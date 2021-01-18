@@ -3,7 +3,14 @@ package com.yuanqing.common.utils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
+
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -151,5 +158,95 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         // 计算差多少秒//输出结果
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
+    }
+
+    public static String getDayOfMonth(String type){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        //每个月1号
+        if ("1".equals(type)) {
+            c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
+            //当天的日期
+        }else if("2".equals(type)){
+            c.setTime(new Date());
+            //下个月的1号
+        }else if("3".equals(type)){
+            c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE)+1);
+            //昨天
+        }else if("4".equals(type)){
+            c.add(Calendar.DAY_OF_MONTH, -1);
+            //前一周
+        }else if("5".equals(type)){
+            c.add(Calendar.DAY_OF_MONTH, -7);
+            //明天
+        }else if("6".equals(type)){
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            //本周日(星期天)
+        }else if("7".equals(type)){
+            c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            //本周末（星期六）
+        }else if("8".equals(type)){
+            c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            c.add(Calendar.DAY_OF_WEEK, 7);
+        }else if("9".equals(type)){
+            c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
+        }
+        else {//其他值都认为是当天日期
+            c.setTime(new Date());
+        }
+        Date firstDateOfMonth = c.getTime();
+        return sdf.format(firstDateOfMonth);
+    }
+
+    /**
+     * 获取当天日期
+     * 开始时间：今天
+     * 结束时间：明天
+     * @return
+     */
+    public static JSONObject getDay(){
+        String startDate = getDayOfMonth("2");
+        String endDate = getDayOfMonth("6");
+        JSONObject filters = new JSONObject();
+        filters.put("startDate", startDate);
+        filters.put("endDate", endDate);
+        return filters;
+    }
+
+    /**
+     * 获取当周日期
+     * 开始时间：本周日
+     * 结束时间：本周六
+     * @return
+     */
+    public static JSONObject getWeek(){
+        String startDate = getDayOfMonth("7");
+        String endDate = getDayOfMonth("8");
+        JSONObject filters = new JSONObject();
+        filters.put("startDate", startDate);
+        filters.put("endDate", endDate);
+        return filters;
+    }
+
+    /**
+     * 获取当月日期
+     * 开始时间：本月1号
+     * 结束时间：下月最后一天
+     * @return
+     */
+    public static JSONObject getMonth(){
+        String startDate = getDayOfMonth("1");
+        String endDate = getDayOfMonth("9");
+        JSONObject filters = new JSONObject();
+        filters.put("startDate", startDate);
+        filters.put("endDate", endDate);
+        return filters;
+    }
+
+    public static JSONObject getDayTime(){
+        JSONObject filters = new JSONObject();
+        filters.put("startDate", LocalDateTime.of(LocalDate.now(), LocalTime.MIN).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        filters.put("endDate", LocalDateTime.of(LocalDate.now(), LocalTime.MAX).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        return filters;
     }
 }

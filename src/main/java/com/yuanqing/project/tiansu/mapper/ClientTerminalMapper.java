@@ -1,0 +1,81 @@
+package com.yuanqing.project.tiansu.mapper;
+
+import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.framework.web.mapper.BaseMapper;
+import com.yuanqing.project.tiansu.domain.ClientTerminal;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * 终端
+ *
+ * @author Ypengfei
+ *
+ * @since 2019/09/05
+ */
+
+@Repository
+public interface ClientTerminalMapper extends BaseMapper<ClientTerminal, Long> {
+    /**
+     *
+     * @param list
+     * @return
+     */
+    boolean changStatus(List<ClientTerminal> list);
+
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    Long insertInto(ClientTerminal entity);
+
+    /**
+     *
+     * @param ipAddress
+     * @return
+     */
+    ClientTerminal findByIpAddress(@Param("ipAddress") Long ipAddress);
+
+    /**
+     *
+     * @param entity
+     */
+    void  updateClientTerminal(ClientTerminal entity);
+
+    /**
+     *
+     * @param IpAddress
+     */
+    void deleteByIpAddress(Long IpAddress);
+
+    /**
+     *
+     * @param filters
+     * @return
+     */
+    List<JSONObject> getTotal(JSONObject filters);
+
+    /**
+     *
+     * @param filters
+     * @return
+     */
+    List<JSONObject> getDistinctClientId(JSONObject filters);
+
+    /**
+     * 根据摄像头ip匹配终端,更新
+     * @param list
+     */
+    void batchUpdateMark(List<ClientTerminal> list);
+
+    /**
+     * 根据ip更新终端设备类型
+     * @param ipAddress
+     */
+    void updateMark(Long ipAddress);
+
+
+}

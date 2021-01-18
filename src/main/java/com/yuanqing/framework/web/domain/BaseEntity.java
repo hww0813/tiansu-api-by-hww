@@ -41,11 +41,11 @@ public class BaseEntity implements Serializable
 
     /** 开始时间 */
     @JsonIgnore
-    private String beginTime;
+    private String startDate;
 
     /** 结束时间 */
     @JsonIgnore
-    private String endTime;
+    private String endDate;
 
     /** 请求参数 */
     private Map<String, Object> params;
@@ -120,24 +120,24 @@ public class BaseEntity implements Serializable
         this.dataScope = dataScope;
     }
 
-    public String getBeginTime()
+    public String getstartDate()
     {
-        return beginTime;
+        return startDate;
     }
 
-    public void setBeginTime(String beginTime)
+    public void setstartDate(String startDate)
     {
-        this.beginTime = beginTime;
+        this.startDate = startDate;
     }
 
-    public String getEndTime()
+    public String getendDate()
     {
-        return endTime;
+        return endDate;
     }
 
-    public void setEndTime(String endTime)
+    public void setendDate(String endDate)
     {
-        this.endTime = endTime;
+        this.endDate = endDate;
     }
 
     public Map<String, Object> getParams()

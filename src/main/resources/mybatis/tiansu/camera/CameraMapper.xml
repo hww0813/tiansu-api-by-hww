@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanqing.project.tiansu.mapper.CameraMapper">
+
+    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.Camera">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="DEVICE_CODE" property="deviceCode" jdbcType="VARCHAR"/>
+        <result column="DEVICE_DOMAIN" property="deviceDomain" jdbcType="VARCHAR"/>
+        <result column="IP_ADDRESS" property="ipAddress" jdbcType="BIGINT"/>
+        <result column="DEVICE_NAME" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="MAC_ADDRESS" property="macAddress" jdbcType="VARCHAR"/>
+        <result column="LONGITUDE" property="longitude" jdbcType="BIGINT"/>
+        <result column="LATITUDE" property="latitude" jdbcType="BIGINT"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="STATUS" property="status" jdbcType="INTEGER"
+                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
+        <result column="DEVICE_TYPE" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="DOMAIN_IP" property="domainIp" jdbcType="BIGINT"/>
+        <result column="DOMAIN_PORT" property="domainPort" jdbcType="BIGINT"/>
+        <result column="SIP_SERVER_ID" property="sipServerId" jdbcType="BIGINT"/>
+        <result column="IS_GB" property="isGb" jdbcType="INTEGER"
+                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
+        <result column="MANUFACTURER" property="manufacturer" jdbcType="VARCHAR"/>
+        <result column="IS_PROBE" property="isProbe" jdbcType="VARCHAR"/>
+        <result column="IS_IMPORT" property="isImport" jdbcType="VARCHAR"/>
+        <result column="IS_CHECK" property="isCheck" jdbcType="BIGINT"/>
+<!--        <association property="region" javaType="REGION">-->
+<!--            <id column="REGION_ID" property="id"/>-->
+<!--            <result column="REGION_NAME" property="name"/>-->
+<!--            <result column="REGION_MERGER_NAME" property="mergerName"/>-->
+<!--            <result column="REGION_LEVEL_TYPE" property="level"/>-->
+<!--        </association>-->
+    </resultMap>
+
+    <select id="getList" resultMap="resultMap">
+        SELECT
+        ca.ID ,
+        ca.DEVICE_CODE ,
+        ca.DEVICE_DOMAIN ,
+        ca.MAC_ADDRESS ,
+        ca.LONGITUDE ,
+        ca.LATITUDE ,
+        ca.REGION ,
+        ca.CREATE_TIME ,
+        ca.UPDATE_TIME ,
+        ca.IP_ADDRESS ,
+        ca.STATUS ,
+        ca.DEVICE_TYPE,
+        ca.DOMAIN_IP,
+        (case when ex.id is not null then ex.MANUFACTURER
+        else ca.MANUFACTURER end) AS MANUFACTURER,
+        ca.IS_PROBE,
+        ca.IS_IMPORT,
+        ca.SIP_SERVER_ID,
+        ca.IS_GB,
+        (case when ex.id is not null then ex.DEVICE_NAME
+        else ca.DEVICE_NAME end) AS DEVICE_NAME,
+        (case when ex.IP_ADDRESS is not null then ip2int(ex.IP_ADDRESS)
+        else ca.IP_ADDRESS end) AS DEVICE_IP,
+        br.ID AS REGION_ID,
+        br.MERGER_NAME AS REGION_MERGER_NAME,
+        (case when ex.id is not null then ex.DOMAIN_ID
+        else br.NAME end) AS REGION_NAME,
+        br.LEVEL_TYPE AS REGION_LEVEL_TYPE
+        FROM BUSI_CAMERA ca
+        LEFT JOIN BUSI_REGION br on br.ID = ca.REGION
+        LEFT JOIN BUSI_EXTERNAL_DEVICE ex on ex.DEVICE_ID = ca.DEVICE_CODE and ex.GB_ID = ca.DEVICE_CODE
+        WHERE 1=1
+        and ca.DEVICE_TYPE is null
+        <if test="id != null ">
+            AND ca.ID = #{id}
+        </if>
+        <if test="deviceDomain != null and deviceDomain != '' ">
+            AND ca.DEVICE_DOMAIN = #{deviceDomain}
+        </if>
+        <if test="deviceCode != null and deviceCode != '' ">
+            AND ca.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="deviceName != null and deviceName != '' ">
+            AND ca.DEVICE_NAME = #{deviceName}
+        </if>
+        <if test="status != null and status != '' ">
+            AND ca.STATUS = #{status}
+        </if>
+        <if test="isGb != null and isGb != '' ">
+            AND ca.IS_GB = #{isGb}
+        </if>
+        <if test="provinceRegion != null and provinceRegion != '' ">
+            AND substr(ca.DEVICE_CODE,0,2) = #{provinceRegion}
+        </if>
+        <if test="cityRegion != null and cityRegion != '' ">
+            <if test="cityRegion == '0000'">
+                and REGION not in
+                ( SELECT id FROM BUSI_REGION WHERE PARENT_ID = 4201 or id = 4201)
+            </if>
+            <if test="cityRegion != '0000'">
+                AND substr(ca.DEVICE_CODE,0,4) = #{cityRegion}
+            </if>
+        </if>
+        <if test="countryRegion != null and countryRegion != '' ">
+
+            AND substr(ca.DEVICE_CODE,0,6) = #{countryRegion}
+        </if>
+        <!--<if test="provinceRegion == null and cityRegion == null and countryRegion == null ">
+            AND substr(ca.DEVICE_CODE,0,2) = #{provinceRegion}
+        </if>-->
+        <if test="ipAddress != null and ipAddress != '' ">
+            AND ca.IP_ADDRESS = #{ipAddress, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="sipServerId != null and sipServerId != ''">
+            AND ca.SIP_SERVER_ID =#{sipServerId}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND ca.UPDATE_TIME > to_date(#{startDate}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND ca.UPDATE_TIME &lt;= to_date(#{endDate}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="manufacturer != null and manufacturer != ''">
+            AND (ca.MANUFACTURER like '%' || #{manufacturer} || '%' or ex.MANUFACTURER like '%' || #{manufacturer} || '%' or ex.MANUFACTURER like '%' || #{manufacturer} || '%')
+        </if>
+        <if test="source != null and source != ''">
+            <if test="source == 1">
+                AND ca.IS_PROBE = '1'
+            </if>
+            <if test="source == 2">
+                AND ca.IS_IMPORT = '1'
+            </if>
+        </if>
+        <if test="rownum != null and rownum != ''">
+           AND rownum &lt;= ${rownum}
+        </if>
+
+        <if test="orderType == null or orderType == ''">
+            ORDER BY ca.CREATE_TIME asc
+        </if>
+        <if test="orderType != null and orderType != ''">
+            ORDER BY ${orderType}
+        </if>
+    </select>
+
+    <select id="getAllData" resultMap="resultMap">
+        SELECT *
+        FROM  BUSI_CAMERA
+        WHERE 1=1
+    </select>
+
+    <select id="getAllIp" resultType="java.lang.Long">
+         select IP_ADDRESS FROM (select IP_ADDRESS,count(id) as num from BUSI_CAMERA where IS_CHECK = 0 group by IP_ADDRESS) where num >1 and IP_ADDRESS is not null
+    </select>
+
+
+    <select id="findCamera" resultMap="resultMap">
+        select ca.* from BUSI_CAMERA ca where 1=1 and ca.DEVICE_TYPE is null
+        <if test="deviceCode != null and deviceCode != '' ">
+            AND ca.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="deviceDomain !=null and deviceDomain !='' ">
+            AND ca.DEVICE_Domain = #{deviceDomain}
+        </if>
+        <if test="deviceName != null and deviceName != '' ">
+            AND ca.DEVICE_NAME = #{deviceName}
+        </if>
+        <if test="macAddress != null and macAddress != '' ">
+            AND ca.MAC_ADDRESS = #{macAddress}
+        </if>
+        <if test="ipAddress != null and ipAddress != '' ">
+            AND ca.IP_ADDRESS = #{ipAddress}
+        </if>
+        <if test="longitude != null and longitude != '' ">
+            AND ca.LONGITUDE = #{longitude}
+        </if>
+        <if test="latitude != null and latitude != '' ">
+            AND ca.LATITUDE = #{latitude}
+        </if>
+        <if test="name != null and name != '' ">
+            AND ca.REGION = #{regionId}
+        </if>
+        <if test="deviceType != null and deviceType != '' ">
+            AND ca.DEVICE_TYPE = #{deviceType}
+        </if>
+        <if test="domainIp != null and domainIp != '' ">
+            AND ca.DOMAIN_IP = #{domainIp}
+        </if>
+        <if test="domainPort != null and domainPort != '' ">
+            AND ca.DOMAIN_PORT = #{domainPort}
+        </if>
+        <if test="isGb != null and isGb != '' ">
+            AND ca.IS_GB = #{isGb}
+        </if>
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+    </select>
+
+    <select id="findChild" resultMap="resultMap">
+        SELECT * FROM BUSI_CAMERA bc
+        WHERE bc.DEVICE_DOMAIN = #{deviceDomain}
+
+        OR (bc.DEVICE_DOMAIN IS NULL AND bc.DOMAIN_IP = #{domainIp})
+           and bc.DEVICE_TYPE is null
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+    </select>
+
+    <select id="findEventCameras" resultMap="resultMap">
+        select
+        ca.*
+        from
+        BUSI_CAMERA ca
+        where
+        ca.ID in (
+        select
+        vbo.CAMERA_ID
+        from
+        busi_oper_event boe
+        left join busi_event be on boe.EVENT_ID = be.id
+        left join v_busi_oper vbo on vbo.uuid = boe.OPER_UUID
+        where
+        be.id=#{id})
+        and ca.DEVICE_TYPE is null
+        <if test="deviceCode != null and deviceCode != '' ">
+            AND ca.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="ipAddress != null and ipAddress != '' ">
+            AND ca.IP_ADDRESS = #{ipAddress, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+    </select>
+
+    <select id="getCameraCount" resultMap="resultMap">
+        SELECT *
+        FROM BUSI_CAMERA bc
+        WHERE 1=1 and bc.DEVICE_TYPE is null
+        <if test="stime != null and stime != ''">
+            AND bc.UPDATE_TIME > to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="etime != null and etime != ''">
+            AND bc.UPDATE_TIME &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="resultMap">
+        SELECT ca.ID ,ca.DEVICE_CODE ,ca.DEVICE_DOMAIN ,ca.MAC_ADDRESS ,ca.LONGITUDE ,ca.LATITUDE ,
+        ca.REGION ,ca.CREATE_TIME ,ca.UPDATE_TIME ,ca.IP_ADDRESS ,ca.STATUS ,ca.DEVICE_TYPE ,ca.DOMAIN_IP ,ca.DOMAIN_PORT ,ca.SIP_SERVER_ID,IS_GB,ca.MANUFACTURER,
+        (case when ex.id is not null then ex.DEVICE_NAME when ex_gb.id is not null then ex_gb.DEVICE_NAME else
+        ca.DEVICE_NAME end) AS DEVICE_NAME,
+        (case when ex.IP_ADDRESS is not null then ip2int(ex.IP_ADDRESS) when ex_gb.IP_ADDRESS is not null then
+        ip2int(ex_gb.IP_ADDRESS) else ca.IP_ADDRESS end) AS DEVICE_IP,
+        br.ID AS REGION_ID,
+        br.MERGER_NAME AS REGION_MERGER_NAME,
+        br.NAME AS REGION_NAME,
+        br.LEVEL_TYPE AS REGION_LEVEL_TYPE
+        FROM BUSI_CAMERA ca
+        LEFT JOIN BUSI_REGION br on br.ID = ca.REGION
+        LEFT JOIN BUSI_EXTERNAL_DEVICE ex on ex.DEVICE_ID = ca.DEVICE_CODE
+        LEFT JOIN BUSI_EXTERNAL_DEVICE ex_gb on ex_gb.GB_ID = ca.DEVICE_CODE
+        WHERE ca.ID = #{id}
+        and ca.DEVICE_TYPE is null
+    </select>
+
+    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.Camera">
+        <selectKey keyProperty="id" order="BEFORE" resultType="long">
+            SELECT SQ_BUSI_CAMERA_ID.nextval AS ID FROM dual
+        </selectKey>
+        INSERT INTO BUSI_CAMERA (ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, LONGITUDE,
+        LATITUDE, REGION, CREATE_TIME, UPDATE_TIME,STATUS,DEVICE_TYPE,SIP_SERVER_ID,IS_GB,MANUFACTURER,IS_PROBE,IS_IMPORT,IS_CHECK)
+        VALUES (
+        #{id},
+        #{deviceCode, jdbcType=VARCHAR},
+        #{deviceDomain, jdbcType=VARCHAR},
+        #{deviceName, jdbcType=VARCHAR},
+        #{ipAddress, jdbcType=BIGINT},
+        #{macAddress, jdbcType=VARCHAR},
+        #{longitude, jdbcType=DOUBLE},
+        #{latitude, jdbcType=DOUBLE},
+        #{region.id, jdbcType=BIGINT},
+        sysdate,
+        sysdate,
+        #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+        #{deviceType,jdbcType =VARCHAR},
+        #{sipServerId, jdbcType=BIGINT},
+        #{isGb, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+        #{manufacturer, jdbcType=VARCHAR},
+        #{isProbe,jdbcType=VARCHAR},
+        #{isImport,jdbcType=VARCHAR},
+        0
+        )
+    </insert>
+
+    <insert id="insertCamera" parameterType="com.yuanqing.project.tiansu.domain.Camera">
+        INSERT INTO BUSI_CAMERA (ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, LONGITUDE,
+        LATITUDE, REGION, CREATE_TIME, UPDATE_TIME,STATUS,DEVICE_TYPE,SIP_SERVER_ID,IS_GB,MANUFACTURER,IS_PROBE,IS_IMPORT,IS_CHECK)
+        VALUES (
+        #{id},
+        #{deviceCode, jdbcType=VARCHAR},
+        #{deviceDomain, jdbcType=VARCHAR},
+        #{deviceName, jdbcType=VARCHAR},
+        #{ipAddress, jdbcType=BIGINT},
+        #{macAddress, jdbcType=VARCHAR},
+        #{longitude, jdbcType=DOUBLE},
+        #{latitude, jdbcType=DOUBLE},
+        #{region.id, jdbcType=BIGINT},
+        sysdate,
+        sysdate,
+        #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+        #{deviceType,jdbcType =VARCHAR},
+        #{sipServerId, jdbcType=BIGINT},
+        #{isGb, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+        #{manufacturer, jdbcType=VARCHAR},
+        #{isProbe,jdbcType=VARCHAR},
+        #{isImport,jdbcType=VARCHAR},
+        0
+        )
+    </insert>
+
+    <select id="findId"  resultType="java.lang.Long" useCache="false" flushCache="true" >
+         select SQ_BUSI_CAMERA_ID.nextval FROM DUAL
+    </select>
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+        <selectKey resultType="long" keyProperty="id" order="BEFORE">
+            SELECT SQ_BUSI_CAMERA_ID.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO BUSI_CAMERA (ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, LONGITUDE,
+        LATITUDE, REGION, CREATE_TIME, UPDATE_TIME,STATUS,DEVICE_TYPE,SIP_SERVER_ID,IS_GB,MANUFACTURER,IS_PROBE,IS_IMPORT,IS_CHECK)
+        SELECT SQ_BUSI_CAMERA_ID.nextval, A.* FROM (
+        <foreach item="item" index="index" collection="list" separator="UNION ALL">
+            SELECT
+            #{item.deviceCode, jdbcType=VARCHAR} as DEVICE_CODE,
+            #{item.deviceDomain, jdbcType=VARCHAR} as DEVICE_DOMAIN,
+            #{item.deviceName, jdbcType=VARCHAR} as DEVICE_NAME,
+            #{item.ipAddress, jdbcType=BIGINT} as IP_ADDRESS,
+            #{item.macAddress, jdbcType=VARCHAR} as MAC_ADDRESS,
+            #{item.longitude, jdbcType=DOUBLE} as LONGITUDE,
+            #{item.latitude, jdbcType=DOUBLE} as LATITUDE,
+            #{item.region.id, jdbcType=BIGINT} as REGION,
+            sysdate as CREATE_TIME,
+            sysdate as UPDATE_TIME,
+            #{item.status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler} as STATUS,
+            #{item.deviceType,jdbcType =VARCHAR} as DEVICE_TYPE,
+            #{item.sipServerId, jdbcType=BIGINT} as SIP_SERVER_ID,
+            #{item.isGb, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler} as IS_GB,
+            #{item.manufacturer, jdbcType=VARCHAR} as MANUFACTURER,
+            #{item.isProbe,jdbcType=VARCHAR} as IS_PROBE,
+            #{item.isImport,jdbcType=VARCHAR} as IS_IMPORT,
+            0 as IS_CHECK
+            FROM dual
+        </foreach>
+        ) A
+    </insert>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+            update BUSI_CAMERA
+            <set>
+                <if test="item.deviceCode != null and item.deviceCode != ''">
+                    DEVICE_CODE   = #{item.deviceCode, jdbcType=VARCHAR},
+                </if>
+                <if test="item.deviceName != null and item.deviceName != ''">
+                    DEVICE_NAME   = #{item.deviceName, jdbcType=VARCHAR},
+                </if>
+                <if test="item.deviceDomain != null and item.deviceDomain != ''">
+                    DEVICE_DOMAIN = #{item.deviceDomain, jdbcType=VARCHAR},
+                </if>
+                <if test="item.ipAddress != null">
+                    IP_ADDRESS    = #{item.ipAddress, jdbcType=BIGINT},
+                </if>
+                <if test="item.macAddress != null and item.macAddress != ''">
+                    MAC_ADDRESS   = #{item.macAddress, jdbcType=VARCHAR},
+                </if>
+                <if test="item.longitude != null">
+                    LONGITUDE     = #{item.longitude, jdbcType=DOUBLE},
+                </if>
+                <if test="item.latitude != null">
+                    LATITUDE      = #{item.latitude, jdbcType=DOUBLE},
+                </if>
+                <if test="item.status != null">
+                    STATUS        = #{item.status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+                </if>
+                <if test="item.deviceType != null and item.deviceType != ''">
+                    DEVICE_TYPE   = #{item.deviceType,jdbcType =VARCHAR},
+                </if>
+                UPDATE_TIME   = sysdate,
+                <if test="item.sipServerId != null">
+                    SIP_SERVER_ID = #{item.sipServerId, jdbcType=BIGINT},
+                </if>
+                <if test="item.isGb != null">
+                    IS_GB         = #{item.isGb, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+                </if>
+                <if test="item.manufacturer != null and item.manufacturer != ''">
+                    MANUFACTURER  = #{item.manufacturer, jdbcType=VARCHAR},
+                </if>
+                <if test="item.isProbe != null and item.isProbe != ''">
+                    IS_PROBE      = #{item.isProbe,jdbcType =VARCHAR},
+                </if>
+                <if test="item.isImport != null and item.isImport != ''">
+                    IS_IMPORT     = #{item.isImport,jdbcType =VARCHAR},
+                </if>
+                <if test="item.region != null">
+                    REGION        = #{item.region.id, jdbcType=INTEGER}
+                </if>
+            </set>
+            WHERE ID = #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.Camera">
+        UPDATE BUSI_CAMERA bc
+        SET
+            DEVICE_CODE   = #{deviceCode, jdbcType=VARCHAR},
+            DEVICE_NAME   = #{deviceName, jdbcType=VARCHAR,},
+            DEVICE_DOMAIN = #{deviceDomain, jdbcType=VARCHAR},
+            IP_ADDRESS    = #{ipAddress, jdbcType=BIGINT},
+            MAC_ADDRESS   = #{macAddress, jdbcType=VARCHAR},
+            LONGITUDE     = #{longitude, jdbcType=DOUBLE},
+            LATITUDE      = #{latitude, jdbcType=DOUBLE},
+            REGION        = #{region.id, jdbcType=INTEGER},
+            STATUS        = #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+            DEVICE_TYPE   = #{deviceType,jdbcType =VARCHAR},
+            UPDATE_TIME   = sysdate,
+            SIP_SERVER_ID = #{sipServerId, jdbcType=BIGINT},
+            IS_GB         = #{isGb, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+            MANUFACTURER  = #{manufacturer, jdbcType=VARCHAR},
+            IS_PROBE      = #{isProbe,jdbcType =VARCHAR},
+            IS_IMPORT     = #{isImport,jdbcType =VARCHAR}
+        WHERE bc.ID = #{id}
+    </update>
+
+    <update id="changStatus" parameterType="java.util.List">
+        UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=sysdate WHERE ID in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <update id="changAllStatus">
+        UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=sysdate WHERE STATUS!='0'
+    </update>
+
+    <update id="updateIsNotServer" parameterType="long">
+        UPDATE BUSI_CAMERA
+            <set>
+                IS_CHECK = 1
+                WHERE IP_ADDRESS = #{ipAddress,jdbcType=BIGINT}
+            </set>
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM BUSI_CAMERA
+        WHERE ID = #{id, jdbcType=BIGINT}
+    </delete>
+
+    <select id="findOne" resultMap="resultMap">
+        SELECT *
+        FROM BUSI_CAMERA bc
+        WHERE 1 = 1
+              AND bc.DEVICE_CODE = #{deviceCode}
+    </select>
+
+    <select id="getGbList" resultMap="resultMap">
+        SELECT * FROM BUSI_CAMERA WHERE IS_GB = 1 AND DEVICE_TYPE is null
+    </select>
+
+    <select id="getNgbList" resultMap="resultMap">
+        SELECT * FROM BUSI_CAMERA WHERE IS_GB = 0 AND DEVICE_TYPE is null
+    </select>
+
+    <select id="getActiveCamera" resultMap="resultMap">
+        SELECT DISTINCT bc.*,br.id REGION_ID,br.SHORT_NAME REGION_NAME,br.MERGER_NAME REGION_MERGER_NAME,br.Level_type REGION_LEVEL_TYPE
+
+         from busi_camera bc
+         RIGHT join busi_oper vbo on bc.id = vbo.CAMERA_ID
+         left join BUSI_REGION br on bc.region = br.id
+        WHERE 1 = 1
+        AND bc.DEVICE_TYPE is null
+        <if test="startDate != null and startDate != ''">
+            AND vbo.STAMP > to_date(#{startDate}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND vbo.STAMP &lt;= to_date(#{endDate}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+    </select>
+
+    <select id="getSessionCameraList" resultMap="resultMap">
+        SELECT ca.ID ,ca.DEVICE_CODE ,ca.DEVICE_DOMAIN ,ca.MAC_ADDRESS ,ca.LONGITUDE ,ca.LATITUDE ,
+        ca.REGION ,ca.CREATE_TIME ,ca.UPDATE_TIME ,ca.IP_ADDRESS ,ca.STATUS ,ca.DEVICE_TYPE ,ca.DOMAIN_IP
+        ,ca.DOMAIN_PORT ,ca.SIP_SERVER_ID,ca.IS_GB,
+        (case when ex.id is not null then ex.DEVICE_NAME
+        when ex_gb.id is not null then ex_gb.DEVICE_NAME
+        else ca.DEVICE_NAME end) AS DEVICE_NAME,
+        (case when ex.IP_ADDRESS is not null then ip2int(ex.IP_ADDRESS)
+        when ex_gb.IP_ADDRESS is not null then ip2int(ex_gb.IP_ADDRESS)
+        else ca.IP_ADDRESS end) AS DEVICE_IP,
+        br.ID AS REGION_ID,
+        br.MERGER_NAME AS REGION_MERGER_NAME,
+        br.NAME AS REGION_NAME,
+        br.LEVEL_TYPE AS REGION_LEVEL_TYPE
+        FROM BUSI_CAMERA ca
+        LEFT JOIN BUSI_REGION br on br.ID = ca.REGION
+        LEFT JOIN BUSI_EXTERNAL_DEVICE ex on ex.DEVICE_ID = ca.DEVICE_CODE
+        LEFT JOIN BUSI_EXTERNAL_DEVICE ex_gb on ex_gb.GB_ID = ca.DEVICE_CODE
+        right join
+        (select DISTINCT camera_id from v_busi_oper where session_id = #{sessionId}) si
+        on
+        si.camera_id = ca.id
+        WHERE 1 = 1
+        AND ca.DEVICE_TYPE is null
+        <if test="stime != null and stime != ''">
+            AND ca.create_time> to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="etime != null and etime != ''">
+            AND ca.create_time &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="deviceCode != null and deviceCode != ''">
+            AND ca.device_code = #{deviceCode}
+        </if>
+        <if test="ip != null and ip != ''">
+            AND int2ip(ca.IP_ADDRESS) = #{ip}
+        </if>
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+    </select>
+
+    <select id="maxId" resultMap="resultMap">
+        SELECT * FROM busi_camera where id=(select max(id) from BUSI_CAMERA) AND DEVICE_TYPE is null
+    </select>
+
+    <select id="getAllVisited" resultMap="resultMap">
+        SELECT
+        ca.ID,
+        ca.DEVICE_CODE,
+        ca.DEVICE_DOMAIN,
+        ca.MAC_ADDRESS,
+        ca.LONGITUDE,
+        ca.LATITUDE,
+        ca.REGION,
+        ca.CREATE_TIME,
+        ca.UPDATE_TIME,ca.IP_ADDRESS,
+        ca.STATUS,
+        ca.DEVICE_TYPE,
+        ca.DOMAIN_IP,
+        ca.MANUFACTURER,
+        ca.DOMAIN_PORT,
+        ca.SIP_SERVER_ID,
+        ca.IS_GB,
+        (case when ex.id is not null then ex.DEVICE_NAME
+        when ex_gb.id is not null then ex_gb.DEVICE_NAME
+        else ca.DEVICE_NAME end) AS DEVICE_NAME,
+        (case when ex.IP_ADDRESS is not null then ip2int(ex.IP_ADDRESS)
+        when ex_gb.IP_ADDRESS is not null then ip2int(ex_gb.IP_ADDRESS)
+        else ca.IP_ADDRESS end) AS DEVICE_IP,
+        br.ID AS REGION_ID,
+        br.MERGER_NAME AS REGION_MERGER_NAME,
+        br.NAME AS REGION_NAME,
+        br.LEVEL_TYPE AS REGION_LEVEL_TYPE
+        FROM
+        (
+        select
+        bc.*
+        from
+        (
+        select
+        distinct camera_id
+        from
+        v_busi_oper vbo
+        where 1 = 1
+        <if test="stime != null and stime != ''">
+            and vbo.stamp >= to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="etime != null and etime != ''">
+            and vbo.stamp &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        ) vbo
+        left join busi_camera bc
+        on vbo.camera_id = bc.id
+        ) ca
+        LEFT JOIN BUSI_REGION br on br.ID = ca.REGION
+        LEFT JOIN BUSI_EXTERNAL_DEVICE ex on ex.DEVICE_ID = ca.DEVICE_CODE
+        LEFT JOIN BUSI_EXTERNAL_DEVICE ex_gb on ex_gb.GB_ID = ca.DEVICE_CODE
+        WHERE 1 = 1
+        AND ca.DEVICE_TYPE is null
+        <if test="id != null ">
+            AND ca.ID = #{id}
+        </if>
+        <if test="deviceCode != null and deviceCode != '' ">
+            AND ca.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="deviceName != null and deviceName != '' ">
+            AND ca.DEVICE_NAME = #{deviceName}
+        </if>
+        <if test="status != null and status != '' ">
+            AND ca.STATUS = #{status}
+        </if>
+        <if test="isGb != null and isGb != '' ">
+            AND ca.IS_GB = #{isGb}
+        </if>
+        <if test="provinceRegion != null and provinceRegion != '' ">
+            AND substr(ca.DEVICE_CODE,0,2) = #{provinceRegion}
+        </if>
+        <if test="cityRegion != null and cityRegion != '' ">
+            AND substr(ca.DEVICE_CODE,0,4) = #{cityRegion}
+        </if>
+        <if test="countryRegion != null and countryRegion != '' ">
+            AND substr(ca.DEVICE_CODE,0,6) = #{countryRegion}
+        </if>
+        <if test="ipAddress != null and ipAddress != '' ">
+            AND ca.IP_ADDRESS = #{ipAddress, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="sipServerId != null and sipServerId != ''">
+            AND ca.SIP_SERVER_ID =#{sipServerId}
+        </if>
+        <if test="manufacturer != null and manufacturer != ''">
+            AND ca.MANUFACTURER like '%' || #{manufacturer} || '%'
+        </if>
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+        ORDER BY ca.CREATE_TIME DESC
+    </select>
+
+    <select id="getTotal" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT count(*)
+        FROM BUSI_CAMERA ca
+        WHERE 1=1
+        AND ca.DEVICE_TYPE is null
+        <if test="status != null and status != '' ">
+            AND ca.STATUS = #{status}
+        </if>
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+    </select>
+
+    <select id="getRealTotal" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT count(*)
+        FROM BUSI_CAMERA ca
+        WHERE 1=1
+        AND ca.DEVICE_TYPE is null
+    </select>
+
+    <select id="getProbeTotal" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT count(*)
+        FROM BUSI_CAMERA ca
+        WHERE 1=1
+        AND ca.DEVICE_TYPE is null
+        <if test="isProbe != null and isProbe != '' ">
+            AND ca.IS_PROBE = #{isProbe}
+        </if>
+        <if test="rownum != null and rownum != ''">
+            AND rownum &lt;= ${rownum}
+        </if>
+    </select>
+
+
+    <resultMap id="operMap" type="com.alibaba.fastjson.JSONObject">
+<!--        <id column="ID" property="id" jdbcType="BIGINT"/>-->
+<!--        <result column="CLIENT_ID" property="clientId" jdbcType="BIGINT"/>-->
+<!--        <result column="SRC_CODE" property="srcCode" jdbcType="BIGINT"/>-->
+<!--        <result column="SRC_IP" property="srcIp" jdbcType="BIGINT"/>-->
+<!--        <result column="USERNAME" property="username" jdbcType="BIGINT"/>-->
+<!--        <result column="SRC_PORT" property="srcPort" jdbcType="BIGINT"/>-->
+<!--        <result column="SRC_MAC" property="srcMac" jdbcType="BIGINT"/>-->
+<!--        <result column="CAMERA_ID" property="cameraId" jdbcType="BIGINT"/>-->
+<!--        <result column="DST_CODE" property="dstCode" jdbcType="BIGINT"/>-->
+<!--        <result column="DST_IP" property="dstIp" jdbcType="BIGINT"/>-->
+<!--        <result column="DST_PORT" property="dstPort" jdbcType="BIGINT"/>-->
+<!--        <result column="DST_MAC" property="dstMac" jdbcType="BIGINT"/>-->
+<!--        <result column="ACTION" property="action" jdbcType="INTEGER"-->
+<!--                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>-->
+<!--        <result column="ACTION_DETAIL" property="actionDetail" jdbcType="INTEGER"-->
+<!--                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>-->
+<!--        <result column="STAMP" property="stamp" jdbcType="TIMESTAMP"/>-->
+<!--        <result column="CONTENT" property="content" jdbcType="TIMESTAMP"/>-->
+<!--        <result column="SESSION_ID" property="sessionId" jdbcType="BIGINT"/>-->
+<!--        <result column="DEVICE_NAME" property="dstDeviceName" jdbcType="VARCHAR"/>-->
+<!--        <result column="DEVICE_IP" property="dstDeviceIp" jdbcType="BIGINT"/>-->
+<!--        <result column="RESULT" property="result" jdbcType="VARCHAR"/>-->
+<!--        <result column="UP_FLOW" property="upFlow" jdbcType="BIGINT"/>-->
+<!--        <result column="DOWN_FLOW" property="downFlow" jdbcType="BIGINT"/>-->
+<!--        <result column="CALL_ID" property="callId" jdbcType="VARCHAR"/>-->
+<!--        <result column="UUID" property="uuid" jdbcType="VARCHAR"/>-->
+    </resultMap>
+
+</mapper>
