@@ -1,6 +1,6 @@
-package com.yuanqing.project.tiansu.domain;
+package com.yuanqing.project.tiansu.domain.assets;
 
-import com.yuanqing.project.tiansu.domain.base.BaseCamera;
+import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
 import lombok.Data;
 
 /**

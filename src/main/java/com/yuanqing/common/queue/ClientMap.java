@@ -1,18 +1,17 @@
 package com.yuanqing.common.queue;
 
-import com.yuanqing.project.tiansu.domain.assets.Camera;
+
+
+import com.yuanqing.project.tiansu.domain.assets.Client;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author xucan
- */
-public class CameraMap {
+public class ClientMap {
 
-    private static final Map<String, Camera> map = new HashMap<>();
+    private static final Map<String, Client> map = new HashMap<>();
 
     /**
      * 获取当前队列大小
@@ -29,7 +28,7 @@ public class CameraMap {
      * @param id
      * @param data
      */
-    public static void put(String id, Camera data) {
+    public static void put(String id, Client data) {
         synchronized (map) {
             map.put(id, data);
         }
@@ -38,7 +37,7 @@ public class CameraMap {
     /**
      * get
      */
-    public static Camera get(String key) {
+    public static Client get(String key) {
         synchronized (map) {
             return map.get(key);
         }
@@ -68,7 +67,7 @@ public class CameraMap {
         }
     }
 
-    public static Collection<Camera> valueList(){
+    public static Collection<Client> valueList(){
         synchronized (map){
             return new ArrayList<>(map.values());
         }

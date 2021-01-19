@@ -1,4 +1,4 @@
-package com.yuanqing.project.tiansu.service.impl;
+package com.yuanqing.project.tiansu.service.impl.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
@@ -7,14 +7,15 @@ import com.yuanqing.common.enums.GBEnum;
 import com.yuanqing.common.queue.CameraMap;
 import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.utils.DateUtils;
-import com.yuanqing.project.tiansu.domain.Camera;
-import com.yuanqing.project.tiansu.domain.ClientTerminal;
-import com.yuanqing.project.tiansu.domain.ExternalDevice;
-import com.yuanqing.project.tiansu.mapper.CameraMapper;
-import com.yuanqing.project.tiansu.mapper.ClientTerminalMapper;
-import com.yuanqing.project.tiansu.service.ICameraService;
+import com.yuanqing.project.tiansu.domain.assets.Camera;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
+import com.yuanqing.project.tiansu.domain.assets.ExternalDevice;
+import com.yuanqing.project.tiansu.mapper.assets.CameraMapper;
+import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
+import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import static com.yuanqing.common.constant.Constants.CAMERA_CACHE_NAME;
 
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
  * Created by xucan on 2021-01-15 16:08
  * @author xucan
  */
+
+@Service
 public class CameraServiceImpl implements ICameraService {
 
     @Autowired
@@ -38,8 +41,7 @@ public class CameraServiceImpl implements ICameraService {
 
     @Override
     public List<Camera> findEventCameras(JSONObject filters) {
-        List<Camera> list = cameraMapper.findEventCameras(filters);
-        return list;
+        return cameraMapper.findEventCameras(filters);
     }
 
     @Override
@@ -67,8 +69,7 @@ public class CameraServiceImpl implements ICameraService {
     @Override
     public List<Camera> getActiveCamera() {
         JSONObject filters = DateUtils.getDayTime();
-        List<Camera> list = cameraMapper.getActiveCamera(filters);
-        return list;
+        return cameraMapper.getActiveCamera(filters);
     }
 
     @Override
@@ -739,6 +740,11 @@ public class CameraServiceImpl implements ICameraService {
     }
 
     @Override
+    public void updateIsNotServer(Long ipAddress) {
+        cameraMapper.updateIsNotServer(ipAddress);
+    }
+
+    @Override
     public Long save(Camera camera) {
         Long ip = camera.getIpAddress();
         ClientTerminal clientTerminal = clientTerminalMapper.findByIpAddress(ip);
@@ -791,7 +797,7 @@ public class CameraServiceImpl implements ICameraService {
 
     /**
      * 批量存入CameraMap缓存
-     * @param list
+     * @param list 摄像头集合
      */
     private void batchPutCameraMap(List<Camera> list){
         for (Camera camera : list) {
@@ -801,7 +807,7 @@ public class CameraServiceImpl implements ICameraService {
 
     /**
      * 单条camera 存入CameraMap缓存
-     * @param camera
+     * @param camera 摄像头对象
      */
     private void putCameraMap(Camera camera){
         String cameraKey = String.format(Constants.TWO_FORMAT, Constants.CAMERA, camera.getDeviceCode());
@@ -810,7 +816,7 @@ public class CameraServiceImpl implements ICameraService {
 
     /**
      * 删除CameraMap缓存
-     * @param camera
+     * @param camera 摄像头对象
      */
     private void delCameraMap(Camera camera){
         //删除缓存中的数据
@@ -821,8 +827,7 @@ public class CameraServiceImpl implements ICameraService {
     /**
      * 判断该设备是否是国标，如果为国标直接入库，为私标则根据服务器ip和终端ip过滤
      * 如果服务器或者终端不为空，则将该摄像头类型设定为服务器
-     * @param camera
-     * @return
+     * @param camera 摄像头对象
      */
     private void isGbForCamera(Camera camera){
 

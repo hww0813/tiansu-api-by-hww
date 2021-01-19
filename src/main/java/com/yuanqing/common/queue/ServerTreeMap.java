@@ -1,6 +1,6 @@
 package com.yuanqing.common.queue;
 
-import com.yuanqing.project.tiansu.domain.assets.Camera;
+import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * @author xucan
  */
-public class CameraMap {
+public class ServerTreeMap {
 
-    private static final Map<String, Camera> map = new HashMap<>();
+    private static final Map<String, ServerTree> map = new HashMap<>();
 
     /**
      * 获取当前队列大小
@@ -29,7 +29,7 @@ public class CameraMap {
      * @param id
      * @param data
      */
-    public static void put(String id, Camera data) {
+    public static void put(String id, ServerTree data) {
         synchronized (map) {
             map.put(id, data);
         }
@@ -38,7 +38,7 @@ public class CameraMap {
     /**
      * get
      */
-    public static Camera get(String key) {
+    public static ServerTree get(String key) {
         synchronized (map) {
             return map.get(key);
         }
@@ -68,7 +68,7 @@ public class CameraMap {
         }
     }
 
-    public static Collection<Camera> valueList(){
+    public static Collection<ServerTree> valueList(){
         synchronized (map){
             return new ArrayList<>(map.values());
         }

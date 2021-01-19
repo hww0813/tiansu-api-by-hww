@@ -1,9 +1,8 @@
-package com.yuanqing.project.tiansu.service;
+package com.yuanqing.project.tiansu.service.assets;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.framework.web.service.BaseService;
-import com.yuanqing.project.tiansu.domain.ClientTerminal;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;

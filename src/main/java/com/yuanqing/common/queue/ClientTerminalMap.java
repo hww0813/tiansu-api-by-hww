@@ -1,6 +1,6 @@
 package com.yuanqing.common.queue;
 
-import com.yuanqing.project.tiansu.domain.ClientTerminal;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 
 import java.util.ArrayList;
 import java.util.Collection;

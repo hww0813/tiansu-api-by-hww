@@ -1,9 +1,10 @@
-package com.yuanqing.project.tiansu.mapper;
+package com.yuanqing.project.tiansu.mapper.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
-import com.yuanqing.project.tiansu.domain.Camera;
+import com.yuanqing.project.tiansu.domain.assets.Camera;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * Created by xucan on 2021-01-15 16:31
  * @author xucan
  */
+@Repository
 public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
@@ -21,16 +23,16 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
     List<Camera> findEventCameras(JSONObject filters);
 
     /**
-     * 根据摄像头编码查询一个摄像头
+     * 根据摄像头编码查询摄像头
      * @param deviceCode
-     * @return 如果查出多个摄像头的情况，取第一个摄像头
+     * @return
      */
     List<Camera> findOne(@Param("deviceCode") String deviceCode);
 
     /**
      * 判断camera在数据库中是否不存在
      * @param camera
-     * @return true 不存在 / false 存在
+     * @return
      */
     Camera findCamera(Camera camera);
 

@@ -1,19 +1,16 @@
-package com.yuanqing.project.tiansu.domain;
+package com.yuanqing.project.tiansu.domain.assets.base;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yuanqing.common.enums.DeviceStatus;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 /**
- * Created by xucan on 2021-01-18 16:13
+ * Created by xucan on 2021-01-19 10:43
  * @author xucan
  */
 
 @Data
-public class ClientTerminal extends BaseEntity {
+public class BaseClient extends BaseEntity {
 
     /** 主键ID */
     private Long id;

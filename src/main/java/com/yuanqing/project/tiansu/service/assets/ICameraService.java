@@ -1,9 +1,9 @@
-package com.yuanqing.project.tiansu.service;
+package com.yuanqing.project.tiansu.service.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
-import com.yuanqing.project.tiansu.domain.Camera;
-import com.yuanqing.project.tiansu.domain.ExternalDevice;
+import com.yuanqing.project.tiansu.domain.assets.Camera;
+import com.yuanqing.project.tiansu.domain.assets.ExternalDevice;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.Map;
  * Created by xucan on 2021-01-15 16:09
  * @author xucan
  */
+
 public interface ICameraService extends BaseService<Camera,Long> {
 
     /**
@@ -183,5 +184,12 @@ public interface ICameraService extends BaseService<Camera,Long> {
      * @param camera
      */
     public void update(Camera camera);
+
+    /**
+     * 根据ip更新摄像头,确定不是服务器
+     * @param ipAddress
+     */
+    void updateIsNotServer(Long ipAddress);
+
 
 }

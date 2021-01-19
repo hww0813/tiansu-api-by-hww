@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yuanqing.project.tiansu.mapper.ClientTerminalMapper">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper">
 
-    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.ClientTerminal">
+    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
         <id column="ID" property="id"/>
         <result column="DEVICE_CODE" property="deviceCode" jdbcType="VARCHAR"/>
         <result column="DEVICE_NAME" property="deviceName" jdbcType="VARCHAR"/>
@@ -152,7 +152,7 @@
         )
     </insert>
 
-    <insert id="insertInto" parameterType="com.yuanqing.project.tiansu.domain.ClientTerminal">
+    <insert id="insertInto" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
         <selectKey keyProperty="id" order="BEFORE" resultType="long">
             SELECT SQ_BUSI_CLIENT_TERMINAL_ID.nextval AS ID FROM dual
         </selectKey>
@@ -184,7 +184,7 @@
 
 
 
-    <update id="updateClientTerminal" parameterType="com.yuanqing.project.tiansu.domain.ClientTerminal">
+    <update id="updateClientTerminal" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
         UPDATE BUSI_CLIENT_TERMINAL
         SET
             DEVICE_CODE = #{deviceCode, jdbcType=VARCHAR},

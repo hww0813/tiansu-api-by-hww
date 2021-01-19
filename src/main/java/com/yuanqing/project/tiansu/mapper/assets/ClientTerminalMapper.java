@@ -1,10 +1,10 @@
-package com.yuanqing.project.tiansu.mapper;
+package com.yuanqing.project.tiansu.mapper.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
-import com.yuanqing.project.tiansu.domain.ClientTerminal;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * @since 2019/09/05
  */
 
-@Repository
+@Component
 public interface ClientTerminalMapper extends BaseMapper<ClientTerminal, Long> {
     /**
      *

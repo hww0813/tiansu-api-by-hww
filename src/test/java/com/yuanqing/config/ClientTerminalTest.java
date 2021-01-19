@@ -1,8 +1,7 @@
 package com.yuanqing.config;
 
 
-import com.yuanqing.project.tiansu.service.IClientTerminalService;
-import lombok.ToString;
+import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

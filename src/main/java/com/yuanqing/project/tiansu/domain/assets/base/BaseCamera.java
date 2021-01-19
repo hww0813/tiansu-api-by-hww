@@ -1,9 +1,7 @@
-package com.yuanqing.project.tiansu.domain.base;
+package com.yuanqing.project.tiansu.domain.assets.base;
 
 import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  *
@@ -13,7 +11,7 @@ import java.io.Serializable;
  */
 
 @Data
-public class BaseCamera extends BaseEntity implements Serializable {
+public class BaseCamera extends BaseEntity {
 
     /** 主键ID */
     private Long id;

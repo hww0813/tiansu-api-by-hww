@@ -1,18 +1,16 @@
-package com.yuanqing.project.tiansu.domain;
+package com.yuanqing.project.tiansu.domain.assets.dto;
 
-import com.yuanqing.common.enums.GBEnum;
-import com.yuanqing.project.tiansu.domain.base.BaseCamera;
+import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
 import lombok.Data;
 
 /**
- *
- * Camera扩展对象
- * Created by xucan on 2021-01-15 15:35
+ * 摄像头DTO对象
+ * Created by xucan on 2021-01-18 10:39
  * @author xucan
  */
 
 @Data
-public class Camera extends BaseCamera {
+public class CameraDto extends BaseCamera {
 
     /** 编号 */
     private String deviceCode;
@@ -40,17 +38,5 @@ public class Camera extends BaseCamera {
 
     /** 信令服务器ID */
     private Long sipServerId;
-
-    /** 审计 */
-    private String isProbe;
-
-    /** 是否导入 */
-    private String isImport;
-
-    /** 是否确认不是服务器 */
-    private Long isCheck;
-
-    /** 是否国标 */
-    private GBEnum isGb;
 
 }

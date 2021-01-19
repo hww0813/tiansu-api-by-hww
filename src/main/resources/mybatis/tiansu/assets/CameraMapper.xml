@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yuanqing.project.tiansu.mapper.CameraMapper">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.CameraMapper">
 
-    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.Camera">
+    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.assets.Camera">
         <id column="ID" property="id" jdbcType="BIGINT"/>
         <result column="DEVICE_CODE" property="deviceCode" jdbcType="VARCHAR"/>
         <result column="DEVICE_DOMAIN" property="deviceDomain" jdbcType="VARCHAR"/>
@@ -266,7 +266,7 @@
         and ca.DEVICE_TYPE is null
     </select>
 
-    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.Camera">
+    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera">
         <selectKey keyProperty="id" order="BEFORE" resultType="long">
             SELECT SQ_BUSI_CAMERA_ID.nextval AS ID FROM dual
         </selectKey>
@@ -295,7 +295,7 @@
         )
     </insert>
 
-    <insert id="insertCamera" parameterType="com.yuanqing.project.tiansu.domain.Camera">
+    <insert id="insertCamera" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera">
         INSERT INTO BUSI_CAMERA (ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, LONGITUDE,
         LATITUDE, REGION, CREATE_TIME, UPDATE_TIME,STATUS,DEVICE_TYPE,SIP_SERVER_ID,IS_GB,MANUFACTURER,IS_PROBE,IS_IMPORT,IS_CHECK)
         VALUES (
@@ -412,7 +412,7 @@
         </foreach>
     </update>
 
-    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.Camera">
+    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera">
         UPDATE BUSI_CAMERA bc
         SET
             DEVICE_CODE   = #{deviceCode, jdbcType=VARCHAR},
@@ -665,32 +665,32 @@
 
 
     <resultMap id="operMap" type="com.alibaba.fastjson.JSONObject">
-<!--        <id column="ID" property="id" jdbcType="BIGINT"/>-->
-<!--        <result column="CLIENT_ID" property="clientId" jdbcType="BIGINT"/>-->
-<!--        <result column="SRC_CODE" property="srcCode" jdbcType="BIGINT"/>-->
-<!--        <result column="SRC_IP" property="srcIp" jdbcType="BIGINT"/>-->
-<!--        <result column="USERNAME" property="username" jdbcType="BIGINT"/>-->
-<!--        <result column="SRC_PORT" property="srcPort" jdbcType="BIGINT"/>-->
-<!--        <result column="SRC_MAC" property="srcMac" jdbcType="BIGINT"/>-->
-<!--        <result column="CAMERA_ID" property="cameraId" jdbcType="BIGINT"/>-->
-<!--        <result column="DST_CODE" property="dstCode" jdbcType="BIGINT"/>-->
-<!--        <result column="DST_IP" property="dstIp" jdbcType="BIGINT"/>-->
-<!--        <result column="DST_PORT" property="dstPort" jdbcType="BIGINT"/>-->
-<!--        <result column="DST_MAC" property="dstMac" jdbcType="BIGINT"/>-->
-<!--        <result column="ACTION" property="action" jdbcType="INTEGER"-->
-<!--                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>-->
-<!--        <result column="ACTION_DETAIL" property="actionDetail" jdbcType="INTEGER"-->
-<!--                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>-->
-<!--        <result column="STAMP" property="stamp" jdbcType="TIMESTAMP"/>-->
-<!--        <result column="CONTENT" property="content" jdbcType="TIMESTAMP"/>-->
-<!--        <result column="SESSION_ID" property="sessionId" jdbcType="BIGINT"/>-->
-<!--        <result column="DEVICE_NAME" property="dstDeviceName" jdbcType="VARCHAR"/>-->
-<!--        <result column="DEVICE_IP" property="dstDeviceIp" jdbcType="BIGINT"/>-->
-<!--        <result column="RESULT" property="result" jdbcType="VARCHAR"/>-->
-<!--        <result column="UP_FLOW" property="upFlow" jdbcType="BIGINT"/>-->
-<!--        <result column="DOWN_FLOW" property="downFlow" jdbcType="BIGINT"/>-->
-<!--        <result column="CALL_ID" property="callId" jdbcType="VARCHAR"/>-->
-<!--        <result column="UUID" property="uuid" jdbcType="VARCHAR"/>-->
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="CLIENT_ID" property="clientId" jdbcType="BIGINT"/>
+        <result column="SRC_CODE" property="srcCode" jdbcType="BIGINT"/>
+        <result column="SRC_IP" property="srcIp" jdbcType="BIGINT"/>
+        <result column="USERNAME" property="username" jdbcType="BIGINT"/>
+        <result column="SRC_PORT" property="srcPort" jdbcType="BIGINT"/>
+        <result column="SRC_MAC" property="srcMac" jdbcType="BIGINT"/>
+        <result column="CAMERA_ID" property="cameraId" jdbcType="BIGINT"/>
+        <result column="DST_CODE" property="dstCode" jdbcType="BIGINT"/>
+        <result column="DST_IP" property="dstIp" jdbcType="BIGINT"/>
+        <result column="DST_PORT" property="dstPort" jdbcType="BIGINT"/>
+        <result column="DST_MAC" property="dstMac" jdbcType="BIGINT"/>
+        <result column="ACTION" property="action" jdbcType="INTEGER"
+                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
+        <result column="ACTION_DETAIL" property="actionDetail" jdbcType="INTEGER"
+                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
+        <result column="STAMP" property="stamp" jdbcType="TIMESTAMP"/>
+        <result column="CONTENT" property="content" jdbcType="TIMESTAMP"/>
+        <result column="SESSION_ID" property="sessionId" jdbcType="BIGINT"/>
+        <result column="DEVICE_NAME" property="dstDeviceName" jdbcType="VARCHAR"/>
+        <result column="DEVICE_IP" property="dstDeviceIp" jdbcType="BIGINT"/>
+        <result column="RESULT" property="result" jdbcType="VARCHAR"/>
+        <result column="UP_FLOW" property="upFlow" jdbcType="BIGINT"/>
+        <result column="DOWN_FLOW" property="downFlow" jdbcType="BIGINT"/>
+        <result column="CALL_ID" property="callId" jdbcType="VARCHAR"/>
+        <result column="UUID" property="uuid" jdbcType="VARCHAR"/>
     </resultMap>
 
 </mapper>

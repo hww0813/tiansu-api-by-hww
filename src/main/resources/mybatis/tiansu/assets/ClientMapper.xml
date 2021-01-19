@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.ClientMapper">
+
+    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.assets.Client">
+        <id column="ID" property="id"/>
+        <result column="DEVICE_CODE" property="deviceCode" jdbcType="VARCHAR"/>
+        <result column="DEVICE_NAME" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="IP_ADDRESS" property="ipAddress" jdbcType="BIGINT"/>
+        <result column="MAC_ADDRESS" property="macAddress" jdbcType="VARCHAR"/>
+        <result column="USERNAME" property="username" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="INTEGER"
+                typeHandler="com.yuanqing.handler.DefaultEnumTypeHandler"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+
+        <result column="DEVICE_TYPE" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="DOMAIN_IP" property="domainIp" jdbcType="BIGINT"/>
+        <result column="DOMAIN_PORT" property="domainPort" jdbcType="BIGINT"/>
+        <result column="SIP_SERVER_ID" property="sipServerId" jdbcType="BIGINT"/>
+        <result column="MEDIA_SERVER_ID" property="mediaServerId" jdbcType="BIGINT"/>
+        <result column="USER_PROXY_SERVER_ID" property="userProxyServerId" jdbcType="BIGINT"/>
+<!--        <association property="region" javaType="REGION">-->
+<!--            <id column="REGION_ID" property="id"/>-->
+<!--            <result column="REGION_NAME" property="name"/>-->
+<!--            <result column="REGION_MERGER_NAME" property="mergerName"/>-->
+<!--            <result column="REGION_LEVEL_TYPE" property="level"/>-->
+<!--        </association>-->
+    </resultMap>
+
+    <select id="getList" resultMap="resultMap">
+        SELECT bc.*
+        FROM BUSI_CLIENT bc
+        WHERE 1=1
+        <if test="ipAddress != null and ipAddress != '' ">
+            AND bc.IP_ADDRESS = #{ipAddress, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="deviceCode != null and deviceCode != '' ">
+            AND bc.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="id != null ">
+            AND bc.ID = #{id}
+        </if>
+        <if test="status != null and status != '' ">
+            AND bc.STATUS = #{status}
+        </if>
+        <if test="provinceRegion != null and provinceRegion != '' ">
+            AND substr(bc.DEVICE_CODE,0,2) = #{provinceRegion}
+        </if>
+        <if test="cityRegion != null and cityRegion != '' ">
+            AND substr(bc.DEVICE_CODE,0,4) = #{cityRegion}
+        </if>
+        <if test="countryRegion != null and countryRegion != '' ">
+            AND substr(bc.DEVICE_CODE,0,6) = #{countryRegion}
+        </if>
+        <!--<if test="(provinceRegion == null) and (cityRegion == null) and (countryRegion == null)">
+            AND substr(bc.DEVICE_CODE,0,2) = #{provinceRegion}
+        </if>-->
+        <if test="sipServerId != null and sipServerId != ''">
+            AND (bc.SIP_SERVER_ID =#{sipServerId} OR bc.MEDIA_SERVER_ID=#{sipServerId} OR
+            bc.USER_PROXY_SERVER_ID=#{sipServerId})
+        </if>
+        <if test="username != null and username != '' ">
+            AND bc.USERNAME like '%${username}%'
+        </if>
+        <if test="stime != null and stime != ''">
+            AND bc.UPDATE_TIME > to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="etime != null and etime != ''">
+            AND bc.UPDATE_TIME &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        ORDER BY bc.CREATE_TIME DESC
+    </select>
+
+    <select id="getByIpAndPort" resultMap="resultMap">
+        SELECT bc.*
+        FROM BUSI_CLIENT bc
+        WHERE 1=1 and bc.DOMAIN_IP = #{serverIp}
+        <if test="serverPort != null and serverPort != '' ">
+            AND bc.DOMAIN_PORT = #{serverPort}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="resultMap">
+        SELECT *
+        FROM BUSI_CLIENT c
+        WHERE c.ID = #{id}
+    </select>
+
+    <select id="findByIP" parameterType="long" resultMap="resultMap">
+        SELECT *
+        FROM BUSI_CLIENT c
+        WHERE c.IP_ADDRESS = #{ipAddress}
+    </select>
+
+    <select id="findId" resultType="java.lang.Long" useCache="false" flushCache="true">
+        SELECT SQ_BUSI_CLIENT_ID.nextval from dual
+    </select>
+
+    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.Client">
+        <selectKey keyProperty="id" order="BEFORE" resultType="long">
+            SELECT SQ_BUSI_CLIENT_ID.nextval AS ID FROM dual
+        </selectKey>
+        INSERT INTO BUSI_CLIENT (ID, DEVICE_CODE, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, USERNAME, STATUS, REGION,
+        CREATE_TIME, UPDATE_TIME,DEVICE_TYPE, SIP_SERVER_ID, MEDIA_SERVER_ID, USER_PROXY_SERVER_ID)
+        VALUES (
+        #{id},
+        #{deviceCode, jdbcType=VARCHAR},
+        #{deviceName, jdbcType=VARCHAR,},
+        #{ipAddress, jdbcType=BIGINT},
+        #{macAddress, jdbcType=VARCHAR},
+        #{username, jdbcType=VARCHAR},
+        #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+        #{region.id, jdbcType=BIGINT},
+        #{createTime, jdbcType=TIMESTAMP},
+        sysdate,
+        #{deviceType,jdbcType=VARCHAR},
+        #{sipServerId, jdbcType=BIGINT},
+        #{mediaServerId, jdbcType=BIGINT},
+        #{userProxyServerId, jdbcType=BIGINT}
+        )
+    </insert>
+
+    <insert id="insertClient" parameterType="com.yuanqing.project.tiansu.domain.assets.Client">
+        INSERT INTO BUSI_CLIENT (ID, DEVICE_CODE, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, USERNAME, STATUS, REGION,
+        CREATE_TIME, UPDATE_TIME,DEVICE_TYPE, SIP_SERVER_ID, MEDIA_SERVER_ID, USER_PROXY_SERVER_ID)
+        VALUES (
+        #{id},
+        #{deviceCode, jdbcType=VARCHAR},
+        #{deviceName, jdbcType=VARCHAR,},
+        #{ipAddress, jdbcType=BIGINT},
+        #{macAddress, jdbcType=VARCHAR},
+        #{username, jdbcType=VARCHAR},
+        #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+        #{region.id, jdbcType=BIGINT},
+        #{createTime, jdbcType=TIMESTAMP},
+        sysdate,
+        #{deviceType,jdbcType=VARCHAR},
+        #{sipServerId, jdbcType=BIGINT},
+        #{mediaServerId, jdbcType=BIGINT},
+        #{userProxyServerId, jdbcType=BIGINT}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.assets.Client">
+        UPDATE BUSI_CLIENT
+        SET
+            DEVICE_CODE = #{deviceCode, jdbcType=VARCHAR},
+            DEVICE_NAME = #{deviceName, jdbcType=VARCHAR},
+            IP_ADDRESS  = #{ipAddress, jdbcType=BIGINT},
+            MAC_ADDRESS = #{macAddress, jdbcType=VARCHAR},
+            USERNAME    = #{username, jdbcType=VARCHAR},
+            STATUS      = #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+            REGION        = #{region.id, jdbcType=INTEGER},
+            UPDATE_TIME = sysdate,
+            DEVICE_TYPE =#{deviceType,jdbcType=VARCHAR},
+            SIP_SERVER_ID = #{sipServerId, jdbcType=BIGINT},
+            MEDIA_SERVER_ID = #{mediaServerId, jdbcType=BIGINT},
+            USER_PROXY_SERVER_ID = #{userProxyServerId, jdbcType=BIGINT}
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM BUSI_CLIENT
+        WHERE ID = #{id, jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByUsername" parameterType="String">
+        DELETE FROM BUSI_CLIENT
+        WHERE USERNAME = #{username, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByIpAddress" parameterType="long">
+        DELETE FROM BUSI_CLIENT
+        WHERE IP_ADDRESS  = #{ipAddress, jdbcType=BIGINT}
+    </delete>
+
+    <update id="changStatus" parameterType="java.util.List">
+        UPDATE BUSI_CLIENT SET STATUS= '0',UPDATE_TIME=sysdate WHERE ID in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <update id="batchUpdateMark" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+        update BUSI_CLIENT
+            <set>
+                DEVICE_TYPE =#{item.deviceType,jdbcType=VARCHAR}
+            WHERE IP_ADDRESS  = #{item.ipAddress, jdbcType=BIGINT}
+            </set>
+        </foreach>
+    </update>
+
+    <update id="updateMark" parameterType="long">
+        update BUSI_CLIENT
+        set DEVICE_TYPE = null
+                WHERE IP_ADDRESS  = #{ipAddress, jdbcType=BIGINT}
+    </update>
+
+    <select id="findOne" resultMap="resultMap">
+        SELECT *
+        FROM BUSI_CLIENT bc
+        WHERE 1 = 1
+        AND bc.IP_ADDRESS = #{ipAddress}
+        <choose>
+            <when test="username != null">
+                AND bc.USERNAME = #{username, jdbcType=VARCHAR}
+            </when>
+        </choose>
+        AND ROWNUM = 1
+    </select>
+
+    <select id="getActiveClient" resultMap="resultMap">
+        SELECT DISTINCT bc.* from BUSI_CLIENT bc left join busi_oper bo on bc.id = bo.CLIENT_ID
+    </select>
+
+    <select id="maxId" resultMap="resultMap">
+        SELECT * FROM BUSI_CLIENT where id=(select max(id) from BUSI_CLIENT)
+    </select>
+
+    <select id="getUserList" resultMap="resultMap">
+        SELECT
+        bc.*
+        FROM
+        (
+        SELECT
+        bc.*
+        FROM
+        busi_client bc
+        RIGHT JOIN (
+        SELECT DISTINCT
+        bc.id client_id
+        FROM
+        v_busi_oper vbo
+        LEFT JOIN busi_client bc ON vbo.client_id = bc.id
+        where 1 = 1
+        <if test="stime != null and stime != ''">
+            and vbo.stamp >= to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="etime != null and etime != ''">
+            and vbo.stamp &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="provinceRegion != null and provinceRegion != '' ">
+            AND substr(vbo.DST_CODE,0,2) = #{provinceRegion}
+        </if>
+        <if test="cityRegion != null and cityRegion != '' ">
+            AND substr(vbo.DST_CODE,0,4) = #{cityRegion}
+        </if>
+        <if test="countryRegion != null and countryRegion != '' ">
+            AND substr(vbo.DST_CODE,0,6) = #{countryRegion}
+        </if>
+        ) vbc ON bc.id = vbc.client_id
+        ) bc
+        WHERE 1=1
+        <if test="ipAddress != null and ipAddress != '' ">
+            AND bc.IP_ADDRESS = #{ipAddress, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="deviceCode != null and deviceCode != '' ">
+            AND bc.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="id != null ">
+            AND bc.ID = #{id}
+        </if>
+        <if test="status != null and status != '' ">
+            AND bc.STATUS = #{status}
+        </if>
+
+        <if test="sipServerId != null and sipServerId != ''">
+            AND (bc.SIP_SERVER_ID =#{sipServerId} OR bc.MEDIA_SERVER_ID=#{sipServerId} OR
+            bc.USER_PROXY_SERVER_ID=#{sipServerId})
+        </if>
+        ORDER BY bc.CREATE_TIME DESC
+    </select>
+
+    <select id="getTotal" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT count(*)
+        FROM BUSI_CLIENT bc
+        WHERE 1=1
+        <if test="status != null and status != '' ">
+            AND bc.STATUS = #{status}
+        </if>
+    </select>
+
+    <select id="getClientVisitList" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        BC.ID CLIENT_ID,
+        BC.DEVICE_CODE CLIENT_CODE,
+        BC.DEVICE_NAME CLIENT_NAME,
+        BC.USERNAME USERNAME,
+        BC.MAC_ADDRESS CLIENT_MAC,
+        long2ip(BC.IP_ADDRESS) CLIENT_IP,
+        NVL(T.VISIT_CNT,0) VISIT_CNT,
+        NVL(T.CAMERA_CNT,0) CAMERA_CNT
+        FROM
+        (
+        SELECT
+        BO.CLIENT_ID,
+        COUNT(1) VISIT_CNT,
+        COUNT(DISTINCT CAMERA_ID) CAMERA_CNT
+        FROM BUSI_OPER BO
+        WHERE 1 = 1
+        AND BO.ACTION != 6
+        <if test="action != null and action != ''">
+            AND BO.ACTION = #{action}
+        </if>
+        <if test="clientId != null and clientId != ''">
+            AND BO.CLIENT_ID = #{clientId}
+        </if>
+        <if test="cameraId != null and cameraId != ''">
+            AND BO.CAMERA_ID = #{cameraId}
+        </if>
+        <if test="stime != null and stime != ''">
+            AND BO.STAMP > TO_DATE(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="etime != null and etime != ''">
+            AND BO.STAMP &lt;= TO_DATE(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        GROUP BY BO.CLIENT_ID
+        ) T
+        LEFT JOIN
+        BUSI_CLIENT BC
+        ON T.CLIENT_ID = BC.ID
+        WHERE 1 = 1
+        <if test="deviceCode != null and deviceCode != ''">
+            AND BC.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="ipAddress != null and ipAddress != ''">
+            AND BC.IP_ADDRESS = #{ipAddress, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="provinceRegion != null and provinceRegion != '' ">
+            AND SUBSTR(BC.DEVICE_CODE,0,2) = #{provinceRegion}
+        </if>
+        <if test="cityRegion != null and cityRegion != '' ">
+            AND SUBSTR(BC.DEVICE_CODE,0,4) = #{cityRegion}
+        </if>
+        <if test="countryRegion != null and countryRegion != '' ">
+            AND SUBSTR(BC.DEVICE_CODE,0,6) = #{countryRegion}
+        </if>
+    </select>
+
+    <resultMap id="operMap" type="OperationBehavior">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="CLIENT_ID" property="clientId" jdbcType="BIGINT"/>
+        <result column="SRC_CODE" property="srcCode" jdbcType="BIGINT"/>
+        <result column="SRC_IP" property="srcIp" jdbcType="BIGINT"/>
+        <result column="USERNAME" property="username" jdbcType="BIGINT"/>
+        <result column="SRC_PORT" property="srcPort" jdbcType="BIGINT"/>
+        <result column="SRC_MAC" property="srcMac" jdbcType="BIGINT"/>
+        <result column="CAMERA_ID" property="cameraId" jdbcType="BIGINT"/>
+        <result column="DST_CODE" property="dstCode" jdbcType="BIGINT"/>
+        <result column="DST_IP" property="dstIp" jdbcType="BIGINT"/>
+        <result column="DST_PORT" property="dstPort" jdbcType="BIGINT"/>
+        <result column="DST_MAC" property="dstMac" jdbcType="BIGINT"/>
+        <result column="ACTION" property="action" jdbcType="INTEGER"
+                typeHandler="com.yuanqing.handler.DefaultEnumTypeHandler"/>
+        <result column="ACTION_DETAIL" property="actionDetail" jdbcType="INTEGER"
+                typeHandler="com.yuanqing.handler.DefaultEnumTypeHandler"/>
+        <result column="STAMP" property="stamp" jdbcType="TIMESTAMP"/>
+        <result column="CONTENT" property="content" jdbcType="TIMESTAMP"/>
+        <result column="SESSION_ID" property="sessionId" jdbcType="BIGINT"/>
+        <result column="DEVICE_NAME" property="dstDeviceName" jdbcType="VARCHAR"/>
+        <result column="DEVICE_IP" property="dstDeviceIp" jdbcType="BIGINT"/>
+        <result column="RESULT" property="result" jdbcType="VARCHAR"/>
+        <result column="UP_FLOW" property="upFlow" jdbcType="BIGINT"/>
+        <result column="DOWN_FLOW" property="downFlow" jdbcType="BIGINT"/>
+        <result column="CALL_ID" property="callId" jdbcType="VARCHAR"/>
+        <result column="UUID" property="uuid" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getClientVisitDetailList" resultMap="operMap">
+        SELECT
+        bo.*
+        FROM
+        busi_oper bo
+        WHERE
+        1 = 1
+        <if test="clientId != null and clientId != ''">
+            AND bo.client_id = #{clientId}
+        </if>
+        <if test="cameraId != null and cameraId != ''">
+            AND bo.camera_id = #{cameraId}
+        </if>
+        <if test="dstIp != null and dstIp != ''">
+            AND bo.dst_ip = #{dstIp, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="dstCode != null and dstCode != ''">
+            AND bo.dst_code = #{dstCode}
+        </if>
+        <if test="action != null and action != ''">
+            AND bo.action = #{action}
+        </if>
+        <if test="stime != null and stime != ''">
+            AND bo.stamp > to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="etime != null and etime != ''">
+            AND bo.stamp &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        ORDER BY
+        bo.stamp
+    </select>
+
+    <select id="getClientVisitRelatedCameraList" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        bc.device_code camera_code,
+        bc.device_name camera_name,
+        long2ip(bc.ip_address) camera_ip,
+        bc.region camera_region,
+        bo.camera_id camera_id,
+        bo.visited_cnt visited_cnt
+        FROM
+        (
+        SELECT
+        bo.camera_id camera_id,
+        COUNT(bo.camera_id) visited_cnt
+        FROM
+        busi_oper bo
+        WHERE
+        1 = 1
+        <if test="stime != null and stime != ''">
+            AND bo.stamp >= TO_DATE(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="etime != null and etime != ''">
+            AND bo.stamp &lt;= TO_DATE(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+        </if>
+        <if test="clientId != null and clientId != ''">
+            AND bo.client_id = #{clientId}
+        </if>
+        GROUP BY
+        bo.camera_id
+        ) bo
+        LEFT JOIN
+        (
+        SELECT
+        bc.id,
+        bc.device_code,
+        bc.device_name,
+        bc.ip_address,
+        br.name region
+        FROM
+        busi_camera bc
+        LEFT JOIN busi_region br ON bc.region = br.id
+        )
+        bc ON bo.camera_id = bc.id
+        ORDER BY
+        bo.visited_cnt DESC
+    </select>
+</mapper>
