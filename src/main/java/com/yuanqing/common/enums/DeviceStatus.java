@@ -18,6 +18,8 @@ public enum DeviceStatus implements BaseEnum {
 
     Integer value;
 
+
+
     DeviceStatus(String label, Integer value) {
         this.label = label;
         this.value = value;

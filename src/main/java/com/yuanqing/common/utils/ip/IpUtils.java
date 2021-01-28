@@ -12,8 +12,7 @@ import com.yuanqing.common.utils.StringUtils;
  */
 public class IpUtils
 {
-    public static String getIpAddr(HttpServletRequest request)
-    {
+    public static String getIpAddr(HttpServletRequest request){
         if (request == null)
         {
             return "unknown";
@@ -44,14 +43,12 @@ public class IpUtils
         return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
     }
 
-    public static boolean internalIp(String ip)
-    {
+    public static boolean internalIp(String ip) {
         byte[] addr = textToNumericFormatV4(ip);
         return internalIp(addr) || "127.0.0.1".equals(ip);
     }
 
-    private static boolean internalIp(byte[] addr)
-    {
+    private static boolean internalIp(byte[] addr) {
         if (StringUtils.isNull(addr) || addr.length < 2)
         {
             return true;
@@ -85,6 +82,37 @@ public class IpUtils
             default:
                 return false;
         }
+    }
+
+    public static long ipToLong(String ipAddr) {
+
+        if (ipAddr == null || "".equalsIgnoreCase(ipAddr)) {
+            return 0;
+        }
+        long[] ip = new long[4];
+        //先找到IP地址字符串中.的位置
+        int position1 = ipAddr.indexOf(".");
+        int position2 = ipAddr.indexOf(".", position1 + 1);
+        int position3 = ipAddr.indexOf(".", position2 + 1);
+        //将每个.之间的字符串转换成整型
+        ip[0] = Long.parseLong(ipAddr.substring(0, position1).trim());
+        ip[1] = Long.parseLong(ipAddr.substring(position1 + 1, position2).trim());
+        ip[2] = Long.parseLong(ipAddr.substring(position2 + 1, position3).trim());
+        ip[3] = Long.parseLong(ipAddr.substring(position3 + 1).trim());
+        return (ip[0] << 24) + (ip[1] << 16) + (ip[2] << 8) + ip[3];
+    }
+
+    /**
+     * 把int->ip地址
+     *
+     * @param ipInt 数字型ip
+     * @return String
+     */
+    public static String longToIp(long ipInt) {
+        return new StringBuilder().append(((ipInt >> 24) & 0xff)).append('.')
+                .append((ipInt >> 16) & 0xff).append('.').append(
+                        (ipInt >> 8) & 0xff).append('.').append((ipInt & 0xff))
+                .toString();
     }
 
     /**

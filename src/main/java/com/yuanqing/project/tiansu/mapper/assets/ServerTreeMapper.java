@@ -14,8 +14,6 @@ import java.util.List;
  */
 @Repository
 public interface ServerTreeMapper extends BaseMapper<ServerTree,Long> {
-    //根据id查询数据
-    ServerTree findById(Long id);
 
     List<ServerTree> findByServerCode(String serverCode);
 

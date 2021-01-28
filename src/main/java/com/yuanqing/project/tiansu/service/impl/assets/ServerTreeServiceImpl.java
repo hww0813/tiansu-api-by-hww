@@ -8,10 +8,10 @@ import com.yuanqing.common.queue.ServerTreeMap;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
+import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ServerTreeMapper;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
-import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ServerTreeServiceImpl implements IServerTreeService {
 
     @Autowired
-    private IClientService clientService;
+    private ClientMapper clientMapper;
 
     @Autowired
     private ClientTerminalMapper clientTerminalMapper;
@@ -83,7 +83,7 @@ public class ServerTreeServiceImpl implements IServerTreeService {
     public void insert(ServerTree serverTree) {
         Long IP = serverTree.getServerIp();
         //根据ip查找客户端
-        List<Client> clientList = clientService.findByIp(IP);
+        List<Client> clientList = clientMapper.findByIP(IP);
 
         //根据ip查找终端,先缓存中查找
         String clientTerminalKey = String.format(Constants.TWO_FORMAT, Constants.CLIENT_TERMINAL, IP);
@@ -111,7 +111,7 @@ public class ServerTreeServiceImpl implements IServerTreeService {
         Long IP = serverTree.getServerIp();
 
         //根据ip查找客户端
-        List<Client> clientList = clientService.findByIp(IP);
+        List<Client> clientList = clientMapper.findByIP(IP);
         //根据ip查找终端
         ClientTerminal clientTerminal = clientTerminalMapper.findByIpAddress(IP);
 
@@ -149,7 +149,7 @@ public class ServerTreeServiceImpl implements IServerTreeService {
         //终端更新
         clientTerminalMapper.updateMark(serverIp);
         //客户端更新
-        clientService.updateMark(serverIp);
+        clientMapper.updateMark(serverIp);
         //根据ip更新摄像头，设置为确认不是服务器
         cameraService.updateIsNotServer(serverIp);
     }
@@ -160,8 +160,8 @@ public class ServerTreeServiceImpl implements IServerTreeService {
     }
 
     @Override
-    public List<ServerTree> getList(JSONObject filters) {
-        return serverTreeMapper.getList(filters);
+    public List<ServerTree> getList(ServerTree serverTree) {
+        return serverTreeMapper.getList(serverTree);
     }
 
     /**
@@ -190,7 +190,7 @@ public class ServerTreeServiceImpl implements IServerTreeService {
         if (clientList.size() > 0) {
             for (Client client : clientList) {
                 client.setDeviceType(DeviceType.PROXY_SERVER.getValue());
-                clientService.update(client);
+                clientMapper.update(client);
             }
         }
         if (clientTerminal != null) {

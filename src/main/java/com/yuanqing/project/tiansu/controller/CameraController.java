@@ -1,61 +1,66 @@
-//package com.yuanqing.project.tiansu.controller;
-//
-//import com.alibaba.fastjson.JSONObject;
-//
-//import com.yuanqing.framework.web.controller.BaseController;
-//import io.swagger.annotations.Api;
-//import io.swagger.annotations.ApiOperation;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.beans.BeanUtils;
-//import org.springframework.format.annotation.DateTimeFormat;
-//import org.springframework.validation.BindingResult;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import javax.annotation.Resource;
-//import javax.validation.Valid;
-//import java.time.LocalDateTime;
-//import java.time.format.DateTimeFormatter;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//
-///**
-// * 摄像头Controller
-// * @author xucan
-// */
-//@RestController
-//@RequestMapping(value = "/api/device/sip-device")
-//@CrossOrigin
-//@Api(value = "摄像头", description = "摄像头相关Api")
-//public class CameraController extends BaseController {
+package com.yuanqing.project.tiansu.controller;
+
+import com.alibaba.fastjson.JSONObject;
+
+import com.yuanqing.common.enums.DeviceStatus;
+import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.framework.web.controller.BaseController;
+import com.yuanqing.framework.web.domain.AjaxResult;
+import com.yuanqing.project.tiansu.domain.assets.Camera;
+import com.yuanqing.project.tiansu.domain.assets.dto.CameraDto;
+import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 摄像头Controller
+ * @author xucan
+ */
+@RestController
+@RequestMapping(value = "/api/device/sip-device")
+@CrossOrigin
+@Api(value = "摄像头", description = "摄像头相关Api")
+public class CameraController extends BaseController {
 //
 //    private static final Logger LOGGER = LoggerFactory.getLogger(CameraController.class);
 //
+//    @Autowired
+//    private ICameraService cameraService;
+//
 //    @Resource
-//    private CameraManager cameraManager;
-//    @Resource
-//    private ServerTreeManager serverTreeManager;
-//    @Resource
-//    private HomePageManager homePageManager;
+//    private HomegetListManager homegetListManager;
 //
 //    //导入excel
 ////    @PostMapping(value = "/import")
 ////    @ApiOperation(value = "导入摄像头列表")
 ////    public Map<String, Object> importExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
 ////        Map<String, Object> map = new HashMap<String, Object>();
-////        String result = cameraManager.readExcelFile(file);
-////        map.put("message", result);
+////        String AjaxResult = cameraService.readExcelFile(file);
+////        map.put("message", AjaxResult);
 ////        return map;
 ////    }
 //
 //
 //    @GetMapping("/list")
 //    @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
-//    public AjaxResult getAll(@RequestParam(value = "status", required = false) String status,
-//                             @RequestParam(value = "isGb", required = false) String isGb,
+//    public AjaxResult getAll(@RequestParam(value = "status", required = false) Integer status,
+//                             @RequestParam(value = "isGb", required = false) Integer isGb,
 //                             @RequestParam(value = "deviceName", required = false) String deviceName,
 //                             @RequestParam(value = "deviceDomain", required = false) String deviceDomain,
 //                             @RequestParam(value = "deviceCode", required = false) String deviceCode,
@@ -68,31 +73,25 @@
 //                             @RequestParam(required = false) String orderType,
 //                             @RequestParam(required = false) String orderValue) throws Exception {
 //
-//        JSONObject filters = new JSONObject();
-//        filters.put("status", status);
-//        filters.put("isGb", isGb);
-//        filters.put("deviceName", deviceName);
-//        filters.put("deviceDomain", deviceDomain);
-//        filters.put("deviceCode", deviceCode);
-//        filters.put("ipAddress", ipAddress);
-//        filters.put("sipServerId", sipServerId);
-//        filters.put("manufacturer", manufacturer);
-//        filters.put("source", source);
-//        filters.put("id", id);
-//        if (orderType != null && orderValue != null && !orderType.isEmpty() && !orderValue.isEmpty()  ) {
-//            filters.put("orderType", orderValue + " " + orderType);
-//        }
-//        filters = RegionUtil.setRegion(filters,regionList);
-//        LOGGER.debug("pageNum:{} pageSize:{} filters:{}", pageNum, pageSize, filters);
-//        PageInfo<Camera> page = cameraManager.page(pageNum, pageSize, filters);
-//        System.out.println(page.toString()+"---------->");
-//        return ResultUtils.success(page);
+//        Camera camera = new Camera();
+//        camera.setStatus(status);
+//        camera.setIsGb(isGb);
+//        camera.setDeviceName(deviceName);
+//        camera.setDeviceDomain(deviceDomain);
+//        camera.setDeviceCode(deviceCode);
+//        camera.setIpAddress(IpUtils.ipToLong(ipAddress));
+//        camera.setSipServerId(sipServerId);
+//        camera.setManufacturer(manufacturer);
+//        camera.setId(id);
+//        List<Camera> getList = cameraService.getList(camera);
+//        System.out.println(getList.toString()+"---------->");
+//        return AjaxResult.success(getList);
 //    }
 //
 //    @GetMapping("/visited/list")
 //    @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
-//    public Result getVisitedNumberList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-//                                       @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+//    public AjaxResult getVisitedNumberList(@RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
+//                                       @RequestParam(value = "getListSize", defaultValue = "20") int getListSize,
 //                                       @RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
 //                                       @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
 //                                       @RequestParam(value = "status", required = false) String status,
@@ -114,16 +113,16 @@
 //        filters.put("sipServerId", sipServerId);
 //        filters.put("manufacturer", manufacturer);
 //        filters.put("id", id);
-//        filters = RegionUtil.setRegion(filters,regionList);
-//        LOGGER.debug("pageNum:{} pageSize:{} filters:{}", pageNum, pageSize, filters);
-//        PageInfo<Camera> page = cameraManager.visitedPage(pageNum, pageSize, filters);
-//        return ResultUtils.success(page);
+////        filters = RegionUtil.setRegion(filters,regionList);
+//        LOGGER.debug("getListNum:{} getListSize:{} filters:{}", getListNum, getListSize, filters);
+//        List<Camera> getList = cameraService.visitedgetList(filters);
+//        return AjaxResult.success(getList);
 //    }
 //
 //    @GetMapping("/findEventCameras")
 //    @ApiOperation(value = "获取告警摄像头列表", httpMethod = "GET")
-//    public Result findEventCameras(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-//                                   @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+//    public AjaxResult findEventCameras(@RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
+//                                   @RequestParam(value = "getListSize", defaultValue = "20") int getListSize,
 //                                   @RequestParam(value = "deviceCode", required = false) String deviceCode,
 //                                   @RequestParam(value = "ipAddress", required = false) String ipAddress,
 //                                   @RequestParam(value = "id", required = false) Long id) throws Exception {
@@ -132,45 +131,45 @@
 //        filters.put("deviceCode", deviceCode);
 //        filters.put("ipAddress", ipAddress);
 //        filters.put("id", id);
-//        LOGGER.debug("pageNum:{} pageSize:{} filters:{}", pageNum, pageSize, filters);
-//        PageInfo<Camera> page = cameraManager.findEventCameras(pageNum, pageSize, filters);
-//        return ResultUtils.success(page);
+//        LOGGER.debug("getListNum:{} getListSize:{} filters:{}", getListNum, getListSize, filters);
+//        List<Camera> getList = cameraService.findEventCameras(getListNum, getListSize, filters);
+//        return AjaxResult.success(getList);
 //
 //    }
 //
 //    @PostMapping
 //    @ApiOperation(value = "新增一个摄像头", httpMethod = "POST")
-//    public Result postSipDevice(@Valid @RequestBody CameraDto dto, BindingResult bindingResult) {
+//    public AjaxResult postSipDevice(@Valid @RequestBody CameraDto dto, BindingAjaxResult bindingAjaxResult) {
 //
-//        if (bindingResult.hasErrors()) {
-//            return ResultUtils.error(ResultEnum.PARAM_ERROR.getCode(), bindingResult.getFieldError().getDefaultMessage());
+//        if (bindingAjaxResult.hasErrors()) {
+//            return AjaxResult.error(AjaxResultEnum.PARAM_ERROR.getCode(), bindingAjaxResult.getFieldError().getDefaultMessage());
 //        }
-//        cameraManager.save(doForward(dto));
-//        return ResultUtils.success();
+//        cameraService.save(doForward(dto));
+//        return AjaxResult.success();
 //    }
 //
 //    @PutMapping
 //    @ApiOperation(value = "更新一个摄像头", httpMethod = "PUT")
-//    public Result putSipDevice(@Valid @RequestBody CameraDto dto, BindingResult bindingResult) {
+//    public AjaxResult putSipDevice(@Valid @RequestBody CameraDto dto, BindingAjaxResult bindingAjaxResult) {
 //
-//        if (bindingResult.hasErrors()) {
-//            return ResultUtils.error(ResultEnum.PARAM_ERROR.getCode(), bindingResult.getFieldError().getDefaultMessage());
+//        if (bindingAjaxResult.hasErrors()) {
+//            return AjaxResult.error(AjaxResultEnum.PARAM_ERROR.getCode(), bindingAjaxResult.getFieldError().getDefaultMessage());
 //        }
-//        cameraManager.save(doForward(dto));
-//        return ResultUtils.success();
+//        cameraService.save(doForward(dto));
+//        return AjaxResult.success();
 //    }
 //
 //
 //    @PutMapping("/changAllStatus")
 //    @ApiOperation(value = "更新所有摄像头状态为已确认摄像头", httpMethod = "PUT")
-//    public Result putAllCameraStatus() {
-//        cameraManager.changAllStatus();
-//        return ResultUtils.success();
+//    public AjaxResult putAllCameraStatus() {
+//        cameraService.changAllStatus();
+//        return AjaxResult.success();
 //    }
 //
 //    @PutMapping("/updateStatus")
 //    @ApiOperation(value = "批量更新摄像头状态为已确认", httpMethod = "PUT")
-//    public Result updateStatus(@Valid @RequestBody JSONObject jsonObject) {
+//    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject) {
 //        String str1 = String.valueOf(jsonObject.get("id"));
 //        String str = str1.substring(1, str1.length() - 1);
 //        List<Camera> list = new ArrayList<Camera>();
@@ -182,72 +181,71 @@
 //            camera.setId(l);
 //            list.add(camera);
 //        }
-//        cameraManager.changStatus(list);
-//        return ResultUtils.success();
+//        cameraService.changStatus(list);
+//        return AjaxResult.success();
 //    }
 //
 //    @DeleteMapping
 //    @ApiOperation(value = "删除一个摄像头", httpMethod = "DELETE")
-//    public Result deleteSipDevice(@RequestParam(name = "id") Long id) {
-//        if (id == null) {
-//            return ResultUtils.error(ResultEnum.PARAM_ERROR);
-//        }
-//        cameraManager.deleteById(id);
-//        return ResultUtils.success();
+//    public AjaxResult deleteSipDevice(@RequestParam(name = "id") Long id) {
+//        cameraService.deleteById(id);
+//        return AjaxResult.success();
 //    }
 //
 //    @GetMapping("/status")
 //    @ApiOperation(value = "当天摄像头的状态")
-//    public Result getStatus() {
-//        return ResultUtils.success(cameraManager.getCurrentStatus());
+//    public AjaxResult getStatus() {
+//        return AjaxResult.success(cameraService.getCurrentStatus());
 //    }
 //
 //    @GetMapping("/active")
 //    @ApiOperation(value = "活跃摄像头列表")
-//    public Result getActiveCamera(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-//                                  @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
-//        return ResultUtils.success(cameraManager.getActiveCamera(pageNum, pageSize));
+//    public AjaxResult getActiveCamera(@RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
+//                                  @RequestParam(value = "getListSize", defaultValue = "20") int getListSize) {
+//        return AjaxResult.success(cameraService.getActiveCamera(getListNum, getListSize));
 //    }
 //
 //    @GetMapping("/getNonNationalCameraList")
 //    @ApiOperation(value = "获取首页国标、非国标编号摄像头列表")
-//    public Result getNonNationalCameraList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-//                                           @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+//    public AjaxResult getNonNationalCameraList(@RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
+//                                           @RequestParam(value = "getListSize", defaultValue = "20") int getListSize,
 //                                           @RequestParam(value = "type", required = false) String type) {
 //        JSONObject filters = new JSONObject();
 //        int isGb = type.equals("gb") ? 1 : 0;
 //        filters.put("isGb", isGb);
-//        return ResultUtils.success(cameraManager.getNonNationalCameraList(pageNum, pageSize, filters));
+//        return AjaxResult.success(cameraService.getNonNationalCameraList(getListNum, getListSize, filters));
 //    }
 //
 //    @GetMapping("/getCameraDatas")
 //    @ApiOperation(value = "获取首页摄像头数据", httpMethod = "GET")
-//    public Result getCameraDatas() {
-//        return ResultUtils.success(homePageManager.findObject("camera","camera_num"));
+//    public AjaxResult getCameraDatas() {
+//        return AjaxResult.success(homegetListManager.findObject("camera","camera_num"));
 //    }
 //
 //    @GetMapping("/findChildCameras")
 //    @ApiOperation(value = "获取子级摄像头", httpMethod = "GET")
-//    public Result getChildCamera(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-//                                 @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+//    public AjaxResult getChildCamera(
+//            @PathVariable
+//            @RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
+//                                 @RequestParam(value = "getListSize", defaultValue = "10") int getListSize,
 //                                 @RequestParam(value = "serverDomain", required = false) String serverDomain,
 //                                 @RequestParam(value = "serverIp", required = false) Long serverIp) {
 //        JSONObject filters = new JSONObject();
 //        filters.put("deviceDomain", serverDomain);
 //        filters.put("domainIp", serverIp);
-//        return ResultUtils.success(cameraManager.findChild(pageNum, pageSize, filters));
+//        return AjaxResult.success(cameraService.findChild(getListNum, getListSize, filters));
 //    }
 //
 //    @GetMapping("/getNonNationalCamera")
 //    @ApiOperation(value = "获取首页国标、非国标编号摄像头数量占比", httpMethod = "GET")
-//    public Result getNonNationalCamera() {
-//        return ResultUtils.success(cameraManager.getNonNationalCamera());
+//    public AjaxResult getNonNationalCamera() {
+//        return AjaxResult.success(cameraService.getNonNationalCamera());
 //    }
 //
 //    @GetMapping("/changestatus")
 //    @ApiOperation(value = "更新状态", httpMethod = "GET")
-//    public Result changeStatus(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-//                               @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+//    public AjaxResult changeStatus(@RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
+//                               @RequestParam(value = "getListSize", defaultValue = "20") int getListSize,
 //                               @RequestParam(value = "status", required = false) String status,
 //                               @RequestParam(value = "deviceName", required = false) String deviceName,
 //                               @RequestParam(value = "region[]", required = false) String[] regionList,
@@ -279,27 +277,27 @@
 //                }
 //            }
 //        }
-//        PageInfo<Camera> page = cameraManager.page(pageNum, pageSize, filters);
+//        List<Camera> getList = cameraService.getList(getListNum, getListSize, filters);
 //        List<Camera> list = new ArrayList<Camera>();
 //        boolean flag = false;
-//        if (page.getSize() > 0) {
-//            for (int i = 0; i < page.getEndRow(); i++) {
-//                if (page.getList().get(i).getStatus().getValue().equals("1") || page.getList().get(i).getStatus().getLabel().equals("新发现") || page.getList().get(i).getStatus().getLabel().equals("NEW")) {
-//                    list.add(page.getList().get(i));
+//        if (getList.getSize() > 0) {
+//            for (int i = 0; i < getList.getEndRow(); i++) {
+//                if (getList.getList().get(i).getStatus().getValue().equals("1") || getList.getList().get(i).getStatus().getLabel().equals("新发现") || getList.getList().get(i).getStatus().getLabel().equals("NEW")) {
+//                    list.add(getList.getList().get(i));
 //                }
 //            }
-//            flag = cameraManager.changStatus(list);
+//            flag = cameraService.changStatus(list);
 //        } else {
 //            flag = true;
 //        }
 //
-//        return ResultUtils.success(flag);
+//        return AjaxResult.success(flag);
 //    }
 //
 //    @GetMapping("/sessionCameraList")
 //    @ApiOperation(value = "获取会话相关的摄像头列表", httpMethod = "GET")
-//    public Result getSessionCameraList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-//                                       @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+//    public AjaxResult getSessionCameraList(@RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
+//                                       @RequestParam(value = "getListSize", defaultValue = "20") int getListSize,
 //                                       @RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
 //                                       @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
 //                                       @RequestParam(value = "sessionId", required = false) Long sessionId,
@@ -315,8 +313,8 @@
 //        if(etime != null) {
 //            jsonObject.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 //        }
-//        PageInfo<Camera> pageInfo = cameraManager.getSessionCameraList(pageNum, pageSize, jsonObject);
-//        return ResultUtils.success(pageInfo);
+//        List<Camera> List = cameraService.getSessionCameraList(getListNum, getListSize, jsonObject);
+//        return AjaxResult.success(List);
 //    }
 //
 //    //导入外部设备表excel
@@ -324,8 +322,8 @@
 //    @ApiOperation(value = "导入外部摄像头列表")
 //    public Map<String, Object> importExtExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
 //        Map<String, Object> map = new HashMap<String, Object>();
-//        String result = cameraManager.readExtExcelFile(file);
-//        map.put("message", result);
+//        String AjaxResult = cameraService.readExtExcelFile(file);
+//        map.put("message", AjaxResult);
 //        return map;
 //    }
 //
@@ -342,4 +340,4 @@
 //        BeanUtils.copyProperties(camera, dto);
 //        return dto;
 //    }
-//}
+}

@@ -54,8 +54,8 @@ public class ClientServiceImpl implements IClientService {
 
     @Override
     public Map<DeviceStatus, Long> getCurrentStatus() {
-        JSONObject filters = DateUtils.getDayTime();
-        List<Client> list = clientMapper.getList(filters);
+        Client ClientFilters = (Client) DateUtils.getDayTime(Client.class);
+        List<Client> list = clientMapper.getList(ClientFilters);
         return list.stream().collect(Collectors.groupingBy(Client::getStatus, Collectors.counting()));
     }
 
@@ -138,29 +138,29 @@ public class ClientServiceImpl implements IClientService {
         return clientMapper.findId();
     }
 
-    @Override
-    public void insert(Client client) {
-
-        findServerByClientIp(client);
-        //服务器为空，且客户端为空，则该ip对应的设备为客户端，在客户端表添加一条新纪录
-        clientMapper.insertClient(client);
-        //存入缓存中
-        String clientKey = String.format(Constants.THREE_FORMAT,Constants.CLIENT,client.getIpAddress(),client.getUsername());
-        ClientMap.put(clientKey,client);
-
-    }
-
-    @Override
-    public void update(Client client) {
-
-        findServerByClientIp(client);
-        //如果服务器为空，且客户端表对应的客户端不为空，则该ip对应的设备为客户端，在客户端表更新对应的客户端
-        clientMapper.update(client);
-        //更新缓存
-        String clientKey = String.format(Constants.THREE_FORMAT,Constants.CLIENT,client.getIpAddress(),client.getUsername());
-        ClientMap.put(clientKey,client);
-
-    }
+//    @Override
+//    public void insert(Client client) {
+//
+//        findServerByClientIp(client);
+//        //服务器为空，且客户端为空，则该ip对应的设备为客户端，在客户端表添加一条新纪录
+//        clientMapper.insertClient(client);
+//        //存入缓存中
+//        String clientKey = String.format(Constants.THREE_FORMAT,Constants.CLIENT,client.getIpAddress(),client.getUsername());
+//        ClientMap.put(clientKey,client);
+//
+//    }
+//
+//    @Override
+//    public void update(Client client) {
+//
+//        findServerByClientIp(client);
+//        //如果服务器为空，且客户端表对应的客户端不为空，则该ip对应的设备为客户端，在客户端表更新对应的客户端
+//        clientMapper.update(client);
+//        //更新缓存
+//        String clientKey = String.format(Constants.THREE_FORMAT,Constants.CLIENT,client.getIpAddress(),client.getUsername());
+//        ClientMap.put(clientKey,client);
+//
+//    }
 
     @Override
     public void updateMark(Long ipAddress) {
@@ -215,29 +215,29 @@ public class ClientServiceImpl implements IClientService {
     }
 
     @Override
-    public List<Client> getList(JSONObject filters) {
-        return clientMapper.getList(filters);
+    public List<Client> getList(Client client) {
+        return clientMapper.getList(client);
     }
 
     /**
      * 根据客户端IP 查找服务器(数据库/缓存)，如果有就将client.deviceType 设置为PROXY_SERVER
      * @param client
      */
-    private void findServerByClientIp(Client client){
-        //根据IP查找服务器
-        Long IP = client.getIpAddress();
-        //根据ip查找缓存
-        String serverTreeKey = String.format(Constants.TWO_FORMAT,Constants.SERVER_TREE , IP);
-        ServerTree serverTree = ServerTreeMap.get(serverTreeKey);
-        //缓存中没有，在数据库中进行查找
-        if (serverTree == null) {
-            serverTree = serverTreeService.findOne(IP);
-            //在数据库中找到了，将数据存入缓存中
-            if (serverTree != null) {
-                ServerTreeMap.put(serverTreeKey,serverTree);
-                //如果服务器不为空，且客户端表对应的客户端不为空，则该ip对应的设备为服务器，在客户端表删除对应的客户端
-                client.setDeviceType(DeviceType.PROXY_SERVER.getValue());
-            }
-        }
-    }
+//    private void findServerByClientIp(Client client){
+//        //根据IP查找服务器
+//        Long IP = client.getIpAddress();
+//        //根据ip查找缓存
+//        String serverTreeKey = String.format(Constants.TWO_FORMAT,Constants.SERVER_TREE , IP);
+//        ServerTree serverTree = ServerTreeMap.get(serverTreeKey);
+//        //缓存中没有，在数据库中进行查找
+//        if (serverTree == null) {
+//            serverTree = serverTreeService.findOne(IP);
+//            //在数据库中找到了，将数据存入缓存中
+//            if (serverTree != null) {
+//                ServerTreeMap.put(serverTreeKey,serverTree);
+//                //如果服务器不为空，且客户端表对应的客户端不为空，则该ip对应的设备为服务器，在客户端表删除对应的客户端
+//                client.setDeviceType(DeviceType.PROXY_SERVER.getValue());
+//            }
+//        }
+//    }
 }

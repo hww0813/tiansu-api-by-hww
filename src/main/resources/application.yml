@@ -38,6 +38,8 @@ spring:
     basename: i18n/messages
   profiles:
     active: dev
+  cache:
+    type: none
   # 文件上传
   servlet:
      multipart:
@@ -50,6 +52,13 @@ spring:
     restart:
       # 热部署开关
       enabled: true
+
+
+##j2cache配置
+j2cache:
+  config-location: classpath:j2cache.properties
+  open-spring-cache: true
+  redis-client: lettuce
 
 # MyBatis配置
 mybatis:

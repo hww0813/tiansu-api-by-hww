@@ -16,51 +16,82 @@ import java.util.List;
 public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
-     * 获取告警相关摄像头
-     * @param filters 过滤
+     * 获取摄像头国标和非国标数
      * @return
      */
-    List<Camera> findEventCameras(JSONObject filters);
+    JSONObject gourpByGb();
 
     /**
-     * 根据摄像头编码查询摄像头
-     * @param deviceCode
+     * 更新摄像头不为服务器
+     * @param ipAddress IP地址
      * @return
      */
-    List<Camera> findOne(@Param("deviceCode") String deviceCode);
+    JSONObject updateIsNotServer(Long ipAddress);
 
     /**
-     * 判断camera在数据库中是否不存在
-     * @param camera
-     * @return
-     */
-    Camera findCamera(Camera camera);
-
-    /**
-     * 查找子级摄像头
-     * @param filters
-     * @return
-     */
-    List<Camera> findChild(JSONObject filters);
-
-    /**
-     * 批量确认摄像头状态
+     * 批量确认摄像头
      * @param list
      * @return
      */
     boolean changStatus(List<Camera> list);
 
     /**
-     * 确认所有摄像头状态
-     * @param
+     * 确认所有摄像头
      * @return
      */
     boolean changAllStatus();
 
+    /**
+     * getList
+     * 根据摄像头编码查询摄像头
+     * @param deviceCode
+     * @return
+     */
+//    List<Camera> findOne(@Param("deviceCode") String deviceCode);
 
-    List<Camera> getGbList();
+    /**
+     * getList
+     * 判断camera在数据库中是否不存在
+     * @param camera
+     * @return
+     */
+//    Camera findCamera(Camera camera);
 
-    List<Camera> getNgbList();
+    /**
+     *
+     * TODO: ==
+     * 查找子级摄像头
+     * @param filters
+     * @return
+     */
+//    List<Camera> findChild(JSONObject filters);
+
+    /**
+     * 批量确认摄像头状态
+     * @param list
+     * @return
+     */
+//    boolean changStatus(List<Camera> list);
+
+    /**
+     * 确认所有摄像头状态
+     * @param
+     * @return
+     */
+//    boolean changAllStatus();
+
+    /**
+     * getList
+     * @return
+     */
+//    List<Camera> getGbList();
+
+
+    /**
+     * getList
+     * @return
+     */
+//    List<Camera> getNgbList();
 
     /**
      * 获取当天活跃摄像头列表
@@ -76,30 +107,30 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      * @param filters 过滤
      * @return
      */
-    List<Camera> getSessionCameraList(JSONObject filters);
+//    List<Camera> getSessionCameraList(JSONObject filters);
 
     Camera maxId();
 
-    List<Camera> getAllVisited(JSONObject filters);
+//    List<Camera> getAllVisited(JSONObject filters);
 
     /**
      * 获取总条数
      * @param filters
      * @return
      */
-    List<JSONObject> getTotal(JSONObject filters);
+//    List<JSONObject> getTotal(JSONObject filters);
 
     /**
      * 获取物理实际总数
      */
-    List<JSONObject> getRealTotal();
+//    List<JSONObject> getRealTotal();
 
     /**
      * 获取审计到的摄像头总数
      * @param filters
      * @return
      */
-    List<JSONObject> getProbeTotal(JSONObject filters);
+//    List<JSONObject> getProbeTotal(JSONObject filters);
 
     /**
      * 批量插入
@@ -107,40 +138,40 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      * @param list
      * @return
      */
-    void batchInsert(@Param("list") List<Camera> list);
+//    void batchInsert(@Param("list") List<Camera> list);
 
     /**
      * 批量更新
      * @param list
      */
-    void batchUpdate(List<Camera> list);
+//    void batchUpdate(List<Camera> list);
 
     /**
      * 获取所有数据
      * @return
      */
-    List<Camera> getAllData();
+//    List<Camera> getAllData();
 
     /**
      * 获得对应具有相同ip的摄像头，每种ip对应的摄像头只取一条数据
      * @return
      */
-    List<Long> getAllIp();
+//    List<Long> getAllIp();
 
     /**
      * 根据ip更新摄像头,确定不是服务器
      * @param ipAddress
      */
-    void updateIsNotServer(Long ipAddress);
+//    void updateIsNotServer(Long ipAddress);
 
     /**
      * 获取下一个camera自增序列ID
      * @return
      */
-    Long findId();
+//    Long findId();
 
 
-    public void insertCamera(Camera camera);
+//    public void insertCamera(Camera camera);
 
 
 }

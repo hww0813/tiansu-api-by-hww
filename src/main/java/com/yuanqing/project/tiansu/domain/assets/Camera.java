@@ -1,8 +1,10 @@
 package com.yuanqing.project.tiansu.domain.assets;
 
 import com.yuanqing.common.enums.GBEnum;
+import com.yuanqing.framework.aspectj.lang.annotation.Excel;
 import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  *
@@ -15,6 +17,7 @@ import lombok.Data;
 public class Camera extends BaseCamera {
 
     /** 编号 */
+    @Excel(name = "设备编码")
     private String deviceCode;
 
     /** 域 */
@@ -24,9 +27,10 @@ public class Camera extends BaseCamera {
     private String macAddress;
 
     /** 城市 */
-    private Integer regionId;
+    private Integer region;
 
     /** 设备状态 */
+    @Excel(name = "设备状态")
     private Integer status;
 
     /** 设备类型 */
@@ -51,6 +55,6 @@ public class Camera extends BaseCamera {
     private Long isCheck;
 
     /** 是否国标 */
-    private GBEnum isGb;
+    private Integer isGb;
 
 }

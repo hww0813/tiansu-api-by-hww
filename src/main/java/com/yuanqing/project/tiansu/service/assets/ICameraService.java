@@ -17,19 +17,6 @@ import java.util.Map;
 
 public interface ICameraService extends BaseService<Camera,Long> {
 
-    /**
-     * 获取告警相关摄像头
-     * @param filters 过滤
-     * @return
-     */
-    List<Camera> findEventCameras(JSONObject filters);
-
-    /**
-     * 根据摄像头编码查询一个摄像头
-     * @param deviceCode
-     * @return 如果查出多个摄像头的情况，取第一个摄像头
-     */
-    Camera findOne(String deviceCode);
 
     /**
      * 判断camera在数据库中是否不存在
@@ -59,14 +46,9 @@ public interface ICameraService extends BaseService<Camera,Long> {
      * @param filter 过滤条件
      * @return
      */
-    List<Camera> getNonNationalCameraList(JSONObject filter);
+    List<Camera> getNonNationalCameraList(Camera camera);
 
-    /**
-     * 查找子级摄像头
-     * @param filters
-     * @return
-     */
-    List<Camera> findChild(JSONObject filters);
+
 
 
     /**
@@ -87,51 +69,12 @@ public interface ICameraService extends BaseService<Camera,Long> {
     /**
      * 获取首页国标、非国标编号摄像头
      *
-     * TODO:重新写sql 直接查出数量
      * @return
      */
-    Map<String, Long> getNonNationalCamera();
+    JSONObject getNonNationalCamera();
 
 
-    /**
-     * 格式化报表格式
-     * TODO: 导出看能不能用ruoyi导出替换
-     * @param filters
-     * @return
-     */
-    List<JSONObject> getAllToReport(JSONObject filters);
 
-    /**
-     * 读取excel中的数据,生成list
-     * @param file excel文件
-     * TODO: 读取文件操作需要整合一下，没用过这个了 用的是导入外部设备表方法
-     *
-     */
-    String readExcelFile(MultipartFile file);
-
-    /**
-     * 获取会话相关的摄像头列表
-     * @param filters 过滤
-     * @return
-     */
-    List<Camera> getSessionCameraList(JSONObject filters);
-
-
-    /**
-     * 获取被访问摄像头列表
-     * @param filters 过滤
-     * @return
-     */
-    List<Camera> visitedPage(JSONObject filters);
-
-    /**
-     * 读取外部设备表excel文件
-     *
-     * TODO: 读取文件操作需要整合一下
-     * @param file
-     * @return
-     */
-    String readExtExcelFile(MultipartFile file);
 
 
     /**
@@ -153,37 +96,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
      */
     void dealCamera(ExternalDevice entity,List<Camera> addList,List<Camera> updateList,Map<String, Object> cameraCodeMap);
 
-    /**
-     * 批量插入
-     * @param list
-     */
-    public void batchInsert(List<Camera> list);
 
-    /**
-     * 批量更新
-     * @param list
-     */
-    void batchUpdate(List<Camera> list);
-
-
-    /**
-     * 获取下一个自增序列ID
-     * @return
-     */
-    Long findId();
-
-    /**
-     * 根据摄像头国标 insert 到数据库和缓存中
-     * TODO:和update方法一模一样 可以合并
-     * @param camera
-     */
-    public void insert(Camera camera);
-
-    /**
-     * 根据摄像头国标 update 到数据库和缓存中
-     * @param camera
-     */
-    public void update(Camera camera);
 
     /**
      * 根据ip更新摄像头,确定不是服务器

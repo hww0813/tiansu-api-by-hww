@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yuanqing.framework.aspectj.lang.annotation.Excel;
 
 /**
  * Entity基类
@@ -31,6 +32,7 @@ public class BaseEntity implements Serializable
 
     /** 更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "更新时间",type = Excel.Type.EXPORT)
     private Date updateTime;
 
     /** 备注 */

@@ -1,6 +1,8 @@
 package com.yuanqing.common.utils;
 
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -11,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.exception.CustomException;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -249,4 +252,31 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         filters.put("endDate", LocalDateTime.of(LocalDate.now(), LocalTime.MAX).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         return filters;
     }
+
+    public static Object getDayTime(Class clazz){
+        Object o;
+        Field startDate;
+        Field endDate;
+        try {
+            Constructor ctor = clazz.getDeclaredConstructor();
+            o = ctor.newInstance();
+            ctor.setAccessible(true);
+            startDate = clazz.getField("startDate");
+            endDate = clazz.getField("endDate");
+
+            if(startDate!=null && endDate !=null){
+                startDate.set(o, LocalDateTime.of(LocalDate.now(), LocalTime.MIN).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                endDate.set(o, LocalDateTime.of(LocalDate.now(), LocalTime.MAX).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                return o;
+            }else{
+                throw new CustomException("对象中不包含开始/结束时间");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 }

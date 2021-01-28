@@ -45,10 +45,10 @@ public interface BaseService<T, PK extends Serializable> {
 
     /**
      * 获取列表
-     * @param filters  筛选条件
+     * @param t  筛选条件
      * @return 列表
      */
-    List<T> getList(JSONObject filters);
+    List<T> getList(T t);
 
 
 

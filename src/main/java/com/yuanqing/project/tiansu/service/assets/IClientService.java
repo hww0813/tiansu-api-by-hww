@@ -104,18 +104,6 @@ public interface IClientService extends BaseService<Client,Long> {
     Long findId ();
 
     /**
-     * 新增一条客户端（先查数据库，在查缓存）
-     * @param client
-     */
-    public void insert(Client client);
-
-    /**
-     * 更新一条客户端（先查数据库，在查缓存）
-     * @param client
-     */
-    public void update(Client client);
-
-    /**
      * 根据IP地址 去除打标（deviceType 设为null）
      * @param ipAddress IP地址
      */

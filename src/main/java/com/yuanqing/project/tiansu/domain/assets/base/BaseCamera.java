@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.domain.assets.base;
 
+import com.yuanqing.framework.aspectj.lang.annotation.Excel;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.Data;
 
@@ -17,12 +18,15 @@ public class BaseCamera extends BaseEntity {
     private Long id;
 
     /** 设备名称 */
+    @Excel(name = "设备名称")
     private String deviceName;
 
     /** IP地址 */
+    @Excel(name = "IP地址")
     private Long ipAddress;
 
     /** 厂商 */
+    @Excel(name = "设备厂商")
     private String manufacturer;
 
     /** 经度 */

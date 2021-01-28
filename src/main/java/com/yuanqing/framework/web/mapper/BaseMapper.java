@@ -45,9 +45,9 @@ public interface BaseMapper<T, PK extends Serializable> {
     /**
      * 获取列表
      *
-     * @param filters 筛选条件
+     * @param t 筛选条件
      * @return 符合条件的记录
      */
-    List<T> getList(JSONObject filters);
+    List<T> getList(T t);
 
 }

@@ -30,7 +30,7 @@ public class BaseClient extends BaseEntity {
     /** 设备状态 */
     private DeviceStatus status;
 
-    /** 设备名称 */
+    /** 区域 */
     private Integer regionId;
 
     /** 设备类型 */

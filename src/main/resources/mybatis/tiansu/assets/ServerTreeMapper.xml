@@ -11,7 +11,7 @@
         <result column="SERVER_PORT" property="serverPort" jdbcType="BIGINT"/>
         <result column="SERVER_MAC" property="serverMac" jdbcType="VARCHAR"/>
         <result column="SERVER_TYPE" property="serverType" jdbcType="INTEGER"
-                typeHandler="com.yuanqing.handler.DefaultEnumTypeHandler"/>
+                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
         <result column="IS_RANG_AUDIT" property="isRangAudit" jdbcType="VARCHAR"/>
         <result column="RANG_AUDIT_PORT" property="rangAuditPort" jdbcType="VARCHAR"/>
         <result column="IS_SSH_AUDIT" property="isSshAudit" jdbcType="VARCHAR"/>
@@ -101,7 +101,7 @@
         #{serverIp, jdbcType=BIGINT},
         #{serverPort, jdbcType=BIGINT},
         #{serverMac, jdbcType=VARCHAR},
-        #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+        #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
         #{isRangAudit, jdbcType=VARCHAR},
         #{rangAuditPort, jdbcType=VARCHAR},
         #{isSshAudit, jdbcType=VARCHAR},
@@ -128,7 +128,7 @@
         #{serverIp, jdbcType=BIGINT},
         #{serverPort, jdbcType=BIGINT},
         #{serverMac, jdbcType=VARCHAR},
-        #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+        #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
         #{isRangAudit, jdbcType=VARCHAR},
         #{rangAuditPort, jdbcType=VARCHAR},
         #{isSshAudit, jdbcType=VARCHAR},
@@ -156,7 +156,7 @@
             #{item.serverIp, jdbcType=BIGINT} as SERVER_IP,
             #{item.serverPort, jdbcType=BIGINT} as SERVER_PORT,
             #{item.serverMac, jdbcType=VARCHAR} as SERVER_MAC,
-            #{item.serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler} as
+            #{item.serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler} as
             SERVER_TYPE,
             #{item.isRangAudit, jdbcType=VARCHAR} as IS_RANG_AUDIT,
             #{item.rangAuditPort, jdbcType=VARCHAR} as RANG_AUDIT_PORT,
@@ -180,7 +180,7 @@
             SERVER_IP      = #{serverIp, jdbcType=BIGINT},
             SERVER_PORT    = #{serverPort, jdbcType=BIGINT},
             SERVER_MAC     = #{serverMac, jdbcType=VARCHAR},
-            SERVER_TYPE    = #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+            SERVER_TYPE    = #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
             IS_RANG_AUDIT  = #{isRangAudit, jdbcType=VARCHAR},
             RANG_AUDIT_PORT= #{rangAuditPort, jdbcType=VARCHAR},
             IS_SSH_AUDIT   = #{isSshAudit, jdbcType=VARCHAR},

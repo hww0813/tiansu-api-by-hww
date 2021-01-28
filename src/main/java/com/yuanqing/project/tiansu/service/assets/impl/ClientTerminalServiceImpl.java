@@ -105,7 +105,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
 
     @Override
-    public List<ClientTerminal> getList(JSONObject filters) {
+    public List<ClientTerminal> getList(ClientTerminal clientTerminal) {
         return null;
     }
 
