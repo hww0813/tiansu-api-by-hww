@@ -1,9 +1,7 @@
 package com.yuanqing.project.tiansu.mapper.assets;
 
-import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
-import com.yuanqing.project.tiansu.domain.assets.OperationBehavior;
-import org.apache.ibatis.annotations.Param;
+import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

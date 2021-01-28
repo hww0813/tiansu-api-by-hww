@@ -1,4 +1,4 @@
-package com.yuanqing.project.tiansu.domain.assets;
+package com.yuanqing.project.tiansu.domain.operation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

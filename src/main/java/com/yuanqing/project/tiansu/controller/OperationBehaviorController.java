@@ -2,17 +2,14 @@ package com.yuanqing.project.tiansu.controller;
 
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
-import com.yuanqing.project.tiansu.domain.assets.OperationBehavior;
+import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -38,4 +35,6 @@ public class OperationBehaviorController extends BaseController {
        List<OperationBehavior> operationBehaviors = operationBehaviorMapper.queryOperationBehaviorList(operationBehavior);
        return AjaxResult.success(operationBehaviors);
     }
+
+
 }

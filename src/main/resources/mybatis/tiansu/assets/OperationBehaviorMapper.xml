@@ -3,7 +3,7 @@
 <mapper namespace="com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper">
 
 
-    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.assets.OperationBehavior">
+    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
         <id column="ID" property="id" jdbcType="BIGINT"/>
         <result column="CLIENT_ID" property="clientId" jdbcType="BIGINT"/>
         <result column="SRC_CODE" property="srcCode" jdbcType="BIGINT"/>
@@ -39,7 +39,7 @@
                 typeHandler="com.yuanqing.handler.DefaultEnumTypeHandler"/>-->
     </resultMap>
 
-    <select id="queryOperationBehaviorList" resultMap="resultMap"   parameterType="com.yuanqing.project.tiansu.domain.assets.OperationBehavior">
+    <select id="queryOperationBehaviorList" resultMap="resultMap"   parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
         SELECT v.* FROM busi_oper v
         <where>
             <if test="id != null and id != '' ">
