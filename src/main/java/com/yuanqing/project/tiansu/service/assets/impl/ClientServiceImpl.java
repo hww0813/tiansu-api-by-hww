@@ -1,4 +1,4 @@
-package com.yuanqing.project.tiansu.service.impl.assets;
+package com.yuanqing.project.tiansu.service.assets.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
@@ -8,10 +8,9 @@ import com.yuanqing.common.queue.ClientMap;
 import com.yuanqing.common.queue.ServerTreeMap;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.project.tiansu.domain.assets.Client;
-import com.yuanqing.project.tiansu.domain.event.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
-import com.yuanqing.project.tiansu.mapper.event.OperationBehaviorMapper;
+import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class ClientServiceImpl implements IClientService {
     @Override
     public Map<String, Integer> getClientDatas() {
         //获取新发现客户端
-        JSONObject discoveryFilters = new JSONObject();
+        /*JSONObject discoveryFilters = new JSONObject();
         discoveryFilters.put("status", 1);
         List<JSONObject> discoveryList = clientMapper.getTotal(discoveryFilters);
         int discovery = Integer.parseInt(discoveryList.get(0).get("COUNT(*)").toString());
@@ -77,12 +76,13 @@ public class ClientServiceImpl implements IClientService {
         map.put("discovery", discovery);
         map.put("active", active);
         map.put("count", count);
-        return map;
+        return map;*/
+        return null;
     }
 
     @Override
     public List<Client> getActiveClient() {
-        JSONObject filters = DateUtils.getDayTime();
+        /*JSONObject filters = DateUtils.getDayTime();
         List<OperationBehavior> activeList = operationBehaviorMapper.getDistinctClientId(filters);
         List<Client> list = new ArrayList<>();
         for (int i = 0; i < activeList.size(); i++) {
@@ -92,7 +92,8 @@ public class ClientServiceImpl implements IClientService {
                 list.add(client);
             }
         }
-        return list;
+        return list;*/
+        return  null;
     }
 
     @Override
