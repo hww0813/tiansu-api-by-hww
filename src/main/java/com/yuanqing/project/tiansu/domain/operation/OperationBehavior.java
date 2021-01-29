@@ -1,11 +1,15 @@
 package com.yuanqing.project.tiansu.domain.operation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -16,8 +20,9 @@ import java.util.Objects;
  * @since 2017/11/11
  **/
 @Data
-@Builder
-public class OperationBehavior   {
+@AllArgsConstructor
+@NoArgsConstructor
+public class OperationBehavior extends OperationBehaviorSearch{
 
     private Long id;
 
@@ -47,6 +52,9 @@ public class OperationBehavior   {
 
     private String dstMac; //目的MAC
 
+    private ActionType action; //操作类型
+
+    private ActionDetailType actionDetail; //操作详细类型
 
     private LocalDateTime stamp;//操作时间
 
@@ -80,10 +88,39 @@ public class OperationBehavior   {
 
     private Long serverIp;
 
-
     // 回放/下载开始、结束时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime startTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime endTime;
+
+
+    /** 页面搜索开始时间和结束时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date sTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date eTime;
+
+
+
+
+    private String[] regionList;
+
+    private String provinceRegion;
+
+    private String cityRegion;
+
+    private String countryRegion;
+
+    private String connectType;
+
+    private String orderType;
+
+    private String orderValue;
+
+
+
+
+
+
 }

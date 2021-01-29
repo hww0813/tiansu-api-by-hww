@@ -2,6 +2,7 @@ package com.yuanqing.project.tiansu.mapper.assets;
 
 import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
  * @since 2017.12.17
  */
 @Repository
-public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior, Long> {
+public interface OperationBehaviorMapper  {
 
     public List<OperationBehavior> queryOperationBehaviorList(OperationBehavior qperationBehavior);
 

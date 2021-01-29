@@ -16,8 +16,8 @@
         <result column="DST_IP" property="dstIp" jdbcType="BIGINT"/>
         <result column="DST_PORT" property="dstPort" jdbcType="BIGINT"/>
         <result column="DST_MAC" property="dstMac" jdbcType="BIGINT"/>
-        <!--<result column="ACTION" property="action" jdbcType="INTEGER" typeHandler="com.yuanqing.handler.DefaultEnumTypeHandler"/>
-        <result column="ACTION_DETAIL" property="actionDetail" jdbcType="INTEGER"  typeHandler="com.yuanqing.handler.DefaultEnumTypeHandler"/>-->
+        <result column="ACTION" property="action" jdbcType="INTEGER" typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
+        <result column="ACTION_DETAIL" property="actionDetail" jdbcType="INTEGER"  typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
         <result column="STAMP" property="stamp" jdbcType="TIMESTAMP"/>
         <result column="CONTENT" property="content" jdbcType="VARCHAR"/>
         <result column="SESSION_ID" property="sessionId" jdbcType="BIGINT"/>
@@ -69,11 +69,11 @@
             <if test="action != null and action != '' ">
                 AND v.ACTION = #{action}
             </if>
-            <if test="stime != null and stime != ''">
-                AND v.STAMP > to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+            <if test="sTime != null">
+                and v.STAMP  &gt; #{sTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="etime != null and etime != ''">
-                AND v.STAMP &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
+            <if test="eTime != null">
+                and v.STAMP &lt; #{eTime,jdbcType=TIMESTAMP}
             </if>
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
                 AND int2ip(v.DEVICE_IP) = #{dstDeviceIp}
@@ -102,13 +102,17 @@
             <if test="connectType != null and connectType != '' ">
                 AND v.CONNECT_TYPE = #{connectType}
             </if>
-            <if test="orderType == null or orderType == ''">
-                ORDER BY v.STAMP DESC
-            </if>
-            <if test="orderType != null and orderType != ''">
-                ORDER BY ${orderType}
-            </if>
         </where>
+
+        <if test="orderType == null or orderType == ''">
+            ORDER BY v.STAMP DESC
+        </if>
+
+        <if test="orderType != null and orderType != ''">
+            ORDER BY ${orderType}
+        </if>
+
+        limit #{num},#{size}
     </select>
 
 
