@@ -21,4 +21,6 @@ public interface OperationBehaviorMapper  {
 
     public List<Long> getCameraidListBySession(Long sessionId);
 
+    public Integer quertyOperationBehaviorCount();
+
 }

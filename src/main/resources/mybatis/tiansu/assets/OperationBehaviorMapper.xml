@@ -85,7 +85,7 @@
                 AND v.DEVICE_NAME = #{dstDeviceName}
             </if>
             <if test="content != null and content != '' ">
-                AND v.CONTENT like #{content}
+                AND v.CONTENT like concat('%', #{content}, '%')
             </if>
             <if test="username != null and username != '' ">
                 AND v.USERNAME = #{username}
@@ -119,6 +119,11 @@
 
     <select id="getCameraidListBySession" resultType="java.lang.Long" parameterType="java.lang.Long">
         select camera_id from busi_oper where session_id = #{sessionId}
+    </select>
+
+
+    <select id="quertyOperationBehaviorCount" resultType="java.lang.Integer" >
+        select count(1) from busi_oper
     </select>
 
 </mapper>

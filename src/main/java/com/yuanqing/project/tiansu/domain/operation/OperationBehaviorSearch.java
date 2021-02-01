@@ -18,24 +18,24 @@ import org.apache.ibatis.annotations.Param;
 public class OperationBehaviorSearch {
 
 
-    private Long num;
+    private Integer num;
 
-    private Long size;
+    private Integer size;
 
 
-    public Long getNum() {
+    public Integer getNum() {
         return num;
     }
 
-    public void setNum(Long num) {
+    public void setNum(Integer num) {
         this.num = num;
     }
 
-    public Long getSize() {
+    public Integer getSize() {
         return size;
     }
 
-    public void setSize(Long size) {
+    public void setSize(Integer size) {
         this.size = size;
     }
 }
