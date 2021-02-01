@@ -126,4 +126,46 @@
         select count(1) from busi_oper
     </select>
 
+    <select id="getRealTimeBehaviorList" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch"  resultMap="resultMap" >
+        SELECT * FROM BUSI_OPER bo WHERE 1=1
+        AND bo.ACTION in (0,1,2,3)
+        <if test="sTime != null">
+            AND bo.STAMP &gt; #{sTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="eTime != null">
+            AND bo.STAMP &lt;= #{eTime,jdbcType=TIMESTAMP}
+        </if>
+        ORDER BY bo.STAMP DESC
+        -- 最大只查3000条
+        limit 0, 3000
+    </select>
+
+
+    <update id="updateOperationBehavior" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior" >
+        UPDATE
+            BUSI_OPER_T
+            SET
+            CLIENT_ID     = #{clientId, jdbcType=BIGINT},
+            SRC_CODE      = #{srcCode, jdbcType=VARCHAR},
+            SRC_IP        = #{srcIp, jdbcType=INTEGER},
+            SRC_PORT      = #{srcPort, jdbcType=INTEGER},
+            SRC_MAC       = #{srcMac, jdbcType=VARCHAR},
+            USERNAME      = #{username, jdbcType=VARCHAR},
+            CAMERA_ID     = #{cameraId, jdbcType=BIGINT},
+            DST_CODE      = #{dstCode, jdbcType=VARCHAR},
+            DST_IP        = #{dstIp, jdbcType=INTEGER},
+            DST_PORT      = #{dstPort, jdbcType=INTEGER},
+            DST_MAC       = #{dstMac, jdbcType=VARCHAR},
+            ACTION        = #{action, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+            ACTION_DETAIL = #{actionDetail, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+            STAMP         = #{stamp, jdbcType=TIMESTAMP},
+            CONTENT       = #{content, jdbcType=VARCHAR},
+            SESSION_ID    = #{sessionId, jdbcType=BIGINT},
+            RESULT         = #{result, jdbcType=VARCHAR},
+            UP_FLOW         = #{upFlow, jdbcType=BIGINT},
+            DOWN_FLOW       = #{downFlow, jdbcType=BIGINT},
+            CALL_ID       = #{callId, jdbcType=VARCHAR}
+        WHERE id = #{id}
+    </update>
+
 </mapper>

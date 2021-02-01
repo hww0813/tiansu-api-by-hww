@@ -44,9 +44,6 @@ public class OperationBehavior extends OperationBehaviorSearch{
 
     private Long cameraId; //摄像头ID
 
-    private String dstCode; //目的设备编码
-
-    private Long dstIp; //目的IP
 
     private Integer dstPort; //目的端口
 
@@ -93,13 +90,6 @@ public class OperationBehavior extends OperationBehaviorSearch{
     private LocalDateTime startTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime endTime;
-
-
-    /** 页面搜索开始时间和结束时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date sTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date eTime;
 
 
 

@@ -1,12 +1,15 @@
 package com.yuanqing.project.tiansu.domain.operation;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
 
 /**
  * @author Dong.Chao
@@ -18,10 +21,38 @@ import org.apache.ibatis.annotations.Param;
 public class OperationBehaviorSearch {
 
 
+    /** 页面搜索开始时间和结束时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date sTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date eTime;
+
+
+    private String dstCode; //目的设备编码
+
+    private Long dstIp; //目的IP
+
+
     private Integer num;
 
     private Integer size;
 
+
+    public String getDstCode() {
+        return dstCode;
+    }
+
+    public void setDstCode(String dstCode) {
+        this.dstCode = dstCode;
+    }
+
+    public Long getDstIp() {
+        return dstIp;
+    }
+
+    public void setDstIp(Long dstIp) {
+        this.dstIp = dstIp;
+    }
 
     public Integer getNum() {
         return num;
@@ -37,5 +68,21 @@ public class OperationBehaviorSearch {
 
     public void setSize(Integer size) {
         this.size = size;
+    }
+
+    public Date getsTime() {
+        return sTime;
+    }
+
+    public void setsTime(Date sTime) {
+        this.sTime = sTime;
+    }
+
+    public Date geteTime() {
+        return eTime;
+    }
+
+    public void seteTime(Date eTime) {
+        this.eTime = eTime;
     }
 }
