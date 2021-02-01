@@ -83,15 +83,15 @@
         </set>
     </update>
 
-    <update id="changStatus" parameterType="java.util.List">
-        UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=sysdate WHERE ID in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item.id}
+    <update id="changStatus">
+        UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=now() WHERE ID in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
         </foreach>
     </update>
 
     <update id="changAllStatus">
-        UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=sysdate WHERE STATUS!='0'
+        UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=now() WHERE STATUS!='0'
     </update>
 
     <insert id="insert" parameterType="Camera">

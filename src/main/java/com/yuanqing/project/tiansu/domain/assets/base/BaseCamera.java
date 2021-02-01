@@ -4,6 +4,8 @@ import com.yuanqing.framework.aspectj.lang.annotation.Excel;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  *
  * 摄像头基础对象
@@ -12,7 +14,7 @@ import lombok.Data;
  */
 
 @Data
-public class BaseCamera extends BaseEntity {
+public class BaseCamera extends BaseEntity implements Serializable {
 
     /** 主键ID */
     private Long id;

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.ExternalDevice;
+import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -53,10 +54,10 @@ public interface ICameraService extends BaseService<Camera,Long> {
 
     /**
      * 批量确认摄像头状态
-     * @param list
+     * @param ids
      * @return
      */
-    boolean changStatus(List<Camera> list);
+    boolean changStatus(String[] ids);
 
 
     /**
@@ -67,7 +68,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
     boolean changAllStatus();
 
     /**
-     * 获取首页国标、非国标编号摄像头
+     * 获取首页国标、非国标编号摄像头数量
      *
      * @return
      */

@@ -1,4 +1,4 @@
-package com.yuanqing.project.tiansu.service.impl.assets;
+package com.yuanqing.project.tiansu.service.assets.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;

@@ -6,6 +6,8 @@ import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  *
  * Camera扩展对象
@@ -14,7 +16,7 @@ import lombok.RequiredArgsConstructor;
  */
 
 @Data
-public class Camera extends BaseCamera {
+public class Camera extends BaseCamera implements Serializable {
 
     /** 编号 */
     @Excel(name = "设备编码")

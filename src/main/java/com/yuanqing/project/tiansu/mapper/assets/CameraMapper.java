@@ -30,10 +30,10 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
      * 批量确认摄像头
-     * @param list
+     * @param ids
      * @return
      */
-    boolean changStatus(List<Camera> list);
+    boolean changStatus(String[] ids);
 
     /**
      * 确认所有摄像头

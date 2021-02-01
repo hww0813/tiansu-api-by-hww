@@ -65,8 +65,8 @@ public class CameraServiceImpl implements ICameraService {
     }
 
     @Override
-    public boolean changStatus(List<Camera> list) {
-        return cameraMapper.changStatus(list);
+    public boolean changStatus(String[] ids) {
+        return cameraMapper.changStatus(ids);
     }
 
     @Override
