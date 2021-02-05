@@ -12,4 +12,7 @@ import lombok.Data;
 @Data
 public class ClientTerminal extends BaseClient {
 
+    /** 登录账号 */
+    private String username;
+
 }

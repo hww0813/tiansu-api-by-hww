@@ -49,6 +49,7 @@ public class ClientController extends BaseController {
                                 @RequestParam(value = "region[]", required = false) Integer regionId,
                                 @RequestParam(value = "status", required = false) Integer status,
                                 @RequestParam(value = "id", required = false) Long id,
+                                @RequestParam(value = "username", required = false) String username,
                                 @RequestParam(value = "sipServerId", required = false) Long sipServerId) {
         ClientTerminal clientTerminal = new ClientTerminal();
         clientTerminal.setStatus(status);
@@ -57,6 +58,7 @@ public class ClientController extends BaseController {
         clientTerminal.setSipServerId(sipServerId);
         clientTerminal.setId(id);
         clientTerminal.setRegionId(regionId);
+        clientTerminal.setUsername(username);
 
         startPage();
         List<ClientTerminal> list = clientTerminalService.getList(clientTerminal);
@@ -119,16 +121,11 @@ public class ClientController extends BaseController {
     public AjaxResult deleteSipClient(@Valid @RequestParam(value = "id") Long id,
                                       @Valid @RequestParam(value = "ipAddress") Long ipAddress) {
 
-        clientTerminalService.deleteById(id);
-        clientService.deleteByIpAddress(ipAddress);
+        clientTerminalService.delete(id,ipAddress);
         return AjaxResult.success();
     }
 
-    /**
-     * 拆分
-     *
-     * @return
-     */
+
     @GetMapping("/active")
     @ApiOperation(value = "活跃终端列表")
     public TableDataInfo getActiveClient() {

@@ -14,18 +14,30 @@
     </resultMap>
 
     <sql id="selectBusiClientUserVo">
-        select ID, USERNAME, STATUS, CREATE_TIME, UPDATE_TIME, SOURCE from busi_client_user
+        SELECT
+            bcu.ID,
+            bcu.USERNAME,
+            bcu.STATUS,
+            bcu.CREATE_TIME,
+            bcu.UPDATE_TIME,
+            bcu.SOURCE
+        FROM
+            busi_client_user bcu
     </sql>
 
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser" resultMap="BusiClientUserResult">
         <include refid="selectBusiClientUserVo"/>
+        <if test="ipAddress != null  and ipAddress != ''">
+            LEFT JOIN busi_client bc on bc.username = bcu.username
+        </if>
         <where>
-            <if test="username != null  and username != ''"> and USERNAME like concat('%', #{username}, '%')</if>
-            <if test="status != null  and status != ''"> and STATUS = #{status}</if>
-            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
-            <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
-            <if test="source != null  and source != ''"> and SOURCE = #{source}</if>
-            <if test="startDate != null and endDate != null">update_time between #{startDate} and #{endDate}</if>
+            <if test="username != null  and username != ''"> and bcu.USERNAME like concat('%', #{username}, '%')</if>
+            <if test="status != null  and status != ''"> and bcu.STATUS = #{status}</if>
+            <if test="createTime != null "> and bcu.CREATE_TIME = #{createTime}</if>
+            <if test="updateTime != null "> and bcu.UPDATE_TIME = #{updateTime}</if>
+            <if test="source != null  and source != ''"> and bcu.SOURCE = #{source}</if>
+            <if test="ipAddress != null  and ipAddress != ''"> and bc.ip_address = #{ipAddress}</if>
+            <if test="startDate != null and endDate != null">bcu.update_time between #{startDate} and #{endDate}</if>
         </where>
     </select>
 

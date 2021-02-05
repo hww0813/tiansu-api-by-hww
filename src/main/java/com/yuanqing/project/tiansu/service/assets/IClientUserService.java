@@ -31,6 +31,14 @@ public interface IClientUserService extends BaseService<ClientUser,Long> {
      */
     List<ClientUserDto> handleClientUserTerminalNum(List<ClientUser> list);
 
+
+    /**
+     * client/clientUser同步删除
+     * @param id
+     * @param username
+     */
+    void delete(Long id,String username);
+
     /**
      * 读取excel中的数据,生成list
      */

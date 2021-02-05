@@ -17,6 +17,7 @@ import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -90,6 +91,10 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     @Override
     public List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> list) {
 
+        if(list.size()<1){
+            throw new CustomException("没有查询到结果");
+        }
+
         //提取集合IP
         List<Long> collect = list.stream().map(f -> f.getIpAddress()).collect(Collectors.toList());
 
@@ -131,7 +136,14 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(@Valid @NotNull(message = "根据ID删除的ID不能为空") Long id) {
+        clientTerminalMapper.delete(id);
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long id,Long ipAddress) {
         ClientTerminal clientTerminal = findById(id);
         if (clientTerminal == null) {
             throw new RuntimeException("entity not existed");
@@ -139,6 +151,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
         //删除数据库
         clientTerminalMapper.delete(id);
+        clientMapper.deleteByIpAddress(ipAddress);
         //删除缓存中的数据
         delClientTerminalMap(clientTerminal);
     }

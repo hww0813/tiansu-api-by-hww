@@ -14,6 +14,7 @@ import com.yuanqing.project.tiansu.service.assets.IClientUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -50,6 +51,10 @@ public class ClientUserServiceImpl implements IClientUserService {
 
     @Override
     public List<ClientUserDto> handleClientUserTerminalNum(List<ClientUser> list) {
+
+        if(list.size()<1){
+            throw new CustomException("没有查询到结果");
+        }
         //提取集合用户名
         List<String> usernameList = list.stream().map(f -> f.getUsername()).collect(Collectors.toList());
 
@@ -109,6 +114,17 @@ public class ClientUserServiceImpl implements IClientUserService {
     @Override
     public void deleteById(@Valid @NotNull(message = "根据ID删除的ID不能为空") Long id) {
         clientUserMapper.delete(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long id,String username){
+        ClientUser clientUser = findById(id);
+        if(clientUser == null){
+            throw new CustomException("该用户不存在");
+        }
+        deleteById(id);
+        clientMapper.deleteByUsername(username);
     }
 
     @Override

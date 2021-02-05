@@ -13,5 +13,7 @@ import lombok.Data;
 @Data
 public class ClientUser extends BaseClientUser {
 
+    /** IP地址 */
+    private Long ipAddress;
 
 }

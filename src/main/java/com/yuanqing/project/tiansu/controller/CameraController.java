@@ -44,28 +44,29 @@ public class CameraController extends BaseController {
                                 @RequestParam(value = "deviceName", required = false) String deviceName,
                                 @RequestParam(value = "deviceDomain", required = false) String deviceDomain,
                                 @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                @RequestParam(value = "region[]", required = false) String[] regionList,
+                                @RequestParam(value = "region[]", required = false) Integer regionId,
                                 @RequestParam(value = "ipAddress", required = false) String ipAddress,
                                 @RequestParam(value = "id", required = false) Long id,
                                 @RequestParam(value = "manufacturer", required = false) String manufacturer,
                                 @RequestParam(value = "sipServerId", required = false) Long sipServerId,
                                 @RequestParam(value = "source", required = false) Long source,
                                 @RequestParam(required = false) String orderType,
-                                @RequestParam(required = false) String orderValue) throws Exception {
+                                @RequestParam(required = false) String orderValue) {
 
         Camera camera = new Camera();
         camera.setStatus(status);
         camera.setIsGb(isGb);
         camera.setDeviceName(deviceName);
+        camera.setRegion(regionId);
+        camera.setSource(source);
+
         camera.setDeviceDomain(deviceDomain);
         camera.setDeviceCode(deviceCode);
-        if(StringUtils.isNotEmpty(ipAddress)){
-            camera.setIpAddress(IpUtils.ipToLong(ipAddress));
-        }
+        camera.setIpAddress(IpUtils.ipToLong(ipAddress));
+
         camera.setSipServerId(sipServerId);
         camera.setManufacturer(manufacturer);
         camera.setId(id);
-
 
         startPage();
         List<Camera> getList = cameraService.getList(camera);

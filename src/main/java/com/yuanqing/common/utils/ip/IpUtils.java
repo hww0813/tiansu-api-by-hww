@@ -84,12 +84,12 @@ public class IpUtils
         }
     }
 
-    public static long ipToLong(String ipAddr) {
+    public static Long ipToLong(String ipAddr) {
 
         if (ipAddr == null || "".equalsIgnoreCase(ipAddr)) {
-            return 0;
+            return null;
         }
-        long[] ip = new long[4];
+        Long[] ip = new Long[4];
         //先找到IP地址字符串中.的位置
         int position1 = ipAddr.indexOf(".");
         int position2 = ipAddr.indexOf(".", position1 + 1);

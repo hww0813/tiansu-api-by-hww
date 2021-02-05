@@ -44,6 +44,14 @@ public interface IClientTerminalService extends BaseService<ClientTerminal, Long
      */
     List<ClientTerminal> getActiveTerminal();
 
+
+    /**
+     * client/terminal 同步删除
+     * @param id
+     * @param ipAddress
+     */
+    void delete(Long id,Long ipAddress);
+
     /**
      * 数据处理
      * 将终端列表根据client 关联出用户数并转换为dto对象

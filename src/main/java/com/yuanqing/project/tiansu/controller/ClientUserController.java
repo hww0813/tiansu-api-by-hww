@@ -7,7 +7,6 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientUserDto;
-import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IClientUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,20 +32,20 @@ public class ClientUserController extends BaseController {
     @Autowired
     private IClientUserService clientUserService;
 
-    @Autowired
-    private IClientService clientService;
 
     @GetMapping("/list")
     @ApiOperation(value = "获取终端用户列表", httpMethod = "GET")
     public TableDataInfo getAll(@RequestParam(value = "status", required = false) Integer status,
                                 @RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "username", required = false) String username)
+                                @RequestParam(value = "username", required = false) String username,
+                                @RequestParam(value = "ipAddress", required = false) Long ipAddress)
     {
         ClientUser clientUser = new ClientUser();
 
         clientUser.setStatus(status);
         clientUser.setUsername(username);
         clientUser.setId(id);
+        clientUser.setIpAddress(ipAddress);
 
         startPage();
         List<ClientUser> list = clientUserService.getList(clientUser);
@@ -62,8 +61,7 @@ public class ClientUserController extends BaseController {
     public AjaxResult deleteSipClient(@Valid @RequestParam(value = "id") Long id,
                                       @Valid @RequestParam(value = "username") String username) {
 
-        clientUserService.deleteById(id);
-        clientService.deleteByUsername(username);
+        clientUserService.delete(id,username);
         return AjaxResult.success();
     }
 

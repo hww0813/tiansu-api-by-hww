@@ -37,4 +37,7 @@ public class BaseCamera extends BaseEntity {
     /** 纬度 */
     private Double latitude;
 
+    /** 来源 */
+    private Long source;
+
 }

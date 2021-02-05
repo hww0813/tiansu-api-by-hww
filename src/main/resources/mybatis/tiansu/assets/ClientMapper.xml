@@ -45,7 +45,7 @@
             <if test="deviceType != null  and deviceType != ''"> and DEVICE_TYPE = #{deviceType}</if>
             <if test="domainIp != null "> and DOMAIN_IP = #{domainIp}</if>
             <if test="domainPort != null "> and DOMAIN_PORT = #{domainPort}</if>
-            <if test="region != null "> and REGION = #{regionId}</if>
+            <if test="regionId != null "> and REGION = #{regionId}</if>
             <if test="source != null  and source != ''"> and SOURCE = #{source}</if>
             <if test="startDate != null and endDate != null">update_time between #{startDate} and #{endDate}</if>
         </where>
@@ -97,7 +97,7 @@
             <if test="deviceType != null  and deviceType != ''">DEVICE_TYPE,</if>
             <if test="domainIp != null ">DOMAIN_IP,</if>
             <if test="domainPort != null ">DOMAIN_PORT,</if>
-            <if test="region != null ">REGION,</if>
+            <if test="regionId != null ">REGION,</if>
             <if test="source != null  and source != ''">SOURCE,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -116,7 +116,7 @@
             <if test="deviceType != null  and deviceType != ''">#{deviceType},</if>
             <if test="domainIp != null ">#{domainIp},</if>
             <if test="domainPort != null ">#{domainPort},</if>
-            <if test="region != null ">#{regionId},</if>
+            <if test="regionId != null ">#{regionId},</if>
             <if test="source != null  and source != ''">#{source},</if>
         </trim>
     </insert>
@@ -138,7 +138,7 @@
             <if test="deviceType != null  and deviceType != ''">DEVICE_TYPE = #{deviceType},</if>
             <if test="domainIp != null ">DOMAIN_IP = #{domainIp},</if>
             <if test="domainPort != null ">DOMAIN_PORT = #{domainPort},</if>
-            <if test="region != null ">REGION = #{regionId},</if>
+            <if test="regionId != null ">REGION = #{regionId},</if>
             <if test="source != null  and source != ''">SOURCE = #{source},</if>
         </trim>
         where ID = #{id}
@@ -149,6 +149,9 @@
     </delete>
     <delete id="deleteByIpAddress" parameterType="Long">
          delete from busi_client where IP_ADDRESS = #{ipAddress}
+    </delete>
+    <delete id="deleteByUsername">
+        delete from busi_client where username = #{username}
     </delete>
 
 
