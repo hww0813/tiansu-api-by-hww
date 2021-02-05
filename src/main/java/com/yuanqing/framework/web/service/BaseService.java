@@ -1,6 +1,7 @@
 package com.yuanqing.framework.web.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.enums.SaveType;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -25,6 +26,15 @@ public interface BaseService<T, PK extends Serializable> {
      * 保存或更新
      *
      * @param entity 实体
+     * @param type 保存方式
+     */
+    PK save(@Valid @NotNull(message = "保存或更新的实体不能为空") T entity, SaveType type);
+
+
+    /**
+     * 保存或更新 根据ID判断保存方式
+     * @param entity
+     * @return
      */
     PK save(@Valid @NotNull(message = "保存或更新的实体不能为空") T entity);
 

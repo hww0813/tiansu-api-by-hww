@@ -132,4 +132,18 @@ public interface ClientMapper extends BaseMapper<Client,Long> {
      * @param client 客户端
      */
     void insertClient(Client client);
+
+    /**
+     * 查询终端IP对应的用户数
+     * @param ips IP集合
+     * @return
+     */
+    List<JSONObject> getUserNumByTerminal(List<Long> ips);
+
+    /**
+     * 查询用户名插对应的终端数
+     * @param usernameList 用户名集合
+     * @return
+     */
+    List<JSONObject> getTerminalNumByUserName(List<String> usernameList);
 }

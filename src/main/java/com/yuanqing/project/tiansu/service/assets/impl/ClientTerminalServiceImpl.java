@@ -3,17 +3,28 @@ package com.yuanqing.project.tiansu.service.assets.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.DeviceType;
+import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
+import com.yuanqing.project.tiansu.domain.assets.dto.ClientTerminalDto;
+import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by xucan on 2021-01-18 16:29
@@ -29,9 +40,12 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     @Autowired
     private IServerTreeService serverTreeService;
 
+    @Autowired
+    private ClientMapper clientMapper;
+
     @Override
-    public boolean changStatus(List<ClientTerminal> list) {
-        return clientTerminalMapper.changStatus(list);
+    public boolean changStatus(String[] ids) {
+        return clientTerminalMapper.changStatus(ids);
     }
 
     @Override
@@ -67,22 +81,53 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     }
 
     @Override
-    public List<JSONObject> getDistinctClientId() {
-        JSONObject filters = DateUtils.getDayTime();
-        List<JSONObject> list = clientTerminalMapper.getDistinctClientId(filters);
+    public List<ClientTerminal> getActiveTerminal() {
+        ClientTerminal clientTerminalFilter = (ClientTerminal)DateUtils.getDayTime(ClientTerminal.class);
+        List<ClientTerminal> list = clientTerminalMapper.getList(clientTerminalFilter);
         return list;
     }
 
     @Override
-    public Long save(ClientTerminal clientTerminal) {
-        if (clientTerminal.getId() == null) {
-            System.out.println(clientTerminal + "to manager save");
+    public List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> list) {
+
+        //提取集合IP
+        List<Long> collect = list.stream().map(f -> f.getIpAddress()).collect(Collectors.toList());
+
+        //获取IP对应的用户数
+        List<JSONObject> originalUserNum = clientMapper.getUserNumByTerminal(collect);
+
+        Map<Long,Integer> map = new HashMap<>();
+
+        //格式化原始数据
+        originalUserNum.stream().forEach(f -> map.put(f.getLong("ip_address"),f.getInteger("userCnt")));
+
+        //将带有用户数的信息转换为dto
+        List<ClientTerminalDto> dtoList = new ArrayList<>();
+
+        list.stream().forEach(f -> {
+            ClientTerminalDto dto = doBackward(f);
+            Integer cnt = map.get(f.getIpAddress());
+            dto.setUserCnt(cnt==null?0:cnt);
+            dtoList.add(dto);
+        });
+        return dtoList;
+    }
+
+
+    @Override
+    public Long save(ClientTerminal clientTerminal, SaveType type) {
+
+        if (type.getCode()==1) {
             clientTerminalMapper.insert(clientTerminal);
-        } else {
-            System.out.println(clientTerminal + "to manager update");
+        } else if(type.getCode()==0){
             clientTerminalMapper.update(clientTerminal);
         }
         return clientTerminal.getId();
+    }
+
+    @Override
+    public Long save(ClientTerminal clientTerminal) {
+        throw new CustomException("暂不支持这种保存方式,需要传入SaveType");
     }
 
     @Override
@@ -106,7 +151,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
     @Override
     public List<ClientTerminal> getList(ClientTerminal clientTerminal) {
-        return null;
+        return clientTerminalMapper.getList(clientTerminal);
     }
 
     /**
@@ -125,5 +170,11 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     private void delClientTerminalMap(ClientTerminal clientTerminal){
         String clientTerminalKey = String.format(Constants.TWO_FORMAT, Constants.CLIENT_TERMINAL, clientTerminal.getIpAddress());
         ClientTerminalMap.remove(clientTerminalKey);
+    }
+
+    protected ClientTerminalDto doBackward(ClientTerminal clientTerminal) {
+        ClientTerminalDto dto = new ClientTerminalDto();
+        BeanUtils.copyProperties(clientTerminal, dto);
+        return dto;
     }
 }

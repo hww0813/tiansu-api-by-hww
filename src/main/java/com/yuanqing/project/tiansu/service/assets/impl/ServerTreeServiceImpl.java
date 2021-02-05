@@ -3,6 +3,8 @@ package com.yuanqing.project.tiansu.service.assets.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.DeviceType;
+import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.queue.ServerTreeMap;
 import com.yuanqing.project.tiansu.domain.assets.Client;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,6 +108,11 @@ public class ServerTreeServiceImpl implements IServerTreeService {
         serverTreeMapper.insertServerTree(serverTree);
         //入缓存
         putServerTreeMap(serverTree,IP);
+    }
+
+    @Override
+    public Long save(@Valid @NotNull(message = "保存或更新的实体不能为空") ServerTree entity, SaveType type) {
+        throw new CustomException("暂不支持这种保存方式,无需SaveType");
     }
 
     @Override

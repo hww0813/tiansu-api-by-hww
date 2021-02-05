@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 
 @Data
-public class BaseCamera extends BaseEntity implements Serializable {
+public class BaseCamera extends BaseEntity {
 
     /** 主键ID */
     private Long id;

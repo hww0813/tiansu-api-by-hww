@@ -28,7 +28,7 @@ public class BaseClient extends BaseEntity {
     private String macAddress;
 
     /** 设备状态 */
-    private DeviceStatus status;
+    private Integer status;
 
     /** 区域 */
     private Integer regionId;
@@ -47,4 +47,6 @@ public class BaseClient extends BaseEntity {
     private Long mediaServerId;
 
     private Long userProxyServerId;
+
+    private String source;
 }

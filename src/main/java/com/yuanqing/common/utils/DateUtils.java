@@ -261,15 +261,22 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
             Constructor ctor = clazz.getDeclaredConstructor();
             o = ctor.newInstance();
             ctor.setAccessible(true);
-            startDate = clazz.getField("startDate");
-            endDate = clazz.getField("endDate");
 
+            while (!clazz.getName().contains("BaseEntity")){
+                if(clazz.getName().contains("Object")){
+                    break;
+                }else {
+                    clazz = clazz.getSuperclass();
+                }
+            }
+            startDate = clazz.getDeclaredField("startDate");
+            endDate = clazz.getDeclaredField("endDate");
+            startDate.setAccessible(true);
+            endDate.setAccessible(true);
             if(startDate!=null && endDate !=null){
                 startDate.set(o, LocalDateTime.of(LocalDate.now(), LocalTime.MIN).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
                 endDate.set(o, LocalDateTime.of(LocalDate.now(), LocalTime.MAX).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
                 return o;
-            }else{
-                throw new CustomException("对象中不包含开始/结束时间");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -72,7 +72,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
      *
      * @return
      */
-    JSONObject getNonNationalCamera();
+    Map<String, Long> getNonNationalCamera();
 
 
 

@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.DeviceType;
 import com.yuanqing.common.enums.GBEnum;
+import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.CameraMap;
 import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.utils.DateUtils;
@@ -17,6 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import static com.yuanqing.common.constant.Constants.CAMERA_CACHE_NAME;
 
 import java.util.HashMap;
@@ -55,8 +61,8 @@ public class CameraServiceImpl implements ICameraService {
 
     @Override
     public List<Camera> getActiveCamera() {
-        JSONObject filters = DateUtils.getDayTime();
-        return cameraMapper.getActiveCamera(filters);
+        Camera camera = (Camera) DateUtils.getDayTime(Camera.class);
+        return cameraMapper.getList(camera);
     }
 
     @Override
@@ -75,224 +81,22 @@ public class CameraServiceImpl implements ICameraService {
     }
 
     @Override
-    public JSONObject getNonNationalCamera() {
-        JSONObject jsonObject = cameraMapper.gourpByGb();
-        return jsonObject;
+    public Map<String, Long> getNonNationalCamera() {
+        List<JSONObject> list = cameraMapper.gourpByGb();
+        HashMap<String, Long> map = new HashMap<>();
+        for (JSONObject jsonObject : list ){
+            if(jsonObject.getBoolean("type")){
+                map.put("gb",jsonObject.getLongValue("count"));
+            }else{
+                map.put("ngb",jsonObject.getLongValue("count"));
+            }
+        }
+        return map;
     }
 
     @Override
     public Long saveExternalDevice(ExternalDevice entity) {
-//        if (entity.getId() == null) {
-//            externalDeviceMapper.insert(entity);
-//            //缓存中新增数据
-//            String externalDeviceKey = null;
-//            if (StringUtils.isNotBlank(entity.getGbId())) {
-//                externalDeviceKey = String.format(IConstants.TWO_FORMAT, IConstants.EXTERNAL_DEVICE, entity.getGbId());
-////                redisCache.setCacheObject(externalDeviceKey, entity, 2, TimeUnit.DAYS);
-//                ExternalDeviceMap.put(externalDeviceKey,entity);
-//            }
-//            if (StringUtils.isNotBlank(entity.getDeviceId())) {
-//                externalDeviceKey = String.format(IConstants.TWO_FORMAT, IConstants.EXTERNAL_DEVICE, entity.getDeviceId());
-////                redisCache.setCacheObject(externalDeviceKey, entity, 2, TimeUnit.DAYS);
-//                ExternalDeviceMap.put(externalDeviceKey,entity);
-//            }
-//        } else {
-//            externalDeviceMapper.update(entity);
-//            //缓存中更新数据
-//            String externalDeviceKey = null;
-//            if (StringUtils.isNotBlank(entity.getGbId())) {
-//                externalDeviceKey = String.format(IConstants.TWO_FORMAT, IConstants.EXTERNAL_DEVICE, entity.getGbId());
-////                redisCache.setCacheObject(externalDeviceKey, entity, 2, TimeUnit.DAYS);
-//                ExternalDeviceMap.put(externalDeviceKey,entity);
-//            }
-//            if (StringUtils.isNotBlank(entity.getDeviceId())) {
-//                externalDeviceKey = String.format(IConstants.TWO_FORMAT, IConstants.EXTERNAL_DEVICE, entity.getDeviceId());
-////                redisCache.setCacheObject(externalDeviceKey, entity, 2, TimeUnit.DAYS);
-//                ExternalDeviceMap.put(externalDeviceKey,entity);
-//            }
-//        }
-////        Long regionId = 0l;
-//        /*
-//         *在导入外部设备时，也要同时往历史表里面备份
-//         * 现根据私标作为key来查历史表
-//         * */
-//        String dstCode = entity.getDeviceId();
-//        Long dstDeviceIp = IPv4Util.ipToLong(this.replaceBlank(entity.getIpAddress()));
-//        // 导入时更新摄像头主表里的区域信息，ip和摄像头名称。
-//        JSONObject filter = new JSONObject();
-//        String deviceId = this.replaceBlank(entity.getDeviceId());
-//        String gbId = this.replaceBlank(entity.getGbId());
-//        Camera camera = null;
-//        Camera camera1 = null;
-//        //根据私标查找摄像头camera
-//        if (deviceId != null && !deviceId.equals("")) {
-//            filter.put("deviceCode", deviceId);
-//            camera = cameraMapper.findCamera(filter);
-//        }
-//
-//        //根据国标查找摄像头camera1
-//        if (gbId != null && !gbId.equals("")) {
-//            filter.put("deviceCode", gbId);
-//            camera1 = cameraMapper.findCamera(filter);
-//        }
-//
-//        //如果私标对应摄像头为空
-//        if (camera == null) {
-//            //如果根据国标查找摄像头存在
-//            //更新摄像头相关信息
-//            if (camera1 != null) {
-//                camera1.setId(camera1.getId());
-//                // 获取摄像头编号的前六位  编号的长度为20
-//                if (gbId != null && !gbId.equals("")) {
-//                    camera1.setDeviceCode(gbId);
-//                    camera1.setIsGb(GBEnum.GB);
-//                } else {
-//                    camera1.setDeviceCode(entity.getDeviceId());
-//                    camera1.setIsGb(GBEnum.NGB);
-//                }
-//                if (gbId != null && !gbId.equals("") && gbId.length() == 20) {
-//                    Region region1 = new Region();
-//                    region1.setId(Long.parseLong(gbId.substring(0, 6)));// 行政区域
-//                    camera1.setRegion(region1);
-//                } else {
-//                    camera1.setRegion(null);
-//                }
-//                String manufacturer = entity.getManufacturer();
-//                if (manufacturer != null && !"".equals(manufacturer)) {
-//                    camera1.setManufacturer(manufacturer);
-//                }
-//
-//                String deviceName = entity.getDeviceName();
-//                if (deviceName != null && !"".equals(deviceName)) {
-//                    camera1.setDeviceName(deviceName);
-//                }
-//                String ip = this.replaceBlank(entity.getIpAddress());
-//                if (ip != null && !"".equals(ip)) {
-//                    camera1.setIpAddress(IpUtils.IPv4ToLong(ip));
-//                }
-//                camera1.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
-//                camera.setIsProbe(ProbeEnum.IMPORT.getValue());
-//                cameraMapper.update(camera1);
-//            }
-//            //私标对应摄像头存在，更新对应摄像头信息
-//        } else {
-////            Camera camera = new Camera();
-//            camera.setId(camera.getId());
-//            // 获取摄像头编号的前六位  编号的长度为20
-////            String gbId = this.replaceBlank(entity.getGbId());
-////            System.out.println(")))))))))))))gbID="+gbId+"$$$$$$$$$$$$$$$$$$$$$$$$$");
-//            if (gbId != null && !gbId.equals("")) {
-//                System.out.println("^^^^^^^^^^^^^^^^^gbID=" + gbId + "************************");
-//                camera.setDeviceCode(gbId);
-//                camera.setIsGb(GBEnum.GB);
-//            } else {
-//                camera.setDeviceCode(entity.getDeviceId());
-//                camera.setIsGb(GBEnum.NGB);
-//            }
-//            if (gbId != null && !gbId.equals("") && gbId.length() == 20) {
-//                Region region1 = new Region();
-//                region1.setId(Long.parseLong(gbId.substring(0, 6)));// 行政区域
-//                camera.setRegion(region1);
-//            } else {
-//                camera.setRegion(null);
-//            }
-//            String manufacturer = entity.getManufacturer();
-//            if (manufacturer != null && !"".equals(manufacturer)) {
-//                camera.setManufacturer(manufacturer);
-//            }
-//
-//            String deviceName = entity.getDeviceName();
-//            if (deviceName != null && !"".equals(deviceName)) {
-//                camera.setDeviceName(deviceName);
-//            }
-//            String ip = this.replaceBlank(entity.getIpAddress());
-//            if (ip != null && !"".equals(ip)) {
-//                camera.setIpAddress(IpUtils.IPv4ToLong(ip));
-//            }
-//            camera.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
-//            camera.setIsProbe(ProbeEnum.IMPORT.getValue());
-//            cameraMapper.update(camera);
-//        }
-//        //如果私标和国标对应摄像头都不存在
-//        if (camera == null && camera1 == null) {
-//            try {
-//                camera = new Camera();
-//                camera.setDeviceName(entity.getDeviceName());
-//            } catch (NullPointerException e) {
-////                camera.setDeviceName("");
-//            }
-//            //设置地域：国标编码前六位
-////                String gbId = this.replaceBlank(entity.getGbId());
-//            if (gbId != null && !gbId.equals("")) {
-//                camera.setDeviceCode(gbId);
-//                camera.setIsGb(GBEnum.GB);
-//            } else {
-//                camera.setDeviceCode(entity.getDeviceId());
-//                camera.setIsGb(GBEnum.NGB);
-//            }
-//            if (gbId != null && !gbId.equals("")) {
-//                Region region1 = new Region();
-//                region1.setId(Long.valueOf(gbId.substring(0, 6)));// 行政区域
-//                camera.setRegion(region1);
-//            } else {
-//                camera.setRegion(null);
-//            }
-//            try {
-//                camera.setIpAddress(IpUtils.IPv4ToLong(this.replaceBlank(entity.getIpAddress())));
-//            } catch (NullPointerException e) {
-//                camera.setIpAddress(null);
-//            }
-//
-//            try {
-//                camera.setDeviceDomain(entity.getDomainId());
-//            } catch (NullPointerException e) {
-//                camera.setDeviceDomain("");
-//            }
-//
-//            try {
-//                if (entity.getLatitude() != null && !"".equals(entity.getLatitude())) {
-//                    camera.setLatitude(Double.valueOf(entity.getLatitude()));
-//                } else {
-//                    camera.setLatitude(null);
-//                }
-//            } catch (NullPointerException e) {
-//                camera.setLatitude(null);
-//            }
-//
-//            try {
-//                if (entity.getLongitude() != null && !"".equals(entity.getLongitude())) {
-//                    camera.setLongitude(Double.valueOf(entity.getLongitude()));
-//                } else {
-//                    camera.setLongitude(null);
-//                }
-//            } catch (NullPointerException e) {
-//                camera.setLongitude(null);
-//            }
-//
-//            try {
-//                camera.setManufacturer(entity.getManufacturer());
-//            } catch (NullPointerException e) {
-//                camera.setManufacturer("");
-//            }
-//            try {
-//                camera.setCreateTime(entity.getCreateTime());
-//            } catch (NullPointerException e) {
-//                camera.setCreateTime(null);
-//            }
-//
-//            try {
-//                camera.setUpdateTime(entity.getUpdateTime());
-//            } catch (NullPointerException e) {
-//                camera.setUpdateTime(null);
-//            }
-//            camera.setIsProbe(ProbeEnum.IMPORT.getValue());
-//            camera.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
-//            count++;
-//            save(camera);
-//            System.out.println(camera.getId());
-//
-//        }
-//        return entity.getId();
+
         return null;
     }
 
@@ -526,6 +330,11 @@ public class CameraServiceImpl implements ICameraService {
             cameraMapper.update(camera);
         }
         return camera.getId();
+    }
+
+    @Override
+    public Long save(@Valid @NotNull(message = "保存或更新的实体不能为空") Camera entity, SaveType type) {
+        throw new CustomException("暂不支持这种保存方式,无需SaveType");
     }
 
     @Override

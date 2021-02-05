@@ -19,7 +19,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      * 获取摄像头国标和非国标数
      * @return
      */
-    JSONObject gourpByGb();
+    List<JSONObject> gourpByGb();
 
     /**
      * 更新摄像头不为服务器
@@ -92,15 +92,6 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      * @return
      */
 //    List<Camera> getNgbList();
-
-    /**
-     * 获取当天活跃摄像头列表
-     * @param jsonObject
-     * TODO:oper表中 如果存放30天数据的话这个接口需要调整
-     * @return
-     */
-    List<Camera> getActiveCamera(JSONObject jsonObject);
-
 
     /**
      * 获取会话相关的摄像头列表

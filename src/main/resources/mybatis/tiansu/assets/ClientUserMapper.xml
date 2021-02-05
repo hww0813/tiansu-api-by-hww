@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.ClientUserMapper">
+
+    <resultMap type="com.yuanqing.project.tiansu.domain.assets.ClientUser" id="BusiClientUserResult">
+        <result property="id"    column="ID"    />
+        <result property="username"    column="USERNAME"    />
+        <result property="status"    column="STATUS"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="updateTime"    column="UPDATE_TIME"    />
+        <result property="source"    column="SOURCE"    />
+    </resultMap>
+
+    <sql id="selectBusiClientUserVo">
+        select ID, USERNAME, STATUS, CREATE_TIME, UPDATE_TIME, SOURCE from busi_client_user
+    </sql>
+
+    <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser" resultMap="BusiClientUserResult">
+        <include refid="selectBusiClientUserVo"/>
+        <where>
+            <if test="username != null  and username != ''"> and USERNAME like concat('%', #{username}, '%')</if>
+            <if test="status != null  and status != ''"> and STATUS = #{status}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
+            <if test="source != null  and source != ''"> and SOURCE = #{source}</if>
+            <if test="startDate != null and endDate != null">update_time between #{startDate} and #{endDate}</if>
+        </where>
+    </select>
+
+    <select id="findById" parameterType="Long" resultMap="BusiClientUserResult">
+        <include refid="selectBusiClientUserVo"/>
+        where ID = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser">
+        insert into busi_client_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">ID,</if>
+            <if test="username != null  and username != ''">USERNAME,</if>
+            <if test="status != null  and status != ''">STATUS,</if>
+            CREATE_TIME,
+            UPDATE_TIME,
+            <if test="source != null  and source != ''">SOURCE,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="username != null  and username != ''">#{username},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            now(),
+            now(),
+            <if test="source != null  and source != ''">#{source}</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser">
+        update busi_client_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null  and username != ''">USERNAME = #{username},</if>
+            <if test="status != null  and status != ''">STATUS = #{status},</if>
+            UPDATE_TIME = now(),
+            <if test="source != null  and source != ''">SOURCE = #{source},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+
+    <update id="changStatus">
+        UPDATE busi_client_user SET STATUS= '0', update_time = now()
+        WHERE id in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="Long">
+        delete from busi_client_user where ID = #{id}
+    </delete>
+
+
+</mapper>

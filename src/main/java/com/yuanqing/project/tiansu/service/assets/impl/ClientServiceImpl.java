@@ -2,10 +2,10 @@ package com.yuanqing.project.tiansu.service.assets.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
-import com.yuanqing.common.enums.DeviceStatus;
 import com.yuanqing.common.enums.DeviceType;
+import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.ClientMap;
-import com.yuanqing.common.queue.ServerTreeMap;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,7 +52,7 @@ public class ClientServiceImpl implements IClientService {
     }
 
     @Override
-    public Map<DeviceStatus, Long> getCurrentStatus() {
+    public Map<Integer, Long> getCurrentStatus() {
         Client ClientFilters = (Client) DateUtils.getDayTime(Client.class);
         List<Client> list = clientMapper.getList(ClientFilters);
         return list.stream().collect(Collectors.groupingBy(Client::getStatus, Collectors.counting()));
@@ -174,6 +174,11 @@ public class ClientServiceImpl implements IClientService {
     }
 
     @Override
+    public List<JSONObject> getUserNumByTerminal(List<Long> ips) {
+        return clientMapper.getUserNumByTerminal(ips);
+    }
+
+    @Override
     public Long save(Client entity) {
         //根据IP查找服务器
         Long IP = entity.getIpAddress();
@@ -195,6 +200,11 @@ public class ClientServiceImpl implements IClientService {
 
         }
         return entity.getId();
+    }
+
+    @Override
+    public Long save(Client entity, SaveType type) {
+        throw new CustomException("暂不支持这种保存方式,无需SaveType");
     }
 
     @Override

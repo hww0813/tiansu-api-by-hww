@@ -1,7 +1,6 @@
 package com.yuanqing.project.tiansu.service.assets;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.enums.DeviceStatus;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 
@@ -33,7 +32,7 @@ public interface IClientService extends BaseService<Client,Long> {
      * 当天的客户端状态
      * @return
      */
-    Map<DeviceStatus, Long> getCurrentStatus();
+    Map<Integer, Long> getCurrentStatus();
 
     /**
      * 获取首页客户端数据
@@ -114,4 +113,13 @@ public interface IClientService extends BaseService<Client,Long> {
      * @param list 客户端集合
      */
     void batchUpdateMark(List<Client> list);
+
+
+    /**
+     * 获取终端相关用户数
+     * @param ips  筛选条件
+     * @return 列表
+     */
+     List<JSONObject> getUserNumByTerminal(List<Long> ips);
+
 }

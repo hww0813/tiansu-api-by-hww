@@ -55,6 +55,7 @@
             <if test="isProbe != null  and isProbe != ''"> and IS_PROBE = #{isProbe}</if>
             <if test="isImport != null  and isImport != ''"> and IS_IMPORT = #{isImport}</if>
             <if test="isCheck != null "> and IS_CHECK = #{isCheck}</if>
+            <if test="startDate != null and endDate != null">update_time between #{startDate} and #{endDate}</if>
         </where>
     </select>
 
@@ -63,15 +64,9 @@
         where ID = #{id}
     </select>
 
-
-    <select id="getActiveCamera" resultType="com.yuanqing.project.tiansu.domain.assets.Camera">
-
-
-    </select>
-
     <select id="gourpByGb" resultType="com.alibaba.fastjson.JSONObject">
 
-            select IS_GB,count(1) from busi_camera GROUP BY IS_GB
+        select is_gb type,count(*) count  from busi_camera GROUP BY IS_GB
 
     </select>
 

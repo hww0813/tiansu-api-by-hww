@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.service.assets;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
+import com.yuanqing.project.tiansu.domain.assets.dto.ClientTerminalDto;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -18,10 +19,10 @@ public interface IClientTerminalService extends BaseService<ClientTerminal, Long
 
     /**
      *
-     * @param list
+     * @param ids
      * @return
      */
-    boolean changStatus(List<ClientTerminal> list);
+    boolean changStatus(String[] ids);
 
     /**
      *
@@ -38,9 +39,17 @@ public interface IClientTerminalService extends BaseService<ClientTerminal, Long
     Long insertInto(ClientTerminal clientTerminal);
 
     /**
+     * 获取活跃终端
      * @return
      */
-    List<JSONObject> getDistinctClientId();
+    List<ClientTerminal> getActiveTerminal();
 
+    /**
+     * 数据处理
+     * 将终端列表根据client 关联出用户数并转换为dto对象
+     * @param list 终端集合
+     * @return 包含用户数的终端集合
+     */
+    List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> list);
 
 }

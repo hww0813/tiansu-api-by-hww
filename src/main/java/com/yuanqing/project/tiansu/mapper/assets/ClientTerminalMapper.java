@@ -18,12 +18,13 @@ import java.util.List;
 
 @Component
 public interface ClientTerminalMapper extends BaseMapper<ClientTerminal, Long> {
+
     /**
-     *
-     * @param list
+     * 批量更新终端状态
+     * @param ids
      * @return
      */
-    boolean changStatus(List<ClientTerminal> list);
+    boolean changStatus(String[] ids);
 
     /**
      *

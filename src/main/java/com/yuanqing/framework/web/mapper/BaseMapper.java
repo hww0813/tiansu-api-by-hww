@@ -18,14 +18,14 @@ public interface BaseMapper<T, PK extends Serializable> {
      * @param entity 实体
      * @return
      */
-    void insert(T entity);
+    Long insert(T entity);
 
     /**
      * 更新一条记录
      *
      * @param entity 实体
      */
-    void update(T entity);
+    Long update(T entity);
 
     /**
      * 查找实体

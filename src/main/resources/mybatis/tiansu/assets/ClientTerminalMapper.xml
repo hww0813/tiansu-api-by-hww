@@ -1,284 +1,137 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper">
 
-    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
-        <id column="ID" property="id"/>
-        <result column="DEVICE_CODE" property="deviceCode" jdbcType="VARCHAR"/>
-        <result column="DEVICE_NAME" property="deviceName" jdbcType="VARCHAR"/>
-        <result column="IP_ADDRESS" property="ipAddress" jdbcType="BIGINT"/>
-        <result column="MAC_ADDRESS" property="macAddress" jdbcType="VARCHAR"/>
-        <result column="STATUS" property="status" jdbcType="INTEGER"
-                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
-        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
-        <result column="DEVICE_TYPE" property="deviceType" jdbcType="VARCHAR"/>
-        <result column="DOMAIN_IP" property="domainIp" jdbcType="BIGINT"/>
-        <result column="DOMAIN_PORT" property="domainPort" jdbcType="BIGINT"/>
-        <result column="SIP_SERVER_ID" property="sipServerId" jdbcType="BIGINT"/>
-        <result column="MEDIA_SERVER_ID" property="mediaServerId" jdbcType="BIGINT"/>
-        <result column="USER_PROXY_SERVER_ID" property="userProxyServerId" jdbcType="BIGINT"/>
-<!--        <association property="region" javaType="REGION">-->
-<!--            <id column="REGION_ID" property="id"/>-->
-<!--            <result column="REGION_NAME" property="name"/>-->
-<!--            <result column="REGION_MERGER_NAME" property="mergerName"/>-->
-<!--            <result column="REGION_LEVEL_TYPE" property="level"/>-->
-<!--        </association>-->
+    <resultMap type="com.yuanqing.project.tiansu.domain.assets.ClientTerminal" id="BusiClientTerminalResult">
+        <result property="id"    column="ID"    />
+        <result property="deviceCode"    column="DEVICE_CODE"    />
+        <result property="deviceName"    column="DEVICE_NAME"    />
+        <result property="macAddress"    column="MAC_ADDRESS"    />
+        <result property="status"    column="STATUS"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="updateTime"    column="UPDATE_TIME"    />
+        <result property="ipAddress"    column="IP_ADDRESS"    />
+        <result property="sipServerId"    column="SIP_SERVER_ID"    />
+        <result property="mediaServerId"    column="MEDIA_SERVER_ID"    />
+        <result property="userProxyServerId"    column="USER_PROXY_SERVER_ID"    />
+        <result property="deviceType"    column="DEVICE_TYPE"    />
+        <result property="domainIp"    column="DOMAIN_IP"    />
+        <result property="domainPort"    column="DOMAIN_PORT"    />
+        <result property="regionId"    column="REGION"    />
+        <result property="source"    column="SOURCE"    />
     </resultMap>
 
-    <select id="getList"   resultType="com.alibaba.fastjson.JSONObject">
-        SELECT bct.IP_ADDRESS, (case when e.userCnt is null then 0 else e.userCnt end )as userCnt,bct.MAC_ADDRESS, TO_CHAR(bct.update_time,'YYYY-MM-DD hh24:mi:ss') as update_time, bct.DEVICE_CODE ,bct.STATUS ,bct.ID
-        FROM (BUSI_CLIENT_TERMINAL bct
-        LEFT JOIN (select c.IP_ADDRESS, COUNT(distinct c.USERNAME) as userCnt,max(update_time), max(MAC_ADDRESS),max(ID),
-        max(DEVICE_CODE) ,max(STATUS)  from BUSI_CLIENT c  GROUP BY c.IP_ADDRESS) e
-        on bct.IP_ADDRESS = e.IP_ADDRESS)
-        WHERE 1=1
-        and bct.DEVICE_TYPE is null
-        <if test="ipAddress != null and ipAddress != '' ">
-            AND bct.IP_ADDRESS = #{ipAddress, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
-        </if>
-        <if test="deviceCode != null and deviceCode != '' ">
-            AND bct.DEVICE_CODE = #{deviceCode}
-        </if>
-        <if test="id != null ">
-            AND bct.ID = #{id}
-        </if>
-        <if test="status != null and status != '' ">
-            AND bct.STATUS = #{status}
-        </if>
-        <if test="username != null and username != '' ">
-            AND bct.IP_ADDRESS in (select IP_ADDRESS from BUSI_CLIENT where USERNAME= #{username})
-        </if>
-        <if test="provinceRegion != null and provinceRegion != '' ">
-            AND substr(bc.DEVICE_CODE,0,2) = #{provinceRegion}
-        </if>
-        <if test="cityRegion != null and cityRegion != '' ">
-            AND substr(bc.DEVICE_CODE,0,4) = #{cityRegion}
-        </if>
+    <sql id="selectBusiClientTerminalVo">
+        select ID, DEVICE_CODE, DEVICE_NAME, MAC_ADDRESS, STATUS, CREATE_TIME, UPDATE_TIME, IP_ADDRESS, SIP_SERVER_ID, MEDIA_SERVER_ID, USER_PROXY_SERVER_ID, DEVICE_TYPE, DOMAIN_IP, DOMAIN_PORT, REGION, SOURCE from busi_client_terminal
+    </sql>
 
-        <if test="countryRegion != null and countryRegion != '' ">
-            AND substr(bc.DEVICE_CODE,0,6) = #{countryRegion}
-        </if>
-        <!--<if test="(provinceRegion == null) and (cityRegion == null) and (countryRegion == null)">
-            AND substr(bc.DEVICE_CODE,0,2) = #{provinceRegion}
-        </if>-->
-        <if test="sipServerId != null and sipServerId != ''">
-            AND (bct.SIP_SERVER_ID =#{sipServerId} OR bct.MEDIA_SERVER_ID=#{sipServerId} OR
-            bct.USER_PROXY_SERVER_ID=#{sipServerId})
-        </if>
-        <if test="stime != null and stime != ''">
-            AND bct.UPDATE_TIME > to_date(#{stime}, 'YYYY-MM-DD')
-        </if>
-        <if test="etime != null and etime != ''">
-            AND bct.UPDATE_TIME &lt;= to_date(#{etime}, 'YYYY-MM-DD')
-        </if>
-        <if test="orderType == null or orderType == ''">
-            ORDER BY userCnt desc
-        </if>
-        <if test="orderType != null and orderType != ''">
-            ORDER BY ${orderType}
-        </if>
+    <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal" resultMap="BusiClientTerminalResult">
+        <include refid="selectBusiClientTerminalVo"/>
+        <where>
+            <if test="deviceCode != null  and deviceCode != ''"> and DEVICE_CODE = #{deviceCode}</if>
+            <if test="deviceName != null  and deviceName != ''"> and DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
+            <if test="macAddress != null  and macAddress != ''"> and MAC_ADDRESS = #{macAddress}</if>
+            <if test="status != null  and status != ''"> and STATUS = #{status}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
+            <if test="ipAddress != null "> and IP_ADDRESS = #{ipAddress}</if>
+            <if test="sipServerId != null "> and SIP_SERVER_ID = #{sipServerId}</if>
+            <if test="mediaServerId != null "> and MEDIA_SERVER_ID = #{mediaServerId}</if>
+            <if test="userProxyServerId != null "> and USER_PROXY_SERVER_ID = #{userProxyServerId}</if>
+            <if test="deviceType != null  and deviceType != ''"> and DEVICE_TYPE = #{deviceType}</if>
+            <if test="domainIp != null "> and DOMAIN_IP = #{domainIp}</if>
+            <if test="domainPort != null "> and DOMAIN_PORT = #{domainPort}</if>
+            <if test="regionId != null "> and REGION = #{regionId}</if>
+            <if test="source != null  and source != ''"> and SOURCE = #{source}</if>
+            <if test="startDate != null and endDate != null">update_time between #{startDate} and #{endDate}</if>
+        </where>
     </select>
 
-    <update id="changStatus" parameterType="java.util.List">
-        UPDATE BUSI_CLIENT_TERMINAL SET STATUS= '0',UPDATE_TIME=sysdate WHERE ID in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item.id}
-        </foreach>
-    </update>
-
-    <update id="update" parameterType="com.alibaba.fastjson.JSONObject">
-        UPDATE BUSI_CLIENT_TERMINAL
-        SET
-            <if test="DEVICE_CODE == null">
-                DEVICE_CODE =null,
-            </if>
-            <if test="DEVICE_CODE != null and DEVICE_CODE != ''">
-                DEVICE_CODE = #{DEVICE_CODE, jdbcType=VARCHAR},
-            </if>
-            IP_ADDRESS  = #{ipAddress, jdbcType=BIGINT},
-            MAC_ADDRESS = #{MAC_ADDRESS, jdbcType=VARCHAR},
-            <if test="status == null">
-                STATUS = 0,
-            </if>
-            <if test="status != null and status != ''">
-                STATUS = #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
-            </if>
-            REGION        = #{region.id, jdbcType=INTEGER},
-            UPDATE_TIME = sysdate,
-            SIP_SERVER_ID = #{sipServerId, jdbcType=BIGINT},
-            MEDIA_SERVER_ID = #{mediaServerId, jdbcType=BIGINT},
-            USER_PROXY_SERVER_ID = #{userProxyServerId, jdbcType=BIGINT}
-        WHERE id = #{ID, jdbcType=BIGINT}
-    </update>
-
-
-    <delete id="delete" parameterType="long">
-        DELETE FROM BUSI_CLIENT_TERMINAL
-        WHERE ID = #{id, jdbcType=BIGINT}
-    </delete>
-
-    <delete id="deleteByIpAddress" parameterType="long">
-        DELETE FROM BUSI_CLIENT_TERMINAL
-        WHERE IP_ADDRESS  = #{ipAddress, jdbcType=BIGINT}
-    </delete>
-
-
-    <select id="findById" parameterType="long"  resultType="com.alibaba.fastjson.JSONObject">
-        SELECT *
-        FROM BUSI_CLIENT_TERMINAL c
-        WHERE c.ID = #{id}
+    <select id="findById" parameterType="Long" resultMap="BusiClientTerminalResult">
+        <include refid="selectBusiClientTerminalVo"/>
+        where ID = #{id}
     </select>
 
-    <insert id="insert" parameterType="com.alibaba.fastjson.JSONObject">
-        <selectKey keyProperty="id" order="BEFORE" resultType="long">
-            SELECT SQ_BUSI_CLIENT_TERMINAL_ID.nextval AS ID FROM dual
-        </selectKey>
-        INSERT INTO BUSI_CLIENT_TERMINAL(ID, DEVICE_CODE, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, STATUS, REGION,
-        CREATE_TIME, UPDATE_TIME,SIP_SERVER_ID, MEDIA_SERVER_ID, USER_PROXY_SERVER_ID)
-        VALUES (
-        #{id},
-        #{deviceCode, jdbcType=VARCHAR},
-        #{deviceName, jdbcType=VARCHAR},
-        #{ipAddress, jdbcType=BIGINT},
-        #{macAddress, jdbcType=VARCHAR},
-        #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
-        #{region.id, jdbcType=BIGINT},
-        #{createTime, jdbcType=TIMESTAMP},
-        sysdate,
-        #{sipServerId, jdbcType=BIGINT},
-        #{mediaServerId, jdbcType=BIGINT},
-        #{userProxyServerId, jdbcType=BIGINT}
-        )
+    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
+        insert into busi_client_terminal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">ID,</if>
+            <if test="deviceCode != null  and deviceCode != ''">DEVICE_CODE,</if>
+            <if test="deviceName != null  and deviceName != ''">DEVICE_NAME,</if>
+            <if test="macAddress != null  and macAddress != ''">MAC_ADDRESS,</if>
+            <if test="status != null  and status != ''">STATUS,</if>
+            <if test="createTime != null ">CREATE_TIME,</if>
+            <if test="updateTime != null ">UPDATE_TIME,</if>
+            <if test="ipAddress != null ">IP_ADDRESS,</if>
+            <if test="sipServerId != null ">SIP_SERVER_ID,</if>
+            <if test="mediaServerId != null ">MEDIA_SERVER_ID,</if>
+            <if test="userProxyServerId != null ">USER_PROXY_SERVER_ID,</if>
+            <if test="deviceType != null  and deviceType != ''">DEVICE_TYPE,</if>
+            <if test="domainIp != null ">DOMAIN_IP,</if>
+            <if test="domainPort != null ">DOMAIN_PORT,</if>
+            <if test="regionId != null ">REGION,</if>
+            <if test="source != null  and source != ''">SOURCE,</if>
+            create_time,
+            update_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="deviceCode != null  and deviceCode != ''">#{deviceCode},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="macAddress != null  and macAddress != ''">#{macAddress},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="ipAddress != null ">#{ipAddress},</if>
+            <if test="sipServerId != null ">#{sipServerId},</if>
+            <if test="mediaServerId != null ">#{mediaServerId},</if>
+            <if test="userProxyServerId != null ">#{userProxyServerId},</if>
+            <if test="deviceType != null  and deviceType != ''">#{deviceType},</if>
+            <if test="domainIp != null ">#{domainIp},</if>
+            <if test="domainPort != null ">#{domainPort},</if>
+            <if test="regionId != null ">#{regionId},</if>
+            <if test="source != null  and source != ''">#{source},</if>
+            now(),
+            now()
+        </trim>
     </insert>
 
-    <insert id="insertInto" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
-        <selectKey keyProperty="id" order="BEFORE" resultType="long">
-            SELECT SQ_BUSI_CLIENT_TERMINAL_ID.nextval AS ID FROM dual
-        </selectKey>
-        INSERT INTO BUSI_CLIENT_TERMINAL(ID, DEVICE_CODE, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, STATUS, REGION,
-        CREATE_TIME, UPDATE_TIME,DEVICE_TYPE, SIP_SERVER_ID, MEDIA_SERVER_ID, USER_PROXY_SERVER_ID)
-        VALUES (
-        #{id},
-        #{deviceCode, jdbcType=VARCHAR},
-        #{deviceName, jdbcType=VARCHAR,},
-        #{ipAddress, jdbcType=BIGINT},
-        #{macAddress, jdbcType=VARCHAR},
-        #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
-        #{region.id, jdbcType=BIGINT},
-        #{createTime, jdbcType=TIMESTAMP},
-        sysdate,
-        #{deviceType,jdbcType=VARCHAR},
-        #{sipServerId, jdbcType=BIGINT},
-        #{mediaServerId, jdbcType=BIGINT},
-        #{userProxyServerId, jdbcType=BIGINT}
-        )
-    </insert>
-
-    <select id="findByIpAddress" parameterType="Long"  resultMap="resultMap">
-        SELECT *
-        FROM BUSI_CLIENT_TERMINAL c
-        WHERE c.IP_ADDRESS = #{ipAddress}
-           and rownum &lt;= 1
-    </select>
-
-
-
-    <update id="updateClientTerminal" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
-        UPDATE BUSI_CLIENT_TERMINAL
-        SET
-            DEVICE_CODE = #{deviceCode, jdbcType=VARCHAR},
-            DEVICE_NAME = #{deviceName, jdbcType=VARCHAR},
-            MAC_ADDRESS = #{macAddress, jdbcType=VARCHAR},
-            STATUS      = #{status, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
-            REGION        = #{region.id, jdbcType=INTEGER},
-            UPDATE_TIME = sysdate,
-            DEVICE_TYPE =#{deviceType,jdbcType=VARCHAR},
-            SIP_SERVER_ID = #{sipServerId, jdbcType=BIGINT},
-            MEDIA_SERVER_ID = #{mediaServerId, jdbcType=BIGINT},
-            USER_PROXY_SERVER_ID = #{userProxyServerId, jdbcType=BIGINT}
-         WHERE ID = #{id, jdbcType=BIGINT}
+    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
+        update busi_client_terminal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceCode != null  and deviceCode != ''">DEVICE_CODE = #{deviceCode},</if>
+            <if test="deviceName != null  and deviceName != ''">DEVICE_NAME = #{deviceName},</if>
+            <if test="macAddress != null  and macAddress != ''">MAC_ADDRESS = #{macAddress},</if>
+            <if test="status != null  and status != ''">STATUS = #{status},</if>
+            <if test="createTime != null ">CREATE_TIME = #{createTime},</if>
+            <if test="updateTime != null ">UPDATE_TIME = #{updateTime},</if>
+            <if test="ipAddress != null ">IP_ADDRESS = #{ipAddress},</if>
+            <if test="sipServerId != null ">SIP_SERVER_ID = #{sipServerId},</if>
+            <if test="mediaServerId != null ">MEDIA_SERVER_ID = #{mediaServerId},</if>
+            <if test="userProxyServerId != null ">USER_PROXY_SERVER_ID = #{userProxyServerId},</if>
+            <if test="deviceType != null  and deviceType != ''">DEVICE_TYPE = #{deviceType},</if>
+            <if test="domainIp != null ">DOMAIN_IP = #{domainIp},</if>
+            <if test="domainPort != null ">DOMAIN_PORT = #{domainPort},</if>
+            <if test="regionId != null ">REGION = #{regionId},</if>
+            <if test="source != null  and source != ''">SOURCE = #{source},</if>
+            update_time = now()
+        </trim>
+        where ID = #{id}
     </update>
+    <update id="changStatus">
 
-    <select id="getTotal" resultType="com.alibaba.fastjson.JSONObject">
-        SELECT count(*)
-        FROM BUSI_CLIENT_TERMINAL bct
-        WHERE 1=1
-        and bct.DEVICE_TYPE is null
-        <if test="status != null and status != '' ">
-            AND bct.STATUS = #{status}
-        </if>
-
-    </select>
-
-    <update id="batchUpdateMark" parameterType="java.util.List">
-        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
-            update BUSI_CLIENT_TERMINAL
-            <set>
-                DEVICE_TYPE =#{item.deviceType,jdbcType=VARCHAR}
-            </set>
-            WHERE IP_ADDRESS = #{item.ipAddress, jdbcType=BIGINT}
+        UPDATE busi_client_terminal SET status= '0',update_time = now() WHERE ID in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
         </foreach>
+
     </update>
 
-    <update id="updateMark" parameterType="long">
-            update BUSI_CLIENT_TERMINAL
-            <set>
-                DEVICE_TYPE = null
-            </set>
-            WHERE IP_ADDRESS = #{ipAddress, jdbcType=BIGINT}
-    </update>
-
-    <select id="getDistinctClientId" resultType="com.alibaba.fastjson.JSONObject">
-        SELECT
-        *
-        FROM
-        (
-        SELECT
-        bct.IP_ADDRESS,
-        e.userCnt,
-        bct.MAC_ADDRESS,
-        TO_CHAR( bct.update_time, 'YYYY-MM-DD hh24:mi:ss' ) AS update_time,
-        bct.DEVICE_CODE,
-        bct.STATUS,
-        bct.ID,
-        bct.device_type
-        FROM
-        (
-        BUSI_CLIENT_TERMINAL bct
-        LEFT JOIN (
-        SELECT
-        c.IP_ADDRESS,
-        COUNT(distinct c.USERNAME ) AS userCnt,
-        max( update_time ),
-        max( MAC_ADDRESS ),
-        max( ID ),
-        max( DEVICE_CODE ),
-        max( STATUS )
-        FROM
-        BUSI_CLIENT c
-        where c.device_type is null
-        GROUP BY
-        c.IP_ADDRESS
-        ) e ON bct.IP_ADDRESS = e.IP_ADDRESS
-        )
-        ) vv
-        right JOIN (
-        SELECT DISTINCT
-        SRC_IP
-        FROM
-        V_BUSI_OPER bo
-        WHERE
-        1 = 1
-        <if test="stime != null and stime != ''">
-            and bo.STAMP > to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
-        </if>
-        <if test="etime != null and etime != ''">
-            and bo.STAMP &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
-        </if>
-        ) cc ON vv.IP_ADDRESS = cc.SRC_IP where vv.device_type is null
-
-    </select>
+    <delete id="delete" parameterType="Long">
+        delete from busi_client_terminal where ID = #{id}
+    </delete>
 
 
 </mapper>
