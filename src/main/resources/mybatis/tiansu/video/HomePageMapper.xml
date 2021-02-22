@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanqing.project.tiansu.mapper.video.HomePageMapper" >
+  <sql id="Base_Column_List" >
+    ID, TYPE, NAME, ORDER_VALUE, DESP, VALUE, DEFAULT_VALUE, VISIBLE, CREATE_TIME
+  </sql>
+
+
+
+  <select id="getCameraStatisticsByTime"  resultType="com.yuanqing.project.tiansu.domain.video.CameraStatistics">
+      SELECT COUNT(bo.`DST_CODE`) AS visitedCnt , bo.`DST_CODE` as cameraCode ,
+      (SELECT COUNT(DISTINCT bo1.USERNAME)  FROM busi_oper bo1 WHERE bo1.DST_CODE = bo.DST_CODE) AS userName,
+      (SELECT COUNT(DISTINCT bo1.SRC_IP) FROM busi_oper bo1 WHERE bo1.DST_CODE = bo.DST_CODE) AS clientCnt,
+      (SELECT bc.ip_address FROM `busi_camera` bc WHERE bc.`DEVICE_CODE` = bo.DST_CODE) AS cameraIp  ,
+      (SELECT bc.id FROM `busi_camera` bc WHERE bc.`DEVICE_CODE` = bo.DST_CODE) AS cameraId  ,
+       (SELECT bc.DEVICE_NAME FROM `busi_camera` bc WHERE bc.`DEVICE_CODE` = bo.DST_CODE) AS cameraName  ,
+      (SELECT br.name FROM `busi_camera` bc LEFT JOIN busi_region br  ON bc.region = br.id  WHERE bc.`DEVICE_CODE` = bo.DST_CODE )  AS cameraRegion
+      FROM busi_oper bo
+      WHERE bo.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bo.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+      <if test="action !=null" >
+          and bo.action = #{action}
+      </if>
+      GROUP  BY bo.`DST_CODE`
+      <if test="ascFlag != null " >
+          order by visitedCnt asc
+      </if>
+      <if test="ascFlag == null" >
+          order by visitedCnt desc
+      </if>
+      limit #{size}
+
+  </select>
+
+    <select id="getClinetStatisticsByTime" resultType="com.alibaba.fastjson.JSONObject" parameterType="com.yuanqing.project.tiansu.domain.video.StatisticsSearch">
+        SELECT COUNT(bo.src_ip) AS VISIT_CNT , bo.src_ip as CLIENT_IP ,
+        (SELECT  count(distinct bo1.dst_code) FROM busi_oper bo1 WHERE bo1.SRC_IP  = bo.src_ip ) as CAMERA_CNT
+        FROM busi_oper bo
+         WHERE bo.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bo.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+        <if test="action !=null" >
+            and bo.action = #{action}
+        </if>
+        GROUP  BY bo.src_ip
+
+        <if test="ascFlag != null " >
+            order by VISIT_CNT asc
+        </if>
+        <if test="ascFlag == null" >
+            order by VISIT_CNT desc
+        </if>
+        limit #{size}
+    </select>
+
+
+    <select id="getUserStatisticsByTime" resultType="com.alibaba.fastjson.JSONObject"
+            parameterType="com.yuanqing.project.tiansu.domain.video.StatisticsSearch">
+        SELECT COUNT(bo.USERNAME) AS VISIT_CNT , bo.USERNAME ,
+        ( SELECT COUNT(DISTINCT bo1.`CAMERA_ID`)  FROM busi_oper bo1 WHERE bo1.USERNAME = bo.USERNAME ) AS CAMERA_ID ,
+        ( SELECT COUNT(DISTINCT bo1.SRC_IP )  FROM busi_oper bo1 WHERE bo1.USERNAME = bo.USERNAME ) AS CLIENT_CNT
+        FROM busi_oper bo
+         WHERE bo.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bo.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+        GROUP  BY bo.`USERNAME`
+        <if test="ascFlag != null " >
+            order by VISIT_CNT asc
+        </if>
+        <if test="ascFlag == null" >
+            order by VISIT_CNT desc
+        </if>
+        limit #{size}
+
+    </select>
+
+
+</mapper>

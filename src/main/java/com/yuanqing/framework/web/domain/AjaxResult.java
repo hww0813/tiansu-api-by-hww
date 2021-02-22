@@ -3,6 +3,7 @@ package com.yuanqing.framework.web.domain;
 import java.util.HashMap;
 import com.yuanqing.common.constant.HttpStatus;
 import com.yuanqing.common.utils.StringUtils;
+import org.aspectj.weaver.loadtime.Aj;
 
 /**
  * 操作消息提醒
@@ -76,6 +77,15 @@ public class AjaxResult extends HashMap<String, Object>
     public static AjaxResult success(Object data)
     {
         return AjaxResult.success("操作成功", data);
+    }
+
+    public static AjaxResult success(Object data,Integer pageSize,Integer pageNum,Integer total)
+    {
+        AjaxResult result = AjaxResult.success("操作成功", data);
+        result.put("total",total);
+        result.put("pageSize",pageSize);
+        result.put("pageNum",pageNum);
+        return result;
     }
 
     /**
