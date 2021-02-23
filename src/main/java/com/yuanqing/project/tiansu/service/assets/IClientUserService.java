@@ -2,6 +2,7 @@ package com.yuanqing.project.tiansu.service.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
+import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientUserDto;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,4 +54,12 @@ public interface IClientUserService extends BaseService<ClientUser,Long> {
      * @return
      */
     List<ClientUser> getActiveClientUser();
+
+
+    /**
+     * 根据用户名查询用户
+     * @param clientList
+     * @return
+     */
+    List<ClientUser> getClientUserByUsername(List<Client> clientList);
 }

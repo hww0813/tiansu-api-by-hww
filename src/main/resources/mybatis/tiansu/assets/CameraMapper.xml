@@ -55,6 +55,8 @@
             <if test="isProbe != null  and isProbe != ''"> and IS_PROBE = #{isProbe}</if>
             <if test="isImport != null  and isImport != ''"> and IS_IMPORT = #{isImport}</if>
             <if test="isCheck != null "> and IS_CHECK = #{isCheck}</if>
+
+             -- 时间格式化
             <if test="startDate != null and endDate != null">update_time between #{startDate} and #{endDate}</if>
         </where>
     </select>
@@ -66,6 +68,8 @@
 
     <select id="gourpByGb" resultType="com.alibaba.fastjson.JSONObject">
 
+
+        --AND DEVICE_TYPE is null 设备类型判断
         select is_gb type,count(*) count  from busi_camera GROUP BY IS_GB
 
     </select>

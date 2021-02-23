@@ -26,7 +26,6 @@ public class ClientUserServiceTest {
 
         List<ClientUser> list = clientUserService.getList(new ClientUser());
         List<ClientUserDto> dtoList = clientUserService.handleClientUserTerminalNum(list);
-
         System.out.println(dtoList);
     }
 

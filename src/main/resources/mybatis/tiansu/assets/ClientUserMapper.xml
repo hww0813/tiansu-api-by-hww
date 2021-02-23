@@ -27,11 +27,8 @@
 
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser" resultMap="BusiClientUserResult">
         <include refid="selectBusiClientUserVo"/>
-        <if test="ipAddress != null  and ipAddress != ''">
-            LEFT JOIN busi_client bc on bc.username = bcu.username
-        </if>
         <where>
-            <if test="username != null  and username != ''"> and bcu.USERNAME like concat('%', #{username}, '%')</if>
+            <if test="username != null  and username != ''"> and bcu.USERNAME = #{username}</if>
             <if test="status != null  and status != ''"> and bcu.STATUS = #{status}</if>
             <if test="createTime != null "> and bcu.CREATE_TIME = #{createTime}</if>
             <if test="updateTime != null "> and bcu.UPDATE_TIME = #{updateTime}</if>
@@ -44,6 +41,14 @@
     <select id="findById" parameterType="Long" resultMap="BusiClientUserResult">
         <include refid="selectBusiClientUserVo"/>
         where ID = #{id}
+    </select>
+    <select id="getClientUserByUsername" resultMap="BusiClientUserResult">
+        <include refid="selectBusiClientUserVo"/>
+        <where> username in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item.username}
+            </foreach>
+        </where>
     </select>
 
     <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser">

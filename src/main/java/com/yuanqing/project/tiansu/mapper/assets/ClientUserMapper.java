@@ -1,8 +1,11 @@
 package com.yuanqing.project.tiansu.mapper.assets;
 
 import com.yuanqing.framework.web.mapper.BaseMapper;
+import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by xucan on 2021-02-03 22:08
@@ -18,4 +21,12 @@ public interface ClientUserMapper extends BaseMapper<ClientUser,Long> {
      * @return
      */
     boolean changStatus(String[] ids);
+
+
+    /**
+     * 根据用户名list 查询用户
+     * @param clientList
+     * @return
+     */
+    List<ClientUser> getClientUserByUsername(List<Client> clientList);
 }

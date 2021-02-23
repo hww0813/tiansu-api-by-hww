@@ -2,11 +2,14 @@ package com.yuanqing.project.tiansu.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
+import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientUserDto;
+import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IClientUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +35,9 @@ public class ClientUserController extends BaseController {
     @Autowired
     private IClientUserService clientUserService;
 
+    @Autowired
+    private IClientService clientService;
+
 
     @GetMapping("/list")
     @ApiOperation(value = "获取终端用户列表", httpMethod = "GET")
@@ -47,8 +53,24 @@ public class ClientUserController extends BaseController {
         clientUser.setId(id);
         clientUser.setIpAddress(ipAddress);
 
-        startPage();
-        List<ClientUser> list = clientUserService.getList(clientUser);
+        List<ClientUser> list = null;
+
+        //判断 username 是否为空
+        if(ipAddress != null){
+            Client client = new Client();
+            client.setIpAddress(ipAddress);
+
+            // 根据用户名查询client列表  需要用IP
+            List<Client> clientList = clientService.getList(client);
+
+            startPage();
+            list = clientUserService.getClientUserByUsername(clientList);
+
+        }else{
+            startPage();
+            clientUserService.getList(clientUser);
+        }
+
 
         //查询终端数量
         List<ClientUserDto> dtoList = clientUserService.handleClientUserTerminalNum(list);

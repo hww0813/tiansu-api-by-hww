@@ -35,7 +35,7 @@
             <if test="deviceName != null  and deviceName != ''"> and DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
             <if test="macAddress != null  and macAddress != ''"> and MAC_ADDRESS = #{macAddress}</if>
             <if test="status != null  and status != ''"> and STATUS = #{status}</if>
-            <if test="username != null  and username != ''"> and USERNAME like concat('%', #{username}, '%')</if>
+            <if test="username != null  and username != ''"> and USERNAME = #{username}</if>
             <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
             <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
             <if test="ipAddress != null "> and IP_ADDRESS = #{ipAddress}</if>

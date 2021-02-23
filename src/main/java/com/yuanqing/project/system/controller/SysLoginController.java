@@ -3,10 +3,7 @@ package com.yuanqing.project.system.controller;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.utils.ServletUtils;
 import com.yuanqing.framework.security.LoginBody;
@@ -24,6 +21,8 @@ import com.yuanqing.project.system.service.ISysMenuService;
  *
  * @author ruoyi
  */
+
+@CrossOrigin
 @RestController
 public class SysLoginController
 {
@@ -48,9 +47,13 @@ public class SysLoginController
      * @param uuid 唯一标识
      * @return 结果
      */
-    @PostMapping("/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody)
+    @GetMapping("/api/login")
+    public AjaxResult login(@RequestParam("username") String username,
+                            @RequestParam("password") String password)
     {
+        LoginBody loginBody = new LoginBody();
+        loginBody.setUsername(username);
+        loginBody.setPassword(password);
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
@@ -64,7 +67,7 @@ public class SysLoginController
      *
      * @return 用户信息
      */
-    @GetMapping("getInfo")
+    @GetMapping("/api/roles")
     public AjaxResult getInfo()
     {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());

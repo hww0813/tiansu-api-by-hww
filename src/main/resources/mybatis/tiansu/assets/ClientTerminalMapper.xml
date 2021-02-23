@@ -47,9 +47,6 @@
 
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal" resultMap="BusiClientTerminalResult">
         <include refid="selectBusiClientTerminalVo"/>
-        <if test="username != null  and username != ''">
-            LEFT JOIN busi_client bc on bc.IP_ADDRESS = bct.IP_ADDRESS
-        </if>
         <where>
             <if test="deviceCode != null  and deviceCode != ''"> and bct.DEVICE_CODE = #{deviceCode}</if>
             <if test="deviceName != null  and deviceName != ''"> and bct.DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
@@ -66,8 +63,19 @@
             <if test="domainPort != null "> and bct.DOMAIN_PORT = #{domainPort}</if>
             <if test="regionId != null "> and bct.REGION = #{regionId}</if>
             <if test="source != null  and source != ''"> and bct.SOURCE = #{source}</if>
-            <if test="username != null  and username != ''">and bc.username = #{username}</if>
+            --时间格式化
             <if test="startDate != null and endDate != null">bct.update_time between #{startDate} and #{endDate}</if>
+            and device_code is null
+        </where>
+    </select>
+
+    <select id="getClientTerminalByIpList" resultMap="BusiClientTerminalResult">
+        <include refid="selectBusiClientTerminalVo"/>
+        <where>
+            bct.IP_ADDRESS in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item.ipAddress}
+            </foreach>
         </where>
     </select>
 
@@ -142,14 +150,15 @@
         </trim>
         where ID = #{id}
     </update>
-    <update id="changStatus">
 
+    <update id="changStatus">
         UPDATE busi_client_terminal SET status= '0',update_time = now() WHERE ID in
         <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
-
     </update>
+
+
 
     <delete id="delete" parameterType="Long">
         delete from busi_client_terminal where ID = #{id}
