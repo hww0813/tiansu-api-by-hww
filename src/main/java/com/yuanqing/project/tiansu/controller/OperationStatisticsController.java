@@ -28,7 +28,7 @@ public class OperationStatisticsController {
 
     private Long[] actionTypes = {-1L,3L,1L};
 
-    @GetMapping(value = "/cameraRatio")
+    @GetMapping(value = "/camera")
     @ApiOperation(value = "手动摄像头使用率", httpMethod = "GET")
     public AjaxResult cameraRatio(){
         try {
