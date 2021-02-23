@@ -10,7 +10,7 @@ public interface HttpStatus
     /**
      * 操作成功
      */
-    public static final int SUCCESS = 200;
+    public static final int SUCCESS = 0;
 
     /**
      * 对象创建成功
