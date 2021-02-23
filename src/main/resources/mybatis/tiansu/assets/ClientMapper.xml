@@ -47,7 +47,7 @@
             <if test="domainPort != null "> and DOMAIN_PORT = #{domainPort}</if>
             <if test="regionId != null "> and REGION = #{regionId}</if>
             <if test="source != null  and source != ''"> and SOURCE = #{source}</if>
-            <if test="startDate != null and endDate != null">update_time between #{startDate} and #{endDate}</if>
+            <if test="startDate != null and endDate != null">update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
         </where>
     </select>
 

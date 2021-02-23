@@ -34,7 +34,7 @@
             <if test="updateTime != null "> and bcu.UPDATE_TIME = #{updateTime}</if>
             <if test="source != null  and source != ''"> and bcu.SOURCE = #{source}</if>
             <if test="ipAddress != null  and ipAddress != ''"> and bc.ip_address = #{ipAddress}</if>
-            <if test="startDate != null and endDate != null">bcu.update_time between #{startDate} and #{endDate}</if>
+            <if test="startDate != null and endDate != null">bcu.update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
         </where>
     </select>
 

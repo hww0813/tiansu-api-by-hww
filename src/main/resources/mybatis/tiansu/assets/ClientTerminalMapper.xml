@@ -48,6 +48,7 @@
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal" resultMap="BusiClientTerminalResult">
         <include refid="selectBusiClientTerminalVo"/>
         <where>
+            1=1
             <if test="deviceCode != null  and deviceCode != ''"> and bct.DEVICE_CODE = #{deviceCode}</if>
             <if test="deviceName != null  and deviceName != ''"> and bct.DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
             <if test="macAddress != null  and macAddress != ''"> and bct.MAC_ADDRESS = #{macAddress}</if>
@@ -63,9 +64,8 @@
             <if test="domainPort != null "> and bct.DOMAIN_PORT = #{domainPort}</if>
             <if test="regionId != null "> and bct.REGION = #{regionId}</if>
             <if test="source != null  and source != ''"> and bct.SOURCE = #{source}</if>
-            --时间格式化
-            <if test="startDate != null and endDate != null">bct.update_time between #{startDate} and #{endDate}</if>
-            and device_code is null
+            <if test="startDate != null and endDate != null">bct.update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+            and device_type is null
         </where>
     </select>
 

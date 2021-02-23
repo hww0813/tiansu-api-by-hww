@@ -45,7 +45,7 @@ public class ClientController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取终端列表", httpMethod = "GET")
-    public TableDataInfo getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
+    public AjaxResult getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
                                 @RequestParam(value = "deviceCode", required = false) String deviceCode,
                                 @RequestParam(value = "region[]", required = false) Integer regionId,
                                 @RequestParam(value = "status", required = false) Integer status,
@@ -82,12 +82,12 @@ public class ClientController extends BaseController {
         //用户数
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(list);
 
-        return getDataTable(dtoList);
+        return AjaxResult.success(getDataTable(dtoList,list));
     }
 
     @GetMapping("/clientList")
     @ApiOperation(value = "获取客户端列表", httpMethod = "GET")
-    public TableDataInfo getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
+    public AjaxResult getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
                                 @RequestParam(value = "deviceCode", required = false) String deviceCode,
                                 @RequestParam(value = "region[]", required = false) Integer regionId,
                                 @RequestParam(value = "status", required = false) Integer status,
@@ -105,7 +105,7 @@ public class ClientController extends BaseController {
 
         startPage();
         List<Client> list = clientService.getList(client);
-        return getDataTable(list);
+        return AjaxResult.success(getDataTable(list));
 
     }
 

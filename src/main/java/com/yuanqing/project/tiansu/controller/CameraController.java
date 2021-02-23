@@ -38,7 +38,7 @@ public class CameraController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
-    public TableDataInfo getAll(@RequestParam(value = "status", required = false) Integer status,
+    public AjaxResult getAll(@RequestParam(value = "status", required = false) Integer status,
                                 @RequestParam(value = "isGb", required = false) Integer isGb,
                                 @RequestParam(value = "deviceName", required = false) String deviceName,
                                 @RequestParam(value = "deviceDomain", required = false) String deviceDomain,
@@ -70,7 +70,8 @@ public class CameraController extends BaseController {
         startPage();
         List<Camera> getList = cameraService.getList(camera);
 
-        return getDataTable(getList);
+        AjaxResult success = AjaxResult.success(getDataTable(getList));
+        return success;
     }
 //
 //    @GetMapping("/visited/list")

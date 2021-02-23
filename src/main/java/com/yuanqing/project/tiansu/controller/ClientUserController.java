@@ -41,7 +41,7 @@ public class ClientUserController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取终端用户列表", httpMethod = "GET")
-    public TableDataInfo getAll(@RequestParam(value = "status", required = false) Integer status,
+    public AjaxResult getAll(@RequestParam(value = "status", required = false) Integer status,
                                 @RequestParam(value = "id", required = false) Long id,
                                 @RequestParam(value = "username", required = false) String username,
                                 @RequestParam(value = "ipAddress", required = false) Long ipAddress)
@@ -68,14 +68,14 @@ public class ClientUserController extends BaseController {
 
         }else{
             startPage();
-            clientUserService.getList(clientUser);
+            list = clientUserService.getList(clientUser);
         }
 
 
         //查询终端数量
         List<ClientUserDto> dtoList = clientUserService.handleClientUserTerminalNum(list);
 
-        return getDataTable(dtoList);
+        return AjaxResult.success(getDataTable(dtoList,list));
     }
 
     @DeleteMapping
