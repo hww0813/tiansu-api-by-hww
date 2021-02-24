@@ -47,13 +47,13 @@ public class Camera extends BaseCamera implements Serializable {
     /** 信令服务器ID */
     private Long sipServerId;
 
-    /** 审计 */
+    /** 审计 0或1*/
     private String isProbe;
 
-    /** 是否导入 */
+    /** 是否导入 0或1*/
     private String isImport;
 
-    /** 是否确认不是服务器 */
+    /** 是否确认不是服务器 0或1*/
     private Long isCheck;
 
     /** 是否国标 */

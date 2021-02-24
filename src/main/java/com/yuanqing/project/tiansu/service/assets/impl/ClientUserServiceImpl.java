@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientTerminalDto;
@@ -15,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -50,13 +52,13 @@ public class ClientUserServiceImpl implements IClientUserService {
     }
 
     @Override
-    public List<ClientUserDto> handleClientUserTerminalNum(List<ClientUser> list) {
+    public List<ClientUserDto> handleClientUserTerminalNum(List<ClientUser> clientUserList) {
 
-        if(list.size()<1){
+        if(CollectionUtils.isEmpty(clientUserList)){
             throw new CustomException("没有查询到结果");
         }
         //提取集合用户名
-        List<String> usernameList = list.stream().map(f -> f.getUsername()).collect(Collectors.toList());
+        List<String> usernameList = clientUserList.stream().map(f -> f.getUsername()).collect(Collectors.toList());
 
         List<JSONObject> originalTerminalNum = clientMapper.getTerminalNumByUserName(usernameList);
 
@@ -66,10 +68,10 @@ public class ClientUserServiceImpl implements IClientUserService {
 
         List<ClientUserDto> dtoList = new ArrayList<>();
 
-        list.stream().forEach(f -> {
+        clientUserList.stream().forEach(f -> {
             ClientUserDto dto = doBackward(f);
             Integer cnt = map.get(f.getUsername());
-            dto.setTerminalCnt(cnt==null?0:cnt);
+            dto.setTerminalCnt(cnt == null ? 0 : cnt);
             dtoList.add(dto);
         });
         return dtoList;
@@ -94,6 +96,15 @@ public class ClientUserServiceImpl implements IClientUserService {
     public List<ClientUser> getActiveClientUser() {
         ClientUser clientUser = (ClientUser) DateUtils.getDayTime(ClientUser.class);
         return clientUserMapper.getList(clientUser);
+    }
+
+    @Override
+    public List<ClientUser> getClientUserByUsername(List<Client> clientList) {
+        List<ClientUser> clientUserList = null;
+        if(!CollectionUtils.isEmpty(clientList)){
+            clientUserList = clientUserMapper.getClientUserByUsername(clientList);
+        }
+        return clientUserList;
     }
 
     @Override

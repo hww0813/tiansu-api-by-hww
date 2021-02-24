@@ -5,10 +5,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -253,6 +252,12 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return filters;
     }
 
+
+    /**
+     * 00：00：00-23：59：59
+     * @param clazz
+     * @return
+     */
     public static Object getDayTime(Class clazz){
         Object o;
         Field startDate;
@@ -285,5 +290,81 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return null;
     }
 
+    public static Date localDateToDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
 
+    public static Date localDateTimeToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone( ZoneId.systemDefault()).toInstant());
+    }
+
+
+    public static Date strLocalDateTimeToDate(String localDateTime) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime time = LocalDateTime.parse(localDateTime, fmt);
+        return Date.from(time.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+
+
+
+
+
+    public static Date getNowDateToLocal()
+    {
+        LocalDate today = LocalDate.now();
+        return localDateToDate(today);
+    }
+    public static Date getNextDay(){
+        LocalDate today = LocalDate.now().plusDays(1);
+        return  localDateToDate(today);
+    }
+
+
+    /**
+     * @author: dongchao
+     * @create: 2021/2/4-17:20
+     * @description: 获取本周周一
+     * @param:
+     * @return:
+     */
+    public static Date getNowMonday(){
+        LocalDate today = LocalDate.now();
+        return  localDateToDate(today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)));
+    }
+
+
+
+    /**
+     * @author: dongchao
+     * @create: 2021/2/4-17:20
+     * @description: 获取下周一
+     * @param:
+     * @return:
+     */
+    public static Date getNowSunday(){
+        LocalDate today = LocalDate.now();
+        return  localDateToDate(today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).plusDays(1));
+    }
+
+
+    public static Date getNowMonthOneDay(){
+        LocalDate today = LocalDate.now();
+        return  localDateToDate(today.with(TemporalAdjusters.firstDayOfMonth()));
+    }
+
+    public static Date getNowMonthLastDay(){
+        LocalDate today = LocalDate.now();
+        return  localDateToDate(today.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()));
+    }
+
+
+
+    public static void main(String[] args) {
+        System.out.println(getNowMonday());
+        System.out.println(getNowSunday());
+        System.out.println(getNowMonthOneDay());
+        System.out.println(getNowMonthLastDay());
+
+    }
 }

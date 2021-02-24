@@ -35,7 +35,7 @@
             <if test="deviceName != null  and deviceName != ''"> and DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
             <if test="macAddress != null  and macAddress != ''"> and MAC_ADDRESS = #{macAddress}</if>
             <if test="status != null  and status != ''"> and STATUS = #{status}</if>
-            <if test="username != null  and username != ''"> and USERNAME like concat('%', #{username}, '%')</if>
+            <if test="username != null  and username != ''"> and USERNAME = #{username}</if>
             <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
             <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
             <if test="ipAddress != null "> and IP_ADDRESS = #{ipAddress}</if>
@@ -47,7 +47,7 @@
             <if test="domainPort != null "> and DOMAIN_PORT = #{domainPort}</if>
             <if test="regionId != null "> and REGION = #{regionId}</if>
             <if test="source != null  and source != ''"> and SOURCE = #{source}</if>
-            <if test="startDate != null and endDate != null">update_time between #{startDate} and #{endDate}</if>
+            <if test="startDate != null and endDate != null">update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
         </where>
     </select>
 

@@ -7,6 +7,7 @@ import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientTerminalDto;
@@ -18,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -88,18 +90,20 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         return list;
     }
 
-    @Override
-    public List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> list) {
 
-        if(list.size()<1){
+    //TODO:每一步进行判空
+    @Override
+    public List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> clientTerminalList) {
+
+        if(CollectionUtils.isEmpty(clientTerminalList)){
             throw new CustomException("没有查询到结果");
         }
 
         //提取集合IP
-        List<Long> collect = list.stream().map(f -> f.getIpAddress()).collect(Collectors.toList());
+        List<Long> ipList = clientTerminalList.stream().map(f -> f.getIpAddress()).collect(Collectors.toList());
 
-        //获取IP对应的用户数
-        List<JSONObject> originalUserNum = clientMapper.getUserNumByTerminal(collect);
+        //获取IP 对应的用户数
+        List<JSONObject> originalUserNum = clientMapper.getUserNumByTerminal(ipList);
 
         Map<Long,Integer> map = new HashMap<>();
 
@@ -109,13 +113,22 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         //将带有用户数的信息转换为dto
         List<ClientTerminalDto> dtoList = new ArrayList<>();
 
-        list.stream().forEach(f -> {
+        clientTerminalList.stream().forEach(f -> {
             ClientTerminalDto dto = doBackward(f);
             Integer cnt = map.get(f.getIpAddress());
-            dto.setUserCnt(cnt==null?0:cnt);
+            dto.setUserCnt(cnt == null ? 0 : cnt);
             dtoList.add(dto);
         });
         return dtoList;
+    }
+
+    @Override
+    public List<ClientTerminal> getTerminalByIpList(List<Client> ipList) {
+        List<ClientTerminal> list = null;
+        if(!CollectionUtils.isEmpty(ipList)){
+             list = clientTerminalMapper.getClientTerminalByIpList(ipList);
+        }
+        return list;
     }
 
 

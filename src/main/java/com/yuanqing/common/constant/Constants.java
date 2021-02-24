@@ -204,4 +204,22 @@ public class Constants
     public static final String CLIENT = "ts:Client";
     public static final String CAMERA = "ts:Camera";
     public static final String CLIENT_TERMINAL = "ts:ClientTerminal";
+
+
+    //定时任务种类
+    /** 摄像头被访问 -天 */
+    public static final String VISIT_CAMERA_ONE_DAY = "VISIT_CAMERA_ONE_DAY";
+    /** 摄像头被访问 -周 */
+    public static final String VISIT_CAMERA_ONE_WEEK = "VISIT_CAMERA_ONE_WEEK";
+    /** 摄像头被访问 -月 */
+    public static final String VISIT_CAMERA_ONE_MONTH = "VISIT_CAMERA_ONE_MONTH";
+
+    /** 摄像头被访问 -天 */
+    public static final String PTZ_VISIT_CAMERA_ONE_DAY =  "PTZ_VISIT_CAMERA_ONE_DAY";
+    /** 摄像头被访问 -周 */
+    public static final String PTZ_VISIT_CAMERA_ONE_WEEK = "PTZ_VISIT_CAMERA_ONE_WEEK";
+    /** 摄像头被访问 -月 */
+    public static final String PTZ_VISIT_CAMERA_ONE_MONTH = "PTZ_VISIT_CAMERA_ONE_MONTH";
+
+
 }

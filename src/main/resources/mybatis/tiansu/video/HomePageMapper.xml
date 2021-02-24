@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanqing.project.tiansu.mapper.video.HomePageMapper" >
+  <sql id="Base_Column_List" >
+    ID, TYPE, NAME, ORDER_VALUE, DESP, VALUE, DEFAULT_VALUE, VISIBLE, CREATE_TIME
+  </sql>
+
+
+
+  <select id="getCameraStatisticsByTime"  resultType="com.yuanqing.project.tiansu.domain.video.CameraStatistics">
+      SELECT   bs.`dst_code` AS cameraCode , COUNT(DISTINCT bs.`src_ip`) AS clientCnt , COUNT(DISTINCT bs.`username`) AS userName ,SUM(bs.`count`) AS visitedCnt
+      ,bc.`DEVICE_NAME` AS cameraName ,bc.ip_address AS cameraIp ,bc.`ID` AS cameraId ,br.name AS cameraRegion
+      FROM busi_statistics bs
+      LEFT JOIN busi_camera bc ON bc.`DEVICE_CODE` = bs.`dst_code`
+      LEFT JOIN busi_region br ON bc.region = br.id
+      WHERE bs.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+      <if test="action !=null and action != 1" >
+          and bs.action = #{action}
+      </if>
+      <if test="action !=null and action == 1" >
+          and (bs.action = 1 or bs.action =2)
+      </if>
+      GROUP BY bs.`dst_code`
+      <if test="ascFlag != null " >
+          order by visitedCnt asc
+      </if>
+      <if test="ascFlag == null" >
+          order by visitedCnt desc
+      </if>
+      limit #{size}
+  </select>
+
+    <select id="getClinetStatisticsByTime" resultType="com.alibaba.fastjson.JSONObject" parameterType="com.yuanqing.project.tiansu.domain.video.StatisticsSearch">
+        SELECT COUNT(DISTINCT bs.`username`)AS USERNAME , COUNT(DISTINCT bs.dst_code) AS CAMERA_CNT, bs.`src_ip` AS CLIENT_IP ,
+        SUM(bs.`count`) AS VISIT_CNT
+        FROM busi_statistics bs
+         WHERE bs.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+        <if test="action !=null and action != 1" >
+            and bs.action = #{action}
+        </if>
+        <if test="action !=null and action == 1" >
+            and (bs.action = 1 or bs.action =2)
+        </if>
+        GROUP BY bs.`src_ip`
+        <if test="ascFlag != null " >
+            order by VISIT_CNT asc
+        </if>
+        <if test="ascFlag == null" >
+            order by VISIT_CNT desc
+        </if>
+        limit #{size}
+    </select>
+
+
+    <select id="getUserStatisticsByTime" resultType="com.alibaba.fastjson.JSONObject"
+            parameterType="com.yuanqing.project.tiansu.domain.video.StatisticsSearch">
+        SELECT   bs.`username` AS USERNAME, COUNT(DISTINCT bs.`src_ip`) AS CLIENT_CNT , COUNT(DISTINCT bs.`dst_code`) AS CAMERA_ID,
+        SUM(bs.`count`) AS VISIT_CNT
+        FROM busi_statistics bs
+        WHERE bs.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+        <if test="action !=null and action != 1" >
+            and bs.action = #{action}
+        </if>
+        <if test="action !=null and action == 1" >
+            and (bs.action = 1 or bs.action =2)
+        </if>
+        GROUP BY bs.`username`
+        <if test="ascFlag != null " >
+            order by VISIT_CNT asc
+        </if>
+        <if test="ascFlag == null" >
+            order by VISIT_CNT desc
+        </if>
+
+        limit #{size}
+
+    </select>
+
+
+</mapper>
