@@ -32,11 +32,12 @@ public interface IServerTreeService extends BaseService<ServerTree,Long> {
 
 
     /**
-     * 获取服务器会话列表
-     * @param filters 过滤
-     * @return 返回列表集合
+     * 根据服务器IP集合 获取服务器列表
+     * @param serverTree 过滤
+     * @param serverIpList 服务器IP集合
+     * @return 返回服务器列表
      */
-    List<ServerTree> getSessionServerList(JSONObject filters);
+    List<ServerTree> getSessionServerList(ServerTree serverTree,List<Long> serverIpList);
 
     /**
      * 读取excel中的数据,生成list

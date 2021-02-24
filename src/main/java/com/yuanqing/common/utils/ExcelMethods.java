@@ -1,6 +1,7 @@
 package com.yuanqing.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.enums.DeviceType;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.Client;
@@ -306,7 +307,7 @@ public class ExcelMethods {
             cell.setCellStyle(cellStyle);
 
             cell = row.createCell(4);
-            cell.setCellValue(entity.getServerType().getLabel());
+            cell.setCellValue(DeviceType.getLabelByValue(entity.getServerType()));
             cell.setCellStyle(cellStyle);
 
             rowIndex++;

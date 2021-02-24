@@ -21,20 +21,26 @@ import java.util.List;
 @Repository
 public interface OperationBehaviorMapper  {
 
-    public List<OperationBehavior> queryOperationBehaviorList(OperationBehavior qperationBehavior);
+     List<OperationBehavior> queryOperationBehaviorList(OperationBehavior operationBehavior);
 
-    public List<Long> getCameraidListBySession(Long sessionId);
+     List<Long> getCameraidListBySession(Long sessionId);
 
-    public Integer quertyOperationBehaviorCount(OperationBehavior qperationBehavior);
+     Integer quertyOperationBehaviorCount(OperationBehavior operationBehavior);
 
-    public List<OperationBehavior> getRealTimeBehaviorList(OperationBehaviorSearch operationBehaviorSearch);
+     List<OperationBehavior> getRealTimeBehaviorList(OperationBehaviorSearch operationBehaviorSearch);
 
-    public int updateOperationBehavior(OperationBehavior operationBehavior);
+     int updateOperationBehavior(OperationBehavior operationBehavior);
 
-    List<HashMap> cameraAnalysisDetail(JSONObject filters);
+     List<HashMap> cameraAnalysisDetail(JSONObject filters);
 
-    Integer cameraAnalysisCount(JSONObject filters);
+     Integer cameraAnalysisCount(JSONObject filters);
 
-    Integer queryRawCount(Object object);
+     Integer queryRawCount(Object object);
 
+        /**
+         * 根据sessionID 查询dstIP
+         * @param sessionId
+         * @return
+                 */
+      List<Long> getDstIpBySessionId(Long sessionId);
 }

@@ -35,7 +35,7 @@ public class ServerTree extends BaseEntity {
     private String serverMac;
 
     /** 服务器类型 */
-    private DeviceType serverType;
+    private String serverType;
 
     /** 是否开启远程审计 */
     private String isRangAudit;

@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.yuanqing</groupId>
-	<artifactId>yuanqing</artifactId>
+	<artifactId>tiansu-api</artifactId>
 	<version>2.2.0</version>
 	<packaging>jar</packaging>
 
-	<name>yuanqing</name>
+	<name>tiansu-api</name>
 	<url>http://www.yuanqing.com</url>
 	<description>元清</description>
 

@@ -31,4 +31,13 @@ public interface ServerTreeMapper extends BaseMapper<ServerTree,Long> {
     Long findId ();
 
     public void insertServerTree(ServerTree serverTree);
+
+    /**
+     * 批量根据serverIpList 查询服务器表
+     * @param serverIpList
+     * @param serverTree 过滤条件
+     * @return
+     */
+    List<ServerTree> getServerByServerIpList(@Param("list") List<Long> serverIpList,
+                                             @Param("server") ServerTree serverTree);
 }

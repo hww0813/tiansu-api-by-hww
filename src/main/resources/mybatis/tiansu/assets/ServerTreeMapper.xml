@@ -1,226 +1,162 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yuanqing.project.tiansu.mapper.assets.ServerTreeMapper">
 
-    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.assets.ServerTree">
-        <id column="ID" property="id" jdbcType="BIGINT"/>
-        <result column="SERVER_CODE" property="serverCode" jdbcType="VARCHAR"/>
-        <result column="SERVER_NAME" property="serverName" jdbcType="VARCHAR"/>
-        <result column="SERVER_DOMAIN" property="serverDomain" jdbcType="VARCHAR"/>
-        <result column="SERVER_IP" property="serverIp" jdbcType="BIGINT"/>
-        <result column="SERVER_PORT" property="serverPort" jdbcType="BIGINT"/>
-        <result column="SERVER_MAC" property="serverMac" jdbcType="VARCHAR"/>
-        <result column="SERVER_TYPE" property="serverType" jdbcType="INTEGER"
-                typeHandler="com.yuanqing.common.handle.DefaultEnumTypeHandler"/>
-        <result column="IS_RANG_AUDIT" property="isRangAudit" jdbcType="VARCHAR"/>
-        <result column="RANG_AUDIT_PORT" property="rangAuditPort" jdbcType="VARCHAR"/>
-        <result column="IS_SSH_AUDIT" property="isSshAudit" jdbcType="VARCHAR"/>
-        <result column="SSH_AUDIT_PORT" property="sshAuditPort" jdbcType="VARCHAR"/>
-        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
-        <result column="PARENT_ID" property="parentId" jdbcType="BIGINT"/>
-        <result column="IS_DELETE" property="isDelete" jdbcType="BIGINT"/>
+    <resultMap type="com.yuanqing.project.tiansu.domain.assets.ServerTree" id="BusiServerResult">
+        <result property="id"    column="ID"    />
+        <result property="serverCode"    column="SERVER_CODE"    />
+        <result property="serverName"    column="SERVER_NAME"    />
+        <result property="serverDomain"    column="SERVER_DOMAIN"    />
+        <result property="serverIp"    column="SERVER_IP"    />
+        <result property="serverPort"    column="SERVER_PORT"    />
+        <result property="serverMac"    column="SERVER_MAC"    />
+        <result property="serverType"    column="SERVER_TYPE"    />
+        <result property="isRangAudit"    column="IS_RANG_AUDIT"    />
+        <result property="rangAuditPort"    column="RANG_AUDIT_PORT"    />
+        <result property="isSshAudit"    column="IS_SSH_AUDIT"    />
+        <result property="sshAuditPort"    column="SSH_AUDIT_PORT"    />
+        <result property="createndDate"    column="CREATE_TIME"    />
+        <result property="updatendDate"    column="UPDATE_TIME"    />
+        <result property="parentId"    column="PARENT_ID"    />
+        <result property="isDelete"    column="IS_DELETE"    />
     </resultMap>
 
-    <select id="getAll" resultMap="resultMap">
-        SELECT u.ID,
-        u.SERVER_CODE,
-        u.SERVER_NAME,
-        u.SERVER_DOMAIN,
-        u.SERVER_IP,
-        u.SERVER_PORT,
-        u.SERVER_MAC,
-        u.SERVER_TYPE,
-        u.IS_RANG_AUDIT,
-        u.RANG_AUDIT_PORT,
-        u.IS_SSH_AUDIT,
-        u.SSH_AUDIT_PORT,
-        u.CREATE_TIME,
-        u.UPDATE_TIME,
-        u.PARENT_ID
-        FROM BUSI_SERVER u
-        WHERE 1=1
-        <if test="serverCode != null and serverCode != ''">
-            AND u.SERVER_CODE like '%' || #{serverCode} || '%'
-        </if>
-        <if test="serverDomain != null and serverDomain != ''">
-            AND u.SERVER_DOMAIN like '%' || #{serverDomain} || '%'
-        </if>
-        <if test="serverIp != null and serverIp != ''">
-            AND u.SERVER_IP = #{serverIp}
-        </if>
-        <if test="serverTypeValue != null and serverTypeValue != ''">
-            and u.SERVER_TYPE = #{serverTypeValue}
-        </if>
-        <if test="isDelete != null and isDelete != ''">
-            and u.IS_DELETE = #{isDelete}
-        </if>
-        ORDER BY UPDATE_TIME DESC
-    </select>
-
-    <select id="getAllDate" resultMap="resultMap">
-        SELECT * FROM BUSI_SERVER
-    </select>
-
-    <select id="findById" parameterType="Long" resultMap="resultMap">
+    <sql id="selectBusiServerVo">
         SELECT
-            u.*
-        FROM BUSI_SERVER u
-        WHERE u.ID = #{id}
-    </select>
+            ID,
+            SERVER_CODE,
+            SERVER_NAME,
+            SERVER_DOMAIN,
+            SERVER_IP,
+            SERVER_PORT,
+            SERVER_MAC,
+            SERVER_TYPE,
+            IS_RANG_AUDIT,
+            RANG_AUDIT_PORT,
+            IS_SSH_AUDIT,
+            SSH_AUDIT_PORT,
+            CREATE_TIME,
+            UPDATE_TIME,
+            PARENT_ID,
+            IS_DELETE
+        FROM
+            busi_server
+    </sql>
 
-    <select id="findByServerCode" parameterType="String" resultMap="resultMap">
-        SELECT
-            u.*
-        FROM BUSI_SERVER u
-        WHERE u.SERVER_CODE = #{serverCode}
-    </select>
-
-    <select id="findOne" resultMap="resultMap">
-        SELECT
-        u.*
-        FROM BUSI_SERVER u
+    <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ServerTree" resultMap="BusiServerResult">
+        <include refid="selectBusiServerVo"/>
         <where>
-            u.SERVER_IP = #{serverIp}
+            <if test="serverCode != null  and serverCode != ''"> and SERVER_CODE = #{serverCode}</if>
+            <if test="serverName != null  and serverName != ''"> and SERVER_NAME like concat('%', #{serverName}, '%')</if>
+            <if test="serverDomain != null  and serverDomain != ''"> and SERVER_DOMAIN = #{serverDomain}</if>
+            <if test="serverIp != null "> and SERVER_IP = #{serverIp}</if>
+            <if test="serverPort != null "> and SERVER_PORT = #{serverPort}</if>
+            <if test="serverMac != null  and serverMac != ''"> and SERVER_MAC = #{serverMac}</if>
+            <if test="serverType != null  and serverType != ''"> and SERVER_TYPE = #{serverType}</if>
+            <if test="isRangAudit != null  and isRangAudit != ''"> and IS_RANG_AUDIT = #{isRangAudit}</if>
+            <if test="rangAuditPort != null  and rangAuditPort != ''"> and RANG_AUDIT_PORT = #{rangAuditPort}</if>
+            <if test="isSshAudit != null  and isSshAudit != ''"> and IS_SSH_AUDIT = #{isSshAudit}</if>
+            <if test="sshAuditPort != null  and sshAuditPort != ''"> and SSH_AUDIT_PORT = #{sshAuditPort}</if>
+            <if test="startDate != null and endDate != null">update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+            <if test="parentId != null "> and PARENT_ID = #{parentId}</if>
+            <if test="isDelete != null "> and IS_DELETE = #{isDelete}</if>
         </where>
     </select>
 
-    <select id="findId" resultType="java.lang.Long" useCache="false" flushCache="true">
-        SELECT SQ_BUSI_SERVER_ID.nextval from dual
+    <select id="findById" parameterType="Long" resultMap="BusiServerResult">
+        <include refid="selectBusiServerVo"/>
+        where ID = #{id}
     </select>
 
-    <insert id="insertServerTree" parameterType="com.yuanqing.project.tiansu.domain.assets.ServerTree">
-        INSERT INTO BUSI_SERVER (ID, SERVER_CODE, SERVER_NAME, SERVER_DOMAIN, SERVER_IP,
-        SERVER_PORT, SERVER_MAC, SERVER_TYPE,IS_RANG_AUDIT,RANG_AUDIT_PORT,
-        IS_SSH_AUDIT,SSH_AUDIT_PORT,CREATE_TIME,UPDATE_TIME,PARENT_ID,IS_DELETE)
-        VALUES (
-        #{id},
-        #{serverCode, jdbcType=VARCHAR},
-        #{serverName, jdbcType=VARCHAR},
-        #{serverDomain, jdbcType=VARCHAR},
-        #{serverIp, jdbcType=BIGINT},
-        #{serverPort, jdbcType=BIGINT},
-        #{serverMac, jdbcType=VARCHAR},
-        #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
-        #{isRangAudit, jdbcType=VARCHAR},
-        #{rangAuditPort, jdbcType=VARCHAR},
-        #{isSshAudit, jdbcType=VARCHAR},
-        #{sshAuditPort, jdbcType=VARCHAR},
-        sysdate,
-        sysdate,
-        #{parentId, jdbcType=BIGINT},
-        1
-        )
-    </insert>
+    <select id="getServerByServerIpList" resultMap="BusiServerResult">
+        <include refid="selectBusiServerVo"/>
+        <where>
+            SERVER_IP in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="server.startDate != null and server.startDate != ''">
+                AND update_time >= STR_TO_DATE(#{server.startDate}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="server.endDate != null and server.endDate != ''">
+                AND update_time &lt;= STR_TO_DATE(#{server.endDate}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="server.serverCode != null and server.serverCode != ''">
+                AND SERVER_CODE = #{server.serverCode}
+            </if>
+            <if test="server.serverIp != null and server.serverIp != ''">
+                AND SERVER_IP = #{server.serverIp}
+            </if>
+        </where>
 
-    <insert id="insert" parameterType="ServerTree">
-        <selectKey resultType="long" order="BEFORE" keyProperty="id">
-            SELECT SQ_BUSI_SERVER_ID.nextval AS id from dual
-        </selectKey>
-        INSERT INTO BUSI_SERVER (ID, SERVER_CODE, SERVER_NAME, SERVER_DOMAIN, SERVER_IP,
-        SERVER_PORT, SERVER_MAC, SERVER_TYPE,IS_RANG_AUDIT,RANG_AUDIT_PORT,
-        IS_SSH_AUDIT,SSH_AUDIT_PORT,CREATE_TIME,UPDATE_TIME,PARENT_ID,IS_DELETE)
-        VALUES (
-        #{id},
-        #{serverCode, jdbcType=VARCHAR},
-        #{serverName, jdbcType=VARCHAR},
-        #{serverDomain, jdbcType=VARCHAR},
-        #{serverIp, jdbcType=BIGINT},
-        #{serverPort, jdbcType=BIGINT},
-        #{serverMac, jdbcType=VARCHAR},
-        #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
-        #{isRangAudit, jdbcType=VARCHAR},
-        #{rangAuditPort, jdbcType=VARCHAR},
-        #{isSshAudit, jdbcType=VARCHAR},
-        #{sshAuditPort, jdbcType=VARCHAR},
-        sysdate,
-        sysdate,
-        #{parentId, jdbcType=BIGINT},
-        1
-        )
-    </insert>
-
-    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
-        <selectKey resultType="long" keyProperty="id" order="BEFORE">
-            SELECT SQ_BUSI_SERVER_ID.nextval FROM DUAL
-        </selectKey>
-        INSERT INTO BUSI_SERVER(ID, SERVER_CODE, SERVER_NAME, SERVER_DOMAIN, SERVER_IP,
-        SERVER_PORT, SERVER_MAC, SERVER_TYPE,IS_RANG_AUDIT,RANG_AUDIT_PORT,
-        IS_SSH_AUDIT,SSH_AUDIT_PORT,CREATE_TIME,UPDATE_TIME,PARENT_ID,IS_DELETE)
-        SELECT SQ_BUSI_SERVER_ID.NEXTVAL, A.* FROM (
-        <foreach item="item" index="index" collection="list" separator="UNION ALL">
-            SELECT
-            #{item.serverCode, jdbcType=VARCHAR} as SERVER_CODE,
-            #{item.serverName, jdbcType=VARCHAR} as SERVER_NAME,
-            #{item.serverDomain, jdbcType=VARCHAR} as SERVER_DOMAIN,
-            #{item.serverIp, jdbcType=BIGINT} as SERVER_IP,
-            #{item.serverPort, jdbcType=BIGINT} as SERVER_PORT,
-            #{item.serverMac, jdbcType=VARCHAR} as SERVER_MAC,
-            #{item.serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler} as
-            SERVER_TYPE,
-            #{item.isRangAudit, jdbcType=VARCHAR} as IS_RANG_AUDIT,
-            #{item.rangAuditPort, jdbcType=VARCHAR} as RANG_AUDIT_PORT,
-            #{item.isSshAudit, jdbcType=VARCHAR} as IS_SSH_AUDIT,
-            #{item.sshAuditPort, jdbcType=VARCHAR} as SSH_AUDIT_PORT,
-            sysdate as CREATE_TIME,
-            sysdate as UPDATE_TIME,
-            #{item.parentId, jdbcType=BIGINT} as PARENT_ID,
-            1 as IS_DELETE
-            FROM dual
-        </foreach>
-        ) A
-    </insert>
-
-    <update id="update" parameterType="ServerTree">
-        UPDATE BUSI_SERVER
-        SET
-            SERVER_CODE    = #{serverCode, jdbcType=VARCHAR},
-            SERVER_NAME    = #{serverName, jdbcType=VARCHAR},
-            SERVER_DOMAIN  = #{serverDomain, jdbcType=VARCHAR},
-            SERVER_IP      = #{serverIp, jdbcType=BIGINT},
-            SERVER_PORT    = #{serverPort, jdbcType=BIGINT},
-            SERVER_MAC     = #{serverMac, jdbcType=VARCHAR},
-            SERVER_TYPE    = #{serverType, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
-            IS_RANG_AUDIT  = #{isRangAudit, jdbcType=VARCHAR},
-            RANG_AUDIT_PORT= #{rangAuditPort, jdbcType=VARCHAR},
-            IS_SSH_AUDIT   = #{isSshAudit, jdbcType=VARCHAR},
-            SSH_AUDIT_PORT = #{sshAuditPort, jdbcType=VARCHAR},
-            UPDATE_TIME    = sysdate,
-            PARENT_ID      = #{parentId, jdbcType=BIGINT}
-        WHERE id = #{id}
-    </update>
-
-    <update id="delete" parameterType="long">
-        UPDATE BUSI_SERVER
-        SET
-            IS_DELETE    = 2
-        WHERE  id = #{id}
-    </update>
-
-    <select id="getSessionServerList" resultMap="resultMap">
-        select
-        bs.*
-        from
-        busi_server bs
-        right join
-        (select DISTINCT dst_ip from v_busi_oper where session_id = #{sessionId}) si
-        on
-        si.dst_ip = bs.server_ip
-        where 1 = 1
-        <if test="stime != null and stime != ''">
-            AND bs.create_time >= to_date(#{stime}, 'YYYY-MM-DD"T"HH24:MI:SS')
-        </if>
-        <if test="etime != null and etime != ''">
-            AND bs.create_time &lt;= to_date(#{etime}, 'YYYY-MM-DD"T"HH24:MI:SS')
-        </if>
-        <if test="serverCode != null and serverCode != ''">
-
-            AND bs.SERVER_CODE = #{serverCode}
-        </if>
-        <if test="serverIp != null and serverIp != ''">
-            AND int2ip(bs.SERVER_IP) = #{serverIp}
-        </if>
     </select>
+
+    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ServerTree">
+        insert into busi_server
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">ID,</if>
+            <if test="serverCode != null  and serverCode != ''">SERVER_CODE,</if>
+            <if test="serverName != null  and serverName != ''">SERVER_NAME,</if>
+            <if test="serverDomain != null  and serverDomain != ''">SERVER_DOMAIN,</if>
+            <if test="serverIp != null ">SERVER_IP,</if>
+            <if test="serverPort != null ">SERVER_PORT,</if>
+            <if test="serverMac != null  and serverMac != ''">SERVER_MAC,</if>
+            <if test="serverType != null  and serverType != ''">SERVER_TYPE,</if>
+            <if test="isRangAudit != null  and isRangAudit != ''">IS_RANG_AUDIT,</if>
+            <if test="rangAuditPort != null  and rangAuditPort != ''">RANG_AUDIT_PORT,</if>
+            <if test="isSshAudit != null  and isSshAudit != ''">IS_SSH_AUDIT,</if>
+            <if test="sshAuditPort != null  and sshAuditPort != ''">SSH_AUDIT_PORT,</if>
+            CREATE_TIME,
+            UPDATE_TIME,
+            <if test="parentId != null ">PARENT_ID,</if>
+            <if test="isDelete != null ">IS_DELETE,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="serverCode != null  and serverCode != ''">#{serverCode},</if>
+            <if test="serverName != null  and serverName != ''">#{serverName},</if>
+            <if test="serverDomain != null  and serverDomain != ''">#{serverDomain},</if>
+            <if test="serverIp != null ">#{serverIp},</if>
+            <if test="serverPort != null ">#{serverPort},</if>
+            <if test="serverMac != null  and serverMac != ''">#{serverMac},</if>
+            <if test="serverType != null  and serverType != ''">#{serverType},</if>
+            <if test="isRangAudit != null  and isRangAudit != ''">#{isRangAudit},</if>
+            <if test="rangAuditPort != null  and rangAuditPort != ''">#{rangAuditPort},</if>
+            <if test="isSshAudit != null  and isSshAudit != ''">#{isSshAudit},</if>
+            <if test="sshAuditPort != null  and sshAuditPort != ''">#{sshAuditPort},</if>
+            now(),
+            now(),
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="isDelete != null ">#{isDelete},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.assets.ServerTree">
+        update busi_server
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="serverCode != null  and serverCode != ''">SERVER_CODE = #{serverCode},</if>
+            <if test="serverName != null  and serverName != ''">SERVER_NAME = #{serverName},</if>
+            <if test="serverDomain != null  and serverDomain != ''">SERVER_DOMAIN = #{serverDomain},</if>
+            <if test="serverIp != null ">SERVER_IP = #{serverIp},</if>
+            <if test="serverPort != null ">SERVER_PORT = #{serverPort},</if>
+            <if test="serverMac != null  and serverMac != ''">SERVER_MAC = #{serverMac},</if>
+            <if test="serverType != null  and serverType != ''">SERVER_TYPE = #{serverType},</if>
+            <if test="isRangAudit != null  and isRangAudit != ''">IS_RANG_AUDIT = #{isRangAudit},</if>
+            <if test="rangAuditPort != null  and rangAuditPort != ''">RANG_AUDIT_PORT = #{rangAuditPort},</if>
+            <if test="isSshAudit != null  and isSshAudit != ''">IS_SSH_AUDIT = #{isSshAudit},</if>
+            <if test="sshAuditPort != null  and sshAuditPort != ''">SSH_AUDIT_PORT = #{sshAuditPort},</if>
+            UPDATE_TIME = now(),
+            <if test="parentId != null ">PARENT_ID = #{parentId},</if>
+            <if test="isDelete != null ">IS_DELETE = #{isDelete},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <update id="delete" parameterType="Long">
+        update busi_server set is_del = 0 where ID = #{id}
+    </update>
 
 
 </mapper>

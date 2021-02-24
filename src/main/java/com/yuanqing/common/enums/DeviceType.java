@@ -25,4 +25,15 @@ public enum DeviceType implements BaseEnum {
         this.label = label;
         this.value = value;
     }
+
+    public static String getLabelByValue(String value){
+        int v = Integer.parseInt(value);
+        for (DeviceType deviceType : DeviceType.values()) {
+            if(deviceType.value.equals(v)){
+                return deviceType.label;
+            }
+        }
+        return "未知类型";
+    }
+
 }

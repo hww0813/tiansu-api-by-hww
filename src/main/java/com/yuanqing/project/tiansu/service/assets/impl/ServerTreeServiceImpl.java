@@ -12,12 +12,16 @@ import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
+import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ServerTreeMapper;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -34,11 +38,16 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ServerTreeServiceImpl implements IServerTreeService {
 
-    @Autowired
-    private ClientMapper clientMapper;
+        private static final Logger log = LoggerFactory.getLogger(ServerTreeServiceImpl.class);
 
-    @Autowired
-    private ClientTerminalMapper clientTerminalMapper;
+        @Autowired
+        private ClientMapper clientMapper;
+
+        @Autowired
+        private ClientTerminalMapper clientTerminalMapper;
+
+        @Autowired
+        private OperationBehaviorMapper operationBehaviorMapper;
 
         @Autowired
         private ServerTreeMapper serverTreeMapper;
@@ -58,13 +67,21 @@ public class ServerTreeServiceImpl implements IServerTreeService {
             return null;
         }
 
+
+
         @Override
-        public List<ServerTree> getSessionServerList(JSONObject filters) {
+        public List<ServerTree> getSessionServerList(ServerTree serverTree,List<Long> serverIpList) {
 
-            List<ServerTree> list = serverTreeMapper.getSessionServerList(filters);
+            if(CollectionUtils.isEmpty(serverIpList)){
+                log.error("服务器IP集合为空");
+                return null;
+            }
+            List<ServerTree> sessionServerList = serverTreeMapper.getServerByServerIpList(serverIpList,serverTree);
 
-            return list.stream().filter(f -> f != null).collect(Collectors.toList());
+            return sessionServerList;
         }
+
+
 
         @Override
         public String readExcelFile(MultipartFile file) {
