@@ -1,11 +1,8 @@
 package com.yuanqing.project.tiansu.service.assets;
 
-import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.ExternalDevice;
-import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;

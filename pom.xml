@@ -32,12 +32,13 @@
 		<bitwalker.version>1.19</bitwalker.version>
 		<jwt.version>0.9.0</jwt.version>
 		<swagger.version>2.9.2</swagger.version>
-		<poi.version>3.17</poi.version>
+		<poi.version>3.15</poi.version>
 		<oshi.version>3.9.1</oshi.version>
 		<velocity.version>1.7</velocity.version>
 		<lombok.version>1.16.18</lombok.version>
 		<j2cache.springboot.version>2.7.0-release</j2cache.springboot.version>
 		<j2cache.core.version>2.7.0-release</j2cache.core.version>
+		<jasperreports.version>6.5.0</jasperreports.version>
 	</properties>
 
 	<dependencies>
@@ -278,6 +279,34 @@
 					<artifactId>c3p0</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<!-- 报表 -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>${jasperreports.version}</version> <!-- 可选用最新的版本 -->
+		</dependency>
+
+		<!-- 临时为 jasperreports 依赖bug引入-->
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+
+		<!--pdf-->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.10</version>
+		</dependency>
+
+		<!-- ftp -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.1</version>
 		</dependency>
 
 	</dependencies>

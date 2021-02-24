@@ -1,0 +1,815 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanqing.project.tiansu.mapper.analysis.VisitRateMapper">
+
+    <resultMap id="resultMap" type="VisitRate">
+        <id column="CITY_CODE" property="cityCode" jdbcType="BIGINT"/>
+        <result column="CITY_NAME" property="cityName" jdbcType="VARCHAR"/>
+        <result column="CAMERA_CNT" property="cameraCnt" jdbcType="BIGINT"/>
+        <result column="RATE" property="rate" jdbcType="VARCHAR"/>
+        <result column="VISIT_CNT" property="visitCnt" jdbcType="BIGINT"/>
+        <result column="CLIENT_CNT" property="clientCnt" jdbcType="BIGINT"/>
+        <result column="VISITED_CNT" property="visitedCnt" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <select id="getAll" resultMap="resultMap">
+         SELECT
+        br.id city_id,
+        br.name city_name,
+        nvl(cvn.device_number,0) device_number,
+        nvl(cvn.visited_number,0) visited_number,
+        nvl(cvn.rate,0) rate,
+        nvl(cvn.session_number,0) session_number,
+        nvl(cvn.user_number,0) user_number
+    FROM
+        (
+            SELECT
+                *
+            FROM
+                busi_region
+            WHERE
+                level_type = 1
+        ) br
+        LEFT JOIN (
+            SELECT
+                cn.city_id,
+                cn.device_number,
+                vn.visited_number,
+                round(vn.visited_number / cn.device_number,4) * 100 rate,
+                vn.session_number,
+                vn.user_number
+            FROM
+                (
+                    SELECT
+                        substr(device_code,0,2) city_id,
+                        COUNT(substr(device_code,0,2) ) device_number
+                    FROM
+                        (
+                            SELECT
+                                (
+                                    CASE
+                                        WHEN bed.gb_id IS NULL THEN bc.device_code
+                                        ELSE bed.gb_id
+                                    END
+                                ) device_code
+                            FROM
+                                busi_camera bc
+                                LEFT JOIN busi_external_device bed ON bc.device_code = bed.device_id
+                                where bc.device_type is null
+                        )
+                    WHERE
+                        substr(device_code,0,2) LIKE #{provinceId}
+                        || '%'
+                    GROUP BY
+                        substr(device_code,0,2)
+                ) cn
+                LEFT JOIN (
+                    SELECT
+                        substr(device_code,0,2) city_id,
+                        COUNT(DISTINCT device_code) visited_number,
+                        COUNT(device_code) session_number,
+                        COUNT(DISTINCT client_id) user_number
+                    FROM
+                        (
+                            SELECT
+                                (
+                                    CASE
+                                        WHEN bed.gb_id IS NULL THEN vbos.dst_code
+                                        ELSE bed.gb_id
+                                    END
+                                ) device_code,
+                                vbos.*
+                            FROM
+                                v_busi_oper vbos
+                                LEFT JOIN busi_external_device bed ON vbos.dst_code = bed.device_id
+                        )
+                    WHERE
+                        substr(device_code,0,2) LIKE #{provinceId}
+                        || '%'
+                    GROUP BY
+                        substr(device_code,0,2)
+                ) vn ON cn.city_id = vn.city_id
+        ) cvn ON substr(br.id,0,2) = cvn.city_id
+         order by city_id asc
+    </select>
+
+    <select id="getRateList" resultMap="resultMap">
+--t.camera_cnt
+        SELECT
+        br.id city_code,
+        br.name city_name,
+        nvl(t.camera_cnt,0) camera_cnt,
+        nvl(s.visited_cnt,0) visited_cnt,
+        decode(
+        substr(
+        nvl(
+        round( s.visited_cnt / t.camera_cnt, 4 ) * 100,
+        0
+        ),
+        1,
+        1
+        ),
+        '.',
+        '0' || nvl(
+        round( s.visited_cnt / t.camera_cnt, 4 ) * 100,
+        0
+        ),
+        nvl(
+        round( s.visited_cnt / t.camera_cnt, 4 ) * 100,
+        0
+        )
+        ) || '%' rate,
+        nvl(s.visit_cnt,0) visit_cnt,
+        nvl(s.ip_address,0) client_cnt
+        FROM
+        (
+        SELECT
+        br.id,
+        br.name
+        FROM
+        busi_region br
+        WHERE
+        1 = 1
+
+        <if test="codeLength != 6">
+            <if test="cityCode != null and cityCode != ''">
+                AND to_char(br.parent_id) = #{cityCode}
+            </if>
+        </if>
+        <if test="codeLength == 6">
+            <if test="cityCode != null and cityCode != ''">
+                AND to_char(br.id) = #{cityCode}
+            </if>
+        </if>
+
+        ) br
+        LEFT JOIN (
+        SELECT
+        substr(bc.device_code,0,${length}) region,
+        COUNT(substr(bc.device_code,0,${length}) ) camera_cnt
+        FROM
+        busi_camera bc
+        where bc.device_type is null
+        GROUP BY
+        substr(bc.device_code,0,${length})
+        ) t ON to_char(br.id) = t.region
+        LEFT JOIN (
+        SELECT
+        substr(vbrs.camera_code,0,${length}) region,
+        COUNT(DISTINCT vbrs.camera_id) visited_cnt,
+        SUM(vbrs.visit_cnt) visit_cnt,
+        COUNT(DISTINCT vbrs.ip_address) ip_address
+        FROM
+        (
+        SELECT
+        client_id,
+        camera_id,
+        camera_code,
+        visit_cnt,
+        visit_time,
+        ip_address
+        FROM
+        (
+        SELECT
+        bo.client_id client_id,
+        bo.camera_id camera_id,
+        bo.dst_code camera_code,
+        bcl.ip_address ip_address,
+        COUNT(bo.id) visit_cnt,
+        max(bo.stamp) visit_time
+        FROM
+        busi_oper bo
+
+        LEFT JOIN busi_camera bc2 on bc2.id = bo.camera_id
+        LEFT JOIN busi_client bcl on bcl.id = bo.client_id
+        where bc2.device_type is null and bcl.device_type is null
+
+        AND bo.STAMP between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        GROUP BY
+        bo.client_id,
+        bo.camera_id,
+        bo.dst_code,
+        bcl.ip_address
+        )
+        UNION ALL
+        SELECT
+        bs.client_id,
+        bs.camera_id,
+        bs.camera_code,
+        bs.visit_cnt,
+        bs.visit_time,
+        bcl1.ip_address
+        FROM
+        busi_statistics bs
+        LEFT JOIN busi_camera bc3 on bc3.id = bs.camera_id
+        LEFT JOIN busi_client bcl1 on bcl1.id = bs.client_id
+        where
+        1=1
+        and  bc3.device_type is null and bcl1.device_type is null
+        and bs.visit_time between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        ) vbrs
+        WHERE
+        1 = 1
+        AND TO_DATE(TO_CHAR(vbrs.visit_time,'yyyy-MM-dd'),'yyyy-MM-dd') >= TO_DATE(#{startDate},'YYYY-MM-DD')
+        AND TO_DATE(TO_CHAR(vbrs.visit_time,'yyyy-MM-dd'),'yyyy-MM-dd') &lt;= TO_DATE(#{endDate},'YYYY-MM-DD')
+        GROUP BY
+        substr(vbrs.camera_code,0,${length})
+        ) s ON to_char(br.id) = s.region
+        ORDER BY
+        br.id ASC
+
+    </select>
+    <!-- 第四级区域统计摄像头使用率 -->
+    <select id="getRateLastList" resultMap="resultMap">
+        select city_code,city_name,sum(camera_cnt) camera_cnt,sum(visited_cnt) visited_cnt,
+        sum(visit_cnt) visit_cnt,sum(client_cnt) client_cnt,
+        nvl(round(sum(visited_cnt) / nvl(NULLIF(sum(camera_cnt),0),1),4) * 100,0) || '%' rate from
+        (select city_code,city_name, camera_cnt,sum(visited_cnt) visited_cnt,
+        sum(visit_cnt) visit_cnt,sum(client_cnt) client_cnt,
+        nvl(round(sum(visited_cnt) / nvl(NULLIF(camera_cnt,0),1),4) * 100,0) || '%' rate from
+        (select s.ID city_code,s.NAME city_name,nvl(s.camera_cnt,0) camera_cnt,
+        nvl(t.visited_cnt,0) visited_cnt,
+        nvl(t.visit_cnt,0) visit_cnt,
+        nvl(t.client_cnt,0) client_cnt
+        from (select re.ID,re.NAME,reip.IP_START,reip.IP_END,COUNT(bc.ID) camera_cnt
+        from BUSI_REGION re left join BUSI_REGION_IP reip
+        on re.ID = reip.ID left join busi_camera bc
+        on reip.IP_START &lt;= bc.IP_ADDRESS and reip.IP_END >= bc.IP_ADDRESS
+        where to_char(re.PARENT_ID) = #{cityCode} group by re.ID,re.NAME,reip.IP_START,reip.IP_END ) s
+        LEFT JOIN (
+        SELECT
+        COUNT(DISTINCT vbrs.camera_id) visited_cnt,
+        SUM(vbrs.visit_cnt) visit_cnt,
+        COUNT(DISTINCT vbrs.client_id) client_cnt,
+        CAMERA_IP
+        FROM
+        (
+        SELECT
+        client_id,
+        camera_id,
+        camera_code,
+        visit_cnt,
+        visit_time,
+        CAMERA_IP
+        FROM
+        (
+        SELECT
+        bo.client_id client_id,
+        bo.camera_id camera_id,
+        bo.dst_code camera_code,
+        COUNT(bo.id) visit_cnt,
+        max(bo.stamp) visit_time,
+        DST_IP as CAMERA_IP
+        FROM
+        busi_oper bo
+        where bo.STAMP between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        GROUP BY
+        bo.client_id,
+        bo.camera_id,
+        bo.dst_code,
+        DST_IP
+        )
+        UNION ALL
+        SELECT
+        bs.client_id,
+        bs.camera_id,
+        bs.camera_code,
+        bs.visit_cnt,
+        bs.visit_time,
+        CAMERA_IP
+        FROM
+        busi_statistics bs
+        where bs.visit_time between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        ) vbrs
+        WHERE
+        1 = 1
+        AND TO_DATE(TO_CHAR(vbrs.visit_time,'yyyy-MM-dd'),'yyyy-MM-dd') >= TO_DATE(#{startDate},'YYYY-MM-DD')
+        AND TO_DATE(TO_CHAR(vbrs.visit_time,'yyyy-MM-dd'),'yyyy-MM-dd') &lt;= TO_DATE(#{endDate},'YYYY-MM-DD')
+        GROUP BY
+        CAMERA_IP
+        ) t
+        on s.IP_START &lt;= t.CAMERA_IP and s.IP_END >= t.CAMERA_IP) sb
+        group by city_code, city_name, camera_cnt) sx
+        group by city_code, city_name
+        order by city_code asc
+    </select>
+
+    <select id="getRegionRate" resultMap="resultMap">
+        SELECT
+        br.id city_code,
+        br.name city_name,
+        nvl(t.camera_cnt,0) camera_cnt,
+        nvl(s.visited_cnt,0) visited_cnt,
+        decode(
+        substr(
+        nvl(
+        round( s.visited_cnt / t.camera_cnt, 4 ) * 100,
+        0
+        ),
+        1,
+        1
+        ),
+        '.',
+        '0' || nvl(
+        round( s.visited_cnt / t.camera_cnt, 4 ) * 100,
+        0
+        ),
+        nvl(
+        round( s.visited_cnt / t.camera_cnt, 4 ) * 100,
+        0
+        )
+        ) || '%' rate,
+
+
+        nvl(s.visit_cnt,0) visit_cnt,
+        nvl(s.client_cnt,0) client_cnt
+        FROM
+        (
+        SELECT
+        br.id,
+        br.name
+        FROM
+        busi_region br
+        WHERE
+        1 = 1
+        <if test="cityCode != null and cityCode != ''">
+            AND to_char(br.id) = #{cityCode}
+        </if>
+        ) br
+        LEFT JOIN (
+        SELECT
+        substr(bc.device_code,0,${length}) region,
+        COUNT(substr(bc.device_code,0,${length}) ) camera_cnt
+        FROM
+        busi_camera bc
+        where bc.device_type is null
+        GROUP BY
+        substr(bc.device_code,0,${length})
+        ) t ON to_char(br.id) = t.region
+        LEFT JOIN (
+        SELECT
+        substr(vbrs.camera_code,0,${length}) region,
+        COUNT(DISTINCT vbrs.camera_id) visited_cnt,
+        SUM(vbrs.visit_cnt) visit_cnt,
+        COUNT(DISTINCT vbrs.client_id) client_cnt
+        FROM
+        (
+        SELECT
+        client_id,
+        camera_id,
+        camera_code,
+        visit_cnt,
+        visit_time
+        FROM
+        (
+        SELECT
+        bo.client_id client_id,
+        bo.camera_id camera_id,
+        bo.dst_code camera_code,
+        COUNT(bo.id) visit_cnt,
+        max(bo.stamp) visit_time
+        FROM
+        busi_oper bo
+        LEFT JOIN busi_camera bc2 on bc2.id = bo.camera_id
+        LEFT JOIN busi_client bcl on bcl.id = bo.client_id
+        where bc2.device_type is null and bcl.device_type is null
+        AND bo.STAMP between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        GROUP BY
+        bo.client_id,
+        bo.camera_id,
+        bo.dst_code
+        )
+        UNION ALL
+        SELECT
+        bs.client_id,
+        bs.camera_id,
+        bs.camera_code,
+        bs.visit_cnt,
+        bs.visit_time
+        FROM
+        busi_statistics bs
+        LEFT JOIN busi_camera bc3 on bc3.id = bs.camera_id
+        LEFT JOIN busi_client bcl1 on bcl1.id = bs.client_id
+        where bs.visit_time between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        and  bc3.device_type is null and bcl1.device_type is null
+        ) vbrs
+        WHERE
+        1 = 1
+        AND TO_DATE(TO_CHAR(vbrs.visit_time,'yyyy-MM-dd'),'yyyy-MM-dd') >= TO_DATE(#{startDate},'YYYY-MM-DD')
+        AND TO_DATE(TO_CHAR(vbrs.visit_time,'yyyy-MM-dd'),'yyyy-MM-dd') &lt;= TO_DATE(#{endDate},'YYYY-MM-DD')
+        GROUP BY
+        substr(vbrs.camera_code,0,${length})
+        ) s ON to_char(br.id) = s.region
+        ORDER BY
+        br.id ASC
+    </select>
+
+    <resultMap id="cameraMap" type="Camera">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="DEVICE_CODE" property="deviceCode" jdbcType="VARCHAR"/>
+        <result column="DEVICE_DOMAIN" property="deviceDomain" jdbcType="VARCHAR"/>
+        <result column="IP_ADDRESS" property="ipAddress" jdbcType="BIGINT"/>
+        <result column="DEVICE_NAME" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="MAC_ADDRESS" property="macAddress" jdbcType="VARCHAR"/>
+        <result column="LONGITUDE" property="longitude" jdbcType="BIGINT"/>
+        <result column="LATITUDE" property="latitude" jdbcType="BIGINT"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="STATUS" property="status" jdbcType="INTEGER"/>
+        <result column="DEVICE_TYPE" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="DOMAIN_IP" property="domainIp" jdbcType="BIGINT"/>
+        <result column="DOMAIN_PORT" property="domainPort" jdbcType="BIGINT"/>
+        <result column="SIP_SERVER_ID" property="sipServerId" jdbcType="BIGINT"/>
+        <result column="IS_GB" property="isGb" jdbcType="INTEGER"/>
+        <result column="MANUFACTURER" property="manufacturer" jdbcType="VARCHAR"/>
+        <result column="REGION_ID" property="region" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getCameraCntList" resultMap="cameraMap">
+        SELECT
+        BC.ID,
+        BC.DEVICE_CODE,
+        BC.DEVICE_DOMAIN,
+        BC.DEVICE_NAME,
+        BC.MAC_ADDRESS,
+        BC.LONGITUDE,
+        BC.LATITUDE,
+        BC.REGION,
+        BC.CREATE_TIME,
+        BC.UPDATE_TIME,
+        BC.IP_ADDRESS,
+        BC.STATUS,
+        BC.SIP_SERVER_ID,
+        BC.DEVICE_TYPE,
+        BC.DOMAIN_IP,
+        BC.DOMAIN_PORT,
+        BC.IS_GB,
+        BC.MANUFACTURER,
+        BR.ID AS REGION_ID,
+        BR.MERGER_NAME AS REGION_MERGER_NAME,
+        BR.NAME AS REGION_NAME,
+        BR.LEVEL_TYPE AS REGION_LEVEL_TYPE
+        FROM
+        (
+        SELECT
+        *
+        FROM
+        BUSI_CAMERA BC
+
+        WHERE
+        1 = 1
+            and BC.device_type is null
+        <if test="deviceCode != null and deviceCode != ''">
+            and bc.device_code = #{deviceCode}
+        </if>
+        <if test="deviceName != null and deviceName != ''">
+            and bc.device_name like '%' || #{deviceName} || '%'
+        </if>
+        <if test="ipAddress != null and ipAddress != ''">
+            and bc.ip_address = #{ipAddress, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="status != null and status != ''">
+            and bc.status = #{status}
+        </if>
+        <if test="manufacturer != null and manufacturer != ''">
+            and bc.manufacturer = #{manufacturer}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 2">
+            and substr(bc.device_code, 0, 2) = #{cityCode}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 4">
+            and substr(bc.device_code, 0, 4) = #{cityCode}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 6">
+            and substr(bc.device_code, 0, 6) = #{cityCode}
+        </if>
+        ) BC
+        LEFT JOIN BUSI_REGION BR ON BC.REGION = BR.ID
+    </select>
+
+    <select id="getVisitedCntList" resultMap="cameraMap">
+----------------访问率报表
+        SELECT
+        BC.ID,
+        BC.DEVICE_CODE,
+        BC.DEVICE_DOMAIN,
+        BC.DEVICE_NAME,
+        BC.MAC_ADDRESS,
+        BC.LONGITUDE,
+        BC.LATITUDE,
+        BC.REGION,
+        BC.CREATE_TIME,
+        BC.UPDATE_TIME,
+        BC.IP_ADDRESS,
+        BC.STATUS,
+        BC.SIP_SERVER_ID,
+        BC.DEVICE_TYPE,
+        BC.DOMAIN_IP,
+        BC.DOMAIN_PORT,
+        BC.IS_GB,
+        BC.MANUFACTURER,
+        BR.ID AS REGION_ID,
+        BR.MERGER_NAME AS REGION_MERGER_NAME,
+        BR.NAME AS REGION_NAME,
+        BR.LEVEL_TYPE AS REGION_LEVEL_TYPE
+        FROM
+        (
+        SELECT DISTINCT
+        VBRS.CAMERA_ID
+        FROM
+        (
+        SELECT
+        client_id,
+        camera_id,
+        camera_code,
+        visit_cnt,
+        visit_time
+        FROM
+        (
+        SELECT
+        bo.client_id client_id,
+        bo.camera_id camera_id,
+        bo.dst_code camera_code,
+        COUNT(bo.id) visit_cnt,
+        max(bo.stamp) visit_time
+        FROM
+        busi_oper bo
+        LEFT JOIN busi_camera bc2 on bc2.id = bo.camera_id
+        LEFT JOIN busi_client bcl on bcl.id = bo.client_id
+        where bc2.device_type is null and bcl.device_type is null
+        AND bo.STAMP between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        GROUP BY
+        bo.client_id,
+        bo.camera_id,
+        bo.dst_code
+        )
+        UNION ALL
+        SELECT
+        bs.client_id,
+        bs.camera_id,
+        bs.camera_code,
+        bs.visit_cnt,
+        bs.visit_time
+        FROM
+        busi_statistics bs
+        LEFT JOIN busi_camera bc3 on bc3.id = bs.camera_id
+        LEFT JOIN busi_client bcl1 on bcl1.id = bs.client_id
+        where bs.visit_time between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        and bc3.device_type is null and bcl1.device_type is null
+        ) VBRS
+        WHERE
+        1 = 1
+        <if test="startDate != null and startDate != ''">
+            AND VBRS.VISIT_TIME >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND VBRS.VISIT_TIME &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 2">
+            and substr(VBRS.CAMERA_CODE, 0, 2) = #{cityCode}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 4">
+            and substr(VBRS.CAMERA_CODE, 0, 4) = #{cityCode}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 6">
+            and substr(VBRS.CAMERA_CODE, 0, 6) = #{cityCode}
+        </if>
+        ) VBRS
+        LEFT JOIN BUSI_CAMERA BC ON BC.ID = VBRS.CAMERA_ID
+        LEFT JOIN BUSI_REGION BR ON BC.REGION = BR.ID
+        WHERE
+        1 = 1
+
+        and bc.DEVICE_TYPE is null
+        <if test="deviceCode != null and deviceCode != ''">
+            and BC.device_code = #{deviceCode}
+        </if>
+        <if test="deviceName != null and deviceName != ''">
+            and BC.device_name like '%' || #{deviceName} || '%'
+        </if>
+        <if test="ipAddress != null and ipAddress != ''">
+            and BC.ip_address = #{ipAddress, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="status != null and status != ''">
+            and BC.status = #{status}
+        </if>
+        <if test="manufacturer != null and manufacturer != ''">
+            and BC.manufacturer = #{manufacturer}
+        </if>
+
+    </select>
+
+    <resultMap id="operMap" type="OperationBehavior">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="CLIENT_ID" property="clientId" jdbcType="BIGINT"/>
+        <result column="SRC_CODE" property="srcCode" jdbcType="BIGINT"/>
+        <result column="SRC_IP" property="srcIp" jdbcType="BIGINT"/>
+        <result column="USERNAME" property="username" jdbcType="BIGINT"/>
+        <result column="SRC_PORT" property="srcPort" jdbcType="BIGINT"/>
+        <result column="SRC_MAC" property="srcMac" jdbcType="BIGINT"/>
+        <result column="CAMERA_ID" property="cameraId" jdbcType="BIGINT"/>
+        <result column="DST_CODE" property="dstCode" jdbcType="BIGINT"/>
+        <result column="DST_IP" property="dstIp" jdbcType="BIGINT"/>
+        <result column="DST_PORT" property="dstPort" jdbcType="BIGINT"/>
+        <result column="DST_MAC" property="dstMac" jdbcType="BIGINT"/>
+        <result column="ACTION" property="action" jdbcType="INTEGER"/>
+        <result column="ACTION_DETAIL" property="actionDetail" jdbcType="INTEGER"/>
+        <result column="STAMP" property="stamp" jdbcType="TIMESTAMP"/>
+        <result column="CONTENT" property="content" jdbcType="TIMESTAMP"/>
+        <result column="SESSION_ID" property="sessionId" jdbcType="BIGINT"/>
+        <result column="DEVICE_NAME" property="dstDeviceName" jdbcType="VARCHAR"/>
+        <result column="DEVICE_IP" property="dstDeviceIp" jdbcType="BIGINT"/>
+        <result column="RESULT" property="result" jdbcType="VARCHAR"/>
+        <result column="UP_FLOW" property="upFlow" jdbcType="BIGINT"/>
+        <result column="DOWN_FLOW" property="downFlow" jdbcType="BIGINT"/>
+        <result column="CALL_ID" property="callId" jdbcType="VARCHAR"/>
+        <result column="UUID" property="uuid" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getVisitCntList" resultMap="operMap">
+        SELECT
+        *
+        FROM
+        V_BUSI_OPER VBO
+        LEFT JOIN BUSI_CLIENT bcl on bcl.id = VBO.CLIENT_ID
+        LEFT JOIN BUSI_CAMERA bc on bc.id = VBO.CAMERA_ID
+        WHERE
+        1 = 1
+        and bcl.DEVICE_TYPE is null and bc.DEVICE_TYPE is null
+        <if test="dstCode != null and dstCode != ''">
+            AND VBO.DST_CODE = #{dstCode}
+        </if>
+        <if test="clientId != null and clientId != ''">
+            AND VBO.CLIENT_ID = #{clientId}
+        </if>
+        <if test="cameraId != null and cameraId != ''">
+            AND VBO.CAMERA_ID = #{cameraId}
+        </if>
+        <if test="dstIp != null and dstIp != ''">
+            AND VBO.DST_IP = #{dstIp, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="srcIp != null and srcIp != ''">
+            AND VBO.SRC_IP = #{srcIp, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="username != null and username != ''">
+            AND VBO.USERNAME = #{username}
+        </if>
+        <if test="action != null and action != ''">
+            AND VBO.ACTION = #{action}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND VBO.STAMP >= TO_DATE(#{startDate} || '00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND VBO.STAMP &lt;= TO_DATE(#{endDate} || '23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 2">
+            AND SUBSTR(VBO.DST_CODE,0,2) = #{cityCode}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 4">
+            AND SUBSTR(VBO.DST_CODE,0,4) = #{cityCode}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 6">
+            AND SUBSTR(VBO.DST_CODE,0,6) = #{cityCode}
+        </if>
+    </select>
+
+    <resultMap id="clientMap" type="Client">
+        <id column="ID" property="id"/>
+        <result column="DEVICE_CODE" property="deviceCode" jdbcType="VARCHAR"/>
+        <result column="DEVICE_NAME" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="IP_ADDRESS" property="ipAddress" jdbcType="BIGINT"/>
+        <result column="MAC_ADDRESS" property="macAddress" jdbcType="VARCHAR"/>
+        <result column="USERNAME" property="username" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="INTEGER"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+
+        <result column="DEVICE_TYPE" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="DOMAIN_IP" property="domainIp" jdbcType="BIGINT"/>
+        <result column="DOMAIN_PORT" property="domainPort" jdbcType="BIGINT"/>
+        <result column="SIP_SERVER_ID" property="sipServerId" jdbcType="BIGINT"/>
+        <result column="MEDIA_SERVER_ID" property="mediaServerId" jdbcType="BIGINT"/>
+        <result column="USER_PROXY_SERVER_ID" property="userProxyServerId" jdbcType="BIGINT"/>
+        <result column="REGION_ID" property="regionId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getClientCntList" resultMap="clientMap">
+        SELECT
+        BC.*,
+        VBRS.username
+        FROM
+        (
+        SELECT DISTINCT
+        BCL.IP_ADDRESS IP_ADDRESS,
+        bcl.username
+        FROM
+        V_BUSI_RATE_STATISTICS VBRS
+        LEFT JOIN busi_camera bc on bc.id = VBRS.camera_id
+        LEFT JOIN busi_client bcl on bcl.id = VBRS.client_id
+        WHERE
+        1 = 1
+        and bc.device_type is null
+        and bcl.device_type is null
+        AND bcl.IP_ADDRESS IS not NULL
+
+        <if test="cityCode != null and cityCode != '' and length == 2">
+            AND SUBSTR(VBRS.CAMERA_CODE,0,2) = #{cityCode}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 4">
+            AND SUBSTR(VBRS.CAMERA_CODE,0,4) = #{cityCode}
+        </if>
+        <if test="cityCode != null and cityCode != '' and length == 6">
+            AND SUBSTR(VBRS.CAMERA_CODE,0,6) = #{cityCode}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND to_date(to_char(VBRS.VISIT_TIME,'yyyy-MM-dd'),'yyyy-MM-dd') >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND to_date(to_char(VBRS.VISIT_TIME,'yyyy-MM-dd'),'yyyy-MM-dd') &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+        </if>
+        ) VBRS LEFT JOIN BUSI_CLIENT_TERMINAL BC ON BC.IP_ADDRESS = VBRS.IP_ADDRESS
+        WHERE
+        1 = 1
+        and bc.device_type is null
+        <if test="deviceCode != null and deviceCode != ''">
+            AND BC.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="status != null and status != ''">
+            AND BC.STATUS = #{status}
+        </if>
+        <if test="ipAddress != null and ipAddress != ''">
+            AND BC.IP_ADDRESS = #{ipAddress, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+        </if>
+        <if test="sipServerId != null and sipServerId != ''">
+            AND (BC.SIP_SERVER_ID = #{sipServerId}
+            OR BC.MEDIA_SERVER_ID = #{sipServerId}
+            OR BC.USER_PROXY_SERVER_ID = #{sipServerId})
+        </if>
+    </select>
+
+    <insert id="updateStatisticsTable">
+        INSERT INTO busi_statistics (
+            id,
+            client_id,
+            camera_id,
+            visit_time,
+            visit_cnt,
+            client_code,
+            client_name,
+            client_ip,
+            username,
+            client_region,
+            camera_code,
+            camera_name,
+            camera_ip,
+            camera_region,
+            action,
+            statistics_time
+        )
+            SELECT
+                sq_busi_statistics_id.NEXTVAL,
+                t.client_id,
+                t.camera_id,
+                TO_DATE(TO_CHAR(t.stamp,'yyyy-MM-dd'),'yyyy-MM-dd') visit_time,
+                t.visited_cnt visit_cnt,
+                bcl.device_code client_code,
+                bcl.device_name client_name,
+                bcl.ip_address client_ip,
+                bcl.username username,
+                bcl.region client_region,
+                bca.device_code camera_code,
+                bca.device_name camera_name,
+                bca.ip_address camera_ip,
+                bca.region camera_region,
+                t.action action,
+                SYSDATE statistics_time
+            FROM
+                (
+                    SELECT
+                        bot.client_id client_id,
+                        bot.camera_id camera_id,
+                        TO_DATE(TO_CHAR(bot.stamp,'yyyy-MM-dd'),'yyyy-MM-dd') stamp,
+                        bot.action action,
+                        COUNT(camera_id) visited_cnt
+                    FROM
+                        busi_oper_t bot
+                    WHERE
+                        1 = 1
+                        AND   TO_DATE(TO_CHAR(bot.stamp,'yyyy-MM-dd'),'yyyy-MM-dd') NOT IN (
+                            SELECT
+                                visit_time
+                            FROM
+                                busi_statistics
+                        )
+                    GROUP BY
+                        bot.client_id,
+                        bot.camera_id,
+                        bot.action,
+                        TO_DATE(TO_CHAR(bot.stamp,'yyyy-MM-dd'),'yyyy-MM-dd')
+                ) t
+                LEFT JOIN busi_client bcl ON t.client_id = bcl.id
+                LEFT JOIN busi_camera bca ON t.camera_id = bca.id
+    </insert>
+
+</mapper>
