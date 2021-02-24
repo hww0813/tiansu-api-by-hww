@@ -2,6 +2,7 @@ package com.yuanqing.project.tiansu.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -30,7 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/device/sip-client")
 @CrossOrigin
-@Api(value = "客户端", description = "客户端相关Api")
+@Api(value = "终端", description = "客户端相关Api")
 public class ClientController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientController.class);
@@ -44,13 +45,14 @@ public class ClientController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取终端列表", httpMethod = "GET")
-    public TableDataInfo getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
+    public AjaxResult getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
                                 @RequestParam(value = "deviceCode", required = false) String deviceCode,
                                 @RequestParam(value = "region[]", required = false) Integer regionId,
                                 @RequestParam(value = "status", required = false) Integer status,
                                 @RequestParam(value = "id", required = false) Long id,
                                 @RequestParam(value = "username", required = false) String username,
                                 @RequestParam(value = "sipServerId", required = false) Long sipServerId) {
+
         ClientTerminal clientTerminal = new ClientTerminal();
         clientTerminal.setStatus(status);
         clientTerminal.setIpAddress(IpUtils.ipToLong(ipAddress));
@@ -58,19 +60,34 @@ public class ClientController extends BaseController {
         clientTerminal.setSipServerId(sipServerId);
         clientTerminal.setId(id);
         clientTerminal.setRegionId(regionId);
-        clientTerminal.setUsername(username);
 
-        startPage();
-        List<ClientTerminal> list = clientTerminalService.getList(clientTerminal);
 
+        List<ClientTerminal> list = null;
+        //判断 username 是否为空
+        if(StringUtils.isNotEmpty(username)){
+            Client client = new Client();
+            client.setUsername(username);
+
+            // 根据用户名查询client列表  需要用IP
+            List<Client> clientList = clientService.getList(client);
+
+            startPage();
+            list = clientTerminalService.getTerminalByIpList(clientList);
+
+        }else{
+            startPage();
+            list = clientTerminalService.getList(clientTerminal);
+        }
+
+        //用户数
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(list);
 
-        return getDataTable(dtoList);
+        return AjaxResult.success(getDataTable(dtoList,list));
     }
 
     @GetMapping("/clientList")
     @ApiOperation(value = "获取客户端列表", httpMethod = "GET")
-    public TableDataInfo getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
+    public AjaxResult getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
                                 @RequestParam(value = "deviceCode", required = false) String deviceCode,
                                 @RequestParam(value = "region[]", required = false) Integer regionId,
                                 @RequestParam(value = "status", required = false) Integer status,
@@ -88,7 +105,7 @@ public class ClientController extends BaseController {
 
         startPage();
         List<Client> list = clientService.getList(client);
-        return getDataTable(list);
+        return AjaxResult.success(getDataTable(list));
 
     }
 
@@ -147,15 +164,16 @@ public class ClientController extends BaseController {
 
     @GetMapping("/getByIpAndPort")
     @ApiOperation(value = "根据IP和端口获取客户端数据", httpMethod = "GET")
-    public TableDataInfo getByIpAndPort(@RequestParam(value = "serverIp", required = false) Long serverIp,
-                                        @RequestParam(value = "serverPort", required = false) Long serverPort) {
+    public TableDataInfo getByIpAndPort(@RequestParam(value = "serverIp", required = false) Long clientIp,
+                                        @RequestParam(value = "serverPort", required = false) Long clientPort) {
 
         Client client = new Client();
-        client.setIpAddress(serverIp);
-        client.setDomainPort(serverPort);
+        client.setIpAddress(clientIp);
+        client.setDomainPort(clientPort);
         startPage();
         List<Client> pageInfo = clientService.getList(client);
         return getDataTable(pageInfo);
+
     }
 
 

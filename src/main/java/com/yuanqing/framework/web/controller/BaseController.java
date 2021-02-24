@@ -67,8 +67,24 @@ public class BaseController
     {
         TableDataInfo rspData = new TableDataInfo();
         rspData.setCode(HttpStatus.SUCCESS);
-        rspData.setRows(list);
+        rspData.setList(list);
         rspData.setTotal(new PageInfo(list).getTotal());
+        return rspData;
+    }
+
+    /**
+     * 响应请求分页数据（在startPage分页之后，又进行了数据处理，此时集合中的总数不正确，需原始list提取总数）
+     * @param list 在分页之后处理的数据，最终数据集
+     * @param originList 原始list 分页时的数据集，用于统计数据总数
+     *
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected TableDataInfo getDataTable(List<?> list, List<?> originList)
+    {
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(HttpStatus.SUCCESS);
+        rspData.setList(list);
+        rspData.setTotal(new PageInfo(originList).getTotal());
         return rspData;
     }
 

@@ -1,8 +1,10 @@
 package com.yuanqing.tiansu.assets;
 
 import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientTerminalDto;
+import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +25,10 @@ public class ClientTerminalServiceTest {
 
     @Autowired
     private IClientTerminalService clientTerminalService;
+
+    @Autowired
+    private IClientService clientService;
+
 
     /**
      * 批量更新终端状态
@@ -81,5 +87,18 @@ public class ClientTerminalServiceTest {
         Long i = clientTerminalService.save(clientTerminal, SaveType.INSERT);
         System.out.println(i);
     }
+
+    @Test
+    public void getTerminalByIpList(){
+        Client client = new Client();
+        client.setUsername("admin");
+        List<Client> clientList = clientService.getList(client);
+
+        List<ClientTerminal> list = clientTerminalService.getTerminalByIpList(clientList);
+
+        System.out.println(list);
+
+    }
+
 
 }

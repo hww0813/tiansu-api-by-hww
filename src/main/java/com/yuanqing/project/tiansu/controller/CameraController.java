@@ -3,7 +3,6 @@ package com.yuanqing.project.tiansu.controller;
 import com.alibaba.fastjson.JSONObject;
 
 import com.yuanqing.common.enums.SaveType;
-import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -39,7 +38,7 @@ public class CameraController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
-    public TableDataInfo getAll(@RequestParam(value = "status", required = false) Integer status,
+    public AjaxResult getAll(@RequestParam(value = "status", required = false) Integer status,
                                 @RequestParam(value = "isGb", required = false) Integer isGb,
                                 @RequestParam(value = "deviceName", required = false) String deviceName,
                                 @RequestParam(value = "deviceDomain", required = false) String deviceDomain,
@@ -71,7 +70,8 @@ public class CameraController extends BaseController {
         startPage();
         List<Camera> getList = cameraService.getList(camera);
 
-        return getDataTable(getList);
+        AjaxResult success = AjaxResult.success(getDataTable(getList));
+        return success;
     }
 //
 //    @GetMapping("/visited/list")
@@ -178,7 +178,7 @@ public class CameraController extends BaseController {
     @ApiOperation(value = "获取首页国标、非国标编号摄像头列表")
     public TableDataInfo getNonNationalCameraList(@RequestParam(value = "type", required = false) String type) {
         Camera camera = new Camera();
-        int isGb = type.equals("gb") ? 1 : 0;
+        int isGb = "gb".equals(type) ? 1 : 0;
         camera.setIsGb(isGb);
         return getDataTable(cameraService.getNonNationalCameraList(camera));
     }

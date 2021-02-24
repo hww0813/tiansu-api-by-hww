@@ -2,6 +2,7 @@ package com.yuanqing.project.tiansu.service.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
+import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientTerminalDto;
 import org.springframework.validation.annotation.Validated;
@@ -59,5 +60,12 @@ public interface IClientTerminalService extends BaseService<ClientTerminal, Long
      * @return 包含用户数的终端集合
      */
     List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> list);
+
+    /**
+     * 根据ip list 获取终端列表
+     * @param list
+     * @return
+     */
+    List<ClientTerminal> getTerminalByIpList(List<Client> list);
 
 }

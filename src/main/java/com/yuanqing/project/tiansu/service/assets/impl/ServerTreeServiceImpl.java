@@ -40,92 +40,92 @@ public class ServerTreeServiceImpl implements IServerTreeService {
     @Autowired
     private ClientTerminalMapper clientTerminalMapper;
 
-    @Autowired
-    private ServerTreeMapper serverTreeMapper;
+        @Autowired
+        private ServerTreeMapper serverTreeMapper;
 
-    @Autowired
-    private ICameraService cameraService;
+        @Autowired
+        private ICameraService cameraService;
 
 
-    @Override
-    public ServerTree findOne(Long serverIp) {
-        List<ServerTree> list = serverTreeMapper.findOne(serverIp);
-        return (list != null && list.size() > 0 ) ? list.get(0) : null;
-    }
-
-    @Override
-    public List<JSONObject> getAllToReport(JSONObject filters) {
-        return null;
-    }
-
-    @Override
-    public List<ServerTree> getSessionServerList(JSONObject filters) {
-
-        List<ServerTree> list = serverTreeMapper.getSessionServerList(filters);
-
-        return list.stream().filter(f -> f != null).collect(Collectors.toList());
-    }
-
-    @Override
-    public String readExcelFile(MultipartFile file) {
-        return null;
-    }
-
-    @Override
-    public void batchInsert(List<ServerTree> list) {
-        serverTreeMapper.batchInsert(list);
-        //新增缓存里的数据
-        list.stream().forEach(f -> putServerTreeMap(f));
-    }
-
-    @Override
-    public Long findId() {
-        return serverTreeMapper.findId();
-    }
-
-    @Override
-    public void insert(ServerTree serverTree) {
-        Long IP = serverTree.getServerIp();
-        //根据ip查找客户端
-        List<Client> clientList = clientMapper.findByIP(IP);
-
-        //根据ip查找终端,先缓存中查找
-        String clientTerminalKey = String.format(Constants.TWO_FORMAT, Constants.CLIENT_TERMINAL, IP);
-        ClientTerminal clientTerminal = ClientTerminalMap.get(clientTerminalKey);
-
-        //缓存中没找到终端，在数据库中进行查找
-        if (clientTerminal == null) {
-            clientTerminal = clientTerminalMapper.findByIpAddress(IP);
-            //将数据放入缓存中
-            if (clientTerminal != null) {
-                ClientTerminalMap.put(clientTerminalKey, clientTerminal);
-            }
+        @Override
+        public ServerTree findOne(Long serverIp) {
+            List<ServerTree> list = serverTreeMapper.findOne(serverIp);
+            return (list != null && list.size() > 0 ) ? list.get(0) : null;
         }
-        //如果存在客户端/终端，则更新对应终端/客户端的设备类型
-        handleClient(clientList,clientTerminal);
 
-        //入数据库
-        serverTreeMapper.insertServerTree(serverTree);
-        //入缓存
-        putServerTreeMap(serverTree,IP);
-    }
+        @Override
+        public List<JSONObject> getAllToReport(JSONObject filters) {
+            return null;
+        }
 
-    @Override
-    public Long save(@Valid @NotNull(message = "保存或更新的实体不能为空") ServerTree entity, SaveType type) {
-        throw new CustomException("暂不支持这种保存方式,无需SaveType");
-    }
+        @Override
+        public List<ServerTree> getSessionServerList(JSONObject filters) {
 
-    @Override
-    public Long save(ServerTree serverTree) {
-        Long IP = serverTree.getServerIp();
+            List<ServerTree> list = serverTreeMapper.getSessionServerList(filters);
 
-        //根据ip查找客户端
-        List<Client> clientList = clientMapper.findByIP(IP);
-        //根据ip查找终端
-        ClientTerminal clientTerminal = clientTerminalMapper.findByIpAddress(IP);
+            return list.stream().filter(f -> f != null).collect(Collectors.toList());
+        }
 
-        //如果存在客户端/中毒案，则更新对应终端/客户端的设备类型
-        handleClient(clientList,clientTerminal);
+        @Override
+        public String readExcelFile(MultipartFile file) {
+            return null;
+        }
+
+        @Override
+        public void batchInsert(List<ServerTree> list) {
+            serverTreeMapper.batchInsert(list);
+            //新增缓存里的数据
+            list.stream().forEach(f -> putServerTreeMap(f));
+        }
+
+        @Override
+        public Long findId() {
+            return serverTreeMapper.findId();
+        }
+
+        @Override
+        public void insert(ServerTree serverTree) {
+            Long IP = serverTree.getServerIp();
+            //根据ip查找客户端
+            List<Client> clientList = clientMapper.findByIP(IP);
+
+            //根据ip查找终端,先缓存中查找
+            String clientTerminalKey = String.format(Constants.TWO_FORMAT, Constants.CLIENT_TERMINAL, IP);
+            ClientTerminal clientTerminal = ClientTerminalMap.get(clientTerminalKey);
+
+            //缓存中没找到终端，在数据库中进行查找
+            if (clientTerminal == null) {
+                clientTerminal = clientTerminalMapper.findByIpAddress(IP);
+                //将数据放入缓存中
+                if (clientTerminal != null) {
+                    ClientTerminalMap.put(clientTerminalKey, clientTerminal);
+                }
+            }
+            //如果存在客户端/终端，则更新对应终端/客户端的设备类型
+            handleClient(clientList,clientTerminal);
+
+            //入数据库
+            serverTreeMapper.insertServerTree(serverTree);
+            //入缓存
+            putServerTreeMap(serverTree,IP);
+        }
+
+        @Override
+        public Long save(@Valid @NotNull(message = "保存或更新的实体不能为空") ServerTree entity, SaveType type) {
+            throw new CustomException("暂不支持这种保存方式,无需SaveType");
+        }
+
+        @Override
+        public Long save(ServerTree serverTree) {
+            Long IP = serverTree.getServerIp();
+
+            //根据ip查找客户端
+            List<Client> clientList = clientMapper.findByIP(IP);
+            //根据ip查找终端
+            ClientTerminal clientTerminal = clientTerminalMapper.findByIpAddress(IP);
+
+            //如果存在客户端/中毒案，则更新对应终端/客户端的设备类型
+            handleClient(clientList,clientTerminal);
 
         ServerTree server = findOne(IP);
 

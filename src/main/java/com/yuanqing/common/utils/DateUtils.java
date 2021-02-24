@@ -252,6 +252,12 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return filters;
     }
 
+
+    /**
+     * 00：00：00-23：59：59
+     * @param clazz
+     * @return
+     */
     public static Object getDayTime(Class clazz){
         Object o;
         Field startDate;

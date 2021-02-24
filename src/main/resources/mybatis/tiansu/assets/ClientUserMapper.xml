@@ -27,23 +27,28 @@
 
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser" resultMap="BusiClientUserResult">
         <include refid="selectBusiClientUserVo"/>
-        <if test="ipAddress != null  and ipAddress != ''">
-            LEFT JOIN busi_client bc on bc.username = bcu.username
-        </if>
         <where>
-            <if test="username != null  and username != ''"> and bcu.USERNAME like concat('%', #{username}, '%')</if>
+            <if test="username != null  and username != ''"> and bcu.USERNAME = #{username}</if>
             <if test="status != null  and status != ''"> and bcu.STATUS = #{status}</if>
             <if test="createTime != null "> and bcu.CREATE_TIME = #{createTime}</if>
             <if test="updateTime != null "> and bcu.UPDATE_TIME = #{updateTime}</if>
             <if test="source != null  and source != ''"> and bcu.SOURCE = #{source}</if>
             <if test="ipAddress != null  and ipAddress != ''"> and bc.ip_address = #{ipAddress}</if>
-            <if test="startDate != null and endDate != null">bcu.update_time between #{startDate} and #{endDate}</if>
+            <if test="startDate != null and endDate != null">bcu.update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
         </where>
     </select>
 
     <select id="findById" parameterType="Long" resultMap="BusiClientUserResult">
         <include refid="selectBusiClientUserVo"/>
         where ID = #{id}
+    </select>
+    <select id="getClientUserByUsername" resultMap="BusiClientUserResult">
+        <include refid="selectBusiClientUserVo"/>
+        <where> username in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item.username}
+            </foreach>
+        </where>
     </select>
 
     <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser">
