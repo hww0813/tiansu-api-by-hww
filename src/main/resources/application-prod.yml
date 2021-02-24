@@ -98,3 +98,9 @@ token:
     secret: abcdefghijklmnopqrstuvwxyz
     # 令牌有效期（默认30分钟）
     expireTime: 30
+
+tiansu:
+    # 配置中心url
+    macshost: https://127.0.0.1:8091/prod-api
+    # 告警中心url
+    alarmhost: http://127.0.0.1:8086/alarm
