@@ -4,7 +4,7 @@ import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
 import lombok.Data;
 
 /**
- * 外部设备表实体
+ * 外部设备表实体(废弃类)
  * Created by xucan on 2021-01-18 10:57
  * @author xucan
  */

@@ -170,4 +170,88 @@
         delete from busi_camera where ID = #{id}
     </delete>
 
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+        INSERT INTO BUSI_CAMERA (ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, LONGITUDE,
+        LATITUDE, REGION, CREATE_TIME, UPDATE_TIME,STATUS,DEVICE_TYPE,SIP_SERVER_ID,IS_GB,MANUFACTURER,IS_PROBE,IS_IMPORT,IS_CHECK)
+        SELECT SQ_BUSI_CAMERA_ID.nextval, A.* FROM (
+        <foreach item="item" index="index" collection="list" separator="UNION ALL">
+            SELECT
+            #{item.id} as ID,
+            #{item.deviceCode, jdbcType=VARCHAR} as DEVICE_CODE,
+            #{item.deviceDomain, jdbcType=VARCHAR} as DEVICE_DOMAIN,
+            #{item.deviceName, jdbcType=VARCHAR} as DEVICE_NAME,
+            #{item.ipAddress, jdbcType=BIGINT} as IP_ADDRESS,
+            #{item.macAddress, jdbcType=VARCHAR} as MAC_ADDRESS,
+            #{item.longitude, jdbcType=DOUBLE} as LONGITUDE,
+            #{item.latitude, jdbcType=DOUBLE} as LATITUDE,
+            #{item.region.id, jdbcType=BIGINT} as REGION,
+            sysdate as CREATE_TIME,
+            sysdate as UPDATE_TIME,
+            #{item.status, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler} as STATUS,
+            #{item.deviceType,jdbcType =VARCHAR} as DEVICE_TYPE,
+            #{item.sipServerId, jdbcType=BIGINT} as SIP_SERVER_ID,
+            #{item.isGb, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler} as IS_GB,
+            #{item.manufacturer, jdbcType=VARCHAR} as MANUFACTURER,
+            #{item.isProbe,jdbcType=VARCHAR} as IS_PROBE,
+            #{item.isImport,jdbcType=VARCHAR} as IS_IMPORT,
+            0 as IS_CHECK
+            FROM dual
+        </foreach>
+        ) A
+    </insert>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+            update BUSI_CAMERA
+            <set>
+                <if test="item.deviceCode != null and item.deviceCode != ''">
+                    DEVICE_CODE   = #{item.deviceCode, jdbcType=VARCHAR},
+                </if>
+                <if test="item.deviceName != null and item.deviceName != ''">
+                    DEVICE_NAME   = #{item.deviceName, jdbcType=VARCHAR},
+                </if>
+                <if test="item.deviceDomain != null and item.deviceDomain != ''">
+                    DEVICE_DOMAIN = #{item.deviceDomain, jdbcType=VARCHAR},
+                </if>
+                <if test="item.ipAddress != null">
+                    IP_ADDRESS    = #{item.ipAddress, jdbcType=BIGINT},
+                </if>
+                <if test="item.macAddress != null and item.macAddress != ''">
+                    MAC_ADDRESS   = #{item.macAddress, jdbcType=VARCHAR},
+                </if>
+                <if test="item.longitude != null">
+                    LONGITUDE     = #{item.longitude, jdbcType=DOUBLE},
+                </if>
+                <if test="item.latitude != null">
+                    LATITUDE      = #{item.latitude, jdbcType=DOUBLE},
+                </if>
+                <if test="item.status != null">
+                    STATUS        = #{item.status, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+                </if>
+                <if test="item.deviceType != null and item.deviceType != ''">
+                    DEVICE_TYPE   = #{item.deviceType,jdbcType =VARCHAR},
+                </if>
+                UPDATE_TIME   = sysdate,
+                <if test="item.sipServerId != null">
+                    SIP_SERVER_ID = #{item.sipServerId, jdbcType=BIGINT},
+                </if>
+                <if test="item.isGb != null">
+                    IS_GB         = #{item.isGb, jdbcType=INTEGER, typeHandler=com.yuanqing.handler.DefaultEnumTypeHandler},
+                </if>
+                <if test="item.manufacturer != null and item.manufacturer != ''">
+                    MANUFACTURER  = #{item.manufacturer, jdbcType=VARCHAR},
+                </if>
+                <if test="item.isProbe != null and item.isProbe != ''">
+                    IS_PROBE      = #{item.isProbe,jdbcType =VARCHAR},
+                </if>
+                <if test="item.isImport != null and item.isImport != ''">
+                    IS_IMPORT     = #{item.isImport,jdbcType =VARCHAR},
+                </if>
+                <if test="item.region != null">
+                    REGION        = #{item.region.id, jdbcType=INTEGER}
+                </if>
+            </set>
+            WHERE ID = #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
 </mapper>

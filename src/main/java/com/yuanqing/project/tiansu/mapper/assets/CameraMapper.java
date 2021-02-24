@@ -129,13 +129,13 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      * @param list
      * @return
      */
-//    void batchInsert(@Param("list") List<Camera> list);
+    void batchInsert(@Param("list") List<Camera> list);
 
     /**
      * 批量更新
      * @param list
      */
-//    void batchUpdate(List<Camera> list);
+    void batchUpdate(List<Camera> list);
 
     /**
      * 获取所有数据

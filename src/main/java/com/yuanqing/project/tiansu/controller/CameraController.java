@@ -17,9 +17,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 摄像头Controller
@@ -219,17 +222,17 @@ public class CameraController extends BaseController {
 //        List<Camera> List = cameraService.getSessionCameraList(getListNum, getListSize, jsonObject);
 //        return AjaxResult.success(List);
 //    }
-//
-//    //导入外部设备表excel
-//    @PostMapping(value = "/importExt")
-//    @ApiOperation(value = "导入外部摄像头列表")
-//    public Map<String, Object> importExtExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        String AjaxResult = cameraService.readExtExcelFile(file);
-//        map.put("message", AjaxResult);
-//        return map;
-//    }
-//
+
+    //导入外部设备表excel
+    @PostMapping(value = "/importExt")
+    @ApiOperation(value = "导入外部摄像头列表")
+    public Map<String, Object> importExtExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        String AjaxResult = cameraService.readExtExcelFile(file);
+        map.put("message", AjaxResult);
+        return map;
+    }
+
 
     protected Camera doForward(CameraDto dto) {
         Camera entity = new Camera();

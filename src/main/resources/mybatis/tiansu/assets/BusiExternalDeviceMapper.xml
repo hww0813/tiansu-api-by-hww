@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.BusiExternalDeviceMapper">
+
+    <resultMap type="BusiExternalDevice" id="BusiExternalDeviceResult">
+        <result property="id"    column="ID"    />
+        <result property="deviceId"    column="DEVICE_ID"    />
+        <result property="deviceName"    column="DEVICE_NAME"    />
+        <result property="domainId"    column="DOMAIN_ID"    />
+        <result property="gbId"    column="GB_ID"    />
+        <result property="ipAddress"    column="IP_ADDRESS"    />
+        <result property="manufacturer"    column="MANUFACTURER"    />
+        <result property="longitude"    column="LONGITUDE"    />
+        <result property="latitude"    column="LATITUDE"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="updateTime"    column="UPDATE_TIME"    />
+        <result property="deviceAlias"    column="DEVICE_ALIAS"    />
+    </resultMap>
+
+    <sql id="selectBusiExternalDeviceVo">
+        select ID, DEVICE_ID, DEVICE_NAME, DOMAIN_ID, GB_ID, IP_ADDRESS, MANUFACTURER, LONGITUDE, LATITUDE, CREATE_TIME, UPDATE_TIME, DEVICE_ALIAS from busi_external_device
+    </sql>
+
+    <select id="selectBusiExternalDeviceList" parameterType="BusiExternalDevice" resultMap="BusiExternalDeviceResult">
+        <include refid="selectBusiExternalDeviceVo"/>
+        <where>
+            <if test="id != null "> and ID = #{id}</if>
+            <if test="deviceId != null  and deviceId != ''"> and DEVICE_ID = #{deviceId}</if>
+            <if test="deviceName != null  and deviceName != ''"> and DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
+            <if test="domainId != null  and domainId != ''"> and DOMAIN_ID = #{domainId}</if>
+            <if test="gbId != null  and gbId != ''"> and GB_ID = #{gbId}</if>
+            <if test="ipAddress != null  and ipAddress != ''"> and IP_ADDRESS = #{ipAddress}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and MANUFACTURER = #{manufacturer}</if>
+            <if test="longitude != null  and longitude != ''"> and LONGITUDE = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''"> and LATITUDE = #{latitude}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
+            <if test="deviceAlias != null  and deviceAlias != ''"> and DEVICE_ALIAS = #{deviceAlias}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiExternalDeviceById" parameterType="Long" resultMap="BusiExternalDeviceResult">
+        <include refid="selectBusiExternalDeviceVo"/>
+        where ID = #{id}
+    </select>
+
+    <insert id="insertBusiExternalDevice" parameterType="BusiExternalDevice">
+        insert into busi_external_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">ID,</if>
+            <if test="deviceId != null  and deviceId != ''">DEVICE_ID,</if>
+            <if test="deviceName != null  and deviceName != ''">DEVICE_NAME,</if>
+            <if test="domainId != null  and domainId != ''">DOMAIN_ID,</if>
+            <if test="gbId != null  and gbId != ''">GB_ID,</if>
+            <if test="ipAddress != null  and ipAddress != ''">IP_ADDRESS,</if>
+            <if test="manufacturer != null  and manufacturer != ''">MANUFACTURER,</if>
+            <if test="longitude != null  and longitude != ''">LONGITUDE,</if>
+            <if test="latitude != null  and latitude != ''">LATITUDE,</if>
+            <if test="createTime != null ">CREATE_TIME,</if>
+            <if test="updateTime != null ">UPDATE_TIME,</if>
+            <if test="deviceAlias != null  and deviceAlias != ''">DEVICE_ALIAS,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="deviceId != null  and deviceId != ''">#{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="domainId != null  and domainId != ''">#{domainId},</if>
+            <if test="gbId != null  and gbId != ''">#{gbId},</if>
+            <if test="ipAddress != null  and ipAddress != ''">#{ipAddress},</if>
+            <if test="manufacturer != null  and manufacturer != ''">#{manufacturer},</if>
+            <if test="longitude != null  and longitude != ''">#{longitude},</if>
+            <if test="latitude != null  and latitude != ''">#{latitude},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="deviceAlias != null  and deviceAlias != ''">#{deviceAlias},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiExternalDevice" parameterType="BusiExternalDevice">
+        update busi_external_device
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceId != null  and deviceId != ''">DEVICE_ID = #{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">DEVICE_NAME = #{deviceName},</if>
+            <if test="domainId != null  and domainId != ''">DOMAIN_ID = #{domainId},</if>
+            <if test="gbId != null  and gbId != ''">GB_ID = #{gbId},</if>
+            <if test="ipAddress != null  and ipAddress != ''">IP_ADDRESS = #{ipAddress},</if>
+            <if test="manufacturer != null  and manufacturer != ''">MANUFACTURER = #{manufacturer},</if>
+            <if test="longitude != null  and longitude != ''">LONGITUDE = #{longitude},</if>
+            <if test="latitude != null  and latitude != ''">LATITUDE = #{latitude},</if>
+            <if test="createTime != null ">CREATE_TIME = #{createTime},</if>
+            <if test="updateTime != null ">UPDATE_TIME = #{updateTime},</if>
+            <if test="deviceAlias != null  and deviceAlias != ''">DEVICE_ALIAS = #{deviceAlias},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <update id="deleteBusiExternalDeviceById" parameterType="Long">
+        update busi_external_device set is_del = 0 where ID = #{id}
+    </update>
+
+    <update id="deleteBusiExternalDeviceByIds" parameterType="String">
+        update busi_external_device set is_del = 0 where ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+        INSERT INTO BUSI_EXTERNAL_DEVICE (ID, DEVICE_ID, DEVICE_NAME, DOMAIN_ID, GB_ID, IP_ADDRESS, MANUFACTURER,
+        LONGITUDE, LATITUDE, CREATE_TIME, UPDATE_TIME,DEVICE_ALIAS)
+        SELECT SQ_EXTERNAL_DEVICE_ID.NEXTVAL, A.* FROM (
+        <foreach item="item" index="index" collection="list" separator="UNION ALL">
+            SELECT
+            #{id} as ID,
+            #{item.deviceId, jdbcType=VARCHAR} as DEVICE_ID,
+            #{item.deviceName, jdbcType=VARCHAR} as DEVICE_NAME,
+            #{item.domainId, jdbcType=VARCHAR} as DOMAIN_ID,
+            #{item.gbId, jdbcType=VARCHAR} as GB_ID,
+            #{item.ipAddress, jdbcType=VARCHAR} as IP_ADDRESS,
+            #{item.manufacturer, jdbcType=VARCHAR} as MANUFACTURER,
+            #{item.longitude, jdbcType=VARCHAR} as LONGITUDE,
+            #{item.latitude, jdbcType=VARCHAR} as LATITUDE,
+            sysdate as CREATE_TIME,
+            sysdate as UPDATE_TIME,
+            #{item.deviceName, jdbcType=VARCHAR} as DEVICE_ALIAS
+            FROM dual
+        </foreach>
+        ) A
+    </insert>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+            update BUSI_EXTERNAL_DEVICE
+            <set>
+                <if test="item.deviceId != null and item.deviceId != ''">
+                    DEVICE_ID   = #{item.deviceId, jdbcType=VARCHAR},
+                </if>
+                <if test="item.deviceName != null and item.deviceName != ''">
+                    DEVICE_NAME   = #{item.deviceName, jdbcType=VARCHAR},
+                </if>
+                <if test="item.domainId != null and item.domainId != ''">
+                    DOMAIN_ID = #{item.domainId, jdbcType=VARCHAR},
+                </if>
+                <if test="item.gbId != null">
+                    GB_ID    = #{item.gbId, jdbcType=VARCHAR},
+                </if>
+                <if test="item.ipAddress != null and item.ipAddress != ''">
+                    IP_ADDRESS   = #{item.ipAddress, jdbcType=VARCHAR},
+                </if>
+                <if test="item.manufacturer != null and item.manufacturer != ''">
+                    MANUFACTURER   = #{item.manufacturer, jdbcType=VARCHAR},
+                </if>
+                <if test="item.longitude != null and item.longitude != ''">
+                    LONGITUDE     = #{item.longitude, jdbcType=VARCHAR},
+                </if>
+                <if test="item.latitude != null and item.latitude != ''">
+                    LATITUDE      = #{item.latitude, jdbcType=VARCHAR},
+                </if>
+                <if test="item.deviceName != null and item.deviceName != ''">
+                    DEVICE_ALIAS  = #{item.deviceName, jdbcType=VARCHAR},
+                </if>
+                UPDATE_TIME   = sysdate
+            </set>
+            WHERE ID = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

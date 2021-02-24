@@ -9,22 +9,26 @@ import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.CameraMap;
 import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.utils.DateUtils;
-import com.yuanqing.project.tiansu.domain.assets.Camera;
-import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
-import com.yuanqing.project.tiansu.domain.assets.ExternalDevice;
+import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.project.tiansu.domain.IConstants;
+import com.yuanqing.project.tiansu.domain.assets.*;
+import com.yuanqing.project.tiansu.mapper.assets.BusiExternalDeviceMapper;
 import com.yuanqing.project.tiansu.mapper.assets.CameraMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import static com.yuanqing.common.constant.Constants.CAMERA_CACHE_NAME;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +49,8 @@ public class CameraServiceImpl implements ICameraService {
     @Autowired
     private ClientTerminalMapper clientTerminalMapper;
 
+    @Resource
+    private BusiExternalDeviceMapper busiExternalDeviceMapper;
 
     @Override
     public boolean findCamera(Camera camera) {
@@ -95,13 +101,13 @@ public class CameraServiceImpl implements ICameraService {
     }
 
     @Override
-    public Long saveExternalDevice(ExternalDevice entity) {
+    public Long saveExternalDevice(BusiExternalDevice entity) {
 
         return null;
     }
 
     @Override
-    public void dealCamera(ExternalDevice entity, List<Camera> addList, List<Camera> updateList, Map<String, Object> cameraCodeMap) {
+    public void dealCamera(BusiExternalDevice entity, List<Camera> addList, List<Camera> updateList, Map<String, Object> cameraCodeMap) {
         /*
          *在导入外部设备时，也要同时往历史表里面备份
          * 现根据私标作为key来查历史表
@@ -371,4 +377,215 @@ public class CameraServiceImpl implements ICameraService {
         CameraMap.remove(cameraKey);
     }
 
+
+    @Override
+    public String readExtExcelFile(MultipartFile file) {
+        String result = "";
+        //创建处理EXCEL的类
+        ReadExcel readExcel = new ReadExcel();
+        int count = 0;
+        //解析excel，获取上传的事件单
+        List<Map<String, Object>> extCameraList = readExcel.getExtCameraExcelInfo(file);
+        //至此已经将excel中的数据转换到list里面了,接下来就可以操作list,可以进行保存到数据库,或者其他操作,
+
+        //获得外部设备表的所有数据,并且new一个外部设备新增 list和一个外部设备更新list
+        List<BusiExternalDevice> externalDeviceList = busiExternalDeviceMapper.selectBusiExternalDeviceList(new BusiExternalDevice());
+        List<BusiExternalDevice> addDeviceList = new ArrayList<>();
+        List<BusiExternalDevice> updateDeviceList = new ArrayList<>();
+
+        //根据国标编码为key,将数据put到HashMap1中;根据设备编码即私标编码为key,将数据put到HashMap2中
+        Map<String, Object> deviceGbIdMap = new HashMap<>();
+        Map<String, Object> deviceIdMap = new HashMap<>();
+        for (BusiExternalDevice b : externalDeviceList) {
+            deviceGbIdMap.put(b.getGbId(), b);
+            deviceIdMap.put(b.getDeviceId(), b);
+        }
+
+        //获得摄像头表的所有数据,并且new一个摄像头新增 list和一个摄像头更新list
+        List<Camera> cameraList = cameraMapper.getList(new Camera());
+        List<Camera> addCameraList = new ArrayList<>();
+        List<Camera> updateCameraList = new ArrayList<>();
+
+        //根据devicecode为key,将数据put到HashMap中
+        Map<String, Object> cameraCodeMap = new HashMap<>();
+        for (Camera b : cameraList) {
+            cameraCodeMap.put(b.getDeviceCode(), b);
+        }
+        for (Map<String, Object> extCamera : extCameraList) {
+            BusiExternalDevice externalDevice = new BusiExternalDevice();
+            try {
+                externalDevice.setDeviceId(extCamera.get("deviceId").toString());
+            } catch (Exception e) {
+                externalDevice.setDeviceId("");
+            }
+            try {
+                externalDevice.setDeviceName(extCamera.get("deviceName").toString());
+            } catch (Exception e) {
+                externalDevice.setDeviceName("");
+            }
+
+            try {
+                externalDevice.setDomainId(extCamera.get("region").toString());
+            } catch (Exception e) {
+                externalDevice.setDomainId("");
+            }
+
+            try {
+                externalDevice.setGbId(extCamera.get("gbId").toString());
+            } catch (Exception e) {
+                externalDevice.setGbId("");
+            }
+
+            try {
+                externalDevice.setIpAddress(extCamera.get("ipAddress").toString());
+            } catch (Exception e) {
+                externalDevice.setIpAddress(null);
+            }
+
+            try {
+                if (extCamera.get("longitude") != null && !extCamera.get("longitude").equals("")) {
+                    externalDevice.setLongitude(extCamera.get("longitude").toString());
+                } else {
+                    externalDevice.setLongitude(null);
+                }
+            } catch (Exception e) {
+                externalDevice.setLongitude(null);
+            }
+
+            try {
+                if (extCamera.get("latitude") != null && !extCamera.get("latitude").equals("")) {
+                    externalDevice.setLatitude(extCamera.get("latitude").toString());
+                } else {
+                    externalDevice.setLatitude(null);
+                }
+            } catch (Exception e) {
+                externalDevice.setLatitude(null);
+            }
+
+            try {
+                externalDevice.setManufacturer(extCamera.get("manufacturer").toString());
+            } catch (Exception e) {
+                externalDevice.setManufacturer("");
+            }
+
+            BusiExternalDevice oldExternalDevice = null;
+
+            // 根据编码在外部资源表中查询
+            String gbId = externalDevice.getGbId().trim();
+            String deviceId = externalDevice.getDeviceId().trim();
+            if (StringUtils.isNotBlank(gbId) && deviceGbIdMap.containsKey(gbId)) {
+//                oldExternalDevice = externalDeviceMapper.findByGbId(gbId);
+                oldExternalDevice = (BusiExternalDevice) deviceGbIdMap.get(gbId);
+            } else if (StringUtils.isNotBlank(deviceId) && deviceIdMap.containsKey(deviceId)) {
+//                oldExternalDevice = externalDeviceMapper.findByDeviceId(deviceId);
+                oldExternalDevice = (BusiExternalDevice) deviceIdMap.get(deviceId);
+            }
+
+            if (oldExternalDevice != null) {
+                externalDevice.setId(oldExternalDevice.getId());
+                updateDeviceList.add(externalDevice);
+            } else {
+                addDeviceList.add(externalDevice);
+            }
+
+            this.dealCamera(externalDevice, addCameraList, updateCameraList, cameraCodeMap);
+        }
+        //外部设备新增和更新批量入库;i=0表示新增，i=1表示更新
+        if (addDeviceList.size() > 0) {
+            this.deviceSave(addDeviceList, 0);
+            count = 1;
+        }
+        if (updateDeviceList.size() > 0) {
+            this.deviceSave(updateDeviceList, 1);
+            count = 1;
+        }
+
+        //摄像头新增和更新批量入库;i=0表示新增，i=1表示更新
+        if (addCameraList.size() > 0) {
+            this.cameraSave(addCameraList, 0);
+            count = 1;
+//            for(Camera entity:addCameraList){
+//                //摄像头导入时新增/更新都要处理缓存
+//                String cameraKey = String.format(IConstants.TWO_FORMAT, IConstants.CAMERA, entity.getDeviceCode());
+////                redisCache.setCacheObject(cameraKey, entity, 2, TimeUnit.DAYS);
+//                CameraMap.put(cameraKey,entity);
+//                CameraHistory cameraHistory = new CameraHistory();
+//                BeanUtils.copyProperties(entity, cameraHistory);
+//                //传到摄像头历史处理队列
+//                CameraHistoryCollection.push(cameraHistory);
+//            }
+        }
+        if (updateCameraList.size() > 0) {
+            this.cameraSave(updateCameraList, 1);
+            count = 1;
+//            for(Camera entity:updateCameraList){
+//                //摄像头导入时新增/更新都要处理缓存
+//                String cameraKey = String.format(IConstants.TWO_FORMAT, IConstants.CAMERA, entity.getDeviceCode());
+////                redisCache.setCacheObject(cameraKey, entity, 2, TimeUnit.DAYS);
+//                CameraMap.put(cameraKey,entity);
+//                CameraHistory cameraHistory = new CameraHistory();
+//                BeanUtils.copyProperties(entity, cameraHistory);
+//                //传到摄像头历史处理队列
+//                CameraHistoryCollection.push(cameraHistory);
+//            }
+        }
+        if (count > 0) {
+            result = "上传成功";
+        } else {
+            result = "上传失败";
+        }
+        return result;
+    }
+
+    private static int batchCount = 500;
+
+    /**
+     * 外部设备新增/更新入库
+     *
+     * @param device
+     */
+    private void deviceSave(List<BusiExternalDevice> device, int j) {
+        for (int i = 0; i <= device.size() / batchCount; i++) {
+            if (i == device.size() / batchCount) {
+                if (device.subList(i * batchCount, device.size()).size() > 0) {
+                    if (j == 0) {
+                        busiExternalDeviceMapper.batchInsert(device.subList(i * batchCount, device.size()));
+                    } else if (j == 1) {
+                        busiExternalDeviceMapper.batchUpdate(device.subList(i * batchCount, device.size()));
+                    }
+                }
+            } else {
+                if (j == 0) {
+                    busiExternalDeviceMapper.batchInsert(device.subList(i * batchCount, (i + 1) * batchCount));
+                } else if (j == 1) {
+                    busiExternalDeviceMapper.batchUpdate(device.subList(i * batchCount, (i + 1) * batchCount));
+                }
+            }
+        }
+    }
+
+    /**
+     * 摄像头新增/更新入库
+     *
+     * @param camera
+     */
+    private void cameraSave(List<Camera> camera, int j) {
+        for (int i = 0; i <= camera.size() / batchCount; i++) {
+            if (i == camera.size() / batchCount) {
+                if (camera.subList(i * batchCount, camera.size()).size() > 0) {
+                    if (j == 0) {
+                        cameraMapper.batchInsert(camera.subList(i * batchCount, camera.size()));
+                    } else if (j == 1) {
+                        cameraMapper.batchUpdate(camera.subList(i * batchCount, camera.size()));
+                    }
+                }
+            } else {
+                if (j == 0) {
+                    cameraMapper.batchInsert(camera.subList(i * batchCount, (i + 1) * batchCount));
+                } else if (j == 1) {
+                    cameraMapper.batchUpdate(camera.subList(i * batchCount, (i + 1) * batchCount));
+                }
+            }
+        }
+    }
 }
