@@ -190,7 +190,7 @@ public class OperationBehaviorController extends BaseController   {
     /**
      * @author: dongchao
      * @create: 2021/2/5-13:55
-     * @description: todo 需优化 count(distinct *)
+     * @description:
      * @param:
      * @return:
      */
@@ -279,8 +279,8 @@ public class OperationBehaviorController extends BaseController   {
     public AjaxResult getCountByTime() throws ExecutionException, InterruptedException {
         LocalDate localDate = LocalDate.now();
         OperationBehavior operationBehaviorSearch   =  new OperationBehavior();
-        operationBehaviorSearch.setsTime(DateUtils.localDateToDate(localDate));
-        operationBehaviorSearch.seteTime(DateUtils.localDateToDate(localDate.plusDays(1)));
+        operationBehaviorSearch.setStime(DateUtils.localDateToDate(localDate));
+        operationBehaviorSearch.setEtime(DateUtils.localDateToDate(localDate.plusDays(1)));
         CompletableFuture<Integer> countFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.quertyOperationBehaviorCount(operationBehaviorSearch));
         CompletableFuture<Integer> countsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.queryRawCount(operationBehaviorSearch));
         HashMap hashMap = new HashMap();

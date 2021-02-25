@@ -64,7 +64,7 @@ public class PageResult extends HashMap<String, Object>
         super.put(MSG_TAG, msg);
         if (StringUtils.isNotNull(data))
         {
-            super.put(DATA_TAG, data);
+            super.put("data", data);
         }
     }
 
@@ -92,10 +92,12 @@ public class PageResult extends HashMap<String, Object>
      */
     public static PageResult success(Object data,Integer pageSize,Integer pageNum,Integer total)
     {
-        PageResult result = PageResult.success("操作成功", data);
-        result.put(Total,total);
-        result.put(PAGE_SIZE,pageSize);
-        result.put(PAGE_NUM,pageNum);
+        PageResult r = new PageResult();
+        r.put(Total,total);
+        r.put(PAGE_SIZE,pageSize);
+        r.put(PAGE_NUM,pageNum);
+        r.put(DATA_TAG,data);
+        PageResult result = PageResult.success("操作成功",r);
         return result;
     }
 
