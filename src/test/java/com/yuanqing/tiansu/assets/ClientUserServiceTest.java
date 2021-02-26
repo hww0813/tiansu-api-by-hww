@@ -3,6 +3,7 @@ package com.yuanqing.tiansu.assets;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientUserDto;
 import com.yuanqing.project.tiansu.service.assets.IClientUserService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,33 +22,46 @@ public class ClientUserServiceTest {
     @Autowired
     private IClientUserService clientUserService;
 
+    /**
+     * 查询用户列表（包含终端数）1/2
+     */
     @Test
     public void handleClientUserTerminalNum(){
 
         List<ClientUser> list = clientUserService.getList(new ClientUser());
         List<ClientUserDto> dtoList = clientUserService.handleClientUserTerminalNum(list);
         System.out.println(dtoList);
+        Assert.assertEquals(32,dtoList.size());
     }
 
+    /**
+     * 活跃用户？？
+     */
     @Test
     public void getActiveClientUser(){
         List<ClientUser> activeClientUser = clientUserService.getActiveClientUser();
         System.out.println(activeClientUser);
     }
 
+    /**
+     * 1改成0
+     */
     @Test
     public void changStatus(){
-        String[] ids = {"1","623239475283234817"};
+        String[] ids = {"1","600000000000000001"};
         boolean b = clientUserService.changStatus(ids);
-        System.out.println(b);
+        Assert.assertEquals(true,b);
     }
 
+    /**
+     * 条件查询用户列表？？？
+     */
     @Test
     public void getList(){
         ClientUser clientUser = new ClientUser();
 
         //条件
-//        clientUser.setUsername("test");
+        clientUser.setUsername("admin");
 //        clientUser.setId(1L);
 //        clientUser.setStatus(1);
 //        clientUser.setSource("test");
@@ -55,18 +69,27 @@ public class ClientUserServiceTest {
         System.out.println(list);
     }
 
+    /**
+     * 按id查找用户，包括ip
+     */
     @Test
     public void findById(){
-        ClientUser clientUser = clientUserService.findById(623262576440119298L);
+        ClientUser clientUser = clientUserService.findById(600000000000000001L);
         System.out.println(clientUser);
     }
 
+    /**
+     * 删除用户
+     */
     @Test
     public void delete(){
         save();
         clientUserService.deleteById(1L);
     }
 
+    /**
+     * 新增用户
+     */
     @Test
     public void save(){
         ClientUser clientUser = new ClientUser();

@@ -55,7 +55,7 @@
             <if test="isProbe != null  and isProbe != ''"> and IS_PROBE = #{isProbe}</if>
             <if test="isImport != null  and isImport != ''"> and IS_IMPORT = #{isImport}</if>
             <if test="isCheck != null "> and IS_CHECK = #{isCheck}</if>
-            <if test="startDate != null and endDate != null">update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+            <if test="startDate != null and endDate != null">and update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
         </where>
     </select>
 
