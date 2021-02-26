@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.CameraMapper">
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.BusiCameraMapper">
 
-    <resultMap type="com.yuanqing.project.tiansu.domain.assets.Camera" id="BusiCameraResult">
+    <resultMap type="BusiCamera" id="BusiCameraResult">
         <result property="id"    column="ID"    />
         <result property="deviceCode"    column="DEVICE_CODE"    />
         <result property="deviceDomain"    column="DEVICE_DOMAIN"    />
@@ -32,7 +32,7 @@
         select ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, MAC_ADDRESS, LONGITUDE, LATITUDE, REGION, CREATE_TIME, UPDATE_TIME, IP_ADDRESS, STATUS, SIP_SERVER_ID, DEVICE_TYPE, DOMAIN_IP, DOMAIN_PORT, IS_GB, MANUFACTURER, IS_PROBE, IS_IMPORT, IS_CHECK from busi_camera
     </sql>
 
-    <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera" resultMap="BusiCameraResult">
+    <select id="selectBusiCameraList" parameterType="BusiCamera" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         <where>
             <if test="deviceCode != null  and deviceCode != ''"> and DEVICE_CODE = #{deviceCode}</if>
@@ -55,41 +55,15 @@
             <if test="isProbe != null  and isProbe != ''"> and IS_PROBE = #{isProbe}</if>
             <if test="isImport != null  and isImport != ''"> and IS_IMPORT = #{isImport}</if>
             <if test="isCheck != null "> and IS_CHECK = #{isCheck}</if>
-            <if test="startDate != null and endDate != null">update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
         </where>
     </select>
 
-    <select id="findById" parameterType="Long" resultMap="BusiCameraResult">
+    <select id="selectBusiCameraById" parameterType="Long" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         where ID = #{id}
     </select>
 
-    <select id="gourpByGb" resultType="com.alibaba.fastjson.JSONObject">
-
-        select is_gb type,count(*) count  from busi_camera where device_type is null GROUP BY IS_GB
-
-    </select>
-
-    <update id="updateIsNotServer" parameterType="long">
-        update busi_camera
-        <set>
-            is_check = 1
-            WHERE ip_address = #{ipAddress}
-        </set>
-    </update>
-
-    <update id="changStatus">
-        UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=now() WHERE ID in
-        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </update>
-
-    <update id="changAllStatus">
-        UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=now() WHERE STATUS!='0'
-    </update>
-
-    <insert id="insert" parameterType="Camera">
+    <insert id="insertBusiCamera" parameterType="BusiCamera">
         insert into busi_camera
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null ">ID,</if>
@@ -113,7 +87,7 @@
             <if test="isProbe != null  and isProbe != ''">IS_PROBE,</if>
             <if test="isImport != null  and isImport != ''">IS_IMPORT,</if>
             <if test="isCheck != null ">IS_CHECK,</if>
-        </trim>
+         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null ">#{id},</if>
             <if test="deviceCode != null  and deviceCode != ''">#{deviceCode},</if>
@@ -136,10 +110,10 @@
             <if test="isProbe != null  and isProbe != ''">#{isProbe},</if>
             <if test="isImport != null  and isImport != ''">#{isImport},</if>
             <if test="isCheck != null ">#{isCheck},</if>
-        </trim>
+         </trim>
     </insert>
 
-    <update id="update" parameterType="Camera">
+    <update id="updateBusiCamera" parameterType="BusiCamera">
         update busi_camera
         <trim prefix="SET" suffixOverrides=",">
             <if test="deviceCode != null  and deviceCode != ''">DEVICE_CODE = #{deviceCode},</if>
@@ -166,9 +140,16 @@
         where ID = #{id}
     </update>
 
-    <delete id="delete" parameterType="Long">
-        delete from busi_camera where ID = #{id}
-    </delete>
+    <update id="deleteBusiCameraById" parameterType="Long">
+        update busi_camera set is_del = 0 where ID = #{id}
+    </update>
+
+    <update id="deleteBusiCameraByIds" parameterType="String">
+        update busi_camera set is_del = 0 where ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 
     <insert id="batchInsert" parameterType="java.util.List">
         INSERT INTO BUSI_CAMERA (ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, IP_ADDRESS, MAC_ADDRESS, LONGITUDE,
@@ -183,59 +164,4 @@
             #{item.manufacturer, jdbcType=VARCHAR}, #{item.isProbe,jdbcType=VARCHAR}, #{item.isImport,jdbcType=VARCHAR}, 0)
         </foreach>
     </insert>
-
-    <update id="batchUpdate" parameterType="java.util.List">
-        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
-            update BUSI_CAMERA
-            <set>
-                <if test="item.deviceCode != null and item.deviceCode != ''">
-                    DEVICE_CODE   = #{item.deviceCode, jdbcType=VARCHAR},
-                </if>
-                <if test="item.deviceName != null and item.deviceName != ''">
-                    DEVICE_NAME   = #{item.deviceName, jdbcType=VARCHAR},
-                </if>
-                <if test="item.deviceDomain != null and item.deviceDomain != ''">
-                    DEVICE_DOMAIN = #{item.deviceDomain, jdbcType=VARCHAR},
-                </if>
-                <if test="item.ipAddress != null">
-                    IP_ADDRESS    = #{item.ipAddress, jdbcType=BIGINT},
-                </if>
-                <if test="item.macAddress != null and item.macAddress != ''">
-                    MAC_ADDRESS   = #{item.macAddress, jdbcType=VARCHAR},
-                </if>
-                <if test="item.longitude != null">
-                    LONGITUDE     = #{item.longitude, jdbcType=DOUBLE},
-                </if>
-                <if test="item.latitude != null">
-                    LATITUDE      = #{item.latitude, jdbcType=DOUBLE},
-                </if>
-                <if test="item.status != null">
-                    STATUS        = #{item.status, jdbcType=INTEGER},
-                </if>
-                <if test="item.deviceType != null and item.deviceType != ''">
-                    DEVICE_TYPE   = #{item.deviceType,jdbcType =VARCHAR},
-                </if>
-                <if test="item.sipServerId != null">
-                    SIP_SERVER_ID = #{item.sipServerId, jdbcType=BIGINT},
-                </if>
-                <if test="item.isGb != null">
-                    IS_GB         = #{item.isGb, jdbcType=INTEGER},
-                </if>
-                <if test="item.manufacturer != null and item.manufacturer != ''">
-                    MANUFACTURER  = #{item.manufacturer, jdbcType=VARCHAR},
-                </if>
-                <if test="item.isProbe != null and item.isProbe != ''">
-                    IS_PROBE      = #{item.isProbe,jdbcType =VARCHAR},
-                </if>
-                <if test="item.isImport != null and item.isImport != ''">
-                    IS_IMPORT     = #{item.isImport,jdbcType =VARCHAR},
-                </if>
-                <if test="item.region != null">
-                    REGION        = #{item.region.id, jdbcType=INTEGER},
-                </if>
-                UPDATE_TIME   = now()
-            </set>
-            WHERE ID = #{item.id,jdbcType=BIGINT}
-        </foreach>
-    </update>
 </mapper>

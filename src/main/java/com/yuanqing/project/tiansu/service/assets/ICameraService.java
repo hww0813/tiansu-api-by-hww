@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.service.assets;
 
 import com.yuanqing.framework.web.service.BaseService;
+import com.yuanqing.project.tiansu.domain.assets.BusiCamera;
 import com.yuanqing.project.tiansu.domain.assets.BusiExternalDevice;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,7 +93,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
      * @param updateList
      * @param cameraCodeMap
      */
-    void dealCamera(BusiExternalDevice entity,List<Camera> addList,List<Camera> updateList,Map<String, Object> cameraCodeMap);
+    void dealCamera(BusiExternalDevice entity, List<BusiCamera> addList, List<BusiCamera> updateList, Map<String, Object> cameraCodeMap);
 
 
 

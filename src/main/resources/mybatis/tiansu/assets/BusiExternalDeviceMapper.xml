@@ -107,33 +107,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </update>
 
-    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+    <insert id="batchInsert" parameterType="java.util.List">
         INSERT INTO BUSI_EXTERNAL_DEVICE (ID, DEVICE_ID, DEVICE_NAME, DOMAIN_ID, GB_ID, IP_ADDRESS, MANUFACTURER,
         LONGITUDE, LATITUDE, CREATE_TIME, UPDATE_TIME,DEVICE_ALIAS)
-        SELECT SQ_EXTERNAL_DEVICE_ID.NEXTVAL, A.* FROM (
-        <foreach item="item" index="index" collection="list" separator="UNION ALL">
-            SELECT
-            #{id} as ID,
-            #{item.deviceId, jdbcType=VARCHAR} as DEVICE_ID,
-            #{item.deviceName, jdbcType=VARCHAR} as DEVICE_NAME,
-            #{item.domainId, jdbcType=VARCHAR} as DOMAIN_ID,
-            #{item.gbId, jdbcType=VARCHAR} as GB_ID,
-            #{item.ipAddress, jdbcType=VARCHAR} as IP_ADDRESS,
-            #{item.manufacturer, jdbcType=VARCHAR} as MANUFACTURER,
-            #{item.longitude, jdbcType=VARCHAR} as LONGITUDE,
-            #{item.latitude, jdbcType=VARCHAR} as LATITUDE,
-            sysdate as CREATE_TIME,
-            sysdate as UPDATE_TIME,
-            #{item.deviceName, jdbcType=VARCHAR} as DEVICE_ALIAS
-            FROM dual
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.deviceId, jdbcType=VARCHAR}, #{item.deviceName, jdbcType=VARCHAR},
+             #{item.domainId, jdbcType=VARCHAR}, #{item.gbId, jdbcType=VARCHAR}, #{item.ipAddress, jdbcType=VARCHAR},
+            #{item.manufacturer, jdbcType=VARCHAR}, #{item.longitude, jdbcType=VARCHAR}, #{item.latitude, jdbcType=VARCHAR},
+            now(), now(), #{item.deviceName, jdbcType=VARCHAR})
         </foreach>
-        ) A
     </insert>
 
     <update id="batchUpdate" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
             update BUSI_EXTERNAL_DEVICE
-            <set>
+            <trim prefix="SET" suffixOverrides=",">
                 <if test="item.deviceId != null and item.deviceId != ''">
                     DEVICE_ID   = #{item.deviceId, jdbcType=VARCHAR},
                 </if>
@@ -161,8 +150,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 <if test="item.deviceName != null and item.deviceName != ''">
                     DEVICE_ALIAS  = #{item.deviceName, jdbcType=VARCHAR},
                 </if>
-                UPDATE_TIME   = sysdate
-            </set>
+                UPDATE_TIME   = now()
+            </trim>
             WHERE ID = #{item.id}
         </foreach>
     </update>

@@ -100,7 +100,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      */
 //    List<Camera> getSessionCameraList(JSONObject filters);
 
-    Camera maxId();
+//    Camera maxId();
 
 //    List<Camera> getAllVisited(JSONObject filters);
 
