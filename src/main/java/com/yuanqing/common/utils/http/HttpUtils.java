@@ -1,23 +1,25 @@
 package com.yuanqing.common.utils.http;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
+import java.util.List;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 通用http发送方法
@@ -27,6 +29,26 @@ import org.slf4j.LoggerFactory;
 public class HttpUtils
 {
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+
+
+
+
+    public static String sendGet(String url, JSONObject param)
+    {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Accept", "application/json");
+        HttpEntity<JSONObject> httpEntity = new HttpEntity(param.toJSONString(), headers);
+        RestTemplate restTemplate = new RestTemplate();
+        setRestTemplateEncode(restTemplate);
+        //或者在注入之前set该requestFactory
+        restTemplate.setRequestFactory(new HttpComponentClientHttpRequestWithBodyFactory());
+        ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+        return exchange.getBody();
+    }
+
+
+
 
     /**
      * 向指定 URL 发送GET方法的请求
@@ -243,6 +265,21 @@ public class HttpUtils
         public boolean verify(String hostname, SSLSession session)
         {
             return true;
+        }
+    }
+
+
+    private static void setRestTemplateEncode(RestTemplate restTemplate) {
+        if (null == restTemplate || ObjectUtils.isEmpty(restTemplate.getMessageConverters())) {
+            return;
+        }
+
+        List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();
+        for (int i = 0; i < messageConverters.size(); i++) {
+            HttpMessageConverter<?> httpMessageConverter = messageConverters.get(i);
+            if (httpMessageConverter.getClass().equals(StringHttpMessageConverter.class)) {
+                messageConverters.set(i, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+            }
         }
     }
 }
