@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.io.Serializable;
+
 /**
  * 系统配置表对象 macs_config
  *
@@ -16,6 +18,25 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class MacsConfig extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
+
+    public MacsConfig(){
+
+    }
+
+    public MacsConfig(Long id,String type,String name){
+        this.id = id;
+        this.type = type;
+        this.name = name;
+    }
+
+    public MacsConfig(String type,String name){
+        this.type = type;
+        this.name = name;
+    }
+
+    public MacsConfig(String type){
+        this.type = type;
+    }
 
     /** id */
     @ApiModelProperty("ID")
@@ -177,5 +198,20 @@ public class MacsConfig extends BaseEntity
             .append("fieldValues", getFieldValues())
             .append("updateTime", getUpdateTime())
             .toString();
+    }
+
+    public String toParamsString(){
+        StringBuilder sb = new StringBuilder();
+
+        if(id!=null){
+            sb.append("id="+id+"&&");
+        }
+        if (type !=null){
+            sb.append("type="+type+"&&");
+        }
+        if(name != null){
+            sb.append("name="+name+"&&");
+        }
+        return sb.toString();
     }
 }

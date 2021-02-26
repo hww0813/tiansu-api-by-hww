@@ -99,6 +99,6 @@ token:
 
 tiansu:
     # 配置中心url
-    macshost: https://192.168.1.20:8091/prod-api
+    macshost: http://192.168.1.20:8091/prod-api
     # 告警中心url
     alarmhost: http://192.168.1.20:8086/alarm

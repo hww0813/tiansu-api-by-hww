@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Component
 public class ReportUtil {
@@ -48,12 +49,12 @@ public class ReportUtil {
 
     private void generateAndSendDayReport() throws Exception {
         //        JSONObject dayReport = StrategyMap.get("DayReport");
-        MacsConfig macsConfig = macsConfigService.selectMacsConfigByTypeAndName("DayReport", "data");
+        List<MacsConfig> macsConfig = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig("DayReport", "data"));
         if(macsConfig == null) {
             return;
         }
-        String[] arr = macsConfig.getValue().split(",");
-        String type = macsConfig.getType();
+        String[] arr = macsConfig.get(0).getValue().split(",");
+        String type = macsConfig.get(0).getType();
 
         JSONObject filters = new JSONObject();
 
@@ -95,7 +96,7 @@ public class ReportUtil {
             } else if (s.equals("9")) {
                 //getRateList需要地区码，和长度
                 String cityCode = "";
-                cityCode = macsConfigService.getRegion(cityCode);
+                cityCode = macsConfigService.getRegion(cityCode).getId();
 
                 if (cityCode.length() == 6){
                     filters.put("length", cityCode.length());
@@ -124,12 +125,12 @@ public class ReportUtil {
 //        JSONObject dayReport = StrategyMap.get("WeekReport");
 //        String[] arr = dayReport.get("data").toString().split(",");
 //        String type = dayReport.get("type").toString();
-        MacsConfig macsConfig = macsConfigService.selectMacsConfigByTypeAndName("WeekReport", "data");
+        List<MacsConfig> macsConfig = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig("WeekReport", "data"));
         if(macsConfig == null) {
             return;
         }
-        String[] arr = macsConfig.getValue().split(",");
-        String type = macsConfig.getType();
+        String[] arr = macsConfig.get(0).getValue().split(",");
+        String type = macsConfig.get(0).getType();
 
         JSONObject filters = new JSONObject();
 
@@ -171,7 +172,7 @@ public class ReportUtil {
             } else if (s.equals("9")) {
                 //getRateList需要地区码，和长度
                 String cityCode = "";
-                cityCode = macsConfigService.getRegion(cityCode);
+                cityCode = macsConfigService.getRegion(cityCode).getId();
 
                 if (cityCode.length() == 6){
                     filters.put("length", cityCode.length());
@@ -200,12 +201,12 @@ public class ReportUtil {
 //        JSONObject dayReport = StrategyMap.get("MonthReport");
 //        String[] arr = dayReport.get("data").toString().split(",");
 //        String type = dayReport.get("type").toString();
-        MacsConfig macsConfig = macsConfigService.selectMacsConfigByTypeAndName("MonthReport", "data");
+        List<MacsConfig> macsConfig = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig("MonthReport", "data"));
         if(macsConfig == null) {
             return;
         }
-        String[] arr = macsConfig.getValue().split(",");
-        String type = macsConfig.getType();
+        String[] arr = macsConfig.get(0).getValue().split(",");
+        String type = macsConfig.get(0).getType();
 
         JSONObject filters = new JSONObject();
 
@@ -247,7 +248,7 @@ public class ReportUtil {
             } else if (s.equals("9")) {
                 //getRateList需要地区码，和长度
                 String cityCode = "";
-                cityCode = macsConfigService.getRegion(cityCode);
+                cityCode = macsConfigService.getRegion(cityCode).getId();
 
                 if (cityCode.length() == 6){
                     filters.put("length", cityCode.length());
@@ -277,29 +278,29 @@ public class ReportUtil {
 //        int port = StrategyMap.get(type).getIntValue("port");
 //        String username = StrategyMap.get(type).getString("username");
 //        String password = StrategyMap.get(type).getString("password");
-        MacsConfig ipConfig = macsConfigService.selectMacsConfigByTypeAndName(type, "ip");
+        List<MacsConfig> ipConfig = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig(type, "ip"));
         if(ipConfig == null) {
             return;
         }
-        String ip = ipConfig.getValue();
+        String ip = ipConfig.get(0).getValue();
 
-        MacsConfig portConfig = macsConfigService.selectMacsConfigByTypeAndName(type, "port");
+        List<MacsConfig> portConfig = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig(type, "port"));
         if(portConfig == null) {
             return;
         }
-        int port = Integer.valueOf(portConfig.getValue());
+        int port = Integer.valueOf(portConfig.get(0).getValue());
 
-        MacsConfig usernameConfig = macsConfigService.selectMacsConfigByTypeAndName(type, "username");
+        List<MacsConfig> usernameConfig = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig(type, "username"));
         if(usernameConfig == null) {
             return;
         }
-        String username = usernameConfig.getValue();
+        String username = usernameConfig.get(0).getValue();
 
-        MacsConfig passwordConfig = macsConfigService.selectMacsConfigByTypeAndName(type, "password");
+        List<MacsConfig> passwordConfig = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig(type, "password"));
         if(passwordConfig == null) {
             return;
         }
-        String password = passwordConfig.getValue();
+        String password = passwordConfig.get(0).getValue();
 
         FTPClient ftpClient = FtpUtil.connect(ip, port, username, password);
 

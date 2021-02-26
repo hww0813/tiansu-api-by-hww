@@ -4,22 +4,42 @@ import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 
+import java.util.List;
+
+/**
+ * @author xucan
+ *
+ */
 public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
 
     /**
      * 根据类型和名称查询系统配置
-     * @param type
-     * @param name
+     * @param macsConfig
      * @return
      */
-    MacsConfig selectMacsConfigByTypeAndName(String type, String name);
+    List<MacsConfig> selectMacsConfigByTypeAndName(MacsConfig macsConfig);
 
     /**
-     * 根据ID获取区域信息
+     * 根据区域ID获取下级区域信息
      * @param id
      * @return
      */
-    MacsRegion selectMacsRegionById(String id);
+    List<MacsRegion> getLowerRegion(String id);
 
-    String getRegion(String cityCode);
+    /**
+     * 根据区域ID获取区域详情
+     * @param id
+     * @return
+     */
+    MacsRegion selectMacsRegionInfo(String id);
+
+
+    /**
+     * 获取区域信息
+     * @param cityCode
+     * @return
+     */
+    MacsRegion getRegion(String cityCode);
+
+
 }

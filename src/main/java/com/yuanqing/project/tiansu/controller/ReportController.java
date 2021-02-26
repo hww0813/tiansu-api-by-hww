@@ -1959,7 +1959,7 @@ public class ReportController extends BaseController {
         filters.put("status", status);
         filters.put("manufacturer", manufacturer);
         if (cityCode == null) {
-            cityCode = macsConfigService.getRegion(cityCode);
+            cityCode = macsConfigService.getRegion(cityCode).getId();
         }
         filters.put("cityCode", cityCode);
         filters.put("length", cityCode.length());

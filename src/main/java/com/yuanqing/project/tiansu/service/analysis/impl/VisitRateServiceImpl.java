@@ -68,7 +68,7 @@ public class VisitRateServiceImpl implements IVisitRateService {
     @Override
     public PageInfo<VisitRate> page(int pageNum, int pageSize, JSONObject filters) {
         PageHelper.startPage(pageNum, pageSize);
-        String cityCode = macsConfigService.getRegion(filters.getString("cityCode"));
+        String cityCode = macsConfigService.getRegion(filters.getString("cityCode")).getId();
         filters.put("cityCode", cityCode);
         filters.put("codeLength", cityCode.length());
         List<VisitRate> list = new ArrayList<>();
@@ -87,7 +87,7 @@ public class VisitRateServiceImpl implements IVisitRateService {
 
     @Override
     public List<VisitRate> getAllToReport(JSONObject filters) {
-        String cityCode = macsConfigService.getRegion(filters.getString("cityCode"));
+        String cityCode = macsConfigService.getRegion(filters.getString("cityCode")).getId();
         filters.put("cityCode", cityCode);
         if (cityCode.length() == 6){
             filters.put("length", cityCode.length());
@@ -103,7 +103,7 @@ public class VisitRateServiceImpl implements IVisitRateService {
 
     @Override
     public VisitRate getRegionRate(JSONObject filters) {
-        String cityCode = macsConfigService.getRegion(filters.getString("cityCode"));
+        String cityCode = macsConfigService.getRegion(filters.getString("cityCode")).getId();
         filters.put("cityCode", cityCode);
         filters.put("length", cityCode.length());
         List<VisitRate> list = visitRateMapper.getRegionRate(filters);

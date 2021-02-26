@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.domain.macs;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author xucan
  * @date 2020-10-14
  */
+@Data
 @ApiModel("地区配置对象")
 public class MacsRegion extends BaseEntity
 {
@@ -33,55 +35,5 @@ public class MacsRegion extends BaseEntity
     @ApiModelProperty("城市级别")
     private Integer level;
 
-    public void setId(String id)
-    {
-        this.id = id;
-    }
 
-    public String getId()
-    {
-        return id;
-    }
-    public void setParentId(String parentId)
-    {
-        this.parentId = parentId;
-    }
-
-    public String getParentId()
-    {
-        return parentId;
-    }
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-    public void setLevel(Integer level)
-    {
-        this.level = level;
-    }
-
-    public Integer getLevel()
-    {
-        return level;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("parentId", getParentId())
-            .append("name", getName())
-            .append("level", getLevel())
-            .append("remark", getRemark())
-            .append("createTime", getCreateTime())
-            .append("updateTime", getUpdateTime())
-            .append("updateBy", getUpdateBy())
-            .append("createBy", getCreateBy())
-            .toString();
-    }
 }

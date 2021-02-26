@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.service.macs.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
@@ -10,6 +11,7 @@ import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -25,43 +27,52 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     @Value("${tiansu.macshost}")
     private String prefix;
 
-    private final String selectMacsConfigByTypeAndName_URL = "/configuration/config/selectMacsConfigByTypeAndName";
+    private final String getConfigList_URL = "/tripartite/config/getConfigList";
 
-    private final String selectMacsRegionById_URL = "/configuration/region/";
+    private final String selectMacsRegionById_URL = "/tripartite/region/getConfigById";
+
+    private final String selectMacsRegionInfo_URL = "/tripartite/region/regionInfo";
 
     // TODO: 增加缓存。。。
 
     @Override
-    public MacsConfig selectMacsConfigByTypeAndName(String type, String name) {
-        if(StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
+    public List<MacsConfig> selectMacsConfigByTypeAndName(MacsConfig macsConfig) {
+        if(macsConfig == null) {
             return null;
         }
-        String rspStr = HttpUtils.sendGet(prefix+selectMacsConfigByTypeAndName_URL, "type=" + type + "&&name=" + name);
+
+        String rspStr = HttpUtils.sendGet(prefix+getConfigList_URL, macsConfig.toParamsString());
         if (StringUtils.isEmpty(rspStr))
         {
-            LOGGER.error("获取配置异常 type={}, name={}", type, name);
+            LOGGER.error("获取配置异常"+macsConfig.toParamsString());
             return null;
         }
 
         JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
         if(jsonObject == null || !jsonObject.containsKey("data")) {  // || 200 != jsonObject.getIntValue("code")
-            LOGGER.error("获取配置为空 type={}, name={}", type, name);
+            LOGGER.error("获取配置为空"+macsConfig.toParamsString());
             return null;
         }
 
-        JSONObject data = (JSONObject) jsonObject.get("data");
-        MacsConfig macsConfig = data.toJavaObject(MacsConfig.class);
+        JSONArray data = jsonObject.getJSONArray("data");
 
-        return macsConfig;
+        List<MacsConfig> Config = data.toJavaList(MacsConfig.class);
+
+        return Config;
     }
 
 
+    /**
+     * 获取下级地区
+     * @param id
+     * @return
+     */
     @Override
-    public MacsRegion selectMacsRegionById(String id) {
-        if(id == null) {
+    public List<MacsRegion> getLowerRegion(String id) {
+        if(StringUtils.isEmpty(id)) {
             return null;
         }
-        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL + id, "");
+        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL, "regionId="+id);
         if (StringUtils.isEmpty(rspStr))
         {
             LOGGER.error("获取区域异常 id={}", id);
@@ -69,7 +80,40 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         }
 
         JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
-        if(jsonObject == null || !jsonObject.containsKey("data")) {  // || 200 != jsonObject.getIntValue("code")
+
+        // || 200 != jsonObject.getIntValue("code")
+        if(jsonObject == null || !jsonObject.containsKey("data")) {
+            LOGGER.error("获取区域为空 id={}", id);
+            return null;
+        }
+
+        JSONArray data = jsonObject.getJSONArray("data");
+        List<MacsRegion> macsRegion = data.toJavaList(MacsRegion.class);
+
+        return macsRegion;
+    }
+
+    /**
+     * 根据regionId 获取区域详情
+     * @param id
+     * @return
+     */
+    @Override
+    public MacsRegion selectMacsRegionInfo(String id) {
+        if(StringUtils.isEmpty(id)) {
+            return null;
+        }
+        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionInfo_URL, "regionId="+id);
+        if (StringUtils.isEmpty(rspStr))
+        {
+            LOGGER.error("获取区域异常 id={}", id);
+            return null;
+        }
+
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
+
+        // || 200 != jsonObject.getIntValue("code")
+        if(jsonObject == null || !jsonObject.containsKey("data")) {
             LOGGER.error("获取区域为空 id={}", id);
             return null;
         }
@@ -81,23 +125,24 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     }
 
     @Override
-    public String getRegion(String cityCode) {
-        MacsRegion region = null;
-        if (cityCode == null || cityCode == "") {
-            MacsConfig macsConfig = selectMacsConfigByTypeAndName("system", "region");
+    public MacsRegion getRegion(String cityCode) {
+        MacsRegion region;
+        if (cityCode == null || "".equals(cityCode)) {
 
-            String[] regionCodeArr = macsConfig.getValue().split(",");
+            List<MacsConfig> macsConfig = selectMacsConfigByTypeAndName(new MacsConfig("system","region"));
+
+            if(CollectionUtils.isEmpty(macsConfig)){
+                LOGGER.error("获取区域异常");
+                return null;
+            }
+
+            String[] regionCodeArr = macsConfig.get(0).getValue().split(",");
             String regionCode = regionCodeArr[regionCodeArr.length - 1];
-            region = selectMacsRegionById(regionCode);
+            region = selectMacsRegionInfo(regionCode);
         } else {
-            region = selectMacsRegionById(cityCode);
+            region = selectMacsRegionInfo(cityCode);
         }
-        cityCode = "";
-        if (region != null) {
-            cityCode = region.getId().toString();
-        }
-
-        return cityCode;
+        return region;
 
     }
 
