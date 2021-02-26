@@ -12,6 +12,7 @@ import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
 import com.yuanqing.project.tiansu.job.IndexStatisticsTask;
 import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
+import com.yuanqing.project.tiansu.service.video.OperationBehaviorService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +44,16 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(value = "/api/operation/behavior")
 public class OperationBehaviorController extends BaseController   {
 
-    @Resource
-    private OperationBehaviorMapper operationBehaviorMapper;
+
+    @Autowired
+    private OperationBehaviorService operationBehaviorService;
 
     @Autowired
     private IndexStatisticsTask indexStatisticsTask;
 
-    @Autowired
-    private RedisCache redisCache;
 
+    @Resource
+    private OperationBehaviorMapper operationBehaviorMapper;
 
 
     @GetMapping("/list")
@@ -60,45 +62,12 @@ public class OperationBehaviorController extends BaseController   {
                              @RequestParam(value = "pageSize", defaultValue = "20") int size,OperationBehavior operationBehavior) throws ExecutionException, InterruptedException {
             operationBehavior.setNum(num -1);
             operationBehavior.setSize(size);
-            //
-            if (StringUtils.isNotBlank(operationBehavior.getOrderType()) && StringUtils.isNotBlank(operationBehavior.getOrderValue())) {
-                operationBehavior.setOrderType(operationBehavior.getOrderType()+ " " +operationBehavior.getOrderValue());
+            try {
+                return operationBehaviorService.queryOperationList(operationBehavior);
+            } catch (Exception e) {
+               return  PageResult.error("获取操作行为接口报错！");
             }
-            //地区码判断
-            if (operationBehavior.getRegionList() != null) {
-                String[] regionList = operationBehavior.getRegionList();
-                String region = regionList[regionList.length - 1];
-                if (regionList.length == 1) {
-                    int count = region.length();
-                    if (count == 2) {
-                        operationBehavior.setProvinceRegion(region);
-                    }
-                    if (count == 4) {
-                        operationBehavior.setCityRegion(region);
-                    }
-                    if (count == 6) {
-                        operationBehavior.setCityRegion(region);
-                    }
-                }
-                if (regionList.length == 2) {
-                    int count = region.length();
-                    if (count == 4) {
-                        operationBehavior.setCityRegion(region);
-                    }
-                    if (count == 6) {
-                        operationBehavior.setCountryRegion(region);
-                    }
-                }
-                if (regionList.length == 3) {
-                    operationBehavior.setCountryRegion(region);
-                }
-            }
-           //总数据
-            CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() ->  operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
-            //操作行为列表
-            CompletableFuture<List<OperationBehavior>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.queryOperationBehaviorList(operationBehavior));
 
-            return PageResult.success(operationBehaviorsFuture.get(),num,size,totalFuter.get());
     }
 
     /**
@@ -173,24 +142,14 @@ public class OperationBehaviorController extends BaseController   {
         if(endDate == null){
             return AjaxResult.error(500,"未知结束时间");
         }
-        //对应事件
-        String timeType = getTimeType(startDate,endDate);
-        //对应 操作行为
-        Long actionType = getActionType(action);
-
-        String cacheKey = timeType+"_"+actionType;
-        //WEEK_3_REVERSE
-        if (!"desc".equals(sort)){
-            cacheKey = cacheKey + "_REVERSE";
-        }
-        return AjaxResult.success("success",redisCache.getCacheObject(cacheKey));
+       return  operationBehaviorService.getCharts(startDate,endDate,action,sort,null);
     }
 
 
     /**
      * @author: dongchao
      * @create: 2021/2/5-13:55
-     * @description: todo 需优化 count(distinct *)
+     * @description:
      * @param:
      * @return:
      */
@@ -210,14 +169,8 @@ public class OperationBehaviorController extends BaseController   {
         if(endDate == null){
             return AjaxResult.error(500,"未知结束时间");
         }
-        String timeType = getTimeType(startDate,endDate);
-        Long actionType = getActionType(action);
-        //拼 redis Key
-        String cacheKey = "CLIENT_"+timeType+"_"+actionType;
-        if (!"desc".equals(sort)){
-            cacheKey = cacheKey + "_REVERSE";
-        }
-        return AjaxResult.success("success",redisCache.getCacheObject(cacheKey));
+
+        return  operationBehaviorService.getCharts(startDate,endDate,action,sort,"CLIENT");
     }
 
 
@@ -238,15 +191,7 @@ public class OperationBehaviorController extends BaseController   {
             return AjaxResult.error(500,"未知结束时间");
         }
 
-        String timeType = getTimeType(startDate,endDate);
-        Long actionType = getActionType(action);
-        //拼 redis Key
-        String cacheKey = "USER_"+timeType+"_"+actionType;
-        if (!"desc".equals(sort)){
-            cacheKey = cacheKey + "_REVERSE";
-        }
-       // indexStatisticsTask.userClient("WEEK",-1L);
-        return AjaxResult.success("success",redisCache.getCacheObject(cacheKey));
+        return  operationBehaviorService.getCharts(startDate,endDate,action,sort,"USER");
     }
 
 
@@ -279,8 +224,8 @@ public class OperationBehaviorController extends BaseController   {
     public AjaxResult getCountByTime() throws ExecutionException, InterruptedException {
         LocalDate localDate = LocalDate.now();
         OperationBehavior operationBehaviorSearch   =  new OperationBehavior();
-        operationBehaviorSearch.setsTime(DateUtils.localDateToDate(localDate));
-        operationBehaviorSearch.seteTime(DateUtils.localDateToDate(localDate.plusDays(1)));
+        operationBehaviorSearch.setStime(DateUtils.localDateToDate(localDate));
+        operationBehaviorSearch.setEtime(DateUtils.localDateToDate(localDate.plusDays(1)));
         CompletableFuture<Integer> countFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.quertyOperationBehaviorCount(operationBehaviorSearch));
         CompletableFuture<Integer> countsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.queryRawCount(operationBehaviorSearch));
         HashMap hashMap = new HashMap();
@@ -290,27 +235,6 @@ public class OperationBehaviorController extends BaseController   {
     }
 
 
-    private String getTimeType(LocalDate startDate,LocalDate endDate){
-        int dayCount =  (int) startDate.until(endDate, ChronoUnit.DAYS);
-        //对应事件
-        String timeType;
-        switch (dayCount){
-            case 1 : timeType = "DAY"; break;
-            case 6 : timeType = "WEEK"; break;
-            default: timeType = "MONTH"; break;
-        }
-        return timeType;
-    };
-
-    public Long getActionType(String action){
-        Long actionType = null;
-        if (StringUtils.isBlank(action)){
-            actionType = -1L;
-        }else{
-            actionType = Long.parseLong(action);
-        }
-        return actionType;
-    }
 
 
 }

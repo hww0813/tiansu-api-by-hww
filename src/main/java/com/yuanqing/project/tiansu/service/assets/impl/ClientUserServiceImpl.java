@@ -12,6 +12,8 @@ import com.yuanqing.project.tiansu.domain.assets.dto.ClientUserDto;
 import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientUserMapper;
 import com.yuanqing.project.tiansu.service.assets.IClientUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ import java.util.stream.Collectors;
 @Service
 public class ClientUserServiceImpl implements IClientUserService {
 
+    private static final Logger log = LoggerFactory.getLogger(ClientUserServiceImpl.class);
+
     @Autowired
     private ClientUserMapper clientUserMapper;
 
@@ -55,16 +59,32 @@ public class ClientUserServiceImpl implements IClientUserService {
     public List<ClientUserDto> handleClientUserTerminalNum(List<ClientUser> clientUserList) {
 
         if(CollectionUtils.isEmpty(clientUserList)){
-            throw new CustomException("没有查询到结果");
+            log.error("用户列表为空");
+            return null;
         }
         //提取集合用户名
         List<String> usernameList = clientUserList.stream().map(f -> f.getUsername()).collect(Collectors.toList());
 
+        if(CollectionUtils.isEmpty(usernameList)){
+            log.error("提取集合用户名,集合为空");
+            return null;
+        }
+
         List<JSONObject> originalTerminalNum = clientMapper.getTerminalNumByUserName(usernameList);
+
+        if(CollectionUtils.isEmpty(originalTerminalNum)){
+            log.error("获取用户名对应的终端数，结果为空");
+            return null;
+        }
 
         Map<String,Integer> map = new HashMap<>();
 
         originalTerminalNum.stream().forEach(f -> map.put(f.getString("username"),f.getInteger("terminalCnt")));
+
+        if(CollectionUtils.isEmpty(map)){
+            log.error("终端数量结果格式化异常,map为空");
+            return null;
+        }
 
         List<ClientUserDto> dtoList = new ArrayList<>();
 

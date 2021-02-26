@@ -51,7 +51,6 @@ public class ClientUserController extends BaseController {
         clientUser.setStatus(status);
         clientUser.setUsername(username);
         clientUser.setId(id);
-        clientUser.setIpAddress(ipAddress);
 
         List<ClientUser> list = null;
 

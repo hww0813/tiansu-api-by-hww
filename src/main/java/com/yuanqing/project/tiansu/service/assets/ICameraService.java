@@ -42,14 +42,10 @@ public interface ICameraService extends BaseService<Camera,Long> {
 
     /**
      * 获取国标/非国标列表
-     * TODO:这个接口 可以直接调用getList 获取国标和非国标
-     * @param filter 过滤条件
+     * @param camera 过滤条件
      * @return
      */
     List<Camera> getNonNationalCameraList(Camera camera);
-
-
-
 
     /**
      * 批量确认摄像头状态
@@ -80,7 +76,6 @@ public interface ICameraService extends BaseService<Camera,Long> {
     /**
      * 导入外部设备
      *
-     * TODO:逻辑有点复杂，需要细看
      * @param entity
      * @return
      */

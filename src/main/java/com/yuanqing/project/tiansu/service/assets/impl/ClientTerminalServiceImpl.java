@@ -15,6 +15,8 @@ import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ClientTerminalServiceImpl implements IClientTerminalService {
+
+    private static final Logger log = LoggerFactory.getLogger(ClientTerminalServiceImpl.class);
 
     @Autowired
     private ClientTerminalMapper clientTerminalMapper;
@@ -91,24 +95,39 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     }
 
 
-    //TODO:每一步进行判空
     @Override
     public List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> clientTerminalList) {
 
         if(CollectionUtils.isEmpty(clientTerminalList)){
-            throw new CustomException("没有查询到结果");
+            log.error("终端列表为空");
+            return null;
         }
 
         //提取集合IP
         List<Long> ipList = clientTerminalList.stream().map(f -> f.getIpAddress()).collect(Collectors.toList());
 
+        if(CollectionUtils.isEmpty(ipList)){
+            log.error("提取集合IP异常,集合为空");
+            return null;
+        }
+
         //获取IP 对应的用户数
         List<JSONObject> originalUserNum = clientMapper.getUserNumByTerminal(ipList);
+
+        if(CollectionUtils.isEmpty(originalUserNum)){
+            log.error("获取IP对应的用户数结果为空");
+            return null;
+        }
 
         Map<Long,Integer> map = new HashMap<>();
 
         //格式化原始数据
         originalUserNum.stream().forEach(f -> map.put(f.getLong("ip_address"),f.getInteger("userCnt")));
+
+        if(CollectionUtils.isEmpty(map)){
+            log.error("用户数量结果格式化异常,map为空");
+            return null;
+        }
 
         //将带有用户数的信息转换为dto
         List<ClientTerminalDto> dtoList = new ArrayList<>();

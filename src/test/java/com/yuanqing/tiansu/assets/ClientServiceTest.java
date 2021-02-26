@@ -2,6 +2,7 @@ package com.yuanqing.tiansu.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.service.assets.IClientService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,15 @@ public class ClientServiceTest {
     public void getUserNumByTerminal(){
 
         List<Long> list = new ArrayList<>();
-        list.add(3232287076L);
-        list.add(2896692008L);
+        list.add(1111111001L);
+        list.add(1111111003L);
         List<JSONObject> userNumByTerminal = clientService.getUserNumByTerminal(list);
-        System.out.println(userNumByTerminal);
-
+        String[] v_userCnt = new String[2];
+        for (int i = 0; i < userNumByTerminal.size(); i++) {
+            JSONObject jsonObject = userNumByTerminal.get(i);
+            v_userCnt[i] = jsonObject.getString("userCnt");
+        }
+        Assert.assertEquals("2",v_userCnt[0]); //检验第1个ip的用户数
+        Assert.assertEquals("1",v_userCnt[1]); //检验第2个ip的用户数
     }
 }

@@ -23,9 +23,9 @@ public class OperationBehaviorSearch {
 
     /** 页面搜索开始时间和结束时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date sTime;
+    private Date stime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date eTime;
+    private Date etime;
 
 
     private String dstCode; //目的设备编码
@@ -70,19 +70,19 @@ public class OperationBehaviorSearch {
         this.size = size;
     }
 
-    public Date getsTime() {
-        return sTime;
+    public Date getStime() {
+        return stime;
     }
 
-    public void setsTime(Date sTime) {
-        this.sTime = sTime;
+    public void setStime(Date stime) {
+        this.stime = stime;
     }
 
-    public Date geteTime() {
-        return eTime;
+    public Date getEtime() {
+        return etime;
     }
 
-    public void seteTime(Date eTime) {
-        this.eTime = eTime;
+    public void setEtime(Date etime) {
+        this.etime = etime;
     }
 }
