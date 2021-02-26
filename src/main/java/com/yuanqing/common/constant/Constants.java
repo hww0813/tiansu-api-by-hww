@@ -225,4 +225,5 @@ public class Constants
     public static final String INDEX_CLIENT_COUNTS_CACHE = "INDEX_CLIENT_COUNTS_CACHE";
     public static final String INDEX_USER_COUNTS_CACHE = "INDEX_USER_COUNTS_CACHE";
     public static final String INDEX_CAMERA_COUNTS_CACHE = "INDEX_CAMERA_COUNTS_CACHE";
+    public static final String ALARM_CAMERA_COUNTS_CACHE = "ALARM_CAMERA_COUNTS_CACHE";
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.domain.video.CameraStatistics;
@@ -12,10 +13,12 @@ import com.yuanqing.project.tiansu.mapper.video.HomePageMapper;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -38,9 +41,8 @@ public class IndexStatisticsTask {
     @Autowired
     private HomePageMapper homePageMapper;
 
-    @Autowired
-    private IClientTerminalService clientTerminalService;
-
+    @Value("${tiansu.alarmhost}")
+    private String alarmHost;
 
 
     /**
@@ -182,7 +184,7 @@ public class IndexStatisticsTask {
      * @return:
      */
     public void cacheIndexCounts(){
-        //缓存终端数据
+        //缓存终端、摄像头、用户数据
         Date nowDate = DateUtils.getNowDate();
         Map clientCounts = homePageMapper.queryClientStatisticsCount(nowDate);
         Map userCounts = homePageMapper.queryUserStatisticsCount(nowDate);
@@ -190,6 +192,18 @@ public class IndexStatisticsTask {
         redisCache.setCacheObject(Constants.INDEX_CLIENT_COUNTS_CACHE,clientCounts);
         redisCache.setCacheObject(Constants.INDEX_USER_COUNTS_CACHE,userCounts);
         redisCache.setCacheObject(Constants.INDEX_CAMERA_COUNTS_CACHE,cameraCounts);
+        //缓存告警事件数据
+        String url = alarmHost+"/BusiEvent/getTAllNum";
+        String  alarmDiscoveryCount =  HttpUtils.sendGet(url,"status=1");
+        String  alarmAllCount =  HttpUtils.sendGet(url,"status=0");
+        url =   alarmHost+"/BusiEvent/getEventActive";
+        String  alarmActiveCount =  HttpUtils.sendGet(url,"");
+        HashMap map = new HashMap();
+        map.put("discovery",Integer.parseInt(alarmDiscoveryCount));
+        map.put("count",Integer.parseInt(alarmAllCount));
+        map.put("active",Integer.parseInt(alarmActiveCount));
+        redisCache.setCacheObject(Constants.ALARM_CAMERA_COUNTS_CACHE,cameraCounts);
+
     }
 
 

@@ -13,6 +13,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -63,7 +64,12 @@ public class HttpUtils
         BufferedReader in = null;
         try
         {
-            String urlNameString = url + "?" + param;
+            String urlNameString;
+            if (StringUtils.isNotEmpty(param)){
+                urlNameString = url + "?" + param;
+            }else{
+                urlNameString =url;
+            }
             log.info("sendGet - {}", urlNameString);
             URL realUrl = new URL(urlNameString);
             URLConnection connection = realUrl.openConnection();

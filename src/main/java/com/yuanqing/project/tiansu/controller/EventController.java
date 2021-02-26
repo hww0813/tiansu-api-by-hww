@@ -4,15 +4,20 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.http.HttpUtils;
+import com.yuanqing.framework.redis.RedisCache;
+import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import static com.yuanqing.common.constant.Constants.ALARM_CAMERA_COUNTS_CACHE;
 
 /**
  * @author Dong.Chao
@@ -31,6 +36,9 @@ public class EventController {
 
     @Value("${tiansu.alarmhost}")
     private String alarmHost;
+
+    @Autowired
+    private RedisCache redisCache;
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "获取告警事件列表", httpMethod = "GET")
@@ -83,4 +91,12 @@ public class EventController {
         Integer total = resultObj.getInteger("total");
         return PageResult.success(datas,pageSize,pageNum,total);
     }
+
+
+    @GetMapping("/getEventDatas")
+    @ApiOperation(value = "获取用户数据", httpMethod = "GET")
+    public AjaxResult getUserDatas() {
+        return AjaxResult.success("success",redisCache.getCacheObject(ALARM_CAMERA_COUNTS_CACHE));
+    }
+
 }
