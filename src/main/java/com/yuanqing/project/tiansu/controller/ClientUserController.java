@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static com.yuanqing.common.constant.Constants.INDEX_USER_COUNTS_CACHE;
+
 /**
  * @author xucan
  */
@@ -37,6 +40,9 @@ public class ClientUserController extends BaseController {
 
     @Autowired
     private IClientService clientService;
+
+    @Autowired
+    private RedisCache redisCache;
 
 
     @GetMapping("/list")
@@ -132,5 +138,11 @@ public class ClientUserController extends BaseController {
         return getDataTable(dtoList);
     }
 
+
+    @GetMapping("/getUserDatas")
+    @ApiOperation(value = "获取用户数据", httpMethod = "GET")
+    public AjaxResult getUserDatas() {
+        return AjaxResult.success("success",redisCache.getCacheObject(INDEX_USER_COUNTS_CACHE));
+    }
 
 }

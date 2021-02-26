@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.yuanqing.common.constant.Constants.INDEX_CLIENT_COUNTS_CACHE;
 
 /**
  * 客户端
@@ -41,6 +44,9 @@ public class ClientController extends BaseController {
 
     @Autowired
     private IClientTerminalService clientTerminalService;
+
+    @Autowired
+    private RedisCache redisCache;
 
 
     @GetMapping("/list")
@@ -146,20 +152,12 @@ public class ClientController extends BaseController {
     @GetMapping("/active")
     @ApiOperation(value = "活跃终端列表")
     public TableDataInfo getActiveClient() {
-
         startPage();
         List<ClientTerminal> activeTerminal = clientTerminalService.getActiveTerminal();
-
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(activeTerminal);
-
         return getDataTable(dtoList);
     }
 
-//    @GetMapping("/getClientDatas")
-//    @ApiOperation(value = "获取首页客户端数据", httpMethod = "GET")
-//    public AjaxResult getClientDatas() {
-//        return AjaxResult.success(homePageManager.findObject("client","client_num"));
-//    }
 
 
     @GetMapping("/getByIpAndPort")
@@ -174,6 +172,13 @@ public class ClientController extends BaseController {
         List<Client> pageInfo = clientService.getList(client);
         return getDataTable(pageInfo);
 
+    }
+
+
+    @GetMapping("/getClientDatas")
+    @ApiOperation(value = "获取客户端数据", httpMethod = "GET")
+    public AjaxResult getClientDatas() {
+        return AjaxResult.success("success",redisCache.getCacheObject(INDEX_CLIENT_COUNTS_CACHE));
     }
 
 

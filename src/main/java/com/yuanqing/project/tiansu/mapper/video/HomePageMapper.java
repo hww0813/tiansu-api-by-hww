@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author dingyong
@@ -25,9 +26,17 @@ public interface HomePageMapper {
      */
     List<CameraStatistics> getCameraStatisticsByTime(Date startTime , Date endTime ,int size ,Long action,String ascFlag);
 
-
     List<JSONObject> getClinetStatisticsByTime(StatisticsSearch statisticsSearch);
 
     List<JSONObject> getUserStatisticsByTime(StatisticsSearch statisticsSearch);
+
+
+    Map queryClientStatisticsCount(Date date);
+
+    Map queryUserStatisticsCount(Date date);
+
+
+    Map queryCameraStatisticsCount(Date date);
+
 
 }

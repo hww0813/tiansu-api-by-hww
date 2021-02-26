@@ -1,13 +1,16 @@
 package com.yuanqing.project.tiansu.controller;
 
+import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.job.IndexStatisticsTask;
+import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -23,6 +26,9 @@ public class OperationStatisticsController {
 
     @Autowired
     private IndexStatisticsTask indexStatisticsTask;
+
+    @Autowired
+    private IClientTerminalService clientTerminalService;
 
     private String[] timeTypes = {"DAY","WEEK","MONTH"};
 
@@ -76,6 +82,18 @@ public class OperationStatisticsController {
             e.printStackTrace();
             return AjaxResult.error();
         }
+    }
+
+
+    @GetMapping(value = "/card")
+    @ApiOperation(value = "手动刷新首页卡片统计", httpMethod = "GET")
+    public AjaxResult card(){
+        try {
+            indexStatisticsTask.cacheIndexCounts();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.success();
     }
 
 

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
@@ -24,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.yuanqing.common.constant.Constants.*;
+
 /**
  * 摄像头Controller
  * @author xucan
@@ -38,6 +41,9 @@ public class CameraController extends BaseController {
 
     @Autowired
     private ICameraService cameraService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
@@ -186,12 +192,15 @@ public class CameraController extends BaseController {
         return getDataTable(cameraService.getNonNationalCameraList(camera));
     }
 
-//    @GetMapping("/getCameraDatas")
-//    @ApiOperation(value = "获取首页摄像头数据", httpMethod = "GET")
-//    public AjaxResult getCameraDatas() {
-//        return AjaxResult.success(homegetListManager.findObject("camera","camera_num"));
-//    }
-//
+
+
+
+    @GetMapping("/getCameraDatas")
+    @ApiOperation(value = "获取首页摄像头数据", httpMethod = "GET")
+    public AjaxResult getCameraDatas() {
+        return AjaxResult.success("success",redisCache.getCacheObject(INDEX_CAMERA_COUNTS_CACHE));
+    }
+
 
     @GetMapping("/getNonNationalCamera")
     @ApiOperation(value = "获取首页国标、非国标编号摄像头数量占比", httpMethod = "GET")

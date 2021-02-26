@@ -222,4 +222,7 @@ public class Constants
     public static final String PTZ_VISIT_CAMERA_ONE_MONTH = "PTZ_VISIT_CAMERA_ONE_MONTH";
 
 
+    public static final String INDEX_CLIENT_COUNTS_CACHE = "INDEX_CLIENT_COUNTS_CACHE";
+    public static final String INDEX_USER_COUNTS_CACHE = "INDEX_USER_COUNTS_CACHE";
+    public static final String INDEX_CAMERA_COUNTS_CACHE = "INDEX_CAMERA_COUNTS_CACHE";
 }
