@@ -1,9 +1,8 @@
 package com.yuanqing.project.tiansu.service.assets;
 
 import com.yuanqing.framework.web.service.BaseService;
-import com.yuanqing.project.tiansu.domain.assets.BusiCamera;
-import com.yuanqing.project.tiansu.domain.assets.BusiExternalDevice;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
+import com.yuanqing.project.tiansu.domain.assets.ExternalDevice;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -79,7 +78,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
      * @param entity
      * @return
      */
-    Long saveExternalDevice(BusiExternalDevice entity);
+    Long saveExternalDevice(ExternalDevice entity);
 
     /**
      *
@@ -88,7 +87,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
      * @param updateList
      * @param cameraCodeMap
      */
-    void dealCamera(BusiExternalDevice entity, List<BusiCamera> addList, List<BusiCamera> updateList, Map<String, Object> cameraCodeMap);
+    void dealCamera(ExternalDevice entity, List<Camera> addList, List<Camera> updateList, Map<String, Object> cameraCodeMap);
 
 
 

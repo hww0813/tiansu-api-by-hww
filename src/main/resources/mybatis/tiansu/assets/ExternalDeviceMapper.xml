@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.BusiExternalDeviceMapper">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.ExternalDeviceMapper">
 
-    <resultMap type="BusiExternalDevice" id="BusiExternalDeviceResult">
+    <resultMap type="com.yuanqing.project.tiansu.domain.assets.ExternalDevice" id="BusiExternalDeviceResult">
         <result property="id"    column="ID"    />
         <result property="deviceId"    column="DEVICE_ID"    />
         <result property="deviceName"    column="DEVICE_NAME"    />
@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select ID, DEVICE_ID, DEVICE_NAME, DOMAIN_ID, GB_ID, IP_ADDRESS, MANUFACTURER, LONGITUDE, LATITUDE, CREATE_TIME, UPDATE_TIME, DEVICE_ALIAS from busi_external_device
     </sql>
 
-    <select id="selectBusiExternalDeviceList" parameterType="BusiExternalDevice" resultMap="BusiExternalDeviceResult">
+    <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.ExternalDevice" resultMap="BusiExternalDeviceResult">
         <include refid="selectBusiExternalDeviceVo"/>
         <where>
             <if test="id != null "> and ID = #{id}</if>
@@ -41,12 +41,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectBusiExternalDeviceById" parameterType="Long" resultMap="BusiExternalDeviceResult">
+    <select id="findById" parameterType="Long" resultMap="BusiExternalDeviceResult">
         <include refid="selectBusiExternalDeviceVo"/>
         where ID = #{id}
     </select>
 
-    <insert id="insertBusiExternalDevice" parameterType="BusiExternalDevice">
+    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ExternalDevice">
         insert into busi_external_device
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null ">ID,</if>
@@ -78,7 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateBusiExternalDevice" parameterType="BusiExternalDevice">
+    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.assets.ExternalDevice">
         update busi_external_device
         <trim prefix="SET" suffixOverrides=",">
             <if test="deviceId != null  and deviceId != ''">DEVICE_ID = #{deviceId},</if>
@@ -96,7 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where ID = #{id}
     </update>
 
-    <update id="deleteBusiExternalDeviceById" parameterType="Long">
+    <update id="delete" parameterType="Long">
         update busi_external_device set is_del = 0 where ID = #{id}
     </update>
 

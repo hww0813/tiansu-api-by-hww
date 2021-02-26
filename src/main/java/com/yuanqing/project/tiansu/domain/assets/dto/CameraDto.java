@@ -21,8 +21,11 @@ public class CameraDto extends BaseCamera {
     /** MAC地址 */
     private String macAddress;
 
-    /** 城市 */
+    /** 区域代码 */
     private Integer regionId;
+
+    /** 区域名称 */
+    private String regionName;
 
     /** 设备状态 */
     private Integer status;

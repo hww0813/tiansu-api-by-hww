@@ -5,22 +5,15 @@ import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.*;
 import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.CameraMap;
-import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.SequenceIdGenerator;
 import com.yuanqing.common.utils.StringUtils;
-import com.yuanqing.common.utils.ip.IpUtils;
-import com.yuanqing.project.tiansu.domain.IConstants;
 import com.yuanqing.project.tiansu.domain.assets.*;
-import com.yuanqing.project.tiansu.domain.region.Region;
-import com.yuanqing.project.tiansu.mapper.assets.BusiCameraMapper;
-import com.yuanqing.project.tiansu.mapper.assets.BusiExternalDeviceMapper;
+import com.yuanqing.project.tiansu.mapper.assets.ExternalDeviceMapper;
 import com.yuanqing.project.tiansu.mapper.assets.CameraMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +21,6 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import static com.yuanqing.common.constant.Constants.CAMERA_CACHE_NAME;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,10 +44,9 @@ public class CameraServiceImpl implements ICameraService {
     private ClientTerminalMapper clientTerminalMapper;
 
     @Resource
-    private BusiExternalDeviceMapper busiExternalDeviceMapper;
+    private ExternalDeviceMapper busiExternalDeviceMapper;
 
-    @Resource
-    private BusiCameraMapper busiCameraMapper;
+
 
     private static SequenceIdGenerator cameraIdGenerator = new SequenceIdGenerator(1, 1);
 
@@ -110,13 +101,13 @@ public class CameraServiceImpl implements ICameraService {
     }
 
     @Override
-    public Long saveExternalDevice(BusiExternalDevice entity) {
+    public Long saveExternalDevice(ExternalDevice entity) {
 
         return null;
     }
 
     @Override
-    public void dealCamera(BusiExternalDevice entity, List<BusiCamera> addList, List<BusiCamera> updateList, Map<String, Object> cameraCodeMap) {
+    public void dealCamera(ExternalDevice entity, List<Camera> addList, List<Camera> updateList, Map<String, Object> cameraCodeMap) {
         /*
          *在导入外部设备时，也要同时往历史表里面备份
          * 现根据私标作为key来查历史表
@@ -132,16 +123,16 @@ public class CameraServiceImpl implements ICameraService {
         // 导入时更新摄像头主表里的区域信息，ip和摄像头名称。
         String deviceId = StringUtils.replaceBlank(entity.getDeviceId());
         String gbId = StringUtils.replaceBlank(entity.getGbId());
-        BusiCamera cameraNGB = null;
-        BusiCamera cameraGB = null;
+        Camera cameraNGB = null;
+        Camera cameraGB = null;
         //根据私标查找摄像头camera
         if (deviceId != null && !deviceId.equals("") && cameraCodeMap.containsKey(deviceId)) {
-            cameraNGB = (BusiCamera) cameraCodeMap.get(deviceId);
+            cameraNGB = (Camera) cameraCodeMap.get(deviceId);
         }
 
         //根据国标查找摄像头camera1
         if (gbId != null && !gbId.equals("") && cameraCodeMap.containsKey(gbId)) {
-            cameraGB = (BusiCamera) cameraCodeMap.get(gbId);
+            cameraGB = (Camera) cameraCodeMap.get(gbId);
         }
 
         //如果私标对应摄像头为空
@@ -160,9 +151,7 @@ public class CameraServiceImpl implements ICameraService {
                 }
                 if (gbId != null && !gbId.equals("") && gbId.length() == 20) {
                     try {
-//                        Region region1 = new Region();
-//                        region1.setId(Long.parseLong(gbId.substring(0, 6)));// 行政区域
-                        cameraGB.setRegion(Long.parseLong(gbId.substring(0, 6)));
+                        cameraGB.setRegion(Integer.parseInt(gbId.substring(0, 6)));
                     } catch (Exception e) {
                         cameraGB.setRegion(null);
                     }
@@ -178,14 +167,13 @@ public class CameraServiceImpl implements ICameraService {
                 if (deviceName != null && !"".equals(deviceName)) {
                     cameraGB.setDeviceName(deviceName);
                 }
-                String ip = StringUtils.replaceBlank(entity.getIpAddress());
-                if (ip != null && !"".equals(ip)) {
-                    try {
-                        cameraGB.setIpAddress(IpUtils.IPv4ToLong(ip));
-                    } catch (Exception e) {
-                        cameraGB.setIpAddress(null);
-                    }
+
+                try {
+                    cameraGB.setIpAddress(entity.getIpAddress());
+                } catch (Exception e) {
+                    cameraGB.setIpAddress(null);
                 }
+
                 cameraGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
                 cameraGB.setIsProbe(ProbeEnum.IMPORT.getValue());
                 updateList.add(cameraGB);
@@ -205,7 +193,7 @@ public class CameraServiceImpl implements ICameraService {
                 try {
 //                    Region region1 = new Region();
 //                    region1.setId(Long.parseLong(gbId.substring(0, 6)));// 行政区域
-                    cameraNGB.setRegion(Long.parseLong(gbId.substring(0, 6)));
+                    cameraNGB.setRegion(Integer.parseInt(gbId.substring(0, 6)));
                 } catch (Exception e) {
                     cameraNGB.setRegion(null);
                 }
@@ -221,13 +209,10 @@ public class CameraServiceImpl implements ICameraService {
             if (deviceName != null && !"".equals(deviceName)) {
                 cameraNGB.setDeviceName(deviceName);
             }
-            String ip = StringUtils.replaceBlank(entity.getIpAddress());
-            if (ip != null && !"".equals(ip)) {
-                try {
-                    cameraNGB.setIpAddress(IpUtils.IPv4ToLong(ip));
-                } catch (Exception e) {
-                    cameraNGB.setIpAddress(null);
-                }
+            try {
+                cameraNGB.setIpAddress(entity.getIpAddress());
+            } catch (Exception e) {
+                cameraNGB.setIpAddress(null);
             }
             cameraNGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
             cameraNGB.setIsProbe(ProbeEnum.IMPORT.getValue());
@@ -236,7 +221,7 @@ public class CameraServiceImpl implements ICameraService {
         //如果私标和国标对应摄像头都不存在
         if (cameraNGB == null && cameraGB == null) {
             try {
-                cameraNGB = new BusiCamera();
+                cameraNGB = new Camera();
                 cameraNGB.setId(cameraIdGenerator.nextId());
                 cameraNGB.setDeviceName(entity.getDeviceName());
             } catch (Exception e) {
@@ -255,7 +240,7 @@ public class CameraServiceImpl implements ICameraService {
                 try {
 //                    Region region1 = new Region();
 //                    region1.setId(Long.valueOf(gbId.substring(0, 6)));// 行政区域
-                    cameraNGB.setRegion(Long.parseLong(gbId.substring(0, 6)));
+                    cameraNGB.setRegion(Integer.parseInt(gbId.substring(0, 6)));
                 } catch (Exception e) {
                     cameraNGB.setRegion(null);
                 }
@@ -263,7 +248,7 @@ public class CameraServiceImpl implements ICameraService {
                 cameraNGB.setRegion(null);
             }
             try {
-                cameraNGB.setIpAddress(IpUtils.IPv4ToLong(StringUtils.replaceBlank(entity.getIpAddress())));
+                cameraNGB.setIpAddress(entity.getIpAddress());
             } catch (Exception e) {
                 cameraNGB.setIpAddress(null);
             }
@@ -400,30 +385,30 @@ public class CameraServiceImpl implements ICameraService {
         //至此已经将excel中的数据转换到list里面了,接下来就可以操作list,可以进行保存到数据库,或者其他操作,
 
         //获得外部设备表的所有数据,并且new一个外部设备新增 list和一个外部设备更新list
-        List<BusiExternalDevice> externalDeviceList = busiExternalDeviceMapper.selectBusiExternalDeviceList(new BusiExternalDevice());
-        List<BusiExternalDevice> addDeviceList = new ArrayList<>();
-        List<BusiExternalDevice> updateDeviceList = new ArrayList<>();
+        List<ExternalDevice> externalDeviceList = busiExternalDeviceMapper.getList(new ExternalDevice());
+        List<ExternalDevice> addDeviceList = new ArrayList<>();
+        List<ExternalDevice> updateDeviceList = new ArrayList<>();
 
         //根据国标编码为key,将数据put到HashMap1中;根据设备编码即私标编码为key,将数据put到HashMap2中
         Map<String, Object> deviceGbIdMap = new HashMap<>();
         Map<String, Object> deviceIdMap = new HashMap<>();
-        for (BusiExternalDevice b : externalDeviceList) {
+        for (ExternalDevice b : externalDeviceList) {
             deviceGbIdMap.put(b.getGbId(), b);
             deviceIdMap.put(b.getDeviceId(), b);
         }
 
         //获得摄像头表的所有数据,并且new一个摄像头新增 list和一个摄像头更新list
-        List<BusiCamera> cameraList = busiCameraMapper.selectBusiCameraList(new BusiCamera());
-        List<BusiCamera> addCameraList = new ArrayList<>();
-        List<BusiCamera> updateCameraList = new ArrayList<>();
+        List<Camera> cameraList = cameraMapper.getList(new Camera());
+        List<Camera> addCameraList = new ArrayList<>();
+        List<Camera> updateCameraList = new ArrayList<>();
 
         //根据devicecode为key,将数据put到HashMap中
         Map<String, Object> cameraCodeMap = new HashMap<>();
-        for (BusiCamera b : cameraList) {
+        for (Camera b : cameraList) {
             cameraCodeMap.put(b.getDeviceCode(), b);
         }
         for (Map<String, Object> extCamera : extCameraList) {
-            BusiExternalDevice externalDevice = new BusiExternalDevice();
+            ExternalDevice externalDevice = new ExternalDevice();
             try {
                 externalDevice.setDeviceId(extCamera.get("deviceId").toString());
             } catch (Exception e) {
@@ -448,14 +433,14 @@ public class CameraServiceImpl implements ICameraService {
             }
 
             try {
-                externalDevice.setIpAddress(extCamera.get("ipAddress").toString());
+                externalDevice.setIpAddress((Long) extCamera.get("ipAddress"));
             } catch (Exception e) {
                 externalDevice.setIpAddress(null);
             }
 
             try {
                 if (extCamera.get("longitude") != null && !extCamera.get("longitude").equals("")) {
-                    externalDevice.setLongitude(extCamera.get("longitude").toString());
+                    externalDevice.setLongitude((Double) extCamera.get("longitude"));
                 } else {
                     externalDevice.setLongitude(null);
                 }
@@ -465,7 +450,7 @@ public class CameraServiceImpl implements ICameraService {
 
             try {
                 if (extCamera.get("latitude") != null && !extCamera.get("latitude").equals("")) {
-                    externalDevice.setLatitude(extCamera.get("latitude").toString());
+                    externalDevice.setLatitude((Double) extCamera.get("latitude"));
                 } else {
                     externalDevice.setLatitude(null);
                 }
@@ -479,17 +464,17 @@ public class CameraServiceImpl implements ICameraService {
                 externalDevice.setManufacturer("");
             }
 
-            BusiExternalDevice oldExternalDevice = null;
+            ExternalDevice oldExternalDevice = null;
 
             // 根据编码在外部资源表中查询
             String gbId = externalDevice.getGbId().trim();
             String deviceId = externalDevice.getDeviceId().trim();
             if (StringUtils.isNotBlank(gbId) && deviceGbIdMap.containsKey(gbId)) {
 //                oldExternalDevice = externalDeviceMapper.findByGbId(gbId);
-                oldExternalDevice = (BusiExternalDevice) deviceGbIdMap.get(gbId);
+                oldExternalDevice = (ExternalDevice) deviceGbIdMap.get(gbId);
             } else if (StringUtils.isNotBlank(deviceId) && deviceIdMap.containsKey(deviceId)) {
 //                oldExternalDevice = externalDeviceMapper.findByDeviceId(deviceId);
-                oldExternalDevice = (BusiExternalDevice) deviceIdMap.get(deviceId);
+                oldExternalDevice = (ExternalDevice) deviceIdMap.get(deviceId);
             }
 
             if (oldExternalDevice != null) {
@@ -557,7 +542,7 @@ public class CameraServiceImpl implements ICameraService {
      *
      * @param externalDevices
      */
-    private void deviceSave(List<BusiExternalDevice> externalDevices, int isUpdate) {
+    private void deviceSave(List<ExternalDevice> externalDevices, int isUpdate) {
         if (isUpdate == 0) {
 //            for (int i = 0; i <= externalDevices.size() / batchCount; i++) {
 //                if (i == externalDevices.size() / batchCount) {
@@ -569,11 +554,11 @@ public class CameraServiceImpl implements ICameraService {
 //                }
 //            }
             for (int i = 0; i < externalDevices.size(); i++) {
-                busiExternalDeviceMapper.insertBusiExternalDevice(externalDevices.get(i));
+                busiExternalDeviceMapper.insert(externalDevices.get(i));
             }
         } else if (isUpdate == 1) {
             for (int i = 0; i < externalDevices.size(); i++) {
-                busiExternalDeviceMapper.updateBusiExternalDevice(externalDevices.get(i));
+                busiExternalDeviceMapper.update(externalDevices.get(i));
             }
         }
     }
@@ -583,24 +568,24 @@ public class CameraServiceImpl implements ICameraService {
      *
      * @param cameras
      */
-    private void cameraSave(List<BusiCamera> cameras, int isUpdate) {
+    private void cameraSave(List<Camera> cameras, int isUpdate) {
         if (isUpdate == 0) {
 //            for (int i = 0; i <= cameras.size() / batchCount; i++) {
 //                if (i == cameras.size() / batchCount) {
 //                    if (cameras.subList(i * batchCount, cameras.size()).size() > 0) {
-//                        busiCameraMapper.batchInsert(cameras.subList(i * batchCount, cameras.size()));
+//                        cameraMapper.batchInsert(cameras.subList(i * batchCount, cameras.size()));
 //                    }
 //                } else {
-//                    busiCameraMapper.batchInsert(cameras.subList(i * batchCount, (i + 1) * batchCount));
+//                    cameraMapper.batchInsert(cameras.subList(i * batchCount, (i + 1) * batchCount));
 //                }
 //            }
 
             for (int i = 0; i < cameras.size(); i++) {
-                busiCameraMapper.insertBusiCamera(cameras.get(i));
+                cameraMapper.insert(cameras.get(i));
             }
         } else {
             for (int i = 0; i < cameras.size(); i++) {
-                busiCameraMapper.updateBusiCamera(cameras.get(i));
+                cameraMapper.update(cameras.get(i));
             }
         }
     }

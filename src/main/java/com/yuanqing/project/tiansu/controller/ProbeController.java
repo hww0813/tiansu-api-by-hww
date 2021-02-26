@@ -52,7 +52,7 @@ public class ProbeController {
     public AjaxResult getLowerRegion(@RequestParam("regionId") String regionId){
         List<MacsRegion> lowerRegion = macsConfigService.getLowerRegion(regionId);
 
-        if(CollectionUtils.isEmpty(lowerRegion)) {
+        if(!CollectionUtils.isEmpty(lowerRegion)) {
             return AjaxResult.success(lowerRegion);
         }else{
             return AjaxResult.error("获取失败，结果为空");

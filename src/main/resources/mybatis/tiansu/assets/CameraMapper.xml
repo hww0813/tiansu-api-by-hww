@@ -13,6 +13,7 @@
         <result property="longitude"    column="LONGITUDE"    />
         <result property="latitude"    column="LATITUDE"    />
         <result property="region"    column="REGION"    />
+        <result property="regionName"    column="REGION_NAME"    />
         <result property="createTime"    column="CREATE_TIME"    />
         <result property="updateTime"    column="UPDATE_TIME"    />
         <result property="ipAddress"    column="IP_ADDRESS"    />
@@ -29,7 +30,7 @@
     </resultMap>
 
     <sql id="selectBusiCameraVo">
-        select ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, MAC_ADDRESS, LONGITUDE, LATITUDE, REGION, CREATE_TIME, UPDATE_TIME, IP_ADDRESS, STATUS, SIP_SERVER_ID, DEVICE_TYPE, DOMAIN_IP, DOMAIN_PORT, IS_GB, MANUFACTURER, IS_PROBE, IS_IMPORT, IS_CHECK from busi_camera
+        select ID, DEVICE_CODE, DEVICE_DOMAIN, DEVICE_NAME, MAC_ADDRESS, LONGITUDE, LATITUDE, REGION,REGION_NAME, CREATE_TIME, UPDATE_TIME, IP_ADDRESS, STATUS, SIP_SERVER_ID, DEVICE_TYPE, DOMAIN_IP, DOMAIN_PORT, IS_GB, MANUFACTURER, IS_PROBE, IS_IMPORT, IS_CHECK from busi_camera
     </sql>
 
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera" resultMap="BusiCameraResult">
@@ -89,7 +90,7 @@
         UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=now() WHERE STATUS!='0'
     </update>
 
-    <insert id="insert" parameterType="Camera">
+    <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera">
         insert into busi_camera
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null ">ID,</if>
@@ -139,7 +140,7 @@
         </trim>
     </insert>
 
-    <update id="update" parameterType="Camera">
+    <update id="update" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera">
         update busi_camera
         <trim prefix="SET" suffixOverrides=",">
             <if test="deviceCode != null  and deviceCode != ''">DEVICE_CODE = #{deviceCode},</if>

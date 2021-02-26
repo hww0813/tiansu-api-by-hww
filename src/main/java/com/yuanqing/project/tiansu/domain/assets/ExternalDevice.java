@@ -27,6 +27,12 @@ public class ExternalDevice extends BaseCamera {
      */
     private String gbId;
 
+    /**
+     * 别名
+     */
+    private String deviceAlias;
+
+
 }
 
 
