@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.BusiCameraHistoryMapper">
+
+    <resultMap type="BusiCameraHistory" id="BusiCameraHistoryResult">
+        <result property="id"    column="ID"    />
+        <result property="deviceCode"    column="DEVICE_CODE"    />
+        <result property="deviceName"    column="DEVICE_NAME"    />
+        <result property="longitude"    column="LONGITUDE"    />
+        <result property="latitude"    column="LATITUDE"    />
+        <result property="ipAddress"    column="IP_ADDRESS"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+    </resultMap>
+
+    <sql id="selectBusiCameraHistoryVo">
+        select ID, DEVICE_CODE, DEVICE_NAME, LONGITUDE, LATITUDE, IP_ADDRESS, CREATE_TIME from busi_camera_history
+    </sql>
+
+    <select id="selectBusiCameraHistoryList" parameterType="BusiCameraHistory" resultMap="BusiCameraHistoryResult">
+        <include refid="selectBusiCameraHistoryVo"/>
+        <where>
+            <if test="deviceCode != null  and deviceCode != ''"> and DEVICE_CODE = #{deviceCode}</if>
+            <if test="deviceName != null  and deviceName != ''"> and DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
+            <if test="longitude != null "> and LONGITUDE = #{longitude}</if>
+            <if test="latitude != null "> and LATITUDE = #{latitude}</if>
+            <if test="ipAddress != null "> and IP_ADDRESS = #{ipAddress}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiCameraHistoryById" parameterType="Long" resultMap="BusiCameraHistoryResult">
+        <include refid="selectBusiCameraHistoryVo"/>
+        where ID = #{id}
+    </select>
+
+    <insert id="insertBusiCameraHistory" parameterType="BusiCameraHistory">
+        insert into busi_camera_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">ID,</if>
+            <if test="deviceCode != null  and deviceCode != ''">DEVICE_CODE,</if>
+            <if test="deviceName != null  and deviceName != ''">DEVICE_NAME,</if>
+            <if test="longitude != null ">LONGITUDE,</if>
+            <if test="latitude != null ">LATITUDE,</if>
+            <if test="ipAddress != null ">IP_ADDRESS,</if>
+            <if test="createTime != null ">CREATE_TIME,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="deviceCode != null  and deviceCode != ''">#{deviceCode},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="longitude != null ">#{longitude},</if>
+            <if test="latitude != null ">#{latitude},</if>
+            <if test="ipAddress != null ">#{ipAddress},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiCameraHistory" parameterType="BusiCameraHistory">
+        update busi_camera_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceCode != null  and deviceCode != ''">DEVICE_CODE = #{deviceCode},</if>
+            <if test="deviceName != null  and deviceName != ''">DEVICE_NAME = #{deviceName},</if>
+            <if test="longitude != null ">LONGITUDE = #{longitude},</if>
+            <if test="latitude != null ">LATITUDE = #{latitude},</if>
+            <if test="ipAddress != null ">IP_ADDRESS = #{ipAddress},</if>
+            <if test="createTime != null ">CREATE_TIME = #{createTime},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <update id="deleteBusiCameraHistoryById" parameterType="Long">
+        update busi_camera_history set is_del = 0 where ID = #{id}
+    </update>
+
+    <update id="deleteBusiCameraHistoryByIds" parameterType="String">
+        update busi_camera_history set is_del = 0 where ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectBusiCameraHistoryByCode" resultMap="BusiCameraHistoryResult">
+        <include refid="selectBusiCameraHistoryVo"/>
+        WHERE DEVICE_CODE = #{deviceCode}
+        ORDER BY CREATE_TIME desc
+        limit 1
+    </select>
+
+</mapper>

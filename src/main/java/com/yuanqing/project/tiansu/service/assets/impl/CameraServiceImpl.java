@@ -1,18 +1,20 @@
 package com.yuanqing.project.tiansu.service.assets.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.*;
 import com.yuanqing.common.exception.CustomException;
-import com.yuanqing.common.queue.CameraMap;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.SequenceIdGenerator;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.project.tiansu.domain.IConstants;
 import com.yuanqing.project.tiansu.domain.assets.*;
-import com.yuanqing.project.tiansu.mapper.assets.ExternalDeviceMapper;
 import com.yuanqing.project.tiansu.mapper.assets.CameraMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
+import com.yuanqing.project.tiansu.mapper.assets.ExternalDeviceMapper;
+import com.yuanqing.project.tiansu.service.assets.IBusiCameraHistoryService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,8 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +46,8 @@ public class CameraServiceImpl implements ICameraService {
     @Resource
     private ExternalDeviceMapper busiExternalDeviceMapper;
 
+    @Resource
+    private IBusiCameraHistoryService busiCameraHistoryService;
 
 
     private static SequenceIdGenerator cameraIdGenerator = new SequenceIdGenerator(1, 1);
@@ -347,8 +349,8 @@ public class CameraServiceImpl implements ICameraService {
         }
         //删除数据库
         cameraMapper.delete(id);
-        //删除缓存
-        delCameraMap(camera);
+//        //删除缓存
+//        delCameraMap(camera);
 
     }
 
@@ -362,15 +364,15 @@ public class CameraServiceImpl implements ICameraService {
         return cameraMapper.getList(camera);
     }
 
-    /**
-     * 删除CameraMap缓存
-     * @param camera 摄像头对象
-     */
-    private void delCameraMap(Camera camera){
-        //删除缓存中的数据
-        String cameraKey = String.format(Constants.TWO_FORMAT, Constants.CAMERA, camera.getDeviceCode());
-        CameraMap.remove(cameraKey);
-    }
+//    /**
+//     * 删除CameraMap缓存
+//     * @param camera 摄像头对象
+//     */
+//    private void delCameraMap(Camera camera){
+//        //删除缓存中的数据
+//        String cameraKey = String.format(Constants.TWO_FORMAT, Constants.CAMERA, camera.getDeviceCode());
+//        CameraMap.remove(cameraKey);
+//    }
 
 
     @Override
@@ -433,7 +435,7 @@ public class CameraServiceImpl implements ICameraService {
             }
 
             try {
-                externalDevice.setIpAddress((Long) extCamera.get("ipAddress"));
+                externalDevice.setIpAddress(IpUtils.ipToLong(extCamera.get("ipAddress").toString()));
             } catch (Exception e) {
                 externalDevice.setIpAddress(null);
             }
@@ -502,30 +504,28 @@ public class CameraServiceImpl implements ICameraService {
         if (addCameraList.size() > 0) {
             this.cameraSave(addCameraList, 0);
             count = 1;
-//            for(Camera entity:addCameraList){
-//                //摄像头导入时新增/更新都要处理缓存
-//                String cameraKey = String.format(IConstants.TWO_FORMAT, IConstants.CAMERA, entity.getDeviceCode());
-////                redisCache.setCacheObject(cameraKey, entity, 2, TimeUnit.DAYS);
-//                CameraMap.put(cameraKey,entity);
-//                CameraHistory cameraHistory = new CameraHistory();
-//                BeanUtils.copyProperties(entity, cameraHistory);
-//                //传到摄像头历史处理队列
-//                CameraHistoryCollection.push(cameraHistory);
-//            }
+            for (Camera entity : updateCameraList) {
+                //摄像头导入时新增/更新都要处理缓存
+                String cameraKey = String.format(IConstants.TWO_FORMAT, IConstants.CAMERA, entity.getDeviceCode());
+//                redisCache.setCacheObject(cameraKey, entity, 2, TimeUnit.DAYS);
+//                CameraMap.put(cameraKey, entity);
+                BusiCameraHistory cameraHistory = new BusiCameraHistory();
+                BeanUtils.copyProperties(entity, cameraHistory);
+                handleCameraHistory(cameraHistory);
+            }
         }
         if (updateCameraList.size() > 0) {
             this.cameraSave(updateCameraList, 1);
             count = 1;
-//            for(Camera entity:updateCameraList){
-//                //摄像头导入时新增/更新都要处理缓存
-//                String cameraKey = String.format(IConstants.TWO_FORMAT, IConstants.CAMERA, entity.getDeviceCode());
-////                redisCache.setCacheObject(cameraKey, entity, 2, TimeUnit.DAYS);
-//                CameraMap.put(cameraKey,entity);
-//                CameraHistory cameraHistory = new CameraHistory();
-//                BeanUtils.copyProperties(entity, cameraHistory);
-//                //传到摄像头历史处理队列
-//                CameraHistoryCollection.push(cameraHistory);
-//            }
+            for (Camera entity : updateCameraList) {
+                //摄像头导入时新增/更新都要处理缓存
+                String cameraKey = String.format(IConstants.TWO_FORMAT, IConstants.CAMERA, entity.getDeviceCode());
+//                redisCache.setCacheObject(cameraKey, entity, 2, TimeUnit.DAYS);
+//                CameraMap.put(cameraKey, entity);
+                BusiCameraHistory cameraHistory = new BusiCameraHistory();
+                BeanUtils.copyProperties(entity, cameraHistory);
+                handleCameraHistory(cameraHistory);
+            }
         }
         if (count > 0) {
             result = "上传成功";
@@ -587,6 +587,37 @@ public class CameraServiceImpl implements ICameraService {
             for (int i = 0; i < cameras.size(); i++) {
                 cameraMapper.update(cameras.get(i));
             }
+        }
+    }
+
+    /**
+     * 处理摄像头历史：
+     * 无同样设备编码就新增记录，
+     * 有同样设备编码，有差别才更新。
+     * @param cameraHistory
+     */
+    private void handleCameraHistory(BusiCameraHistory cameraHistory) {
+        BusiCameraHistory oldCameraHistory = busiCameraHistoryService.selectBusiCameraHistoryByCode(cameraHistory.getDeviceCode());
+        if (oldCameraHistory != null) {
+            cameraHistory.setId(oldCameraHistory.getId());
+
+            Long newIp = cameraHistory.getIpAddress();
+            Long oldIp = oldCameraHistory.getIpAddress();
+            String newName = cameraHistory.getDeviceName();
+            String oldName = oldCameraHistory.getDeviceName();
+            if (newIp != null && !newIp.equals(oldIp)) {
+                // 新IP不为空，且和旧IP不相等
+                busiCameraHistoryService.updateBusiCameraHistory(cameraHistory);
+                return;
+            }
+            if (StringUtils.isNotBlank(newName) && !newName.equals(oldName)) {
+                // 新名称不为空，且和旧名称不相等
+                busiCameraHistoryService.updateBusiCameraHistory(cameraHistory);
+                return;
+            }
+        } else {
+            // 没有找到缓存，新增
+            busiCameraHistoryService.insertBusiCameraHistory(cameraHistory);
         }
     }
 }
