@@ -51,7 +51,7 @@ public class MacsServiceTest {
     public void selectMacsRegionById(){
 
 
-        List<MacsRegion> regionList = macsConfigService.getLowerRegion("420100");
+        List<MacsRegion> regionList = macsConfigService.getLowerRegion("340000");
 
         System.out.println(regionList);
     }

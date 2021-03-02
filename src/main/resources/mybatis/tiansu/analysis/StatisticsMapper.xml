@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanqing.project.tiansu.mapper.analysis.StatisticsMapper">
+
+    <resultMap id="TerminalVisitMap" type="com.yuanqing.project.tiansu.domain.analysis.TerminalVisit">
+        <result column="src_ip" property="ipAddress" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="action" property="action" jdbcType="INTEGER"/>
+        <result column="count" property="visitCnt" jdbcType="BIGINT"/>
+        <result column="camera_cnt" property="cameraCnt" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <resultMap id="visitedRateMap" type="com.yuanqing.project.tiansu.domain.analysis.VisitedRate">
+        <result column="region" property="regionId" jdbcType="BIGINT"/>
+        <result column="visitedCamera" property="visitedCamera" jdbcType="INTEGER"/>
+        <result column="terminalCnt" property="terminalCnt" jdbcType="INTEGER"/>
+        <result column="userCnt" property="userCnt" jdbcType="INTEGER"/>
+        <result column="allCount" property="allCount" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <select id="visitedRate" resultMap="visitedRateMap">
+        SELECT
+            bc.REGION region,
+            count( DISTINCT bs.dst_code ) visitedCamera,
+            count( DISTINCT bs.src_ip) terminalCnt,
+            count( DISTINCT bs.username ) userCnt,
+            (select count(1) from busi_camera bc1 where bc1.REGION = bc.REGION) as allCount
+        FROM
+            busi_statistics bs
+        LEFT JOIN busi_camera bc ON bs.dst_code = bc.DEVICE_CODE
+        GROUP BY
+            bc.REGION
+    </select>
+
+
+</mapper>
