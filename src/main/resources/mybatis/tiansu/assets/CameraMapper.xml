@@ -46,7 +46,7 @@
             <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
             <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
             <if test="ipAddress != null "> and IP_ADDRESS = #{ipAddress}</if>
-            <if test="status != null  and status != ''"> and STATUS = #{status}</if>
+            <if test="status != null"> and STATUS = #{status}</if>
             <if test="sipServerId != null "> and SIP_SERVER_ID = #{sipServerId}</if>
             <if test="deviceType != null  and deviceType != ''"> and DEVICE_TYPE = #{deviceType}</if>
             <if test="domainIp != null "> and DOMAIN_IP = #{domainIp}</if>

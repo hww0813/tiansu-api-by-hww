@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.Color;
@@ -99,23 +100,25 @@ public class ExportExcelUtils {
         dataStyle.setFont(dataFont);
         setBorder(dataStyle, BorderStyle.THIN, new XSSFColor(new Color(0, 0, 0)));
 
-        for (List<Object> rowData : rows) {
-            Row dataRow = sheet.createRow(rowIndex);
-            // dataRow.setHeightInPoints(25);
-            colIndex = 0;
+        if(!CollectionUtils.isEmpty(rows)) {
+            for (List<Object> rowData : rows) {
+                Row dataRow = sheet.createRow(rowIndex);
+                // dataRow.setHeightInPoints(25);
+                colIndex = 0;
 
-            for (Object cellData : rowData) {
-                Cell cell = dataRow.createCell(colIndex);
-                if (cellData != null) {
-                    cell.setCellValue(cellData.toString());
-                } else {
-                    cell.setCellValue("");
+                for (Object cellData : rowData) {
+                    Cell cell = dataRow.createCell(colIndex);
+                    if (cellData != null) {
+                        cell.setCellValue(cellData.toString());
+                    } else {
+                        cell.setCellValue("");
+                    }
+
+                    cell.setCellStyle(dataStyle);
+                    colIndex++;
                 }
-
-                cell.setCellStyle(dataStyle);
-                colIndex++;
+                rowIndex++;
             }
-            rowIndex++;
         }
         return rowIndex;
     }

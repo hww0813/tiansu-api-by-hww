@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -2953,7 +2954,7 @@ public class ReportController extends BaseController {
     public void ClientExcel(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("终端");
-        List<JSONObject> all = clientTerminalService.getAllToReport(filters);
+
         List<String> titles = new ArrayList();
         titles.add("设备编号");
         titles.add("IP地址");
@@ -2962,19 +2963,22 @@ public class ReportController extends BaseController {
         titles.add("状态");
         titles.add("最后更新时间");
         data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : all) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("deviceCode"));
-            row.add(j.get("ipAddress"));
-            row.add(j.get("macAddress"));
-            row.add(j.get("usercnt"));
-            row.add(j.get("status"));
-            row.add(j.get("updateTime"));
-            rows.add(row);
-        }
 
-        data.setRows(rows);
+        List<JSONObject> all = clientTerminalService.getAllToReport(filters);
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("deviceCode"));
+                row.add(j.get("ipAddress"));
+                row.add(j.get("macAddress"));
+                row.add(j.get("usercnt"));
+                row.add(j.get("status"));
+                row.add(j.get("updateTime"));
+                rows.add(row);
+            }
+            data.setRows(rows);
+        }
 
         ExportExcelUtils.exportExcel(response, "终端报表.xlsx", data);
     }
@@ -2982,24 +2986,27 @@ public class ReportController extends BaseController {
     public void ClientUserExcel(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("用户");
-        List<JSONObject> all = clientUserService.getAllToReport(filters);
+
         List<String> titles = new ArrayList();
         titles.add("用户名");
         titles.add("终端数");
         titles.add("状态");
         titles.add("最后更新时间");
         data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : all) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("username"));
-            row.add(j.get("ipCnt"));
-            row.add(j.get("status"));
-            row.add(j.get("updateTime"));
-            rows.add(row);
-        }
 
-        data.setRows(rows);
+        List<JSONObject> all = clientUserService.getAllToReport(filters);
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("username"));
+                row.add(j.get("ipCnt"));
+                row.add(j.get("status"));
+                row.add(j.get("updateTime"));
+                rows.add(row);
+            }
+            data.setRows(rows);
+        }
 
         ExportExcelUtils.exportExcel(response, "终端用户报表.xlsx", data);
     }

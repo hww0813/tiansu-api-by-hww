@@ -7,12 +7,15 @@ import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientTerminalDto;
 import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
+import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import org.slf4j.Logger;
@@ -25,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +54,9 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     @Autowired
     private ClientMapper clientMapper;
 
+    @Autowired
+    private IClientService clientService;
+
     @Override
     public boolean changStatus(String[] ids) {
         return clientTerminalMapper.changStatus(ids);
@@ -57,7 +64,62 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
     @Override
     public List<JSONObject> getAllToReport(JSONObject filters) {
-        return null;
+        ClientTerminal condClientTerminal = new ClientTerminal();
+        condClientTerminal.setIpAddress(IpUtils.ipToLong(filters.getString("ipAddress")));
+        condClientTerminal.setStatus(filters.getInteger("status"));
+//        condClientTerminal.setDeviceCode(deviceCode);
+//        condClientTerminal.setSipServerId(sipServerId);
+//        condClientTerminal.setId(id);
+//        condClientTerminal.setRegionId(regionId);
+
+        String username = filters.getString("username");
+
+        List<ClientTerminal> list = null;
+        //判断 username 是否为空
+        if(StringUtils.isNotEmpty(username)){
+            Client client = new Client();
+            client.setUsername(username);
+
+            // 根据用户名查询client列表  需要用IP
+            List<Client> clientList = clientService.getList(client);
+
+            list = getTerminalByIpList(clientList);
+
+        }else{
+            list = getList(condClientTerminal);
+        }
+
+        //用户数
+        List<ClientTerminalDto> clientTerminalDtoList = handleTerminalUserNum(list);
+
+        List<JSONObject> reportList = new ArrayList<JSONObject>();
+        if(!CollectionUtils.isEmpty(clientTerminalDtoList)){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            for (ClientTerminalDto clientTerminalDto : clientTerminalDtoList) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("deviceCode", clientTerminalDto.getDeviceCode());
+                if (clientTerminalDto.getIpAddress() != null) {
+                    jsonObject.put("ipAddress", IpUtils.longToIPv4(clientTerminalDto.getIpAddress()));
+                }
+                jsonObject.put("macAddress", clientTerminalDto.getMacAddress());
+                if (clientTerminalDto.getUserCnt() != null) {
+                    jsonObject.put("usercnt", String.valueOf(clientTerminalDto.getUserCnt()));
+                } else {
+                    jsonObject.put("usercnt", "0");
+                }
+                if (clientTerminalDto.getStatus() != null && 0 == clientTerminalDto.getStatus()) {
+                    jsonObject.put("status", "已确认");
+                } else if (1 == clientTerminalDto.getStatus()) {
+                    jsonObject.put("status", "新发现");
+                }
+                if (clientTerminalDto.getUpdateTime() != null) {
+                    jsonObject.put("updateTime", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, clientTerminalDto.getUpdateTime()));
+                }
+                reportList.add(jsonObject);
+            }
+        }
+
+        return reportList;
     }
 
     @Override

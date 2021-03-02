@@ -53,7 +53,7 @@
             <if test="deviceCode != null  and deviceCode != ''"> and bct.DEVICE_CODE = #{deviceCode}</if>
             <if test="deviceName != null  and deviceName != ''"> and bct.DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
             <if test="macAddress != null  and macAddress != ''"> and bct.MAC_ADDRESS = #{macAddress}</if>
-            <if test="status != null  and status != ''"> and bct.STATUS = #{status}</if>
+            <if test="status != null"> and bct.STATUS = #{status}</if>
             <if test="createTime != null "> and bct.CREATE_TIME = #{createTime}</if>
             <if test="updateTime != null "> and bct.UPDATE_TIME = #{updateTime}</if>
             <if test="ipAddress != null "> and bct.IP_ADDRESS = #{ipAddress}</if>

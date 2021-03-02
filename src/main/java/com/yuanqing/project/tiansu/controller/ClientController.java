@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.yuanqing.common.constant.Constants.INDEX_CLIENT_COUNTS_CACHE;
@@ -87,6 +88,9 @@ public class ClientController extends BaseController {
 
         //用户数
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(list);
+        if(dtoList == null) {
+            dtoList = new ArrayList<ClientTerminalDto>();
+        }
 
         return AjaxResult.success(getDataTable(dtoList,list));
     }
