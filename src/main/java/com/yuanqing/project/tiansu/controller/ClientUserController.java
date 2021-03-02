@@ -61,7 +61,7 @@ public class ClientUserController extends BaseController {
 
         List<ClientUser> list = null;
 
-        //判断 username 是否为空
+        //判断 ipAddress 是否为空
         if(ipAddress != null){
             Client client = new Client();
             client.setIpAddress(ipAddress);
@@ -78,12 +78,12 @@ public class ClientUserController extends BaseController {
         }
 
         //查询终端数量
-        List<ClientUserDto> dtoList = clientUserService.handleClientUserTerminalNum(list);
-        if(dtoList == null) {
-            dtoList = new ArrayList<ClientUserDto>();
+        List<ClientUserDto> clientUserDtoList = clientUserService.handleClientUserTerminalNum(list);
+        if(clientUserDtoList == null) {
+            clientUserDtoList = new ArrayList<ClientUserDto>();
         }
 
-        return AjaxResult.success(getDataTable(dtoList,list));
+        return AjaxResult.success(getDataTable(clientUserDtoList,list));
     }
 
     @DeleteMapping

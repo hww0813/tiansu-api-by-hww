@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 /**
  * Created by xucan on 2021-01-18 16:29
+ *
  * @author xucan
  */
 
@@ -76,7 +77,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
         List<ClientTerminal> list = null;
         //判断 username 是否为空
-        if(StringUtils.isNotEmpty(username)){
+        if (StringUtils.isNotEmpty(username)) {
             Client client = new Client();
             client.setUsername(username);
 
@@ -85,7 +86,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
             list = getTerminalByIpList(clientList);
 
-        }else{
+        } else {
             list = getList(condClientTerminal);
         }
 
@@ -93,7 +94,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         List<ClientTerminalDto> clientTerminalDtoList = handleTerminalUserNum(list);
 
         List<JSONObject> reportList = new ArrayList<JSONObject>();
-        if(!CollectionUtils.isEmpty(clientTerminalDtoList)){
+        if (!CollectionUtils.isEmpty(clientTerminalDtoList)) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             for (ClientTerminalDto clientTerminalDto : clientTerminalDtoList) {
                 JSONObject jsonObject = new JSONObject();
@@ -151,7 +152,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
     @Override
     public List<ClientTerminal> getActiveTerminal() {
-        ClientTerminal clientTerminalFilter = (ClientTerminal)DateUtils.getDayTime(ClientTerminal.class);
+        ClientTerminal clientTerminalFilter = (ClientTerminal) DateUtils.getDayTime(ClientTerminal.class);
         List<ClientTerminal> list = clientTerminalMapper.getList(clientTerminalFilter);
         return list;
     }
@@ -160,7 +161,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     @Override
     public List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> clientTerminalList) {
 
-        if(CollectionUtils.isEmpty(clientTerminalList)){
+        if (CollectionUtils.isEmpty(clientTerminalList)) {
             log.error("终端列表为空");
             return null;
         }
@@ -168,7 +169,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         //提取集合IP
         List<Long> ipList = clientTerminalList.stream().map(f -> f.getIpAddress()).collect(Collectors.toList());
 
-        if(CollectionUtils.isEmpty(ipList)){
+        if (CollectionUtils.isEmpty(ipList)) {
             log.error("提取集合IP异常,集合为空");
             return null;
         }
@@ -176,17 +177,17 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         //获取IP 对应的用户数
         List<JSONObject> originalUserNum = clientMapper.getUserNumByTerminal(ipList);
 
-        if(CollectionUtils.isEmpty(originalUserNum)){
+        if (CollectionUtils.isEmpty(originalUserNum)) {
             log.error("获取IP对应的用户数结果为空");
             return null;
         }
 
-        Map<Long,Integer> map = new HashMap<>();
+        Map<Long, Integer> map = new HashMap<>();
 
         //格式化原始数据
-        originalUserNum.stream().forEach(f -> map.put(f.getLong("ip_address"),f.getInteger("userCnt")));
+        originalUserNum.stream().forEach(f -> map.put(f.getLong("ip_address"), f.getInteger("userCnt")));
 
-        if(CollectionUtils.isEmpty(map)){
+        if (CollectionUtils.isEmpty(map)) {
             log.error("用户数量结果格式化异常,map为空");
             return null;
         }
@@ -206,8 +207,8 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     @Override
     public List<ClientTerminal> getTerminalByIpList(List<Client> ipList) {
         List<ClientTerminal> list = null;
-        if(!CollectionUtils.isEmpty(ipList)){
-             list = clientTerminalMapper.getClientTerminalByIpList(ipList);
+        if (!CollectionUtils.isEmpty(ipList)) {
+            list = clientTerminalMapper.getClientTerminalByIpList(ipList);
         }
         return list;
     }
@@ -216,9 +217,9 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     @Override
     public Long save(ClientTerminal clientTerminal, SaveType type) {
 
-        if (type.getCode()==1) {
+        if (type.getCode() == 1) {
             clientTerminalMapper.insert(clientTerminal);
-        } else if(type.getCode()==0){
+        } else if (type.getCode() == 0) {
             clientTerminalMapper.update(clientTerminal);
         }
         return clientTerminal.getId();
@@ -237,7 +238,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(Long id,Long ipAddress) {
+    public void delete(Long id, Long ipAddress) {
         ClientTerminal clientTerminal = findById(id);
         if (clientTerminal == null) {
             throw new RuntimeException("entity not existed");
@@ -263,18 +264,20 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
     /**
      * 单条clientTerminal 存入clientTerminalMap缓存
+     *
      * @param clientTerminal
      */
-    private void putClientTerminalMap(ClientTerminal clientTerminal){
+    private void putClientTerminalMap(ClientTerminal clientTerminal) {
         String clientTerminalKey = String.format(Constants.TWO_FORMAT, Constants.CLIENT_TERMINAL, clientTerminal.getIpAddress());
-        ClientTerminalMap.put(clientTerminalKey,clientTerminal);
+        ClientTerminalMap.put(clientTerminalKey, clientTerminal);
     }
 
     /**
      * 单条clientTerminal 删除clientTerminalMap缓存
+     *
      * @param clientTerminal
      */
-    private void delClientTerminalMap(ClientTerminal clientTerminal){
+    private void delClientTerminalMap(ClientTerminal clientTerminal) {
         String clientTerminalKey = String.format(Constants.TWO_FORMAT, Constants.CLIENT_TERMINAL, clientTerminal.getIpAddress());
         ClientTerminalMap.remove(clientTerminalKey);
     }

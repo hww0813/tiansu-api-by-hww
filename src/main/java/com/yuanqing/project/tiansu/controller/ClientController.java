@@ -87,12 +87,12 @@ public class ClientController extends BaseController {
         }
 
         //用户数
-        List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(list);
-        if(dtoList == null) {
-            dtoList = new ArrayList<ClientTerminalDto>();
+        List<ClientTerminalDto> clientTerminalDtoList = clientTerminalService.handleTerminalUserNum(list);
+        if(clientTerminalDtoList == null) {
+            clientTerminalDtoList = new ArrayList<ClientTerminalDto>();
         }
 
-        return AjaxResult.success(getDataTable(dtoList,list));
+        return AjaxResult.success(getDataTable(clientTerminalDtoList,list));
     }
 
     @GetMapping("/clientList")
