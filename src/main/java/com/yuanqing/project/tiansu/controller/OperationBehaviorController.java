@@ -142,7 +142,7 @@ public class OperationBehaviorController extends BaseController   {
         if(endDate == null){
             return AjaxResult.error(500,"未知结束时间");
         }
-       return  operationBehaviorService.getCharts(startDate,endDate,action,sort,null);
+       return  operationBehaviorService.getCharts(startDate,endDate,action,sort,"CAMERA");
     }
 
 

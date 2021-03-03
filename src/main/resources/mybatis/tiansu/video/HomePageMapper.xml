@@ -13,7 +13,7 @@
       FROM busi_statistics bs
       LEFT JOIN busi_camera bc ON bc.`DEVICE_CODE` = bs.`dst_code`
       LEFT JOIN busi_region br ON bc.region = br.id
-      WHERE bs.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+      WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
       <if test="action !=null and action != 1" >
           and bs.action = #{action}
       </if>
@@ -34,7 +34,7 @@
         SELECT COUNT(DISTINCT bs.`username`)AS USERNAME , COUNT(DISTINCT bs.dst_code) AS CAMERA_CNT, bs.`src_ip` AS CLIENT_IP ,
         SUM(bs.`count`) AS VISIT_CNT
         FROM busi_statistics bs
-         WHERE bs.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+         WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
         <if test="action !=null and action != 1" >
             and bs.action = #{action}
         </if>
@@ -57,7 +57,7 @@
         SELECT   bs.`username` AS USERNAME, COUNT(DISTINCT bs.`src_ip`) AS CLIENT_CNT , COUNT(DISTINCT bs.`dst_code`) AS CAMERA_ID,
         SUM(bs.`count`) AS VISIT_CNT
         FROM busi_statistics bs
-        WHERE bs.STAMP &gt;  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+        WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
         <if test="action !=null and action != 1" >
             and bs.action = #{action}
         </if>
@@ -80,7 +80,7 @@
     <select id="queryClientStatisticsCount" resultType="java.util.Map" parameterType="java.util.Date">
          SELECT
         COUNT(DISTINCT bs.`src_ip`) AS active ,
-        (SELECT COUNT(DISTINCT bs.`src_ip`)  FROM `busi_statistics` bs ) AS count,
+        (SELECT COUNT(bct.`ip_address`)  FROM `busi_client_terminal` bct ) AS count,
         (SELECT COUNT(1) FROM busi_client_terminal b WHERE b.status = 1) AS discovery
          FROM busi_statistics bs
         WHERE bs.stamp = DATE_FORMAT(#{date},'%y%m%d')
@@ -89,7 +89,7 @@
     <select id="queryUserStatisticsCount" resultType="java.util.Map" parameterType="java.util.Date">
         SELECT
         COUNT(DISTINCT bs.username) AS active ,
-        (SELECT COUNT(DISTINCT bs.username)  FROM `busi_statistics` bs ) AS count,
+        (SELECT COUNT(bcl.username)  FROM `busi_client_user` bcl ) AS count,
         (SELECT COUNT(1) FROM busi_client_user b WHERE b.status = 1) AS discovery
          FROM busi_statistics bs
         WHERE bs.stamp = DATE_FORMAT(#{date},'%y%m%d')
@@ -98,7 +98,7 @@
     <select id="queryCameraStatisticsCount" resultType="java.util.Map" parameterType="java.util.Date">
          SELECT
         COUNT(DISTINCT bs.dst_code) AS active ,
-        (SELECT COUNT(DISTINCT bs.dst_code)  FROM `busi_statistics` bs ) AS count,
+        (SELECT COUNT(bc.device_code)  FROM `busi_camera` bc ) AS count,
         (SELECT COUNT(1) FROM busi_camera b WHERE b.status = 1) AS discovery
          FROM busi_statistics bs
          WHERE bs.stamp = DATE_FORMAT(#{date},'%y%m%d')

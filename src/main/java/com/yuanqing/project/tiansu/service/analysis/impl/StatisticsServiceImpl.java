@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.service.analysis.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.DoubleUtils;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.mapper.analysis.StatisticsMapper;
@@ -92,5 +93,11 @@ public class StatisticsServiceImpl implements IStatisticsService {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit) {
+
+        return statisticsMapper.getTerminalVisit(terminalVisit);
     }
 }

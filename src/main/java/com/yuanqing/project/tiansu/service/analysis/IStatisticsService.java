@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.service.analysis;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 
 import java.util.List;
 
@@ -18,4 +19,10 @@ public interface IStatisticsService {
      */
     List<JSONObject> getVisitedRate(String regionId);
 
+    /**
+     * 获取终端访问列表
+     * @param terminalVisit 过滤条件
+     * @return
+     */
+    List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit);
 }

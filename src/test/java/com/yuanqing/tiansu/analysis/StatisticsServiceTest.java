@@ -1,6 +1,7 @@
 package com.yuanqing.tiansu.analysis;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,15 @@ public class StatisticsServiceTest {
         List<JSONObject> visitedRate = statisticsService.getVisitedRate("340100");
         System.out.println(visitedRate);
 
+    }
+
+    @Test
+    public void getTerminalVisit(){
+        TerminalVisit terminalVisit = new TerminalVisit();
+        terminalVisit.setIpAddress(3232287076L);
+        List<TerminalVisit> terminalVisitList = statisticsService.getTerminalVisit(terminalVisit);
+
+        System.out.println(terminalVisitList);
     }
 
 }

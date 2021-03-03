@@ -191,6 +191,8 @@ public class IndexStatisticsTask {
         Map clientCounts = homePageMapper.queryClientStatisticsCount(nowDate);
         Map userCounts = homePageMapper.queryUserStatisticsCount(nowDate);
         Map cameraCounts = homePageMapper.queryCameraStatisticsCount(nowDate);
+
+
         redisCache.setCacheObject(Constants.INDEX_CLIENT_COUNTS_CACHE,clientCounts);
         redisCache.setCacheObject(Constants.INDEX_USER_COUNTS_CACHE,userCounts);
         redisCache.setCacheObject(Constants.INDEX_CAMERA_COUNTS_CACHE,cameraCounts);

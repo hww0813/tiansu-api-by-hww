@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.mapper.analysis;
 
+import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +21,12 @@ public interface StatisticsMapper {
      * @return
      */
     List<VisitedRate> visitedRate();
+
+
+    /**
+     * 获取终端访问列表
+     * @return
+     */
+    List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit);
 
 }

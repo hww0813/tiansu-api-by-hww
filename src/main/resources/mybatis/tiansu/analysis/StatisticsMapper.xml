@@ -33,5 +33,27 @@
             bc.REGION
     </select>
 
+    <select id="getTerminalVisit" resultMap="TerminalVisitMap">
+        SELECT
+            src_ip,
+            username,
+            action,
+            sum( count ) count,
+            count( DISTINCT dst_code ) camera_cnt
+        FROM
+            busi_statistics
+        <where>
+            1=1
+            <if test="ipAddress != null  and ipAddress != ''"> and src_ip = #{ipAddress}</if>
+            <if test="username != null  and username != ''"> and username = #{username}</if>
+            <if test="action != null  and action != ''"> and action = #{action}</if>
+            <if test="startDate != null and endDate != null">and stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d') and STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
+        </where>
+        GROUP BY
+        src_ip,
+        username,
+        action
+    </select>
+
 
 </mapper>

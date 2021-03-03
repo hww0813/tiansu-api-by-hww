@@ -250,10 +250,10 @@
         </if>
 
         <if test="stime != null">
-            and bo.STAMP &gt;=  STR_TO_DATE(#{stime},'%Y-%m-%d %H:%i:%s')
+            and bo.STAMP &gt;=  STR_TO_DATE(#{stime},'%Y-%m-%dT%H:%i:%s')
         </if>
         <if test="etime != null">
-            and bo.STAMP &lt;= STR_TO_DATE(#{etime},'%Y-%m-%d %H:%i:%s')
+            and bo.STAMP &lt;= STR_TO_DATE(#{etime},'%Y-%m-%dT%H:%i:%s')
         </if>
         <if test="action != null and action != ''">
             and bo.ACTION = #{action}
@@ -275,10 +275,10 @@
         </if>
 
         <if test="stime != null">
-            and bo.STAMP &gt;=  STR_TO_DATE(#{stime},'%Y-%m-%d %H:%i:%s')
+            and bo.STAMP &gt;=  STR_TO_DATE(#{stime},'%Y-%m-%dT%H:%i:%s')
         </if>
         <if test="etime != null">
-            and bo.STAMP &lt;= STR_TO_DATE(#{etime},'%Y-%m-%d %H:%i:%s')
+            and bo.STAMP &lt;= STR_TO_DATE(#{etime},'%Y-%m-%dT%H:%i:%s')
         </if>
         <if test="action != null and action != ''">
             and bo.ACTION = #{action}

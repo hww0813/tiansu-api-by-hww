@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.domain.analysis;
 
+import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.Data;
 
 /**
@@ -10,7 +11,7 @@ import lombok.Data;
  */
 
 @Data
-public class TerminalVisit {
+public class TerminalVisit extends BaseEntity {
 
     private Long ipAddress;
 

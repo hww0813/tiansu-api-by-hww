@@ -59,7 +59,7 @@
             <if test="rangAuditPort != null  and rangAuditPort != ''"> and RANG_AUDIT_PORT = #{rangAuditPort}</if>
             <if test="isSshAudit != null  and isSshAudit != ''"> and IS_SSH_AUDIT = #{isSshAudit}</if>
             <if test="sshAuditPort != null  and sshAuditPort != ''"> and SSH_AUDIT_PORT = #{sshAuditPort}</if>
-            <if test="startDate != null and endDate != null">update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+            <if test="startDate != null and endDate != null">update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
             <if test="parentId != null "> and PARENT_ID = #{parentId}</if>
             <if test="isDelete != null "> and IS_DELETE = #{isDelete}</if>
         </where>
@@ -78,10 +78,10 @@
                 #{item}
             </foreach>
             <if test="server.startDate != null and server.startDate != ''">
-                AND update_time >= STR_TO_DATE(#{server.startDate}, '%Y-%m-%d %H:%i:%s')
+                AND update_time >= STR_TO_DATE(#{server.startDate}, '%Y-%m-%dT%H:%i:%s')
             </if>
             <if test="server.endDate != null and server.endDate != ''">
-                AND update_time &lt;= STR_TO_DATE(#{server.endDate}, '%Y-%m-%d %H:%i:%s')
+                AND update_time &lt;= STR_TO_DATE(#{server.endDate}, '%Y-%m-%dT%H:%i:%s')
             </if>
             <if test="server.serverCode != null and server.serverCode != ''">
                 AND SERVER_CODE = #{server.serverCode}
