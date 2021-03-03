@@ -17,11 +17,13 @@ import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -619,5 +621,64 @@ public class CameraServiceImpl implements ICameraService {
             // 没有找到缓存，新增
             busiCameraHistoryService.insertBusiCameraHistory(cameraHistory);
         }
+    }
+
+    @Override
+    public List<JSONObject> getAllToReport(JSONObject filters) {
+        Camera condCamera = new Camera();
+        condCamera.setDeviceCode(filters.getString("deviceCode"));
+        condCamera.setDeviceName(filters.getString("deviceName"));
+        condCamera.setIpAddress(IpUtils.ipToLong(filters.getString("ipAddress")));
+        condCamera.setRegion(filters.getInteger("regionId"));
+        condCamera.setStatus(filters.getInteger("status"));
+        condCamera.setManufacturer(filters.getString("manufacturer"));
+        List<Camera> cameraList = cameraMapper.getList(condCamera);
+
+        List<JSONObject> reportList = new ArrayList<JSONObject>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        try {
+            if(!CollectionUtils.isEmpty(cameraList)) {
+                for (Camera camera : cameraList) {
+                    JSONObject jsonObject = new JSONObject();
+                    if (!StringUtils.isEmpty(camera.getDeviceName())) {
+                        jsonObject.put("deviceName", camera.getDeviceName());
+                    } else {
+                        jsonObject.put("deviceName", "");
+                    }
+                    if (camera.getIpAddress() != null) {
+                        jsonObject.put("ipAddress", IpUtils.longToIPv4(camera.getIpAddress()));
+                    }
+                    if (!StringUtils.isEmpty(camera.getRegionName())) {
+                        jsonObject.put("name", camera.getRegionName());
+                    } else {
+                        jsonObject.put("name", "");
+                    }
+                    if (!StringUtils.isEmpty(camera.getDeviceCode())) {
+                        jsonObject.put("deviceCode", camera.getDeviceCode());
+                    }
+                    if (!StringUtils.isEmpty(camera.getManufacturer())) {
+                        jsonObject.put("manufacturer", camera.getManufacturer());
+                    } else {
+                        jsonObject.put("manufacturer", "");
+                    }
+                    if (camera.getStatus() != null && 0 == camera.getStatus()) {
+                        jsonObject.put("status", "已确认");
+                    } else if (camera.getStatus() == null || 1 == camera.getStatus()) {
+                        jsonObject.put("status", "新发现");
+                    }
+                    if (camera.getUpdateTime() != null) {
+                        jsonObject.put("updateTime", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, camera.getUpdateTime()));
+                    } else {
+                        jsonObject.put("updateTime", "");
+                    }
+
+                    reportList.add(jsonObject);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return reportList;
     }
 }

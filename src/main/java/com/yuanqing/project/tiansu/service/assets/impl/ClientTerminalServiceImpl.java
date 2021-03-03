@@ -110,7 +110,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
                 }
                 if (clientTerminalDto.getStatus() != null && 0 == clientTerminalDto.getStatus()) {
                     jsonObject.put("status", "已确认");
-                } else if (1 == clientTerminalDto.getStatus()) {
+                } else if (clientTerminalDto.getStatus() == null || 1 == clientTerminalDto.getStatus()) {
                     jsonObject.put("status", "新发现");
                 }
                 if (clientTerminalDto.getUpdateTime() != null) {

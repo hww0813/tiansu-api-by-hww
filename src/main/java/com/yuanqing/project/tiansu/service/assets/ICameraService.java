@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.service.assets;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.ExternalDevice;
@@ -98,4 +99,6 @@ public interface ICameraService extends BaseService<Camera,Long> {
     void updateIsNotServer(Long ipAddress);
 
     String readExtExcelFile(MultipartFile file);
+
+    List<JSONObject> getAllToReport(JSONObject filters);
 }

@@ -385,7 +385,7 @@ public class ReportController extends BaseController {
                                    @RequestParam(value = "region", required = false) String region,
                                    @RequestParam(value = "ipAddress", required = false) String ipAddress,
                                    @RequestParam(value = "sipServerId", required = false) Long sipServerId,
-                                   @RequestParam(value = "format", required = false) String format) {
+                                   @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("status", status);
         filters.put("deviceName", deviceName);
@@ -412,8 +412,74 @@ public class ReportController extends BaseController {
         }
         if ("xlsx".equals(format)) {
             try {
-                CameraExcel(filters);
+                CameraExcel(response, filters);
             } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
+
+            org.springframework.core.io.Resource resource = null;
+
+            resource = ctx.getResource(SIP_DEVICE_REPORT_NAME);
+
+            InputStream inputStream;
+            try {
+                inputStream = resource.getInputStream();
+
+
+                //编译报表
+                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+
+                //参数
+                Map<String, Object> params = new HashMap<>();
+
+                List<JSONObject> list = cameraService.getAllToReport(filters);
+
+                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+
+                //print文件
+                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
+
+                JRAbstractExporter exporter = null;
+
+                if ("pdf".equals(format)) {
+                    exporter = new JRPdfExporter();
+                    response.setContentType("application/pdf");
+                } else if ("docx".equals(format)) {
+                    exporter = new JRDocxExporter();
+                    response.setContentType("application/msword");
+                } else if ("html".equals(format)) {
+                    exporter = new HtmlExporter();
+                    response.setContentType("application/html");
+                } else {
+                    throw new RuntimeException("参数错误");
+                }
+
+                //设置输入项
+                ExporterInput exporterInput = new SimpleExporterInput(print);
+                exporter.setExporterInput(exporterInput);
+
+                //设置输出项
+                if ("html".equals(format)) {
+                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
+
+                    exporter.setExporterOutput(htmlExportOutput);
+                } else {
+                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+                            response.getOutputStream());
+                    exporter.setExporterOutput(exporterOutput);
+
+                }
+
+                response.setHeader("Content-Disposition",
+                        "attachment;filename=" + new String("摄像头报表".getBytes("gbk"), "iso8859-1") + "." + format);
+
+                exporter.exportReport();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JRException e) {
                 e.printStackTrace();
             }
         }
@@ -2919,7 +2985,7 @@ public class ReportController extends BaseController {
     public void ServerTreeExcel(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("服务器资源树");
-        List<JSONObject> all = serverTreeService.getAllToReport(filters);
+
         List<String> titles = new ArrayList();
         titles.add("服务器编号");
         titles.add("服务器名称");
@@ -2927,28 +2993,60 @@ public class ReportController extends BaseController {
         titles.add("服务器域名");
         titles.add("服务器类型");
         data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : all) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("serverCode"));
-            row.add(j.get("serverName"));
-            row.add(j.get("serverIp"));
-            row.add(j.get("serverDomain"));
-            row.add(j.get("serverType"));
-            rows.add(row);
-        }
 
-        data.setRows(rows);
+        List<JSONObject> all = serverTreeService.getAllToReport(filters);
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("serverCode"));
+                row.add(j.get("serverName"));
+                row.add(j.get("serverIp"));
+                row.add(j.get("serverDomain"));
+                row.add(j.get("serverType"));
+                rows.add(row);
+            }
+
+            data.setRows(rows);
+        }
 
         ExportExcelUtils.exportExcel(response, "服务器资源树报表.xlsx", data);
     }
 
-    public AjaxResult CameraExcel(JSONObject filters) throws Exception {
-        Camera cameraCond = new Camera();
-        // TODO: 拼cameraCond
-        List<Camera> list = cameraService.getList(cameraCond);
-        ExcelUtil<Camera> util = new ExcelUtil<>(Camera.class);
-        return util.exportExcel(list, "camera");
+    public void CameraExcel(HttpServletResponse response, JSONObject filters) throws Exception {
+        ExcelData data = new ExcelData();
+        data.setName("摄像头");
+
+        List<String> titles = new ArrayList();
+        titles.add("设备编号");
+        titles.add("摄像头名称");
+        titles.add("IP地址");
+        titles.add("所在地区");
+        titles.add("状态");
+        titles.add("最后更新时间");
+        titles.add("设备厂商");
+        data.setTitles(titles);
+
+        List<JSONObject> all = cameraService.getAllToReport(filters);
+
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("deviceCode"));
+                row.add(j.get("deviceName"));
+                row.add(j.get("ipAddress"));
+                row.add(j.get("name"));
+                row.add(j.get("status"));
+                row.add(j.get("updateTime"));
+                row.add(j.get("manufacturer"));
+                rows.add(row);
+            }
+
+            data.setRows(rows);
+        }
+
+        ExportExcelUtils.exportExcel(response, "摄像头报表.xlsx", data);
     }
 
     public void ClientExcel(HttpServletResponse response, JSONObject filters) throws Exception {

@@ -87,7 +87,7 @@ public class ClientUserServiceImpl implements IClientUserService {
             }
             if (clientUserDto.getStatus() != null && 0 == clientUserDto.getStatus()) {
                 jsonObject.put("status", "已确认");
-            } else if (1 == clientUserDto.getStatus()) {
+            } else if (clientUserDto.getStatus() == null || 1 == clientUserDto.getStatus()) {
                 jsonObject.put("status", "新发现");
             }
             if (clientUserDto.getUpdateTime() != null) {

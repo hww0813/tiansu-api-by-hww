@@ -32,7 +32,7 @@ public class ServerTreeController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(ServerTreeController.class);
 
     @Resource
-    private IServerTreeService iServerTreeService;
+    private IServerTreeService serverTreeService;
 
     @Autowired
     private OperationBehaviorMapper operationBehaviorMapper;
@@ -51,7 +51,7 @@ public class ServerTreeController extends BaseController {
         serverTree.setServerIp(serverIp);
         serverTree.setServerType(deviceType);
         serverTree.setIsDelete(isDelete);
-        List<ServerTree> list = iServerTreeService.getList(serverTree);
+        List<ServerTree> list = serverTreeService.getList(serverTree);
         return AjaxResult.success(getDataTable(list));
     }
 
@@ -78,7 +78,7 @@ public class ServerTreeController extends BaseController {
         List<Long> serverIpList = operationBehaviorMapper.getDstIpBySessionId(sessionId);
 
         startPage();
-        List<ServerTree> sessionServerList = iServerTreeService.getSessionServerList(serverTree, serverIpList);
+        List<ServerTree> sessionServerList = serverTreeService.getSessionServerList(serverTree, serverIpList);
 
         return AjaxResult.success(getDataTable(sessionServerList));
     }
@@ -87,14 +87,14 @@ public class ServerTreeController extends BaseController {
     @GetMapping("/serverList")
     @ApiOperation(value = "获取服务器列表", httpMethod = "GET")
     public AjaxResult getServerNumber() {
-        List<ServerTree> list = iServerTreeService.getList(new ServerTree());
+        List<ServerTree> list = serverTreeService.getList(new ServerTree());
         return AjaxResult.success(list);
     }
 
     @GetMapping("/serverCode")
     @ApiOperation(value = "获取服务器编号", httpMethod = "GET")
     public AjaxResult getAllServerCode() {
-        List<ServerTree> list = iServerTreeService.getList(new ServerTree());
+        List<ServerTree> list = serverTreeService.getList(new ServerTree());
         List<ServerTree> list1 = list.stream().filter(f -> f.getServerCode() != null).collect(Collectors.toList());
         return AjaxResult.success(list1);
     }
@@ -104,7 +104,7 @@ public class ServerTreeController extends BaseController {
     public AjaxResult getByType(@RequestParam(value = "serverType", required = false) String serverType) {
         ServerTree serverTree = new ServerTree();
         serverTree.setServerType(serverType);
-        List<ServerTree> list = iServerTreeService.getList(serverTree);
+        List<ServerTree> list = serverTreeService.getList(serverTree);
         return AjaxResult.success(list);
     }
 
@@ -125,14 +125,14 @@ public class ServerTreeController extends BaseController {
     @ApiOperation(value = "新增一个服务器", httpMethod = "POST")
     public AjaxResult postServerTree(@Valid @RequestBody ServerTree dto) {
 
-        iServerTreeService.save(dto);
+        serverTreeService.save(dto);
         return AjaxResult.success();
     }
 
     @PutMapping
     @ApiOperation(value = "更新一个服务器", httpMethod = "PUT")
     public AjaxResult putServerTree(@Valid @RequestBody ServerTree dto) {
-        iServerTreeService.save(dto);
+        serverTreeService.save(dto);
         return AjaxResult.success();
     }
 
@@ -142,7 +142,7 @@ public class ServerTreeController extends BaseController {
         if (id == null) {
             return AjaxResult.error();
         }
-        iServerTreeService.deleteById(id);
+        serverTreeService.deleteById(id);
         return AjaxResult.success();
     }
 }

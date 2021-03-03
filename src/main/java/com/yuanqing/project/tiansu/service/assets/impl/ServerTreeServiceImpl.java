@@ -7,6 +7,8 @@ import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.ClientTerminalMap;
 import com.yuanqing.common.queue.ServerTreeMap;
+import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
@@ -26,8 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by xucan on 2021-01-19 10:29
@@ -64,10 +66,39 @@ public class ServerTreeServiceImpl implements IServerTreeService {
 
         @Override
         public List<JSONObject> getAllToReport(JSONObject filters) {
-            return null;
+            ServerTree condServerTree = new ServerTree();
+            condServerTree.setServerCode(filters.getString("serverCode"));
+            condServerTree.setServerDomain(filters.getString("serverDomain"));
+            condServerTree.setServerIp(IpUtils.ipToLong(filters.getString("serverIp")));
+            condServerTree.setServerType(filters.getString("deviceType"));
+            List<ServerTree> serverTreeList = serverTreeMapper.getList(condServerTree);
+
+            List<JSONObject> reportList = new ArrayList<JSONObject>();
+            if(!CollectionUtils.isEmpty(serverTreeList)) {
+                for (ServerTree serverTree : serverTreeList) {
+                    JSONObject jsonObject = new JSONObject();
+                    if (!StringUtils.isEmpty(serverTree.getServerCode())) {
+                        jsonObject.put("serverCode", serverTree.getServerCode());
+                    }
+                    if (!StringUtils.isEmpty(serverTree.getServerName())) {
+                        jsonObject.put("serverName", serverTree.getServerName());
+                    } else {
+                        jsonObject.put("serverName", "");
+                    }
+                    if (serverTree.getServerIp() != null) {
+                        jsonObject.put("serverIp", IpUtils.longToIPv4(serverTree.getServerIp()));
+                    }
+                    if (!StringUtils.isEmpty(serverTree.getServerDomain())) {
+                        jsonObject.put("serverDomain", serverTree.getServerDomain());
+                    }
+                    if (!StringUtils.isEmpty(serverTree.getServerType())) {
+                        jsonObject.put("serverType", serverTree.getServerType());
+                    }
+                    reportList.add(jsonObject);
+                }
+            }
+            return reportList;
         }
-
-
 
         @Override
         public List<ServerTree> getSessionServerList(ServerTree serverTree,List<Long> serverIpList) {
