@@ -18,10 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.yuanqing.common.constant.Constants.INDEX_USER_COUNTS_CACHE;
 
@@ -114,16 +117,16 @@ public class ClientUserController extends BaseController {
         return AjaxResult.success();
     }
 
-    //导入excel
-//    @PostMapping(value = "/import")
-//    @ApiOperation(value = "导入用户列表")
-//    public Map<String, Object> importExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
-//
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        String AjaxResult = clientUserService.readExcelFile(file);
-//        map.put("message", AjaxResult);
-//        return map;
-//    }
+    // 导入excel
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "导入用户列表")
+    public Map<String, Object> importExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        String AjaxResult = clientUserService.readExcelFile(file);
+        map.put("message", AjaxResult);
+        return map;
+    }
 
 //    @GetMapping("/getUserDatas")
 //    @ApiOperation(value = "获取首页用户数据", httpMethod = "GET")

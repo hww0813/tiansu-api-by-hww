@@ -1,12 +1,15 @@
 package com.yuanqing.project.tiansu.service.assets.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.enums.DeviceStatus;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.common.utils.SequenceIdGenerator;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
+import com.yuanqing.project.tiansu.domain.assets.ReadUserExcel;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientUserDto;
 import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientUserMapper;
@@ -49,6 +52,8 @@ public class ClientUserServiceImpl implements IClientUserService {
 
     @Autowired
     private IClientService clientService;
+
+    private static SequenceIdGenerator clientUserIdGenerator = new SequenceIdGenerator(1, 1);
 
     @Override
     public List<JSONObject> getAllToReport(JSONObject filters) {
@@ -147,16 +152,85 @@ public class ClientUserServiceImpl implements IClientUserService {
 
     @Override
     public String readExcelFile(MultipartFile file) {
-        return null;
+        String result = "";
+        //创建处理EXCLE得类
+        ReadUserExcel readExcel = new ReadUserExcel();
+        int count = 0;
+        List<Map<String, Object>> clientUserList = readExcel.getExcelInfo(file);
+        //至此已将excle中得数据转换到list中了，接下来可以操作list，进行保存到数据库或其他操作
+
+        for (Map<String, Object> clientUser : clientUserList) {
+            ClientUser insertClientUser = new ClientUser();
+            try {
+                insertClientUser.setUsername(clientUser.get("username").toString());
+            } catch (NullPointerException e) {
+                insertClientUser.setUsername("");
+            }
+            try {
+                String status = String.valueOf(clientUser.get("status").toString());
+                if ("已确认".equals(status) || "0".equals(status)) {
+                    insertClientUser.setStatus(Integer.valueOf(DeviceStatus.CONFIRM.getValue()));
+                } else if ("新发现".equals(status) || "1".equals(status)) {
+                    insertClientUser.setStatus(Integer.valueOf(DeviceStatus.NEW.getValue()));
+                } else if ("变更".equals(status) || "2".equals(status)) {
+                    insertClientUser.setStatus(Integer.valueOf(DeviceStatus.CHANGED.getValue()));
+                } else if ("未授权".equals(status) || "3".equals(status)) {
+                    insertClientUser.setStatus(Integer.valueOf(DeviceStatus.UNAUTHORIZED.getValue()));
+                } else {
+                    insertClientUser.setStatus(Integer.valueOf(DeviceStatus.CONFIRM.getValue()));
+                }
+            } catch (NullPointerException e) {
+                insertClientUser.setStatus(Integer.valueOf(DeviceStatus.NEW.getValue()));
+            }
+            boolean flag = this.findClientUser(clientUser.get("username").toString());
+            if (flag) {
+                try {
+                    Long id = this.insert(insertClientUser);
+                    if (id > 0) {
+                        count++;
+                        result = "上传成功";
+                    } else {
+                        result = "上传失败";
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    result = "上传失败";
+                }
+            } else {
+                result = "该用户已存在";
+            }
+        }
+
+        if (count > 0) {
+            result = "上传成功";
+        } else {
+            result = "上传失败";
+        }
+        return result;
     }
 
+    /**
+     * 根据用户名查询用户，如果返回false，表示查询到了，如果返回true，表示没查询到
+     * @param username
+     * @return
+     */
     @Override
     public boolean findClientUser(String username) {
-        return false;
+        ClientUser condClientUser = new ClientUser();
+        condClientUser.setUsername(username);
+        List<ClientUser> clientUserList = clientUserMapper.getList(condClientUser);
+        if(CollectionUtils.isEmpty(clientUserList)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public Long insert(ClientUser clientUser) {
+        if(clientUser.getId() == null) {
+            clientUser.setId(clientUserIdGenerator.nextId());
+        }
         return clientUserMapper.insert(clientUser);
     }
 
