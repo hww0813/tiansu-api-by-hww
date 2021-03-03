@@ -116,6 +116,7 @@ public class IndexStatisticsTask {
         CompletableFuture.runAsync(() -> {
             try {
                 List<JSONObject> clientStatistics = homePageMapper.getClinetStatisticsByTime(statisticsSearch);
+                clientStatistics.stream().forEach(j -> j.put("CLIENT_IP",IpUtils.longToIPv4(j.getLong("CLIENT_IP"))));
                 if (!CollectionUtils.isEmpty(clientStatistics)){
                     redisCache.setCacheObject(cacheKey,clientStatistics);
                 }
@@ -129,6 +130,7 @@ public class IndexStatisticsTask {
             try {
                 statisticsSearch.setAscFlag("asc");
                 List<JSONObject> clientStatistics = homePageMapper.getClinetStatisticsByTime(statisticsSearch);
+                clientStatistics.stream().forEach(j -> j.put("CLIENT_IP",IpUtils.longToIPv4(j.getLong("CLIENT_IP"))));
                 if (!CollectionUtils.isEmpty(clientStatistics)){
                     redisCache.setCacheObject(cacheKey+"_REVERSE",clientStatistics);
                 }
