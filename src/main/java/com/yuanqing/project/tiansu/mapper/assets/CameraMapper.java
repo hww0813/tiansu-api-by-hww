@@ -36,6 +36,13 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
     boolean changStatus(String[] ids);
 
     /**
+     * 根据camera列表 批量查询摄像头
+     * @param cameraIdList
+     * @return
+     */
+    List<Camera> batchGetCameraById(List<Long> cameraIdList);
+
+    /**
      * 确认所有摄像头
      * @return
      */

@@ -2,11 +2,15 @@ package com.yuanqing.project.tiansu.controller.analysis;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.yuanqing.common.enums.ActionType;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
+import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
+import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
+import com.yuanqing.project.tiansu.service.video.IOperationBehaviorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author xucan
@@ -34,6 +39,9 @@ public class TerminalVisitedController extends BaseController {
 
     @Autowired
     private IStatisticsService statisticsService;
+
+    @Autowired
+    private IOperationBehaviorService operationBehaviorService;
 
 
     @GetMapping("/list")
@@ -56,6 +64,48 @@ public class TerminalVisitedController extends BaseController {
         List<TerminalVisit> visitList = statisticsService.getTerminalVisit(terminalVisit);
 
         return AjaxResult.success(getDataTable(visitList));
+
+    }
+
+    @GetMapping("/visitCnt")
+    @ApiOperation(value = "获取客户端访问次数列表", httpMethod = "GET")
+    public AjaxResult getClientVisitCntList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                            @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                            @RequestParam(value = "startDate", required = false) String startDate,
+                                            @RequestParam(value = "endDate", required = false) String endDate,
+                                            @RequestParam(value = "clientId", required = false) Long clientId,
+                                            @RequestParam(value = "cameraId", required = false) Long cameraId,
+                                            @RequestParam(value = "dstIp", required = false) String dstIp,
+                                            @RequestParam(value = "srcIp", required = false) String srcIp,
+                                            @RequestParam(value = "username", required = false) String username,
+                                            @RequestParam(value = "dstCode", required = false) String dstCode,
+                                            @RequestParam(value = "action", required = false) String action) throws Exception {
+
+        OperationBehavior operationBehavior = new OperationBehavior();
+        operationBehavior.setClientId(clientId);
+        operationBehavior.setCameraId(cameraId);
+        operationBehavior.setDstIp(IpUtils.ipToLong(dstIp));
+        operationBehavior.setDstCode(dstCode);
+        operationBehavior.setAction(ActionType.getActionType(action));
+        operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
+        operationBehavior.setUsername(username);
+        operationBehavior.setstartDate(startDate);
+        operationBehavior.setendDate(endDate);
+        operationBehavior.setSize(pageSize);
+        operationBehavior.setNum(pageNum);
+
+
+
+        //TODO:慢sql
+        PageResult pageResult = operationBehaviorService.queryOperationList(operationBehavior);
+        PageResult data = (PageResult)pageResult.get("data");
+
+        List<OperationBehavior> operationBehaviorList = (List<OperationBehavior>) data.get("list");
+
+        List<JSONObject> terminalVisitedCameraList = statisticsService.associateCameraInfo(operationBehaviorList);
+
+        return AjaxResult.success(terminalVisitedCameraList);
+
 
     }
 

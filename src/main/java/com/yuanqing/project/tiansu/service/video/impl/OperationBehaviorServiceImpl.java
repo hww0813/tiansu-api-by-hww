@@ -5,7 +5,7 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
-import com.yuanqing.project.tiansu.service.video.OperationBehaviorService;
+import com.yuanqing.project.tiansu.service.video.IOperationBehaviorService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author Dong.Chao
@@ -25,7 +24,7 @@ import java.util.concurrent.ExecutionException;
  * @Version V1.0
  */
 @Service
-public class OperationBehaviorServiceImpl implements OperationBehaviorService{
+public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
 
     @Resource
     private OperationBehaviorMapper operationBehaviorMapper;
@@ -71,7 +70,7 @@ public class OperationBehaviorServiceImpl implements OperationBehaviorService{
         //总数据
         CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() ->  operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
         //操作行为列表
-        CompletableFuture<List<OperationBehavior>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.queryOperationBehaviorList(operationBehavior));
+        CompletableFuture<List<OperationBehavior>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.getList(operationBehavior));
 
         return PageResult.success(operationBehaviorsFuture.get(),operationBehavior.getNum(),operationBehavior.getSize(),totalFuter.get());
     }

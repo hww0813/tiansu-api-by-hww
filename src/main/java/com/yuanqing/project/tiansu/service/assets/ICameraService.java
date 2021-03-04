@@ -91,6 +91,13 @@ public interface ICameraService extends BaseService<Camera,Long> {
     void dealCamera(ExternalDevice entity, List<Camera> addList, List<Camera> updateList, Map<String, Object> cameraCodeMap);
 
 
+    /**
+     * 关联摄像头信息
+     * @param cameraIdList
+     * @return
+     */
+    List<Camera> batchGetCameraById(List<Long> cameraIdList);
+
 
     /**
      * 根据ip更新摄像头,确定不是服务器

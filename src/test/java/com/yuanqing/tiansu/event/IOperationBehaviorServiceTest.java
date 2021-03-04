@@ -17,7 +17,7 @@ import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class OperationBehaviorServiceTest {
+public class IOperationBehaviorServiceTest {
 
     @Autowired
     private OperationBehaviorMapper operationBehaviorMapper;

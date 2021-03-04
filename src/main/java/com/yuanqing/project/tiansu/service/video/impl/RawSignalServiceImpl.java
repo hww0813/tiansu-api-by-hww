@@ -1,10 +1,9 @@
 package com.yuanqing.project.tiansu.service.video.impl;
 
 import com.yuanqing.framework.web.domain.PageResult;
-import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
 import com.yuanqing.project.tiansu.domain.operation.RawSignal;
 import com.yuanqing.project.tiansu.mapper.video.RawSignalMapper;
-import com.yuanqing.project.tiansu.service.video.RawSignalService;
+import com.yuanqing.project.tiansu.service.video.IRawSignalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ import java.util.concurrent.ExecutionException;
  * @Version V1.0
  */
 @Service
-public class RawSignalServiceImpl implements RawSignalService {
+public class RawSignalServiceImpl implements IRawSignalService {
 
     @Autowired
     private RawSignalMapper rawSignalMapper;

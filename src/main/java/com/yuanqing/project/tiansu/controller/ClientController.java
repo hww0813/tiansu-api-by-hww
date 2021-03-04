@@ -89,7 +89,7 @@ public class ClientController extends BaseController {
         //用户数
         List<ClientTerminalDto> clientTerminalDtoList = clientTerminalService.handleTerminalUserNum(list);
         if(clientTerminalDtoList == null) {
-            clientTerminalDtoList = new ArrayList<ClientTerminalDto>();
+            clientTerminalDtoList = new ArrayList<>();
         }
 
         return AjaxResult.success(getDataTable(clientTerminalDtoList,list));

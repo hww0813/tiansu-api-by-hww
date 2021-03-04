@@ -49,6 +49,7 @@ public class BaseEntity implements Serializable
     @JsonIgnore
     private String endDate;
 
+
     /** 请求参数 */
     private Map<String, Object> params;
 

@@ -1,12 +1,9 @@
 package com.yuanqing.project.tiansu.service.video.impl;
 
 import com.yuanqing.framework.web.domain.PageResult;
-import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
-import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorSessionMapper;
-import com.yuanqing.project.tiansu.service.video.OperationBehaviorSessionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yuanqing.project.tiansu.service.video.IOperationBehaviorSessionService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,7 +19,7 @@ import java.util.concurrent.ExecutionException;
  * @Version V1.0
  */
 @Service
-public class OperationBehaviorSessionServiceImpl implements OperationBehaviorSessionService {
+public class OperationBehaviorSessionServiceImpl implements IOperationBehaviorSessionService {
 
     @Resource
     private OperationBehaviorSessionMapper operationBehaviorSessionMapper;

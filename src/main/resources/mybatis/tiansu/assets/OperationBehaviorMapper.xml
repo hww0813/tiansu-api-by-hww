@@ -39,17 +39,17 @@
                 typeHandler="com.yuanqing.handler.DefaultEnumTypeHandler"/>-->
     </resultMap>
 
-    <select id="queryOperationBehaviorList" resultMap="resultMap"   parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
+    <select id="getList" resultMap="resultMap"   parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
         SELECT v.* FROM busi_oper v
         <where>
             <if test="id != null and id != '' ">
                 AND v.ID = #{id}
             </if>
             <if test="srcIp != null and srcIp != '' ">
-                AND v.SRC_IP = #{srcIp, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+                AND v.SRC_IP = #{srcIp}
             </if>
             <if test="dstIp != null and dstIp != '' ">
-                AND v.DST_IP = #{dstIp, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+                AND v.DST_IP = #{dstIp}
             </if>
             <if test="srcCode != null and srcCode != '' ">
                 AND v.SRC_CODE = #{srcCode}
@@ -69,12 +69,9 @@
             <if test="action != null and action != '' ">
                 AND v.ACTION = #{action}
             </if>
-            <if test="stime != null">
-                and v.STAMP  &gt; #{stime,jdbcType=TIMESTAMP}
-            </if>
-            <if test="etime != null">
-                and v.STAMP &lt; #{etime,jdbcType=TIMESTAMP}
-            </if>
+
+            <if test="startDate != null and endDate != null">and v.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
                 AND int2ip(v.DEVICE_IP) = #{dstDeviceIp}
             </if>
@@ -129,10 +126,11 @@
                 AND v.ID = #{id}
             </if>
             <if test="srcIp != null and srcIp != '' ">
-                AND v.SRC_IP = #{srcIp, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+                AND v.SRC_IP = #{srcIp}
+
             </if>
             <if test="dstIp != null and dstIp != '' ">
-                AND v.DST_IP = #{dstIp, jdbcType=BIGINT, typeHandler=com.yuanqing.handler.IPTypeHandler}
+                AND v.DST_IP = #{dstIp}
             </if>
             <if test="srcCode != null and srcCode != '' ">
                 AND v.SRC_CODE = #{srcCode}
@@ -152,12 +150,8 @@
             <if test="action != null and action != '' ">
                 AND v.ACTION = #{action}
             </if>
-            <if test="stime != null">
-                and v.STAMP  &gt; #{stime,jdbcType=TIMESTAMP}
-            </if>
-            <if test="etime != null">
-                and v.STAMP &lt; #{etime,jdbcType=TIMESTAMP}
-            </if>
+            <if test="startDate != null and endDate != null">and v.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
                 AND int2ip(v.DEVICE_IP) = #{dstDeviceIp}
             </if>
@@ -191,12 +185,7 @@
     <select id="getRealTimeBehaviorList" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch"  resultMap="resultMap" >
         SELECT * FROM BUSI_OPER bo WHERE 1=1
         AND bo.ACTION in (0,1,2,3)
-        <if test="stime != null">
-            AND bo.STAMP &gt; #{stime,jdbcType=TIMESTAMP}
-        </if>
-        <if test="etime != null">
-            AND bo.STAMP &lt;= #{etime,jdbcType=TIMESTAMP}
-        </if>
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
         ORDER BY bo.STAMP DESC
         -- 最大只查3000条
         limit 0, 3000
@@ -249,12 +238,8 @@
             AND bo.CAMERA_ID = #{cameraId}
         </if>
 
-        <if test="stime != null">
-            and bo.STAMP &gt;=  STR_TO_DATE(#{stime},'%Y-%m-%dT%H:%i:%s')
-        </if>
-        <if test="etime != null">
-            and bo.STAMP &lt;= STR_TO_DATE(#{etime},'%Y-%m-%dT%H:%i:%s')
-        </if>
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+
         <if test="action != null and action != ''">
             and bo.ACTION = #{action}
         </if>
@@ -274,12 +259,8 @@
             AND bo.CAMERA_ID = #{cameraId}
         </if>
 
-        <if test="stime != null">
-            and bo.STAMP &gt;=  STR_TO_DATE(#{stime},'%Y-%m-%dT%H:%i:%s')
-        </if>
-        <if test="etime != null">
-            and bo.STAMP &lt;= STR_TO_DATE(#{etime},'%Y-%m-%dT%H:%i:%s')
-        </if>
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+
         <if test="action != null and action != ''">
             and bo.ACTION = #{action}
         </if>
@@ -289,12 +270,8 @@
     <select id="queryRawCount" resultType="java.lang.Integer" parameterType="java.lang.Object">
         select count(1) from busi_raw_signal b
         <where>
-            <if test="stime != null">
-                and b.STAMP  &gt; #{stime,jdbcType=TIMESTAMP}
-            </if>
-            <if test="etime != null">
-                and b.STAMP &lt; #{etime,jdbcType=TIMESTAMP}
-            </if>
+            <if test="startDate != null and endDate != null">and b.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+
         </where>
     </select>
 

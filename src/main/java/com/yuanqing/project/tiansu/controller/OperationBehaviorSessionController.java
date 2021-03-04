@@ -1,22 +1,15 @@
 package com.yuanqing.project.tiansu.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.PageResult;
-import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
-import com.yuanqing.project.tiansu.service.video.OperationBehaviorSessionService;
+import com.yuanqing.project.tiansu.service.video.IOperationBehaviorSessionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @author Dong.Chao
@@ -32,7 +25,7 @@ import java.time.format.DateTimeFormatter;
 public class OperationBehaviorSessionController extends BaseController {
 
     @Autowired
-    private OperationBehaviorSessionService operationBehaviorSessionService;
+    private IOperationBehaviorSessionService IOperationBehaviorSessionService;
 
 
     @GetMapping("/list")
@@ -54,7 +47,7 @@ public class OperationBehaviorSessionController extends BaseController {
             operationBehaviorSession.setOrderType(orderValue + " " + orderType);
         }
         try {
-            return operationBehaviorSessionService.queryOperationBehaviorSession(operationBehaviorSession);
+            return IOperationBehaviorSessionService.queryOperationBehaviorSession(operationBehaviorSession);
         }catch (Exception e){
             return PageResult.error("获取获取操作行为会话列表异常！");
         }

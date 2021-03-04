@@ -60,6 +60,16 @@
         </where>
     </select>
 
+    <select id="batchGetCameraById" resultMap="BusiCameraResult">
+        <include refid="selectBusiCameraVo"/>
+        <where>
+            id in
+            <foreach collection="list" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
     <select id="findById" parameterType="Long" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         where ID = #{id}

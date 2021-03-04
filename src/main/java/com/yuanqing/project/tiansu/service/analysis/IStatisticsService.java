@@ -2,6 +2,7 @@ package com.yuanqing.project.tiansu.service.analysis;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
+import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 
 import java.util.List;
 
@@ -25,4 +26,13 @@ public interface IStatisticsService {
      * @return
      */
     List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit);
+
+    /**
+     * 操作行为关联摄像头信息
+     *
+     * @param operationBehaviorList 操作行为list
+     * @return
+     */
+    List<JSONObject> associateCameraInfo(List<OperationBehavior> operationBehaviorList);
+
 }

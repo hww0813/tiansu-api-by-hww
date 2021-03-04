@@ -1,20 +1,16 @@
 package com.yuanqing.project.tiansu.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.utils.DateUtils;
-import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
-import com.yuanqing.project.tiansu.domain.assets.SessionClient;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
 import com.yuanqing.project.tiansu.job.IndexStatisticsTask;
 import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
-import com.yuanqing.project.tiansu.service.video.OperationBehaviorService;
+import com.yuanqing.project.tiansu.service.video.IOperationBehaviorService;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
@@ -26,7 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -46,7 +41,7 @@ public class OperationBehaviorController extends BaseController   {
 
 
     @Autowired
-    private OperationBehaviorService operationBehaviorService;
+    private IOperationBehaviorService IOperationBehaviorService;
 
     @Autowired
     private IndexStatisticsTask indexStatisticsTask;
@@ -63,7 +58,7 @@ public class OperationBehaviorController extends BaseController   {
             operationBehavior.setNum(num -1);
             operationBehavior.setSize(size);
             try {
-                return operationBehaviorService.queryOperationList(operationBehavior);
+                return IOperationBehaviorService.queryOperationList(operationBehavior);
             } catch (Exception e) {
                return  PageResult.error("获取操作行为接口报错！");
             }
@@ -142,7 +137,7 @@ public class OperationBehaviorController extends BaseController   {
         if(endDate == null){
             return AjaxResult.error(500,"未知结束时间");
         }
-       return  operationBehaviorService.getCharts(startDate,endDate,action,sort,"CAMERA");
+       return  IOperationBehaviorService.getCharts(startDate,endDate,action,sort,"CAMERA");
     }
 
 
@@ -170,7 +165,7 @@ public class OperationBehaviorController extends BaseController   {
             return AjaxResult.error(500,"未知结束时间");
         }
 
-        return  operationBehaviorService.getCharts(startDate,endDate,action,sort,"CLIENT");
+        return  IOperationBehaviorService.getCharts(startDate,endDate,action,sort,"CLIENT");
     }
 
 
@@ -191,7 +186,7 @@ public class OperationBehaviorController extends BaseController   {
             return AjaxResult.error(500,"未知结束时间");
         }
 
-        return  operationBehaviorService.getCharts(startDate,endDate,action,sort,"USER");
+        return  IOperationBehaviorService.getCharts(startDate,endDate,action,sort,"USER");
     }
 
 
@@ -222,10 +217,7 @@ public class OperationBehaviorController extends BaseController   {
     @GetMapping("/getCountByTime")
     @ApiOperation(value = "获取某天操作行为和原始信令总数", httpMethod = "GET")
     public AjaxResult getCountByTime() throws ExecutionException, InterruptedException {
-        LocalDate localDate = LocalDate.now();
-        OperationBehavior operationBehaviorSearch   =  new OperationBehavior();
-        operationBehaviorSearch.setStime(DateUtils.localDateToDate(localDate));
-        operationBehaviorSearch.setEtime(DateUtils.localDateToDate(localDate.plusDays(1)));
+        OperationBehavior operationBehaviorSearch = (OperationBehavior) DateUtils.getDayTime(OperationBehavior.class);
         CompletableFuture<Integer> countFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.quertyOperationBehaviorCount(operationBehaviorSearch));
         CompletableFuture<Integer> countsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.queryRawCount(operationBehaviorSearch));
         HashMap hashMap = new HashMap();

@@ -3,6 +3,8 @@ package com.yuanqing.common.utils.ip;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import javax.servlet.http.HttpServletRequest;
+
+import com.yuanqing.common.constant.RegexConstants;
 import com.yuanqing.common.utils.StringUtils;
 
 /**
@@ -88,6 +90,9 @@ public class IpUtils
 
         if (ipAddr == null || "".equalsIgnoreCase(ipAddr)) {
             return null;
+        }
+        if (ipAddr.matches(RegexConstants.NUM)){
+            return Long.parseLong(ipAddr);
         }
         Long[] ip = new Long[4];
         //先找到IP地址字符串中.的位置

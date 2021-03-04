@@ -1,22 +1,15 @@
 package com.yuanqing.project.tiansu.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.operation.RawSignal;
-import com.yuanqing.project.tiansu.service.video.RawSignalService;
+import com.yuanqing.project.tiansu.service.video.IRawSignalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author Dong.Chao
@@ -32,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 public class RawSignalController extends BaseController {
 
     @Autowired
-    private RawSignalService rawSignalService;
+    private IRawSignalService IRawSignalService;
 
     @GetMapping("/list")
     @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
@@ -51,7 +44,7 @@ public class RawSignalController extends BaseController {
             rawSignal.setOrderType(orderValue + " " + orderType);
         }
         try {
-            return rawSignalService.queryRawSignals(rawSignal);
+            return IRawSignalService.queryRawSignals(rawSignal);
         } catch (Exception e) {
             e.printStackTrace();
             return PageResult.error("请求原始信令列表错误");

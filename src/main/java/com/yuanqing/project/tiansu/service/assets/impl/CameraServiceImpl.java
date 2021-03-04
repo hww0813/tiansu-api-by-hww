@@ -14,6 +14,8 @@ import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ExternalDeviceMapper;
 import com.yuanqing.project.tiansu.service.assets.IBusiCameraHistoryService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class CameraServiceImpl implements ICameraService {
+
+    private static final Logger log = LoggerFactory.getLogger(CameraServiceImpl.class);
 
     @Autowired
     private CameraMapper cameraMapper;
@@ -304,6 +308,20 @@ public class CameraServiceImpl implements ICameraService {
 //            count++;
             addList.add(cameraNGB);
         }
+    }
+
+    @Override
+    public List<Camera> batchGetCameraById(List<Long> cameraIdList) {
+
+        if(CollectionUtils.isEmpty(cameraIdList)){
+            log.error("cameraIdList为空");
+            return null;
+        }
+
+        List<Camera> cameraList = cameraMapper.batchGetCameraById(cameraIdList);
+
+
+        return cameraList;
     }
 
 

@@ -2,10 +2,8 @@ package com.yuanqing.project.tiansu.mapper.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
-import com.yuanqing.project.tiansu.domain.assets.SessionClient;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -19,9 +17,7 @@ import java.util.List;
  * @since 2017.12.17
  */
 @Repository
-public interface OperationBehaviorMapper  {
-
-     List<OperationBehavior> queryOperationBehaviorList(OperationBehavior operationBehavior);
+public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior,Long> {
 
      List<Long> getCameraidListBySession(Long sessionId);
 

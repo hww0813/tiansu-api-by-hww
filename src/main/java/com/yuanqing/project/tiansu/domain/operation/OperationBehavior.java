@@ -1,6 +1,8 @@
 package com.yuanqing.project.tiansu.domain.operation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.yuanqing.common.enums.ActionType;
+import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +24,7 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OperationBehavior extends OperationBehaviorSearch{
+public class OperationBehavior extends BaseEntity {
 
     private Long id;
 
@@ -91,9 +93,6 @@ public class OperationBehavior extends OperationBehaviorSearch{
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime endTime;
 
-
-
-
     private String[] regionList;
 
     private String provinceRegion;
@@ -107,6 +106,14 @@ public class OperationBehavior extends OperationBehaviorSearch{
     private String orderType;
 
     private String orderValue;
+
+    private String dstCode; //目的设备编码
+
+    private Long dstIp; //目的IP
+
+    private Integer num;
+
+    private Integer size;
 
 
 

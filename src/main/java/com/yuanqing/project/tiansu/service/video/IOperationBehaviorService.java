@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
  * @Date 2021/2/25 11:37
  * @Version V1.0
  */
-public interface OperationBehaviorService {
+public interface IOperationBehaviorService {
 
     PageResult queryOperationList(OperationBehavior operationBehavior) throws Exception;
 

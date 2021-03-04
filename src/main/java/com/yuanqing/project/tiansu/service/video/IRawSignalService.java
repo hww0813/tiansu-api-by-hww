@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
  * @Date 2021/2/25 17:14
  * @Version V1.0
  */
-public interface RawSignalService {
+public interface IRawSignalService {
 
     PageResult queryRawSignals(RawSignal rawSignal) throws ExecutionException, InterruptedException;
 }

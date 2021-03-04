@@ -31,4 +31,13 @@ public enum ActionType implements BaseEnum {
         this.label = label;
         this.value = value;
     }
+
+    public static ActionType getActionType(String label){
+        for (ActionType v : ActionType.values()) {
+            if(v.getLabel().equals(label)){
+                return v;
+            }
+        }
+         return null;
+    }
 }

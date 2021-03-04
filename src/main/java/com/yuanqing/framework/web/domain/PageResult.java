@@ -39,6 +39,10 @@ public class PageResult extends HashMap<String, Object>
     {
     }
 
+    public String getDataTag() {
+        return DATA_TAG;
+    }
+
     /**
      * 初始化一个新创建的 AjaxResult 对象
      *

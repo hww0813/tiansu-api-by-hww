@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
  * @Date 2021/2/25 15:24
  * @Version V1.0
  */
-public interface OperationBehaviorSessionService {
+public interface IOperationBehaviorSessionService {
 
 
     PageResult queryOperationBehaviorSession(OperationBehaviorSession operationBehaviorSession) throws ExecutionException, InterruptedException;
