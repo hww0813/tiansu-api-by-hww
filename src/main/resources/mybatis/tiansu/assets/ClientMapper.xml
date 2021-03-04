@@ -154,5 +154,14 @@
         delete from busi_client where username = #{username}
     </delete>
 
+    <select id="findByIP" parameterType="long" resultMap="BusiClientResult">
+        <include refid="selectBusiClientVo"/>
+        WHERE IP_ADDRESS = #{ipAddress}
+    </select>
 
+    <update id="updateMark" parameterType="long">
+        update BUSI_CLIENT
+        set DEVICE_TYPE = null
+        WHERE IP_ADDRESS  = #{ipAddress, jdbcType=BIGINT}
+    </update>
 </mapper>

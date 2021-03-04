@@ -17,8 +17,8 @@
         <result property="rangAuditPort"    column="RANG_AUDIT_PORT"    />
         <result property="isSshAudit"    column="IS_SSH_AUDIT"    />
         <result property="sshAuditPort"    column="SSH_AUDIT_PORT"    />
-        <result property="createndDate"    column="CREATE_TIME"    />
-        <result property="updatendDate"    column="UPDATE_TIME"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="updateTime"    column="UPDATE_TIME"    />
         <result property="parentId"    column="PARENT_ID"    />
         <result property="isDelete"    column="IS_DELETE"    />
     </resultMap>
@@ -155,8 +155,12 @@
     </update>
 
     <update id="delete" parameterType="Long">
-        update busi_server set is_del = 0 where ID = #{id}
+        update busi_server set IS_DELETE = 0 where ID = #{id}
     </update>
 
+    <select id="findOne" resultMap="BusiServerResult">
+        <include refid="selectBusiServerVo"/>
+        where SERVER_IP = #{serverIp} and IS_DELETE = 1
+    </select>
 
 </mapper>

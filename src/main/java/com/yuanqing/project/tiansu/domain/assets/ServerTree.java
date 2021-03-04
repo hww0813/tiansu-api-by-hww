@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.domain.assets;
 
-import com.yuanqing.common.enums.DeviceType;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ import lombok.Data;
 public class ServerTree extends BaseEntity {
 
     /** 主键id */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 服务器编号 */

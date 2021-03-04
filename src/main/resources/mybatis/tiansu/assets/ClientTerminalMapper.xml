@@ -165,4 +165,33 @@
     </delete>
 
 
+    <select id="findByIpAddress" parameterType="Long"  resultMap="BusiClientTerminalResult">
+        <include refid="selectBusiClientTerminalVo"/>
+        WHERE IP_ADDRESS = #{ipAddress}
+        limit 1
+    </select>
+
+    <update id="updateClientTerminal" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
+        UPDATE BUSI_CLIENT_TERMINAL
+        SET
+            DEVICE_CODE = #{deviceCode, jdbcType=VARCHAR},
+            DEVICE_NAME = #{deviceName, jdbcType=VARCHAR},
+            MAC_ADDRESS = #{macAddress, jdbcType=VARCHAR},
+            STATUS      = #{status, jdbcType=INTEGER},
+            REGION        = #{region.id, jdbcType=INTEGER},
+            UPDATE_TIME = now(),
+            DEVICE_TYPE =#{deviceType,jdbcType=VARCHAR},
+            SIP_SERVER_ID = #{sipServerId, jdbcType=BIGINT},
+            MEDIA_SERVER_ID = #{mediaServerId, jdbcType=BIGINT},
+            USER_PROXY_SERVER_ID = #{userProxyServerId, jdbcType=BIGINT}
+        WHERE ID = #{id, jdbcType=BIGINT}
+    </update>
+
+    <update id="updateMark" parameterType="long">
+        update BUSI_CLIENT_TERMINAL
+        <set>
+            DEVICE_TYPE = null
+        </set>
+        WHERE IP_ADDRESS = #{ipAddress, jdbcType=BIGINT}
+    </update>
 </mapper>

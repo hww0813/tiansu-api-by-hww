@@ -26,7 +26,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      * @param ipAddress IP地址
      * @return
      */
-    JSONObject updateIsNotServer(Long ipAddress);
+    void updateIsNotServer(Long ipAddress);
 
     /**
      * 批量确认摄像头

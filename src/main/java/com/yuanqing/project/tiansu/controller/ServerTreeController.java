@@ -12,10 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +47,7 @@ public class ServerTreeController extends BaseController {
                              @RequestParam(value = "serverDomain", required = false) String serverDomain,
                              @RequestParam(value = "serverIp", required = false) Long serverIp,
                              @RequestParam(value = "deviceType", required = false) String deviceType,
-                             @RequestParam(value = "isDelete", defaultValue = "1") Short isDelete){
+                             @RequestParam(value = "isDelete", defaultValue = "1") Short isDelete) {
         ServerTree serverTree = new ServerTree();
         serverTree.setServerCode(serverCode);
         serverTree.setServerDomain(serverDomain);
@@ -58,10 +61,10 @@ public class ServerTreeController extends BaseController {
     @GetMapping("/sessionServerList")
     @ApiOperation(value = "获取会话相关的服务器列表", httpMethod = "GET")
     public AjaxResult getSessionServerList(@RequestParam(value = "startDate", required = false) String startDate,
-                                       @RequestParam(value = "endDate", required = false) String endDate,
-                                       @RequestParam(value = "sessionId", required = false) Long sessionId,
-                                       @RequestParam(value = "serverCode", required = false) String serverCode,
-                                       @RequestParam(value = "serverIp", required = false) String serverIp) {
+                                           @RequestParam(value = "endDate", required = false) String endDate,
+                                           @RequestParam(value = "sessionId", required = false) Long sessionId,
+                                           @RequestParam(value = "serverCode", required = false) String serverCode,
+                                           @RequestParam(value = "serverIp", required = false) String serverIp) {
 
         ServerTree serverTree = new ServerTree();
         serverTree.setServerCode(serverCode);
@@ -69,7 +72,7 @@ public class ServerTreeController extends BaseController {
         serverTree.setstartDate(startDate);
         serverTree.setendDate(endDate);
 
-        if(sessionId == null){
+        if (sessionId == null) {
             log.error("sessionId为空");
             return null;
         }
@@ -108,19 +111,18 @@ public class ServerTreeController extends BaseController {
         return AjaxResult.success(list);
     }
 
-//
-//
-//    //导入excel
-//    @PostMapping(value = "/import")
-//    @ApiOperation(value = "导入服务器列表")
-//    public Map<String, Object> importExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        String AjaxResult = iServerTreeService.readExcelFile(file);
-//        map.put("message", AjaxResult);
-//        return map;
-//    }
-//
-//
+
+    //导入excel
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "导入服务器列表")
+    public Map<String, Object> importExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        String AjaxResult = serverTreeService.readExcelFile(file);
+        map.put("message", AjaxResult);
+        return map;
+    }
+
+
     @PostMapping
     @ApiOperation(value = "新增一个服务器", httpMethod = "POST")
     public AjaxResult postServerTree(@Valid @RequestBody ServerTree dto) {
