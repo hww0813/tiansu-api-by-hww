@@ -76,16 +76,16 @@ public class OperationBehaviorController extends BaseController   {
     @ApiOperation(value = "根据事件id获取操作行为列表", httpMethod = "GET")
     public PageResult findByEventId(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                 @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-                                @RequestParam(value = "stime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-                                @RequestParam(value = "etime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                                @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
                                 @RequestParam(value = "dstCode", required = false) String dstCode,
                                 @RequestParam(value = "id", required = false) Long id,
                                 @RequestParam(value = "dstDeviceIp", required = false) Long dstDeviceIp) {
 
         JSONObject filters = new JSONObject();
 
-        filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        filters.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         filters.put("dstCode", dstCode);
         filters.put("id", id);
         filters.put("dstDeviceIp", dstDeviceIp);
@@ -196,15 +196,15 @@ public class OperationBehaviorController extends BaseController   {
                                           @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
                                           @RequestParam(value = "cameraId") Long cameraId,
                                           @RequestParam(value = "action", required = false) String action,
-                                          @RequestParam(value = "stime") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime stime,
-                                          @RequestParam(value = "etime") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime etime) throws ExecutionException, InterruptedException {
+                                          @RequestParam(value = "startDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startDate,
+                                          @RequestParam(value = "endDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endDate) throws ExecutionException, InterruptedException {
         JSONObject filters = new JSONObject();
         filters.put("num", pageNum - 1);
         filters.put("size", pageSize);
         filters.put("cameraId", cameraId);
         filters.put("action", action);
-        filters.put("sTime", LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + stime.format(DateTimeFormatter.ISO_LOCAL_TIME));
-        filters.put("eTime",  LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + etime.format(DateTimeFormatter.ISO_LOCAL_TIME));
+        filters.put("startDate", LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + startDate.format(DateTimeFormatter.ISO_LOCAL_TIME));
+        filters.put("endDate",  LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + endDate.format(DateTimeFormatter.ISO_LOCAL_TIME));
         //数据
         CompletableFuture<List<HashMap>> sessionClients = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.cameraAnalysisDetail(filters));
         //总量

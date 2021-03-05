@@ -46,12 +46,10 @@
         <if test="operId != null and operId != ''">
             AND br.OPER_ID = #{operId}
         </if>
-        <if test="stime != null">
-            AND br.STAMP &gt; #{stime,jdbcType=TIMESTAMP}
+        <if test="startDate != null and endDate != null">
+            and br.STAMP between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
         </if>
-        <if test="etime != null">
-            AND br.STAMP  &lt; #{etime,jdbcType=TIMESTAMP}
-        </if>
+
         <if test="srcIp != null">
             AND br.SRC_IP = #{srcIp}
         </if>
@@ -78,11 +76,8 @@
         <if test="operId != null and operId != ''">
             AND br.OPER_ID = #{operId}
         </if>
-        <if test="stime != null ">
-            AND br.STAMP &gt; #{stime,jdbcType=TIMESTAMP}
-        </if>
-        <if test="etime != null">
-            AND br.STAMP  &lt; #{etime,jdbcType=TIMESTAMP}
+        <if test="startDate != null and endDate != null">
+            and br.STAMP between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
         </if>
         <if test="srcIp != null ">
             AND br.SRC_IP = #{srcIp}

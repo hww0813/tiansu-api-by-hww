@@ -85,12 +85,10 @@
         <if test="id != null">
             AND os.ID = #{id}
         </if>
-        <if test="stime != null ">
-            AND os.START_TIME  &gt; #{stime,jdbcType=TIMESTAMP}
+        <if test="startDate != null and endDate != null">
+            and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
         </if>
-        <if test="etime != null ">
-            AND os.START_TIME &lt; #{etime,jdbcType=TIMESTAMP}
-        </if>
+
         <if test="username != null and username != ''">
             AND c.USERNAME = #{username}
         </if>
@@ -211,12 +209,11 @@
         <if test="id != null ">
             AND os.ID = #{id}
         </if>
-        <if test="stime != null">
-            AND os.START_TIME  &gt; #{stime,jdbcType=TIMESTAMP}
+
+        <if test="startDate != null and endDate != null">
+            and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
         </if>
-        <if test="etime != null">
-            AND os.START_TIME &lt; #{etime,jdbcType=TIMESTAMP}
-        </if>
+
         <if test="username != null">
             AND c.USERNAME = #{username}
         </if>

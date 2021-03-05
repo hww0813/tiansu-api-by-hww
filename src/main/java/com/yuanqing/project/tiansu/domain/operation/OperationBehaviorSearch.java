@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.domain.operation;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ import java.util.Date;
  * @Date 2021/1/29 10:14
  * @Version V1.0
  */
-public class OperationBehaviorSearch {
+public class OperationBehaviorSearch extends BaseEntity {
 
 
     /** 页面搜索开始时间和结束时间 */
