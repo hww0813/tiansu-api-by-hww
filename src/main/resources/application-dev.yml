@@ -35,11 +35,11 @@ spring:
                 max-wait: -1ms
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
-        driverClassName: com.mysql.cj.jdbc.Driver
+        driverClassName: com.p6spy.engine.spy.P6SpyDriver
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://192.168.1.20:3306/itms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:p6spy:mysql://192.168.1.20:3306/itms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: root
                 password: mysql
             # 从库数据源

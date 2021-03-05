@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.service.video;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
 
@@ -18,4 +19,5 @@ public interface IOperationBehaviorSessionService {
 
     PageResult queryOperationBehaviorSession(OperationBehaviorSession operationBehaviorSession) throws ExecutionException, InterruptedException;
 
+    List<JSONObject> getAllToReport(JSONObject filters);
 }

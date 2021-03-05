@@ -190,7 +190,7 @@
 
     <select id="getCount" resultType="java.lang.Integer" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession">
         SELECT
-         count(os.`CAMERA_ID`)
+         count(os.`ID`)
         FROM
         `busi_oper_session` os
         LEFT JOIN BUSI_CLIENT c
