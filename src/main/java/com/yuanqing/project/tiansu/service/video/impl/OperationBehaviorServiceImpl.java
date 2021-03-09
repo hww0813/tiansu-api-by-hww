@@ -98,7 +98,7 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
         //对应事件
         String timeType;
         switch (dayCount){
-            case 1 : timeType = "DAY"; break;
+            case 1|0 : timeType = "DAY"; break;
             case 6 : timeType = "WEEK"; break;
             default: timeType = "MONTH"; break;
         }
