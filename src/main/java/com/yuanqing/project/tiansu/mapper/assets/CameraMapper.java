@@ -43,6 +43,13 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
     List<Camera> batchGetCameraById(List<Long> cameraIdList);
 
     /**
+     * 根据camera列表 批量查询摄像头
+     * @param cameraCodeList
+     * @return
+     */
+    List<Camera> batchGetCameraByCode(List<String> cameraCodeList);
+
+    /**
      * 确认所有摄像头
      * @return
      */

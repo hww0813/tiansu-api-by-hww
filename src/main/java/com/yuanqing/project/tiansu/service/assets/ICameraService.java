@@ -98,6 +98,13 @@ public interface ICameraService extends BaseService<Camera,Long> {
      */
     List<Camera> batchGetCameraById(List<Long> cameraIdList);
 
+    /**
+     * 关联摄像头信息
+     * @param cameraCodeList
+     * @return
+     */
+    List<Camera> batchGetCameraByCode(List<String> cameraCodeList);
+
 
     /**
      * 根据ip更新摄像头,确定不是服务器

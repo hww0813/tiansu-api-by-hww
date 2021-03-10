@@ -3,19 +3,26 @@
 <mapper namespace="com.yuanqing.project.tiansu.mapper.analysis.StatisticsMapper">
 
     <resultMap id="TerminalVisitMap" type="com.yuanqing.project.tiansu.domain.analysis.TerminalVisit">
-        <result column="src_ip" property="ipAddress" jdbcType="BIGINT"/>
-        <result column="username" property="username" jdbcType="VARCHAR"/>
-        <result column="action" property="action" jdbcType="INTEGER"/>
-        <result column="count" property="visitCnt" jdbcType="BIGINT"/>
-        <result column="camera_cnt" property="cameraCnt" jdbcType="BIGINT"/>
+        <result column="src_ip" property="ipAddress"/>
+        <result column="username" property="username"/>
+        <result column="action" property="action"/>
+        <result column="count" property="visitCnt"/>
+        <result column="camera_cnt" property="cameraCnt"/>
+    </resultMap>
+
+    <resultMap id="CameraVisitMap" type="com.yuanqing.project.tiansu.domain.analysis.CameraVisit">
+        <result column="dst_code" property="deviceCode"/>
+        <result column="action" property="action"/>
+        <result column="count" property="visitCnt"/>
+        <result column="terminal_cnt" property="terminalCnt"/>
     </resultMap>
 
     <resultMap id="visitedRateMap" type="com.yuanqing.project.tiansu.domain.analysis.VisitedRate">
-        <result column="region" property="regionId" jdbcType="BIGINT"/>
-        <result column="visitedCamera" property="visitedCamera" jdbcType="INTEGER"/>
-        <result column="terminalCnt" property="terminalCnt" jdbcType="INTEGER"/>
-        <result column="userCnt" property="userCnt" jdbcType="INTEGER"/>
-        <result column="allCount" property="allCount" jdbcType="INTEGER"/>
+        <result column="region" property="regionId"/>
+        <result column="visitedCamera" property="visitedCamera"/>
+        <result column="terminalCnt" property="terminalCnt"/>
+        <result column="userCnt" property="userCnt"/>
+        <result column="allCount" property="allCount"/>
     </resultMap>
 
 
@@ -29,6 +36,10 @@
         FROM
             busi_statistics bs
         LEFT JOIN busi_camera bc ON bs.dst_code = bc.DEVICE_CODE
+        <where>
+            1=1
+            <if test="startDate != null and endDate != null"> and bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
+        </where>
         GROUP BY
             bc.REGION
     </select>
@@ -47,12 +58,35 @@
             <if test="ipAddress != null  and ipAddress != ''"> and src_ip = #{ipAddress}</if>
             <if test="username != null  and username != ''"> and username = #{username}</if>
             <if test="action != null  and action != ''"> and action = #{action}</if>
-            <if test="startDate != null and endDate != null">and stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d') and STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
+            <if test="startDate != null and endDate != null"> and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
         </where>
         GROUP BY
         src_ip,
         username,
         action
+    </select>
+
+
+    <select id="getCameraVisit" resultMap="CameraVisitMap">
+
+        SELECT
+            dst_code,
+            action,
+            sum( count ) count,
+            count( DISTINCT src_ip ) terminal_cnt
+        FROM
+            busi_statistics
+        <where>
+            dst_code in
+            <foreach collection="list" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+            <if test="filter.startDate != null and filter.endDate != null"> and stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')</if>
+        </where>
+        GROUP BY
+            dst_code,
+            action
+
     </select>
 
 

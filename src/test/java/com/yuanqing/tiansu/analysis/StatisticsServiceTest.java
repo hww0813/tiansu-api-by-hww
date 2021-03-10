@@ -30,7 +30,7 @@ public class StatisticsServiceTest {
      */
     @Test
     public void getVisitedRate(){
-        List<JSONObject> visitedRate = statisticsService.getVisitedRate(null);
+        List<JSONObject> visitedRate = statisticsService.getVisitedRate("340100","day");
         System.out.println(visitedRate);
 
     }

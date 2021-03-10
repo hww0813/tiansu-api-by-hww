@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE_MONTH;
+import static com.yuanqing.common.constant.Constants.*;
 
 /**
  * @author Dong.Chao
@@ -228,8 +228,13 @@ public class IndexStatisticsTask {
      */
     public void initIndexAreaCache(){
         // null默认为当月
-        List<JSONObject> visitedRate = iStatisticsService.getVisitedRate(null);
-        redisCache.setCacheObject(INDEX_VISITED_RATE_CACHE_MONTH,visitedRate);
+        List<JSONObject> visitedRateDay = iStatisticsService.getVisitedRate(null,"day");
+        List<JSONObject> visitedRateWeek = iStatisticsService.getVisitedRate(null,"week");
+        List<JSONObject> visitedRateMonth = iStatisticsService.getVisitedRate(null,"month");
+
+        redisCache.setCacheObject(INDEX_VISITED_RATE_CACHE_MONTH,visitedRateMonth);
+        redisCache.setCacheObject(INDEX_VISITED_RATE_CACHE_DAY,visitedRateDay);
+        redisCache.setCacheObject(INDEX_VISITED_RATE_CACHE_WEEK,visitedRateWeek);
     }
 
 

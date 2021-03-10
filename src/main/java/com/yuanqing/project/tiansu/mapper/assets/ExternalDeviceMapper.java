@@ -12,50 +12,7 @@ import java.util.List;
  * @date 2021-02-24
  */
 public interface ExternalDeviceMapper extends BaseMapper<ExternalDevice,Long> {
-    /**
-     * 查询外部设备表
-     *
-     * @param id 外部设备表ID
-     * @return 外部设备表
-     */
-    @Override
-    ExternalDevice findById(Long id);
 
-    /**
-     * 查询外部设备表列表
-     *
-     * @param ExternalDevice 外部设备表
-     * @return 外部设备表集合
-     */
-    @Override
-    List<ExternalDevice> getList(ExternalDevice ExternalDevice);
-
-    /**
-     * 新增外部设备表
-     *
-     * @param ExternalDevice 外部设备表
-     * @return 结果
-     */
-    @Override
-    Long insert(ExternalDevice ExternalDevice);
-
-    /**
-     * 修改外部设备表
-     *
-     * @param ExternalDevice 外部设备表
-     * @return 结果
-     */
-    @Override
-    Long update(ExternalDevice ExternalDevice);
-
-    /**
-     * 删除外部设备表
-     *
-     * @param id 外部设备表ID
-     * @return 结果
-     */
-    @Override
-    void delete(Long id);
 
     /**
      * 批量删除外部设备表

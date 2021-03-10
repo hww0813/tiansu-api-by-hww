@@ -2,8 +2,10 @@ package com.yuanqing.project.tiansu.service.analysis.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.DoubleUtils;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
@@ -52,10 +54,21 @@ public class StatisticsServiceImpl implements IStatisticsService {
      * 3.统计数据库中的数据
      * 4.将统计的数据与下级地区关联
      * @param regionId 地区代码
+     * @param dateType 时间属性
      * @return
      */
     @Override
-    public List<JSONObject> getVisitedRate(String regionId) {
+    public List<JSONObject> getVisitedRate(String regionId,String dateType) {
+
+        JSONObject filter = new JSONObject();
+
+        //默认为当天
+        switch (dateType){
+            default:
+            case "day" : filter = DateUtils.getDayTime(); break;
+            case "week" : filter = DateUtils.getWeek(); break;
+            case "month" : filter = DateUtils.getMonth(); break;
+        }
 
         MacsRegion region = macsConfigService.getRegion(regionId);
 
@@ -73,7 +86,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
 
             }else{
                 log.info("获取下级地区配置成功");
-                List<VisitedRate> visitedRateList = statisticsMapper.visitedRate();
+                List<VisitedRate> visitedRateList = statisticsMapper.visitedRate(filter);
 
                 lowerRegion.stream().forEach(f ->{
                     JSONObject visitedRate = new JSONObject();
@@ -107,6 +120,39 @@ public class StatisticsServiceImpl implements IStatisticsService {
     public List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit) {
 
         return statisticsMapper.getTerminalVisit(terminalVisit);
+    }
+
+
+    /**
+     *
+     * @param cameraList 摄像头集合
+     * @return
+     */
+    @Override
+    public List<CameraVisit> getCameraVisit(List<Camera> cameraList,CameraVisit cameraVisit) {
+
+        if(CollectionUtils.isEmpty(cameraList)){
+            log.error("cameraList为空，根据device_code批量查询摄像头列表为空");
+            return null;
+        }
+
+        List<String> deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
+
+        List<CameraVisit> cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList,cameraVisit);
+
+        cameraVisitList.stream().forEach(f -> {
+            cameraList.stream().forEach(h -> {
+                if(f.getDeviceCode().equals(h.getDeviceCode())){
+                    f.setDeviceName(h.getDeviceName());
+                    f.setIpAddress(h.getIpAddress());
+                    f.setRegionName(h.getRegionName());
+                }
+            });
+        });
+
+
+
+        return cameraVisitList;
     }
 
     @Override

@@ -94,6 +94,18 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     }
 
 
+    private String getTimeType(LocalDate startDate,LocalDate endDate){
+        int dayCount =  (int) startDate.until(endDate, ChronoUnit.DAYS);
+        //对应事件
+        String timeType;
+        switch (dayCount){
+            case 0 :
+            case 1 : timeType = "DAY"; break;
+            case 6 : timeType = "WEEK"; break;
+            default: timeType = "MONTH"; break;
+        }
+        return timeType;
+    };
 
 
     public Long getActionType(String action){

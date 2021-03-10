@@ -320,6 +320,18 @@ public class CameraServiceImpl implements ICameraService {
 
         List<Camera> cameraList = cameraMapper.batchGetCameraById(cameraIdList);
 
+        return cameraList;
+    }
+
+    @Override
+    public List<Camera> batchGetCameraByCode(List<String> cameraCodeList) {
+
+        if(CollectionUtils.isEmpty(cameraCodeList)){
+            log.error("cameraCodeList为空");
+            return null;
+        }
+
+        List<Camera> cameraList = cameraMapper.batchGetCameraByCode(cameraCodeList);
 
         return cameraList;
     }

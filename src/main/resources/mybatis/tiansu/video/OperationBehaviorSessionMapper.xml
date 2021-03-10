@@ -86,7 +86,7 @@
             AND os.ID = #{id}
         </if>
         <if test="startDate != null and endDate != null">
-            and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+            and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
         </if>
 
         <if test="username != null and username != ''">
@@ -211,7 +211,7 @@
         </if>
 
         <if test="startDate != null and endDate != null">
-            and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+            and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
         </if>
 
         <if test="username != null">
