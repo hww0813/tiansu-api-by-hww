@@ -4,10 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yuanqing.common.constant.DictConstants;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.FlowUtil;
 import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.project.system.domain.SysDictData;
+import com.yuanqing.project.system.service.ISysDictDataService;
+import com.yuanqing.project.system.service.ISysDictTypeService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
@@ -38,6 +42,8 @@ public class VisitRateServiceImpl implements IVisitRateService {
     @Resource
     private IMacsConfigService macsConfigService;
 
+    @Resource
+    private ISysDictDataService sysDictDataService;
 //    private static Region region = new Region();
 
     @Override
@@ -276,10 +282,13 @@ public class VisitRateServiceImpl implements IVisitRateService {
                 jsonObject.put("downFlow", "0");
             }
             if (operList.get(i).getAction() != null && !operList.get(i).getAction().equals("")) {
-                jsonObject.put("action", operList.get(i).getAction().getLabel());
+
+                String action = sysDictDataService.selectDictLabel(DictConstants.OPERATION_ACTION, operList.get(i).getAction());
+                jsonObject.put("action", action);
             }
             if (operList.get(i).getActionDetail() != null && !operList.get(i).getActionDetail().equals("")) {
-                jsonObject.put("actionDetail", operList.get(i).getActionDetail().getLabel());
+                String actionDetail = sysDictDataService.selectDictLabel(DictConstants.OPERATION_ACTION_DETAIL, operList.get(i).getAction());
+                jsonObject.put("actionDetail", actionDetail);
             }
             if (operList.get(i).getResult() != null && !operList.get(i).getResult().equals("")) {
                 if ("1".equals(operList.get(i).getResult())) {

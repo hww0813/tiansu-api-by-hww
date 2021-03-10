@@ -86,7 +86,7 @@ public class TerminalVisitedController extends BaseController {
         operationBehavior.setCameraId(cameraId);
         operationBehavior.setDstIp(IpUtils.ipToLong(dstIp));
         operationBehavior.setDstCode(dstCode);
-        operationBehavior.setAction(ActionType.getActionType(action));
+        operationBehavior.setAction(action);
         operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
         operationBehavior.setUsername(username);
         operationBehavior.setstartDate(startDate);

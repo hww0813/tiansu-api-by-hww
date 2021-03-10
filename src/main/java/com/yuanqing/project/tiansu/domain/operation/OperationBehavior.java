@@ -51,9 +51,10 @@ public class OperationBehavior extends BaseEntity {
 
     private String dstMac; //目的MAC
 
-    private ActionType action; //操作类型
+    private String action; //操作类型
 
-    private ActionDetailType actionDetail; //操作详细类型
+    private String actionDetail; //操作详细类型
+
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date stamp;//操作时间
