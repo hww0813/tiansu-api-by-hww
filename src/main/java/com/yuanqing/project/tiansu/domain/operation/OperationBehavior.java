@@ -1,18 +1,13 @@
 package com.yuanqing.project.tiansu.domain.operation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.yuanqing.common.enums.ActionType;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * 操作行为

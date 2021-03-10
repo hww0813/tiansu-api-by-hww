@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.ExportExcelUtils;
 import com.yuanqing.common.utils.ReportUtil;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.poi.ExcelUtil;
 import com.yuanqing.common.utils.spring.SpringContextUtil;
 import com.yuanqing.framework.web.controller.BaseController;
@@ -13,6 +14,7 @@ import com.yuanqing.project.tiansu.domain.video.VisitRate;
 import com.yuanqing.project.tiansu.service.analysis.IVisitRateService;
 import com.yuanqing.project.tiansu.service.assets.*;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
+import com.yuanqing.project.tiansu.service.video.IOperationBehaviorService;
 import com.yuanqing.project.tiansu.service.video.IOperationBehaviorSessionService;
 import io.swagger.annotations.Api;
 import net.sf.jasperreports.engine.*;
@@ -35,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -141,9 +144,9 @@ public class ReportController extends BaseController {
     @Resource
     private IOperationBehaviorSessionService operationBehaviorSessionService;
 
-//    @Resource
-//    private OperationBehaviorManager operationBehaviorManager;
-//
+    @Resource
+    private IOperationBehaviorService operationBehaviorService;
+
 //    @Resource
 //    private RawSignalManager rawSignalManager;
 //
@@ -860,108 +863,108 @@ public class ReportController extends BaseController {
         }
     }
 
-//    @GetMapping(value = "/operationBehavior")
-//    public void getOperationBehaviorReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//                                           @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//                                           @RequestParam(value = "srcIp", required = false) String srcIp,
-//                                           @RequestParam(value = "dstIp", required = false) String dstIp,
-//                                           @RequestParam(value = "srcCode", required = false) String srcCode,
-//                                           @RequestParam(value = "dstCode", required = false) String dstCode,
-//                                           @RequestParam(value = "sessionId", required = false) Long sessionId,
-//                                           @RequestParam(value = "clientId", required = false) Long clientId,
-//                                           @RequestParam(value = "cameraId", required = false) Long cameraId,
-//                                           @RequestParam(value = "action", required = false) String action,
-//                                           @RequestParam(value = "dstDeviceIp", required = false) String dstDeviceIp,
-//                                           @RequestParam(value = "content", required = false) String content,
-//                                           @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-//        JSONObject filters = new JSONObject();
-//        filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        filters.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        filters.put("srcIp", srcIp);
-//        filters.put("dstIp", dstIp);
-//        filters.put("srcCode", srcCode);
-//        filters.put("dstCode", dstCode);
-//        filters.put("sessionId", sessionId);
-//        filters.put("clientId", clientId);
-//        filters.put("cameraId", cameraId);
-//        filters.put("action", action);
-//        filters.put("dstDeviceIp", dstDeviceIp);
-//        if (StringUtils.isNotBlank(content)) {
-//            filters.put("content", "%" + content + "%");
-//        }
-//        if ("xlsx".equals(format)) {
-//            try {
-//                operationBehaviorExcel(response, filters);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
-//            org.springframework.core.io.Resource resource = null;
-//
-//            resource = ctx.getResource(OPERATION_BEHAVIOR_REPORT_NAME);
-//
-//            InputStream inputStream;
-//            try {
-//                inputStream = resource.getInputStream();
-//
-//                //编译报表
-//                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
-//                //参数
-//                Map<String, Object> params = new HashMap<>();
-//
-//                List<JSONObject> list = operationBehaviorManager.getAllToReport(filters);
-//
-//                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
-//
-//                //print文件
-//                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
-//
-//                JRAbstractExporter exporter = null;
-//
-//                if ("pdf".equals(format)) {
-//                    exporter = new JRPdfExporter();
-//                    response.setContentType("application/pdf");
-//                } else if ("xlsx".equals(format)) {
-//                    exporter = new JRXlsxExporter();
-//                    response.setContentType("application/vnd.ms-excel");
-//                } else if ("docx".equals(format)) {
-//                    exporter = new JRDocxExporter();
-//                    response.setContentType("application/msword");
-//                } else if ("html".equals(format)) {
-//                    exporter = new HtmlExporter();
-//                    response.setContentType("application/html");
-//                } else {
-//                    throw new RuntimeException("参数错误");
-//                }
-//                //设置输入项
-//                ExporterInput exporterInput = new SimpleExporterInput(print);
-//                exporter.setExporterInput(exporterInput);
-//
-//                //设置输出项
-//                if ("html".equals(format)) {
-//                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
-//
-//                    exporter.setExporterOutput(htmlExportOutput);
-//                } else {
-//                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
-//                            response.getOutputStream());
-//                    exporter.setExporterOutput(exporterOutput);
-//
-//                }
-//
-//                response.setHeader("Content-Disposition",
-//                        "attachment;filename=" + URLEncoder.encode("操作行为报表." + format, "utf-8"));
-//
-//                exporter.exportReport();
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (JRException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    @GetMapping(value = "/operationBehavior")
+    public void getOperationBehaviorReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                                           @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                                           @RequestParam(value = "srcIp", required = false) String srcIp,
+                                           @RequestParam(value = "dstIp", required = false) String dstIp,
+                                           @RequestParam(value = "srcCode", required = false) String srcCode,
+                                           @RequestParam(value = "dstCode", required = false) String dstCode,
+                                           @RequestParam(value = "sessionId", required = false) Long sessionId,
+                                           @RequestParam(value = "clientId", required = false) Long clientId,
+                                           @RequestParam(value = "cameraId", required = false) Long cameraId,
+                                           @RequestParam(value = "action", required = false) String action,
+                                           @RequestParam(value = "dstDeviceIp", required = false) String dstDeviceIp,
+                                           @RequestParam(value = "content", required = false) String content,
+                                           @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+        JSONObject filters = new JSONObject();
+        filters.put("stime", stime);
+        filters.put("etime", etime);
+        filters.put("srcIp", srcIp);
+        filters.put("dstIp", dstIp);
+        filters.put("srcCode", srcCode);
+        filters.put("dstCode", dstCode);
+        filters.put("sessionId", sessionId);
+        filters.put("clientId", clientId);
+        filters.put("cameraId", cameraId);
+        filters.put("action", action);
+        filters.put("dstDeviceIp", dstDeviceIp);
+        if (StringUtils.isNotBlank(content)) {
+            filters.put("content", "%" + content + "%");
+        }
+        if ("xlsx".equals(format)) {
+            try {
+                operationBehaviorExcel(response, filters);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
+            org.springframework.core.io.Resource resource = null;
+
+            resource = ctx.getResource(OPERATION_BEHAVIOR_REPORT_NAME);
+
+            InputStream inputStream;
+            try {
+                inputStream = resource.getInputStream();
+
+                //编译报表
+                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+                //参数
+                Map<String, Object> params = new HashMap<>();
+
+                List<JSONObject> list = operationBehaviorService.getAllToReport(filters);
+
+                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+
+                //print文件
+                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
+
+                JRAbstractExporter exporter = null;
+
+                if ("pdf".equals(format)) {
+                    exporter = new JRPdfExporter();
+                    response.setContentType("application/pdf");
+                } else if ("xlsx".equals(format)) {
+                    exporter = new JRXlsxExporter();
+                    response.setContentType("application/vnd.ms-excel");
+                } else if ("docx".equals(format)) {
+                    exporter = new JRDocxExporter();
+                    response.setContentType("application/msword");
+                } else if ("html".equals(format)) {
+                    exporter = new HtmlExporter();
+                    response.setContentType("application/html");
+                } else {
+                    throw new RuntimeException("参数错误");
+                }
+                //设置输入项
+                ExporterInput exporterInput = new SimpleExporterInput(print);
+                exporter.setExporterInput(exporterInput);
+
+                //设置输出项
+                if ("html".equals(format)) {
+                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
+
+                    exporter.setExporterOutput(htmlExportOutput);
+                } else {
+                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+                            response.getOutputStream());
+                    exporter.setExporterOutput(exporterOutput);
+
+                }
+
+                response.setHeader("Content-Disposition",
+                        "attachment;filename=" + URLEncoder.encode("操作行为报表." + format, "utf-8"));
+
+                exporter.exportReport();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JRException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 //    @GetMapping(value = "/OperationSignal")
 //    public void getOperationSignalReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
@@ -2924,7 +2927,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = operationBehaviorSessionService.getAllToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -2944,44 +2947,48 @@ public class ReportController extends BaseController {
         ExportExcelUtils.exportExcel(response, "行为会话报表.xlsx", data);
     }
 
-//    public void operationBehaviorExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-//        ExcelData data = new ExcelData();
-//        data.setName("操作行为");
-//        List<JSONObject> all = operationBehaviorManager.getAllToReport(filters);
-//        List<String> titles = new ArrayList();
-//        titles.add("终端IP");
-//        titles.add("摄像头IP");
-//        titles.add("摄像头编号");
-//        titles.add("摄像头名称");
-//        titles.add("动作");
-//        titles.add("动作详细");
-//        titles.add("上行流量");
-//        titles.add("下行流量");
-//        titles.add("登录帐号");
-//        titles.add("时间");
-//        titles.add("结果");
-//        data.setTitles(titles);
-//        List<List<Object>> rows = new ArrayList();
-//        for (JSONObject j : all) {
-//            List<Object> row = new ArrayList();
-//            row.add(j.get("srcIp"));
-//            row.add(j.get("dstIp"));
-//            row.add(j.get("dstCode"));
-//            row.add(j.get("dstDeviceName"));
-//            row.add(j.get("action"));
-//            row.add(j.get("actionDetail"));
-//            row.add(j.get("upFlow"));
-//            row.add(j.get("downFlow"));
-//            row.add(j.get("username"));
-//            row.add(j.get("stamp"));
-//            row.add(j.get("result"));
-//            rows.add(row);
-//        }
-//
-//        data.setRows(rows);
-//
-//        ExportExcelUtils.exportExcel(response, "操作行为报表.xlsx", data);
-//    }
+    public void operationBehaviorExcel(HttpServletResponse response, JSONObject filters) throws Exception {
+        ExcelData data = new ExcelData();
+        data.setName("操作行为");
+
+        List<String> titles = new ArrayList();
+        titles.add("终端IP");
+        titles.add("摄像头IP");
+        titles.add("摄像头编号");
+        titles.add("摄像头名称");
+        titles.add("动作");
+        titles.add("动作详细");
+        titles.add("上行流量");
+        titles.add("下行流量");
+        titles.add("登录帐号");
+        titles.add("时间");
+        titles.add("结果");
+        data.setTitles(titles);
+
+        List<JSONObject> all = operationBehaviorService.getAllToReport(filters);
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("srcIp"));
+                row.add(j.get("dstIp"));
+                row.add(j.get("dstCode"));
+                row.add(j.get("dstDeviceName"));
+                row.add(j.get("action"));
+                row.add(j.get("actionDetail"));
+                row.add(j.get("upFlow"));
+                row.add(j.get("downFlow"));
+                row.add(j.get("username"));
+                row.add(j.get("stamp"));
+                row.add(j.get("result"));
+                rows.add(row);
+            }
+
+            data.setRows(rows);
+        }
+
+        ExportExcelUtils.exportExcel(response, "操作行为报表.xlsx", data);
+    }
 
     public void ServerTreeExcel(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
@@ -2996,7 +3003,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = serverTreeService.getAllToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -3030,7 +3037,7 @@ public class ReportController extends BaseController {
 
         List<JSONObject> all = cameraService.getAllToReport(filters);
 
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -3064,7 +3071,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = clientTerminalService.getAllToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -3094,7 +3101,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = clientUserService.getAllToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();

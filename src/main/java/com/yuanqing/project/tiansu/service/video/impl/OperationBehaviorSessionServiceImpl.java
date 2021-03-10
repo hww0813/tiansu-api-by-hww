@@ -54,8 +54,8 @@ public class OperationBehaviorSessionServiceImpl implements IOperationBehaviorSe
 
         condOperationBehaviorSession.setNum(0);
         Integer count = operationBehaviorSessionMapper.getCount(condOperationBehaviorSession);
-        if(count > 5000) {
-            condOperationBehaviorSession.setSize(5000);
+        if(count > 20000) {
+            condOperationBehaviorSession.setSize(20000);
         } else {
             condOperationBehaviorSession.setSize(count);
         }

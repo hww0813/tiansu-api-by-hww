@@ -54,7 +54,8 @@ public class OperationBehaviorController extends BaseController   {
     @GetMapping("/list")
     @ApiOperation(value = "获取操作行为列表", httpMethod = "GET")
     public PageResult getAll(@RequestParam(value = "pageNum", defaultValue = "1") int num,
-                             @RequestParam(value = "pageSize", defaultValue = "20") int size,OperationBehavior operationBehavior) throws ExecutionException, InterruptedException {
+                             @RequestParam(value = "pageSize", defaultValue = "20") int size,
+                             OperationBehavior operationBehavior) throws ExecutionException, InterruptedException {
             operationBehavior.setNum(num -1);
             operationBehavior.setSize(size);
             try {
