@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.service.video.impl;
 
+import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
@@ -77,7 +78,7 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
 
     @Override
     public AjaxResult getCharts(LocalDate startDate, LocalDate endDate, String action, String sort, String type) {
-        String timeType = getTimeType(startDate,endDate);
+        String timeType = DateUtils.getTimeType(startDate,endDate);
         Long actionType = getActionType(action);
         //拼 redis Key
         if (StringUtils.isNotBlank(type)){
@@ -93,17 +94,7 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     }
 
 
-    private String getTimeType(LocalDate startDate,LocalDate endDate){
-        int dayCount =  (int) startDate.until(endDate, ChronoUnit.DAYS);
-        //对应事件
-        String timeType;
-        switch (dayCount){
-            case 1|0 : timeType = "DAY"; break;
-            case 6 : timeType = "WEEK"; break;
-            default: timeType = "MONTH"; break;
-        }
-        return timeType;
-    };
+
 
     public Long getActionType(String action){
         Long actionType = null;

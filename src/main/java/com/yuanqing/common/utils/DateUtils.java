@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
@@ -357,6 +358,20 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         LocalDate today = LocalDate.now();
         return  localDateToDate(today.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()));
     }
+
+
+    public static String getTimeType(LocalDate startDate,LocalDate endDate){
+        int dayCount =  (int) startDate.until(endDate, ChronoUnit.DAYS);
+        //对应事件
+        String timeType;
+        switch (dayCount){
+            case 0 :
+            case 1 : timeType = "DAY"; break;
+            case 6 : timeType = "WEEK"; break;
+            default: timeType = "MONTH"; break;
+        }
+        return timeType;
+    };
 
 
 

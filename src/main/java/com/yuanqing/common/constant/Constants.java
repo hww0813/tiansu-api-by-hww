@@ -221,9 +221,19 @@ public class Constants
     /** 摄像头被访问 -月 */
     public static final String PTZ_VISIT_CAMERA_ONE_MONTH = "PTZ_VISIT_CAMERA_ONE_MONTH";
 
-
+    /** 首页摄像头缓存KEY */
     public static final String INDEX_CLIENT_COUNTS_CACHE = "INDEX_CLIENT_COUNTS_CACHE";
+    /** 首页摄用户缓存KEY */
     public static final String INDEX_USER_COUNTS_CACHE = "INDEX_USER_COUNTS_CACHE";
+
     public static final String INDEX_CAMERA_COUNTS_CACHE = "INDEX_CAMERA_COUNTS_CACHE";
+
     public static final String ALARM_CAMERA_COUNTS_CACHE = "ALARM_CAMERA_COUNTS_CACHE";
+    public static final String INDEX_VISITED_RATE_CACHE = "INDEX_VISITED_RATE_CACHE";
+    /** 首页区县缓存 月 */
+    public static final String INDEX_VISITED_RATE_CACHE_MONTH = "INDEX_VISITED_RATE_CACHE_MONTH";
+    /** 首页区县缓存 周 */
+    public static final String INDEX_VISITED_RATE_CACHE_WEEK = "INDEX_VISITED_RATE_CACHE_WEEK";
+    /** 首页区县缓存 日 */
+    public static final String INDEX_VISITED_RATE_CACHE_DAY = "INDEX_VISITED_RATE_CACHE_DAY";
 }

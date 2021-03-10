@@ -10,6 +10,7 @@ import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.domain.video.CameraStatistics;
 import com.yuanqing.project.tiansu.domain.video.StatisticsSearch;
 import com.yuanqing.project.tiansu.mapper.video.HomePageMapper;
+import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE_MONTH;
 
 /**
  * @author Dong.Chao
@@ -40,6 +43,11 @@ public class IndexStatisticsTask {
 
     @Autowired
     private HomePageMapper homePageMapper;
+
+    @Autowired
+    private IStatisticsService iStatisticsService;
+
+
 
     @Value("${tiansu.alarmhost}")
     private String alarmHost;
@@ -211,8 +219,24 @@ public class IndexStatisticsTask {
     }
 
 
+    /**
+     * @author: dongchao
+     * @create: 2021/3/4-15:01
+     * @description: 缓存首页地区摄像头访问率
+     * @param:
+     * @return:
+     */
+    public void initIndexAreaCache(){
+        // null默认为当月
+        List<JSONObject> visitedRate = iStatisticsService.getVisitedRate(null);
+        redisCache.setCacheObject(INDEX_VISITED_RATE_CACHE_MONTH,visitedRate);
+    }
 
-    public StatisticsSearch initSearch(String timeType, Long action){
+
+
+
+
+    private StatisticsSearch initSearch(String timeType, Long action){
        Date startTime = null ,endTime = null;
         if ("DAY".equals(timeType)){
             startTime = DateUtils.getNowDateToLocal();

@@ -1,17 +1,21 @@
 package com.yuanqing.project.tiansu.controller;
 
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.job.IndexStatisticsTask;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
+import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE;
 
 /**
  * @author Dong.Chao
@@ -30,19 +34,37 @@ public class OperationStatisticsController {
     @Autowired
     private IClientTerminalService clientTerminalService;
 
+    @Autowired
+    private RedisCache redisCache;
+
     private String[] timeTypes = {"DAY","WEEK","MONTH"};
 
     private Long[] actionTypes = {-1L,3L,1L};
 
     @GetMapping(value = "/camera")
     @ApiOperation(value = "手动摄像头使用率", httpMethod = "GET")
-    public AjaxResult cameraRatio(){
+    public AjaxResult camera(){
         try {
             for (String timeType : timeTypes) {
                 for (Long actionType : actionTypes) {
                     indexStatisticsTask.visitCamera(timeType,actionType);
                 }
             }
+            indexStatisticsTask.initIndexAreaCache();
+            return AjaxResult.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error();
+        }
+    }
+
+
+
+    @GetMapping(value = "/cameraRatio")
+    @ApiOperation(value = "手动摄像头访问率", httpMethod = "GET")
+    public AjaxResult cameraRatio(){
+        try {
+            indexStatisticsTask.initIndexAreaCache();
             return AjaxResult.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,6 +117,11 @@ public class OperationStatisticsController {
         }
         return AjaxResult.success();
     }
+
+
+
+
+
 
 
 }
