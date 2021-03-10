@@ -47,7 +47,7 @@
             AND br.OPER_ID = #{operId}
         </if>
         <if test="startDate != null and endDate != null">
-            and br.STAMP between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+            and br.STAMP between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
         </if>
 
         <if test="srcIp != null">
@@ -77,7 +77,7 @@
             AND br.OPER_ID = #{operId}
         </if>
         <if test="startDate != null and endDate != null">
-            and br.STAMP between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+            and br.STAMP between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
         </if>
         <if test="srcIp != null ">
             AND br.SRC_IP = #{srcIp}
