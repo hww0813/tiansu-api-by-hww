@@ -54,6 +54,8 @@ public class CameraVisitedController extends BaseController {
 
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList,cameraVisit);
 
+
+
         return AjaxResult.success(getDataTable(cameraVisitList));
 
 

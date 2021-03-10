@@ -55,7 +55,8 @@ public class OperationBehavior extends BaseEntity {
 
     private ActionDetailType actionDetail; //操作详细类型
 
-    private LocalDateTime stamp;//操作时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date stamp;//操作时间
 
     private String content; //内容
 

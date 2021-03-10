@@ -292,7 +292,7 @@ public class VisitRateServiceImpl implements IVisitRateService {
             } else {
                 jsonObject.put("result", "未知");
             }
-            jsonObject.put("stamp", formatter.format(operList.get(i).getStamp()));
+            jsonObject.put("stamp", operList.get(i).getStamp());
             list.add(jsonObject);
         }
         return list;

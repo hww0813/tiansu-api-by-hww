@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import com.github.pagehelper.PageHelper;
@@ -65,11 +66,21 @@ public class BaseController
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected TableDataInfo getDataTable(List<?> list)
     {
+
+
         TableDataInfo rspData = new TableDataInfo();
-        rspData.setCode(HttpStatus.SUCCESS);
-        rspData.setList(list);
-        rspData.setTotal(new PageInfo(list).getTotal());
-        return rspData;
+
+        if(CollectionUtils.isEmpty(list)){
+            rspData.setCode(HttpStatus.SUCCESS);
+            rspData.setList(null);
+            rspData.setTotal(0);
+            return rspData;
+        }else{
+            rspData.setCode(HttpStatus.SUCCESS);
+            rspData.setList(list);
+            rspData.setTotal(new PageInfo(list).getTotal());
+            return rspData;
+        }
     }
 
     /**

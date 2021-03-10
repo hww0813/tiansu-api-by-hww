@@ -3,6 +3,8 @@ package com.yuanqing.project.tiansu.controller.analysis;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
+import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
+import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,16 @@ import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE;
  * @Version V1.0
  */
 @RestController
-@RequestMapping(value = "/api/analysis")
+@RequestMapping(value = "/api/analysis/visit/rate")
 public class RateVisitController {
 
     @Autowired
     private RedisCache redisCache;
 
-    @GetMapping(value = "/visit/rate/list")
+    @Autowired
+    private IMacsConfigService macsConfigService;
+
+    @GetMapping(value = "/list")
     @ApiOperation(value = "首页访问率查询", httpMethod = "GET")
     public AjaxResult rateList(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
                                @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
@@ -39,4 +44,14 @@ public class RateVisitController {
         String time = DateUtils.getTimeType(startDate,endDate);
         return AjaxResult.success("success",redisCache.getCacheObject(INDEX_VISITED_RATE_CACHE+"_"+time));
     }
+
+    @GetMapping(value = "/region")
+    @ApiOperation(value = "首页访问率查询", httpMethod = "GET")
+    public AjaxResult getRegion(){
+        MacsRegion region = macsConfigService.getRegion(null);
+        return AjaxResult.success(region);
+
+    }
+
+
 }

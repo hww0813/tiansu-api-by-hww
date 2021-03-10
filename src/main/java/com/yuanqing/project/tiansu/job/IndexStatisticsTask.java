@@ -227,7 +227,7 @@ public class IndexStatisticsTask {
      * @return:
      */
     public void initIndexAreaCache(){
-        // null默认为当月
+
         List<JSONObject> visitedRateDay = iStatisticsService.getVisitedRate(null,"day");
         List<JSONObject> visitedRateWeek = iStatisticsService.getVisitedRate(null,"week");
         List<JSONObject> visitedRateMonth = iStatisticsService.getVisitedRate(null,"month");
