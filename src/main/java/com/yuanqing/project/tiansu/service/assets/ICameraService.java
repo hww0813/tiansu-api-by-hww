@@ -101,9 +101,10 @@ public interface ICameraService extends BaseService<Camera,Long> {
     /**
      * 关联摄像头信息
      * @param cameraCodeList
+     * @param camera 过滤条件
      * @return
      */
-    List<Camera> batchGetCameraByCode(List<String> cameraCodeList);
+    List<Camera> batchGetCameraByCode(List<String> cameraCodeList,Camera camera);
 
 
     /**

@@ -78,6 +78,10 @@
             <foreach collection="list" open="(" separator="," close=")" item="item">
                 #{item}
             </foreach>
+            <if test="filter.deviceCode != null  and filter.deviceCode != ''"> and DEVICE_CODE = #{filter.deviceCode}</if>
+            <if test="filter.deviceName != null  and filter.deviceName != ''"> and DEVICE_NAME like concat('%', #{filter.deviceName}, '%')</if>
+            <if test="filter.ipAddress != null "> and IP_ADDRESS = #{filter.ipAddress}</if>
+            <if test="filter.region != null "> and REGION = #{filter.region}</if>
             and device_type = 1
         </where>
     </select>

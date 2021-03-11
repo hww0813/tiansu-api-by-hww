@@ -3,9 +3,9 @@ package com.yuanqing.project.tiansu.service.analysis;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
+import com.yuanqing.project.tiansu.domain.analysis.Statistics;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
-import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 
 import java.util.List;
@@ -16,6 +16,8 @@ import java.util.List;
  * @Date 2021-03-01 14:40
  */
 public interface IStatisticsService {
+
+    List<Statistics> getList(Statistics statistics);
 
     /**
      * 获取下级地区访问率
@@ -31,6 +33,7 @@ public interface IStatisticsService {
      * @return
      */
     List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit);
+
 
     /**
      * 获取摄像头访问列表

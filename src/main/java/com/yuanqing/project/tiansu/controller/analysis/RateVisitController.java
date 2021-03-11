@@ -115,7 +115,7 @@ public class RateVisitController extends BaseController {
 
         startPage();
 
-        List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList);
+        List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList,null);
 
         return AjaxResult.success(getDataTable(finalCameraList));
 

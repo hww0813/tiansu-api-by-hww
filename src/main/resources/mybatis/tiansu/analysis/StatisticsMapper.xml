@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.yuanqing.project.tiansu.mapper.analysis.StatisticsMapper">
 
+    <resultMap id="BusiStatisticsResultMap" type="com.yuanqing.project.tiansu.domain.analysis.Statistics">
+        <result column="src_ip" property="srcIp"/>
+        <result column="username" property="username"/>
+        <result column="dst_code" property="dstCode"/>
+        <result column="stamp" property="stamp"/>
+        <result column="action" property="action"/>
+        <result column="count" property="count"/>
+    </resultMap>
+
     <resultMap id="TerminalVisitMap" type="com.yuanqing.project.tiansu.domain.analysis.TerminalVisit">
         <result column="src_ip" property="ipAddress"/>
         <result column="username" property="username"/>
@@ -25,6 +34,20 @@
         <result column="allCount" property="allCount"/>
     </resultMap>
 
+    <sql id="selectBusiStatisticsVo">
+        select src_ip, username, dst_code, stamp, action, count from busi_statistics
+    </sql>
+
+    <select id="getList" resultMap="BusiStatisticsResultMap">
+        <include refid="selectBusiStatisticsVo"/>
+        <where>
+            <if test="srcIp != null  and srcIp != ''"> and src_ip = #{srcIp}</if>
+            <if test="username != null  and username != ''"> and username = #{username}</if>
+            <if test="dstCode != null  and dstCode != ''"> and dst_code like concat('%', #{dstCode}, '%')</if>
+            <if test="action != null  and action != ''"> and action = #{action}</if>
+            <if test="startDate != null and endDate != null"> and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
+        </where>
+    </select>
 
     <select id="visitedRate" resultMap="visitedRateMap">
         SELECT
@@ -119,6 +142,7 @@
         </where>
 
     </select>
+
 
 
 </mapper>

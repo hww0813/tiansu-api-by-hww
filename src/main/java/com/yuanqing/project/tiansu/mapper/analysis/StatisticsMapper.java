@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.mapper.analysis;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
+import com.yuanqing.project.tiansu.domain.analysis.Statistics;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
@@ -19,6 +20,13 @@ import java.util.List;
 
 @Repository
 public interface StatisticsMapper {
+
+    /**
+     * 获取相关
+     * @param statistics
+     * @return
+     */
+    List<Statistics> getList(Statistics statistics);
 
     /**
      * 根据地区统计访问率
@@ -63,4 +71,6 @@ public interface StatisticsMapper {
      */
     List<Long> getTerminalVisited(@Param("list") List<String> deviceCodeList,
                                      @Param("filter") BaseEntity baseEntity);
+
+
 }
