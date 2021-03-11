@@ -16,6 +16,7 @@ import com.yuanqing.project.tiansu.service.assets.*;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import com.yuanqing.project.tiansu.service.video.IOperationBehaviorService;
 import com.yuanqing.project.tiansu.service.video.IOperationBehaviorSessionService;
+import com.yuanqing.project.tiansu.service.video.IRawSignalService;
 import io.swagger.annotations.Api;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -128,6 +129,9 @@ public class ReportController extends BaseController {
 
     @Resource
     private IClientUserService clientUserService;
+
+    @Resource
+    private IRawSignalService rawSignalService;
 
 //    @Resource
 //    private ClientVisitManager clientVisitManager;
@@ -966,101 +970,101 @@ public class ReportController extends BaseController {
         }
     }
 
-//    @GetMapping(value = "/OperationSignal")
-//    public void getOperationSignalReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//                                         @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//                                         @RequestParam(value = "srcIp", required = false) String srcIp,
-//                                         @RequestParam(value = "dstIp", required = false) String dstIp,
-//                                         @RequestParam(value = "connectType", required = false) String connectType,
-//                                         @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-//        JSONObject filters = new JSONObject();
-//        if (stime != null) {
-//            filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        }
-//        if (etime != null) {
-//            filters.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        }
-//        filters.put("connectType", connectType);
-//        filters.put("srcIp", srcIp);
-//        filters.put("dstIp", dstIp);
-//
-//        if ("xlsx".equals(format)) {
-//            try {
-//                rawSignalExcel(response, filters);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
-//
-//            org.springframework.core.io.Resource resource = null;
-//
-//            resource = ctx.getResource(RAW_SIGNAL_REPORT_NAME);
-//
-//            InputStream inputStream;
-//            try {
-//                inputStream = resource.getInputStream();
-//
-//
-//                //编译报表
-//                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
-//
-//                //参数
-//                Map<String, Object> params = new HashMap<>();
-//
-//                List<JSONObject> list = rawSignalManager.getAllToReport(filters);
-//
-//                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
-//
-//                //print文件
-//                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
-//
-//                JRAbstractExporter exporter = null;
-//
-//                if ("pdf".equals(format)) {
-//                    exporter = new JRPdfExporter();
-//                    response.setContentType("application/pdf");
-//                } else if ("xlsx".equals(format)) {
-//                    exporter = new JRXlsxExporter();
-//                    response.setContentType("application/vnd.ms-excel");
-//                } else if ("docx".equals(format)) {
-//                    exporter = new JRDocxExporter();
-//                    response.setContentType("application/msword");
-//                } else if ("html".equals(format)) {
-//                    exporter = new HtmlExporter();
-//                    response.setContentType("application/html");
-//                } else {
-//                    throw new RuntimeException("参数错误");
-//                }
-//
-//                //设置输入项
-//                ExporterInput exporterInput = new SimpleExporterInput(print);
-//                exporter.setExporterInput(exporterInput);
-//
-//                //设置输出项
-//                if ("html".equals(format)) {
-//                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
-//
-//                    exporter.setExporterOutput(htmlExportOutput);
-//                } else {
-//                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
-//                            response.getOutputStream());
-//                    exporter.setExporterOutput(exporterOutput);
-//
-//                }
-//
-//                response.setHeader("Content-Disposition",
-//                        "attachment;filename=" + new String("原始信令报表".getBytes("gbk"), "iso8859-1") + "." + format);
-//
-//                exporter.exportReport();
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (JRException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    @GetMapping(value = "/OperationSignal")
+    public void getOperationSignalReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                                         @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                                         @RequestParam(value = "srcIp", required = false) String srcIp,
+                                         @RequestParam(value = "dstIp", required = false) String dstIp,
+                                         @RequestParam(value = "connectType", required = false) String connectType,
+                                         @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+        JSONObject filters = new JSONObject();
+        if (stime != null) {
+            filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        }
+        if (etime != null) {
+            filters.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        }
+        filters.put("connectType", connectType);
+        filters.put("srcIp", srcIp);
+        filters.put("dstIp", dstIp);
+
+        if ("xlsx".equals(format)) {
+            try {
+                rawSignalExcel(response, filters);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
+
+            org.springframework.core.io.Resource resource = null;
+
+            resource = ctx.getResource(RAW_SIGNAL_REPORT_NAME);
+
+            InputStream inputStream;
+            try {
+                inputStream = resource.getInputStream();
+
+
+                //编译报表
+                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+
+                //参数
+                Map<String, Object> params = new HashMap<>();
+
+                List<JSONObject> list = rawSignalService.getAllToReport(filters);
+
+                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+
+                //print文件
+                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
+
+                JRAbstractExporter exporter = null;
+
+                if ("pdf".equals(format)) {
+                    exporter = new JRPdfExporter();
+                    response.setContentType("application/pdf");
+                } else if ("xlsx".equals(format)) {
+                    exporter = new JRXlsxExporter();
+                    response.setContentType("application/vnd.ms-excel");
+                } else if ("docx".equals(format)) {
+                    exporter = new JRDocxExporter();
+                    response.setContentType("application/msword");
+                } else if ("html".equals(format)) {
+                    exporter = new HtmlExporter();
+                    response.setContentType("application/html");
+                } else {
+                    throw new RuntimeException("参数错误");
+                }
+
+                //设置输入项
+                ExporterInput exporterInput = new SimpleExporterInput(print);
+                exporter.setExporterInput(exporterInput);
+
+                //设置输出项
+                if ("html".equals(format)) {
+                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
+
+                    exporter.setExporterOutput(htmlExportOutput);
+                } else {
+                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+                            response.getOutputStream());
+                    exporter.setExporterOutput(exporterOutput);
+
+                }
+
+                response.setHeader("Content-Disposition",
+                        "attachment;filename=" + new String("原始信令报表".getBytes("gbk"), "iso8859-1") + "." + format);
+
+                exporter.exportReport();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JRException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 //    @GetMapping(value = "/RawNetFlow")
@@ -2812,36 +2816,39 @@ public class ReportController extends BaseController {
 //
 //        ExportExcelUtils.exportExcel(response, "终端访问报表.xlsx", data);
 //    }
-//
-//    private void rawSignalExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-//        ExcelData data = new ExcelData();
-//        data.setName("原始信令");
-//        List<JSONObject> all = rawSignalManager.getAllToReport(filters);
-//        List<String> titles = new ArrayList();
-//        titles.add("源设备IP");
-//        titles.add("源设备编码");
-//        titles.add("目的设备IP");
-//        titles.add("目的设备编码");
-//        titles.add("时间");
-//        titles.add("信令内容");
-//        data.setTitles(titles);
-//
-//        List<List<Object>> rows = new ArrayList();
-//        for (JSONObject j : all) {
-//            List<Object> row = new ArrayList();
-//            row.add(j.get("srcIp"));
-//            row.add(j.get("fromCode"));
-//            row.add(j.get("dstIp"));
-//            row.add(j.get("toCode"));
-//            row.add(j.get("stamp"));
-//            row.add(j.get("content"));
-//            rows.add(row);
-//        }
-//        data.setRows(rows);
-//
-//        ExportExcelUtils.exportExcel(response, "原始信令报表.xlsx", data);
-//    }
-//
+
+    private void rawSignalExcel(HttpServletResponse response, JSONObject filters) throws Exception {
+        ExcelData data = new ExcelData();
+        data.setName("原始信令");
+
+        List<String> titles = new ArrayList();
+        titles.add("源设备IP");
+        titles.add("源设备编码");
+        titles.add("目的设备IP");
+        titles.add("目的设备编码");
+        titles.add("时间");
+        titles.add("信令内容");
+        data.setTitles(titles);
+
+        List<JSONObject> all = rawSignalService.getAllToReport(filters);
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("srcIp"));
+                row.add(j.get("fromCode"));
+                row.add(j.get("dstIp"));
+                row.add(j.get("toCode"));
+                row.add(j.get("stamp"));
+                row.add(j.get("content"));
+                rows.add(row);
+            }
+            data.setRows(rows);
+        }
+
+        ExportExcelUtils.exportExcel(response, "原始信令报表.xlsx", data);
+    }
+
 //    private void rawNetFlowExcel(HttpServletResponse response, JSONObject filters) throws Exception {
 //        ExcelData data = new ExcelData();
 //        data.setName("原始流量");
@@ -2966,7 +2973,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = operationBehaviorService.getAllToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
