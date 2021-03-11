@@ -1,9 +1,11 @@
 package com.yuanqing.project.tiansu.service.analysis;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.framework.web.domain.BaseEntity;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 
 import java.util.List;
@@ -36,8 +38,18 @@ public interface IStatisticsService {
      * @param cameraVisit 过滤条件
      * @return
      */
-
     List<CameraVisit> getCameraVisit(List<Camera> cameraList,CameraVisit cameraVisit);
+
+
+    /**
+     * 根据 cameraVisit条件 查询统计表 deviceCodeList中含有相关摄像头
+     * @param cameraList 摄像头集合
+     * @param cameraVisit 过滤条件
+     * @return 返回摄像头编号集合
+     */
+    List<String> getCameraVisited(List<Camera> cameraList,CameraVisit cameraVisit);
+
+
     /**
      * 操作行为关联摄像头信息
      *
@@ -46,4 +58,11 @@ public interface IStatisticsService {
      */
     List<JSONObject> associateCameraInfo(List<OperationBehavior> operationBehaviorList);
 
+    /**
+     * 根据 cameraVisit条件 查询统计表 deviceCodeList中含有相关终端IP
+     * @param cameraList 摄像头集合
+     * @param baseEntity 过滤条件
+     * @return 返回终端IP集合
+     */
+    List<Long> getTerminalVisited(List<Camera> cameraList, BaseEntity baseEntity);
 }

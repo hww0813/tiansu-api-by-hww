@@ -5,6 +5,7 @@ import com.yuanqing.framework.web.domain.BaseEntity;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -39,9 +40,27 @@ public interface StatisticsMapper {
      * 获取摄像头访问列表
      * @param deviceCodeList 摄像头编号集合
      * @param cameraVisit 过滤条件
-     * @return
+     * @return CameraVisit对象
      */
     List<CameraVisit> getCameraVisit(@Param("list") List<String> deviceCodeList,
                                      @Param("filter") CameraVisit cameraVisit);
 
+    /**
+     * 根据 cameraVisit条件 查询统计表 deviceCodeList中含有相关摄像头
+     * @param deviceCodeList 摄像头编号集合
+     * @param cameraVisit 过滤条件
+     * @return 返回摄像头编号集合
+     */
+    List<String> getCameraVisited(@Param("list") List<String> deviceCodeList,
+                                  @Param("filter") CameraVisit cameraVisit);
+
+
+    /**
+     * 根据 terminalVisit条件 查询统计表 deviceCodeList中含有相关终端IP
+     * @param deviceCodeList 摄像头编号集合
+     * @param baseEntity
+     * @return 返回终端IP集合
+     */
+    List<Long> getTerminalVisited(@Param("list") List<String> deviceCodeList,
+                                     @Param("filter") BaseEntity baseEntity);
 }

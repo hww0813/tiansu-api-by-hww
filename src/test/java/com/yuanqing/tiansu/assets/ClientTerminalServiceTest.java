@@ -116,7 +116,7 @@ public class ClientTerminalServiceTest {
 //        client.setUsername("admin");
         List<Client> clientList = clientService.getList(client);
 
-        List<ClientTerminal> list = clientTerminalService.getTerminalByIpList(clientList);
+        List<ClientTerminal> list = clientTerminalService.getTerminalByClientList(clientList);
 
         System.out.println(list.size());
         Assert.assertEquals(31,list.size());

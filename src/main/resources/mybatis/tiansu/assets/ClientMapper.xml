@@ -67,6 +67,19 @@
 
     </select>
 
+
+    <select id="getClientByIpList" resultMap="BusiClientResult">
+        <include refid="selectBusiClientVo"/>
+        <where>
+            IP_ADDRESS in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="filter.status != null"> and STATUS = #{filter.status}</if>
+            <if test="filter.ipAddress != null "> and IP_ADDRESS = #{filter.ipAddress}</if>
+        </where>
+    </select>
+
     <select id="getTerminalNumByUserName" resultType="com.alibaba.fastjson.JSONObject">
 
         select username,count(DISTINCT IP_ADDRESS) terminalCnt from busi_client

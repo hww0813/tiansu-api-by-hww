@@ -84,7 +84,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
             // 根据用户名查询client列表  需要用IP
             List<Client> clientList = clientService.getList(client);
 
-            list = getTerminalByIpList(clientList);
+            list = getTerminalByClientList(clientList);
 
         } else {
             list = getList(condClientTerminal);
@@ -123,7 +123,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         return reportList;
     }
 
-    @Override
+
     public Long insertInto(ClientTerminal clientTerminal) {
         //根据IP查找终端
         ClientTerminal clientTerminal1 = clientTerminalMapper.findByIpAddress(clientTerminal.getIpAddress());
@@ -143,7 +143,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
                 clientTerminal.setDeviceType(DeviceType.PROXY_SERVER.getValue());
             }
             //如果终端为空，服务器为空，则该IP对应的设备为终端，在终端表新增加终端
-            clientTerminalMapper.insertInto(clientTerminal);
+//            clientTerminalMapper.insertInto(clientTerminal);
         }
         //新增缓存
         putClientTerminalMap(clientTerminal);
@@ -205,14 +205,23 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     }
 
     @Override
-    public List<ClientTerminal> getTerminalByIpList(List<Client> ipList) {
+    public List<ClientTerminal> getTerminalByClientList(List<Client> clientList) {
         List<ClientTerminal> list = null;
-        if (!CollectionUtils.isEmpty(ipList)) {
-            list = clientTerminalMapper.getClientTerminalByIpList(ipList);
+        if (!CollectionUtils.isEmpty(clientList)) {
+            List<Long> ipList = clientList.stream().map(f -> f.getIpAddress()).collect(Collectors.toList());
+            list = clientTerminalMapper.getClientTerminalByIpList(ipList,null);
         }
         return list;
     }
 
+    @Override
+    public List<ClientTerminal> getTerminalByIpList(List<Long> ipList, ClientTerminal clientTerminal ) {
+        List<ClientTerminal> list = null;
+        if (!CollectionUtils.isEmpty(ipList)) {
+            list = clientTerminalMapper.getClientTerminalByIpList(ipList,clientTerminal);
+        }
+        return list;
+    }
 
     @Override
     public Long save(ClientTerminal clientTerminal, SaveType type) {

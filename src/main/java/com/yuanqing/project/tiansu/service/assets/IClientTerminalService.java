@@ -32,12 +32,6 @@ public interface IClientTerminalService extends BaseService<ClientTerminal, Long
      */
     List<JSONObject> getAllToReport(JSONObject filters);
 
-    /**
-     *
-     * @param clientTerminal
-     * @return
-     */
-    Long insertInto(ClientTerminal clientTerminal);
 
     /**
      * 获取活跃终端
@@ -62,10 +56,19 @@ public interface IClientTerminalService extends BaseService<ClientTerminal, Long
     List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> list);
 
     /**
-     * 根据ip list 获取终端列表
-     * @param list
+     * 根据终端 list 获取终端列表
+     * @param list 终端list
      * @return
      */
-    List<ClientTerminal> getTerminalByIpList(List<Client> list);
+    List<ClientTerminal> getTerminalByClientList(List<Client> list);
+
+
+    /**
+     * 根据ip list 获取终端列表
+     * @param ipList IP list
+     * @return
+     */
+    List<ClientTerminal> getTerminalByIpList(List<Long> ipList,ClientTerminal clientTerminal);
+
 
 }

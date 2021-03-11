@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.DoubleUtils;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.framework.web.domain.BaseEntity;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.mapper.analysis.StatisticsMapper;
@@ -126,7 +128,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
     /**
      *
      * @param cameraList 摄像头集合
-     * @return
+     * @return 摄像头被访问对象
      */
     @Override
     public List<CameraVisit> getCameraVisit(List<Camera> cameraList,CameraVisit cameraVisit) {
@@ -150,7 +152,25 @@ public class StatisticsServiceImpl implements IStatisticsService {
             });
         });
 
+        return cameraVisitList;
+    }
 
+    /**
+     *
+     * @param cameraList 获取摄像头被访问集合
+     * @return 摄像头对象
+     */
+    @Override
+    public List<String> getCameraVisited(List<Camera> cameraList,CameraVisit cameraVisit) {
+
+        if(CollectionUtils.isEmpty(cameraList)){
+            log.error("cameraList为空，根据device_code批量查询摄像头列表为空");
+            return null;
+        }
+
+        List<String> deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
+
+        List<String> cameraVisitList = statisticsMapper.getCameraVisited(deviceCodeList, cameraVisit);
 
         return cameraVisitList;
     }
@@ -191,6 +211,21 @@ public class StatisticsServiceImpl implements IStatisticsService {
         });
 
         return terminalVisitedCameraList;
+    }
+
+    @Override
+    public List<Long> getTerminalVisited(List<Camera> cameraList, BaseEntity baseEntity) {
+
+        if(CollectionUtils.isEmpty(cameraList)){
+            log.error("cameraList为空");
+            return null;
+        }
+
+        List<String> deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
+
+        List<Long> terminalIpList = statisticsMapper.getTerminalVisited(deviceCodeList,baseEntity);
+
+        return terminalIpList;
     }
 
 

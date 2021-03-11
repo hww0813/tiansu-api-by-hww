@@ -74,8 +74,10 @@
         <where>
             bct.IP_ADDRESS in
             <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-                #{item.ipAddress}
+                #{item}
             </foreach>
+            <if test="filter.status != null"> and bct.STATUS = #{filter.status}</if>
+            <if test="filter.ipAddress != null "> and bct.IP_ADDRESS = #{filter.ipAddress}</if>
         </where>
     </select>
 

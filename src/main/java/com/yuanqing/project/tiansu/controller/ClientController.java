@@ -79,7 +79,7 @@ public class ClientController extends BaseController {
             List<Client> clientList = clientService.getList(client);
 
             startPage();
-            list = clientTerminalService.getTerminalByIpList(clientList);
+            list = clientTerminalService.getTerminalByClientList(clientList);
 
         }else{
             startPage();

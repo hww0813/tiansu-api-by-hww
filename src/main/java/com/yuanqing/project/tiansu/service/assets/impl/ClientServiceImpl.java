@@ -13,6 +13,7 @@ import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,15 @@ public class ClientServiceImpl implements IClientService {
 
     @Autowired
     private OperationBehaviorMapper operationBehaviorMapper;
+
+    @Override
+    public List<Client> getClientByIpList(List<Long> ipList, Client client) {
+        List<Client> list = null;
+        if (!CollectionUtils.isEmpty(ipList)) {
+            list = clientMapper.getClientByIpList(ipList,client);
+        }
+        return list;
+    }
 
     @Override
     public boolean changStatus(List<Client> list) {

@@ -98,6 +98,7 @@ public class TerminalVisitedController extends BaseController {
 
         //TODO:慢sql
         PageResult pageResult = operationBehaviorService.queryOperationList(operationBehavior);
+
         PageResult data = (PageResult)pageResult.get("data");
 
         List<OperationBehavior> operationBehaviorList = (List<OperationBehavior>) data.get("list");

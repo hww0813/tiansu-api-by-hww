@@ -89,5 +89,36 @@
 
     </select>
 
+    <select id="getCameraVisited" resultType="java.lang.String">
+
+        SELECT
+            DISTINCT dst_code
+        FROM
+            busi_statistics
+        <where>
+            dst_code in
+            <foreach collection="list" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+            <if test="filter.startDate != null and filter.endDate != null"> and stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')</if>
+        </where>
+    </select>
+
+
+    <select id="getTerminalVisited" resultType="java.lang.Long">
+        SELECT
+        DISTINCT src_ip
+        FROM
+        busi_statistics
+        <where>
+            dst_code in
+            <foreach collection="list" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+            <if test="filter.startDate != null and filter.endDate != null"> and stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')</if>
+        </where>
+
+    </select>
+
 
 </mapper>

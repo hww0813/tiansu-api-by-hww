@@ -5,6 +5,7 @@ import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -146,4 +147,8 @@ public interface ClientMapper extends BaseMapper<Client,Long> {
      * @return
      */
     List<JSONObject> getTerminalNumByUserName(List<String> usernameList);
+
+
+    List<Client> getClientByIpList(@Param("list") List<Long> ipList,
+                                   @Param("filter") Client client);
 }

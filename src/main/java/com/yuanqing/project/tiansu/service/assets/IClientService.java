@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.service.assets;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Client;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,15 @@ import java.util.Map;
  * @author xucan
  */
 public interface IClientService extends BaseService<Client,Long> {
+
+    /**
+     * 根据IP list 查询client
+     * @param ipList
+     * @param clientTerminal
+     * @return
+     */
+    List<Client> getClientByIpList(List<Long> ipList, Client clientTerminal);
+
     /**
      * 修改选中数据的状态为已确认
      * @param list 集合

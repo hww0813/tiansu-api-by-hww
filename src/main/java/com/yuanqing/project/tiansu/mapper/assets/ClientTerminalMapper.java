@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
@@ -30,15 +31,17 @@ public interface ClientTerminalMapper extends BaseMapper<ClientTerminal, Long> {
 
     /**
      * 根据IP list 查询终端
+     * @param list IP list
+     * @param clientTerminal 过滤条件
+     * @return
      */
-
-    List<ClientTerminal> getClientTerminalByIpList(List<Client> list);
+    List<ClientTerminal> getClientTerminalByIpList(@Param("list") List<Long> list,
+                                                   @Param("filter") ClientTerminal clientTerminal);
 
     ClientTerminal findByIpAddress(Long ip);
 
     void updateClientTerminal(ClientTerminal clientTerminal);
 
-    void insertInto(ClientTerminal clientTerminal);
 
     void updateMark(Long serverIp);
 }

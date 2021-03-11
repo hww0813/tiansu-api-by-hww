@@ -38,9 +38,6 @@ public class CameraVisitedController extends BaseController {
     @ApiOperation(value = "获取摄像头被访问列表", httpMethod = "GET")
     public AjaxResult getCameraVisitedList(Camera camera) {
 
-
-
-
         CameraVisit cameraVisit = new CameraVisit();
 
         cameraVisit.setstartDate(camera.getstartDate());
@@ -53,8 +50,6 @@ public class CameraVisitedController extends BaseController {
         List<Camera> cameraList = cameraService.getList(camera);
 
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList,cameraVisit);
-
-
 
         return AjaxResult.success(getDataTable(cameraVisitList));
 
