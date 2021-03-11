@@ -3,6 +3,7 @@ package com.yuanqing.tiansu.assets;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class ServerTreeServiceTest {
     private OperationBehaviorMapper operationBehaviorMapper;
 
     /**
-     * 根据sessionId 查询服务器
+     * 根据sessionId 查询服务器列表 1/2
      */
     @Test
     public void getSessionServerList(){
@@ -37,11 +38,13 @@ public class ServerTreeServiceTest {
         ServerTree serverTree = new ServerTree();
 
         //1.根据sessionID 查询操作行为表，得到相关操作行为到dst_ip 集合
-        List<Long> dstIpList = operationBehaviorMapper.getDstIpBySessionId(630423123174494209L);
+        List<Long> dstIpList = operationBehaviorMapper.getDstIpBySessionId(630494791108530177L);
 
         //2.根据dst_ip集合 和serverTree 过滤条件 查询服务器表，得到sessionId 相关服务器列表
         List<ServerTree> sessionServerList = serverTreeService.getSessionServerList(serverTree, dstIpList);
 
+        Assert.assertEquals(2, sessionServerList.size());
         System.out.println(sessionServerList);
+
     }
 }

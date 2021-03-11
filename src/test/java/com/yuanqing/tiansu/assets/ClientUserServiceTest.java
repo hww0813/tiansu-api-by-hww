@@ -1,5 +1,6 @@
 package com.yuanqing.tiansu.assets;
 
+import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
 import com.yuanqing.project.tiansu.domain.assets.dto.ClientUserDto;
 import com.yuanqing.project.tiansu.service.assets.IClientUserService;
@@ -23,7 +24,7 @@ public class ClientUserServiceTest {
     private IClientUserService clientUserService;
 
     /**
-     * 查询用户列表（包含终端数）1/2
+     * 查询用户列表（数量和对应终端数）1/2
      */
     @Test
     public void handleClientUserTerminalNum(){
@@ -31,74 +32,44 @@ public class ClientUserServiceTest {
         List<ClientUser> list = clientUserService.getList(new ClientUser());
         List<ClientUserDto> dtoList = clientUserService.handleClientUserTerminalNum(list);
         System.out.println(dtoList);
-        Assert.assertEquals(32,dtoList.size());
+        Assert.assertEquals(5,dtoList.size());
     }
 
     /**
-     * 活跃用户？？
+     * 查询活跃用户（数量和对应终端数）1/2
      */
     @Test
     public void getActiveClientUser(){
         List<ClientUser> activeClientUser = clientUserService.getActiveClientUser();
-        System.out.println(activeClientUser);
+//        System.out.println(activeClientUser);
+        Assert.assertEquals(3,activeClientUser.size());
     }
 
-    /**
-     * 1改成0
-     */
-    @Test
-    public void changStatus(){
-        String[] ids = {"1","600000000000000001"};
-        boolean b = clientUserService.changStatus(ids);
-        Assert.assertEquals(true,b);
-    }
 
     /**
-     * 条件查询用户列表？？？
+     * 根据条件查询用户列表(多条件待添加)
      */
     @Test
     public void getList(){
         ClientUser clientUser = new ClientUser();
 
         //条件
-        clientUser.setUsername("admin");
+        clientUser.setUsername("001");
 //        clientUser.setId(1L);
-//        clientUser.setStatus(1);
+        clientUser.setStatus(0);
 //        clientUser.setSource("test");
         List<ClientUser> list = clientUserService.getList(clientUser);
         System.out.println(list);
+        Assert.assertEquals(1,list.size());
     }
 
     /**
-     * 按id查找用户，包括ip
+     * 按id查找用户，包括ip  --1/2
      */
     @Test
     public void findById(){
-        ClientUser clientUser = clientUserService.findById(600000000000000001L);
+        ClientUser clientUser = clientUserService.findById(100000000000000001L);
         System.out.println(clientUser);
-    }
-
-    /**
-     * 删除用户
-     */
-    @Test
-    public void delete(){
-        save();
-        clientUserService.deleteById(1L);
-    }
-
-    /**
-     * 新增用户
-     */
-    @Test
-    public void save(){
-        ClientUser clientUser = new ClientUser();
-        clientUser.setUsername("test");
-        clientUser.setSource("test");
-        clientUser.setStatus(1);
-        clientUser.setId(1L);
-        Long i = clientUserService.save(clientUser);
-        System.out.println(i);
     }
 
 }

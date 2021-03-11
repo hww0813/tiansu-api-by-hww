@@ -40,7 +40,7 @@ public class ClientServiceTest {
             JSONObject jsonObject = userNumByTerminal.get(i);
             v_userCnt[i] = jsonObject.getString("userCnt");
         }
-        Assert.assertEquals("2",v_userCnt[0]); //检验第1个ip的用户数
-        Assert.assertEquals("1",v_userCnt[1]); //检验第2个ip的用户数
+        Assert.assertEquals("1",v_userCnt[0]); //检验第1个ip的用户数为1
+        Assert.assertEquals("3",v_userCnt[1]); //检验第2个ip的用户数为3
     }
 }

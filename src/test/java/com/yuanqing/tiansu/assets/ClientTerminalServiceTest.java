@@ -30,96 +30,61 @@ public class ClientTerminalServiceTest {
     @Autowired
     private IClientService clientService;
 
-
     /**
-     * 批量更新终端状态 1改成0, 改为0后返回true
-     */
-    @Test
-    public void changeStatus(){
-        String[] ids = {"600000000000000001", "600000000000000002"};
-        boolean b = clientTerminalService.changStatus(ids);
-        Assert.assertEquals(true,b);
-    }
-
-    /**
-     * 查询终端列表（包含用户数）？？？
+     * 查询终端列表(数量和对应用户数) 1/2
      */
     @Test
     public void handleTerminalUserNum(){
         List<ClientTerminal> list = clientTerminalService.getList(new ClientTerminal());
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(list);
-        System.out.println(dtoList.size());
-        System.out.println(dtoList);
+//        System.out.println(dtoList);
+        Assert.assertEquals(4,dtoList.size());
     }
 
     /**
-     * 查询活跃的终端 ？？？
+     * 查询活跃的终端(数量和对应用户数) 1/2
      */
     @Test
     public void getActiveTerminal(){
         List<ClientTerminal> activeTerminal = clientTerminalService.getActiveTerminal();
-
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(activeTerminal);
-        System.out.println(dtoList);
+//        System.out.println(dtoList);
+        Assert.assertEquals(1,dtoList.size());
     }
 
+    /**
+     * 永远返回1个值，有什么用途？
+     */
     @Test
     public void findById(){
-        ClientTerminal clientTerminal = clientTerminalService.findById(1L);
+        ClientTerminal clientTerminal = clientTerminalService.findById(100000000000000004L);
+        System.out.println("++++++++++++++++++++++");
         System.out.println(clientTerminal);
     }
 
     /**
-     * 查询记录总数
+     * 查询表记录总数
      */
     @Test
     public void getList(){
         ClientTerminal clientTerminal = new ClientTerminal();
         List<ClientTerminal> list = clientTerminalService.getList(clientTerminal);
-        Assert.assertEquals(31,list.size());
+        Assert.assertEquals(4,list.size());
     }
 
     /**
-     * 根据id删除记录
-     */
-    @Test
-    public void delete(){
-        ClientTerminal clientTerminal = new ClientTerminal();
-        List<ClientTerminal> list1 = clientTerminalService.getList(clientTerminal);
-
-        clientTerminalService.deleteById(600000000000000004L);
-
-        Assert.assertEquals(31,list1.size()-1);
-    }
-
-    /**
-     * 新增一条记录
-     */
-    @Test
-    public void save(){
-        ClientTerminal clientTerminal = new ClientTerminal();
-        clientTerminal.setId(2021L);
-        clientTerminal.setIpAddress(11111L);
-        clientTerminal.setDeviceCode("1111");
-        clientTerminal.setDeviceName("testTerminal");
-        clientTerminal.setStatus(1);
-        Long i = clientTerminalService.save(clientTerminal, SaveType.INSERT);
-        Assert.assertEquals("2021",i.toString());
-    }
-
-    /**
-     * 按ip查数量 ip没对应上的不算
+     * 按ip查数量 ip没对应上的不算--报错
      */
     @Test
     public void getTerminalByIpList(){
         Client client = new Client();
-//        client.setUsername("admin");
+        client.setUsername("001");
         List<Client> clientList = clientService.getList(client);
 
         List<ClientTerminal> list = clientTerminalService.getTerminalByClientList(clientList);
 
         System.out.println(list.size());
-        Assert.assertEquals(31,list.size());
+//        Assert.assertEquals(4,list.size());
 
     }
 
