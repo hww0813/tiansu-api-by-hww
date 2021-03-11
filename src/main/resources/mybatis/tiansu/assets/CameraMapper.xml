@@ -36,6 +36,7 @@
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         <where>
+            device_type = 1
             <if test="deviceCode != null  and deviceCode != ''"> and DEVICE_CODE = #{deviceCode}</if>
             <if test="deviceDomain != null  and deviceDomain != ''"> and DEVICE_DOMAIN = #{deviceDomain}</if>
             <if test="deviceName != null  and deviceName != ''"> and DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
@@ -48,7 +49,6 @@
             <if test="ipAddress != null "> and IP_ADDRESS = #{ipAddress}</if>
             <if test="status != null"> and STATUS = #{status}</if>
             <if test="sipServerId != null "> and SIP_SERVER_ID = #{sipServerId}</if>
-            <if test="deviceType != null  and deviceType != ''"> and DEVICE_TYPE = #{deviceType}</if>
             <if test="domainIp != null "> and DOMAIN_IP = #{domainIp}</if>
             <if test="domainPort != null "> and DOMAIN_PORT = #{domainPort}</if>
             <if test="isGb != null "> and IS_GB = #{isGb}</if>
@@ -67,6 +67,7 @@
             <foreach collection="list" open="(" separator="," close=")" item="item">
                 #{item}
             </foreach>
+            and device_type = 1
         </where>
     </select>
 
@@ -77,17 +78,19 @@
             <foreach collection="list" open="(" separator="," close=")" item="item">
                 #{item}
             </foreach>
+            and device_type = 1
         </where>
     </select>
 
     <select id="findById" parameterType="Long" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         where ID = #{id}
+        and device_type = 1
     </select>
 
     <select id="gourpByGb" resultType="com.alibaba.fastjson.JSONObject">
 
-        select is_gb type,count(*) count  from busi_camera where device_type is null GROUP BY IS_GB
+        select is_gb type,count(*) count  from busi_camera where device_type = 1 GROUP BY IS_GB
 
     </select>
 

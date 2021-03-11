@@ -100,7 +100,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
                             visitedRate.put("clientCnt",h.getTerminalCnt());
                             visitedRate.put("visitCnt",h.getVisitedCamera());
                             visitedRate.put("visitedCnt",h.getUserCnt());
-                            Double rate =  DoubleUtils.roundOff(((double) h.getVisitedCamera()/(double) h.getAllCount()),2);
+                            Double rate =  DoubleUtils.roundOff(((double) h.getTerminalCnt()/(double) h.getAllCount()),2);
                             visitedRate.put("rate",rate*100+"%");
                         }else{
                             visitedRate.put("cameraCnt",0);
