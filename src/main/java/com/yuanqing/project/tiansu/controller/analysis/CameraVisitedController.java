@@ -54,6 +54,7 @@ public class CameraVisitedController extends BaseController {
         camera.setendDate(null);
 
         startPage();
+        // TODO: camera中开始结束时间没有值
         List<Camera> cameraList = cameraService.getList(camera);
 
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList,cameraVisit);

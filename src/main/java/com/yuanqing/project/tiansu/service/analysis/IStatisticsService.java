@@ -74,4 +74,6 @@ public interface IStatisticsService {
     List<JSONObject> getClientVisitCntToReport(JSONObject filters);
 
     List<JSONObject> getClientVisitRelateCameraToReport(JSONObject filters);
+
+    List<JSONObject> getCameraVisitedToReport(JSONObject filters);
 }

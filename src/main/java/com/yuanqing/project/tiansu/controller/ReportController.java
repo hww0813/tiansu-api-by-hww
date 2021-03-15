@@ -1737,101 +1737,101 @@ public class ReportController extends BaseController {
 //        }
 //    }
 
-//    @GetMapping(value = "analysis/camera/visited")
-//    public void getAnalysisCameraReport(@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-//                                        @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-//                                        @RequestParam(value = "cameraIp", required = false) String cameraIp,
-//                                        @RequestParam(value = "region[]", required = false) String[] region,
-//                                        @RequestParam(value = "cameraCode", required = false) String cameraCode,
-//                                        @RequestParam(value = "cameraName", required = false) String cameraName,
-//                                        @RequestParam(value = "action", required = false) String action,
-//                                        @RequestParam(value = "cameraId", required = false) String cameraId,
-//                                        @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-//
-//        JSONObject filters = new JSONObject();
-//        if (startDate != null) filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-//        if (startDate != null) filters.put("endDate", endDate.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
-//        filters.put("cameraIp", cameraIp);
-//        filters.put("cameraCode", cameraCode);
-//        filters.put("cameraName", cameraName);
-//        filters.put("action", action);
-//        filters.put("cameraId", cameraId);
-//        filters = RegionUtil.setRegion(filters, region);
-//
-//        if ("xlsx".equals(format)) {
-//            try {
-//                this.getAnalysisCameraExcelReport(response, filters);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
-//
-//            org.springframework.core.io.Resource resource = null;
-//
-//            resource = ctx.getResource(ANALYSIS_CAMERA);
-//
-//            InputStream inputStream;
-//            try {
-//                inputStream = resource.getInputStream();
-//
-//
-//                //编译报表
-//                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
-//
-//                //参数
-//                Map<String, Object> params = new HashMap<>();
-//
-//                List<JSONObject> list = cameraVisitedManager.getCameraVisitedToReport(filters);
-//
-//                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
-//
-//                //print文件
-//                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
-//
-//                JRAbstractExporter exporter = null;
-//
-//                if ("pdf".equals(format)) {
-//                    exporter = new JRPdfExporter();
-//                    response.setContentType("application/pdf");
-//                } else if ("docx".equals(format)) {
-//                    exporter = new JRDocxExporter();
-//                    response.setContentType("application/msword");
-//                } else if ("html".equals(format)) {
-//                    exporter = new HtmlExporter();
-//                    response.setContentType("application/html");
-//                } else {
-//                    throw new RuntimeException("参数错误");
-//                }
-//
-//                //设置输入项
-//                ExporterInput exporterInput = new SimpleExporterInput(print);
-//                exporter.setExporterInput(exporterInput);
-//
-//                //设置输出项
-//                if ("html".equals(format)) {
-//                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
-//
-//                    exporter.setExporterOutput(htmlExportOutput);
-//                } else {
-//                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
-//                            response.getOutputStream());
-//                    exporter.setExporterOutput(exporterOutput);
-//
-//                }
-//
-//                response.setHeader("Content-Disposition",
-//                        "attachment;filename=" + URLEncoder.encode("摄像头被访问报表." + format, "utf-8"));
-//
-//                exporter.exportReport();
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (JRException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    @GetMapping(value = "analysis/camera/visited")
+    public void getAnalysisCameraReport(@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                        @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                        @RequestParam(value = "cameraIp", required = false) String cameraIp,
+                                        @RequestParam(value = "region[]", required = false) String[] region,
+                                        @RequestParam(value = "cameraCode", required = false) String cameraCode,
+                                        @RequestParam(value = "cameraName", required = false) String cameraName,
+                                        @RequestParam(value = "action", required = false) String action,
+                                        @RequestParam(value = "cameraId", required = false) String cameraId,
+                                        @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+
+        JSONObject filters = new JSONObject();
+        if (startDate != null) filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        if (startDate != null) filters.put("endDate", endDate.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
+        filters.put("cameraIp", cameraIp);
+        filters.put("cameraCode", cameraCode);
+        filters.put("cameraName", cameraName);
+        filters.put("action", action);
+        filters.put("cameraId", cameraId);
+        filters = RegionUtil.setRegion(filters, region);
+
+        if ("xlsx".equals(format)) {
+            try {
+                this.getAnalysisCameraExcelReport(response, filters);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
+
+            org.springframework.core.io.Resource resource = null;
+
+            resource = ctx.getResource(ANALYSIS_CAMERA);
+
+            InputStream inputStream;
+            try {
+                inputStream = resource.getInputStream();
+
+
+                //编译报表
+                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+
+                //参数
+                Map<String, Object> params = new HashMap<>();
+
+                List<JSONObject> list = statisticsService.getCameraVisitedToReport(filters);
+
+                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+
+                //print文件
+                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
+
+                JRAbstractExporter exporter = null;
+
+                if ("pdf".equals(format)) {
+                    exporter = new JRPdfExporter();
+                    response.setContentType("application/pdf");
+                } else if ("docx".equals(format)) {
+                    exporter = new JRDocxExporter();
+                    response.setContentType("application/msword");
+                } else if ("html".equals(format)) {
+                    exporter = new HtmlExporter();
+                    response.setContentType("application/html");
+                } else {
+                    throw new RuntimeException("参数错误");
+                }
+
+                //设置输入项
+                ExporterInput exporterInput = new SimpleExporterInput(print);
+                exporter.setExporterInput(exporterInput);
+
+                //设置输出项
+                if ("html".equals(format)) {
+                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
+
+                    exporter.setExporterOutput(htmlExportOutput);
+                } else {
+                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+                            response.getOutputStream());
+                    exporter.setExporterOutput(exporterOutput);
+
+                }
+
+                response.setHeader("Content-Disposition",
+                        "attachment;filename=" + URLEncoder.encode("摄像头被访问报表." + format, "utf-8"));
+
+                exporter.exportReport();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JRException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 //    @GetMapping(value = "analysis/camera/visit/cnt")
 //    public void getAnalysisCameraReport(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -2693,38 +2693,38 @@ public class ReportController extends BaseController {
 //
 //        ExportExcelUtils.exportExcel(response, "摄像头被访问次数报表.xlsx", data);
 //    }
-//
-//    private void getAnalysisCameraExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-//        ExcelData data = new ExcelData();
-//        data.setName("摄像头被访问");
-//        List<JSONObject> all = cameraVisitedManager.getCameraVisitedToReport(filters);
-//        List<String> titles = new ArrayList();
-//        titles.add("摄像头编号");
-//        titles.add("摄像头IP");
-//        titles.add("摄像头名称");
-//        titles.add("所在地区");
-//        titles.add("操作类型");
-//        titles.add("被访问次数");
-//        titles.add("相关终端数");
-//        data.setTitles(titles);
-//
-//        List<List<Object>> rows = new ArrayList();
-//        for (JSONObject j : all) {
-//            List<Object> row = new ArrayList();
-//            row.add(j.get("CAMERA_CODE"));
-//            row.add(j.get("CAMERA_IP"));
-//            row.add(j.get("CAMERA_NAME"));
-//            row.add(j.get("CAMERA_REGION"));
-//            row.add(j.get("ACTION"));
-//            row.add(j.get("VISITED_CNT"));
-//            row.add(j.get("CLIENT_CNT"));
-//            rows.add(row);
-//        }
-//        data.setRows(rows);
-//
-//        ExportExcelUtils.exportExcel(response, "摄像头被访问报表.xlsx", data);
-//    }
-//
+
+    private void getAnalysisCameraExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
+        ExcelData data = new ExcelData();
+        data.setName("摄像头被访问");
+        List<JSONObject> all = statisticsService.getCameraVisitedToReport(filters);
+        List<String> titles = new ArrayList();
+        titles.add("摄像头编号");
+        titles.add("摄像头IP");
+        titles.add("摄像头名称");
+        titles.add("所在地区");
+        titles.add("操作类型");
+        titles.add("被访问次数");
+        titles.add("相关终端数");
+        data.setTitles(titles);
+
+        List<List<Object>> rows = new ArrayList();
+        for (JSONObject j : all) {
+            List<Object> row = new ArrayList();
+            row.add(j.get("CAMERA_CODE"));
+            row.add(j.get("CAMERA_IP"));
+            row.add(j.get("CAMERA_NAME"));
+            row.add(j.get("CAMERA_REGION"));
+            row.add(j.get("ACTION"));
+            row.add(j.get("VISITED_CNT"));
+            row.add(j.get("CLIENT_CNT"));
+            rows.add(row);
+        }
+        data.setRows(rows);
+
+        ExportExcelUtils.exportExcel(response, "摄像头被访问报表.xlsx", data);
+    }
+
 //    private void getAnalysisClientRelatedCameraExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
 //        ExcelData data = new ExcelData();
 //        data.setName("终端访问相关摄像头");
@@ -2771,7 +2771,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = statisticsService.getClientVisitCntToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -2808,7 +2808,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = statisticsService.getClientVisitToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -2840,7 +2840,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = rawSignalService.getAllToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();

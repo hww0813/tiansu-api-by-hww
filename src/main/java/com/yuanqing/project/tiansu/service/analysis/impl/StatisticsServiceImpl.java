@@ -245,11 +245,11 @@ public class StatisticsServiceImpl implements IStatisticsService {
         TerminalVisit condTerminalVisit = new TerminalVisit();
         condTerminalVisit.setstartDate(filters.getString("startDate"));
         condTerminalVisit.setendDate(filters.getString("endDate"));
-        if(StringUtils.isNotEmpty(filters.getString("clientIp"))) {
+        if (StringUtils.isNotEmpty(filters.getString("clientIp"))) {
             condTerminalVisit.setIpAddress(IpUtils.ipToLong(filters.getString("clientIp")));
         }
         condTerminalVisit.setUsername(filters.getString("user"));
-        if(StringUtils.isNotEmpty(filters.getString("action"))) {
+        if (StringUtils.isNotEmpty(filters.getString("action"))) {
             condTerminalVisit.setAction(Integer.valueOf(filters.getString("action")));
         }
         List<TerminalVisit> terminalVisitList = statisticsMapper.getTerminalVisit(condTerminalVisit);
@@ -296,14 +296,14 @@ public class StatisticsServiceImpl implements IStatisticsService {
                 }
 
                 Long visitCnt = terminalVisit.getVisitCnt();
-                if(visitCnt != null) {
+                if (visitCnt != null) {
                     jsonObject.put("VISIT_CNT", BigDecimal.valueOf(visitCnt));
                 } else {
                     jsonObject.put("VISIT_CNT", BigDecimal.valueOf(0L));
                 }
 
                 Long cameraCnt = terminalVisit.getCameraCnt();
-                if(cameraCnt != null) {
+                if (cameraCnt != null) {
                     jsonObject.put("CAMERA_CNT", BigDecimal.valueOf(cameraCnt));
                 } else {
                     jsonObject.put("CAMERA_CNT", BigDecimal.valueOf(0L));
@@ -386,4 +386,100 @@ public class StatisticsServiceImpl implements IStatisticsService {
         return list;
     }
 
+    @Override
+    public List<JSONObject> getCameraVisitedToReport(JSONObject filters) {
+        List<JSONObject> cameraVisitedObjectList = new ArrayList<>();
+
+        Camera condCamera = new Camera();
+        // TODO: 开始结束时间未生效
+//        condCamera.setstartDate(filters.getString("startDate"));
+//        condCamera.setendDate(filters.getString("endDate"));
+        if (StringUtils.isNotEmpty(filters.getString("cameraIp"))) {
+            condCamera.setIpAddress(IpUtils.ipToLong(filters.getString("cameraIp")));
+        }
+        condCamera.setDeviceCode(filters.getString("cameraCode"));
+        condCamera.setDeviceName(filters.getString("cameraName"));
+        // TODO: 地区查询
+//        condCamera.setRegion();
+        List<Camera> cameraList = cameraService.getList(condCamera);
+
+        CameraVisit condCameraVisit = new CameraVisit();
+        condCameraVisit.setstartDate(filters.getString("startDate"));
+        condCameraVisit.setendDate(filters.getString("endDate"));
+        List<CameraVisit> cameraVisitList = this.getCameraVisit(cameraList, condCameraVisit);
+        if (!CollectionUtils.isEmpty(cameraVisitList)) {
+            for (CameraVisit cameraVisit : cameraVisitList) {
+                JSONObject jsonObject = new JSONObject();
+
+                jsonObject.put("USERNAME", "");
+                if (StringUtils.isNotEmpty(cameraVisit.getDeviceCode())) {
+                    jsonObject.put("CAMERA_CODE", cameraVisit.getDeviceCode());
+                } else {
+                    jsonObject.put("CAMERA_CODE", "");
+                }
+                if (cameraVisit.getIpAddress() != null) {
+                    jsonObject.put("CAMERA_IP", IpUtils.longToIPv4(cameraVisit.getIpAddress()));
+                } else {
+                    jsonObject.put("CAMERA_IP", "");
+                }
+                if (StringUtils.isNotEmpty(cameraVisit.getDeviceName())) {
+                    jsonObject.put("CAMERA_NAME", cameraVisit.getDeviceName());
+                } else {
+                    jsonObject.put("CAMERA_NAME", "");
+                }
+                if (StringUtils.isNotEmpty(cameraVisit.getRegionName())) {
+                    jsonObject.put("CAMERA_REGION", cameraVisit.getRegionName());
+                } else {
+                    jsonObject.put("CAMERA_REGION", "");
+                }
+                Integer action = cameraVisit.getAction();
+                if (action != null) {
+                    if (action == 0) {
+                        jsonObject.put("ACTION", "播放视频");
+                    } else if (action == 1) {
+                        jsonObject.put("ACTION", "下载视频");
+                    } else if (action == 2) {
+                        jsonObject.put("ACTION", "回放视频");
+                    } else if (action == 3) {
+                        jsonObject.put("ACTION", "控制设备");
+                    } else if (action == 4) {
+                        jsonObject.put("ACTION", "登录");
+                    } else if (action == 5) {
+                        jsonObject.put("ACTION", "退出");
+                    } else if (action == 6) {
+                        jsonObject.put("ACTION", "其他操作");
+                    } else if (action == 7) {
+                        jsonObject.put("ACTION", "订阅");
+                    } else if (action == 8) {
+                        jsonObject.put("ACTION", "通知");
+                    } else if (action == 9) {
+                        jsonObject.put("ACTION", "查询");
+                    } else if (action == 10) {
+                        jsonObject.put("ACTION", "PLAY_DEFEAT");  // 播放失败
+                    } else {
+                        jsonObject.put("ACTION", "OTHER");  // 其它
+                    }
+                } else {
+                    jsonObject.put("ACTION", "OTHER");  // 其它
+                }
+
+                Long visitCnt = cameraVisit.getVisitCnt();
+                if (visitCnt != null) {
+                    jsonObject.put("VISITED_CNT", BigDecimal.valueOf(visitCnt));
+                } else {
+                    jsonObject.put("VISITED_CNT", BigDecimal.valueOf(0L));
+                }
+
+                Long terminalCnt = cameraVisit.getTerminalCnt();
+                if (terminalCnt != null) {
+                    jsonObject.put("CLIENT_CNT", BigDecimal.valueOf(terminalCnt));
+                } else {
+                    jsonObject.put("CLIENT_CNT", BigDecimal.valueOf(0L));
+                }
+
+                cameraVisitedObjectList.add(jsonObject);
+            }
+        }
+        return cameraVisitedObjectList;
+    }
 }
