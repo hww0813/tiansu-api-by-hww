@@ -68,4 +68,10 @@ public interface IStatisticsService {
      * @return 返回终端IP集合
      */
     List<Long> getTerminalVisited(List<Camera> cameraList, BaseEntity baseEntity);
+
+    List<JSONObject> getClientVisitToReport(JSONObject filters);
+
+    List<JSONObject> getClientVisitCntToReport(JSONObject filters);
+
+    List<JSONObject> getClientVisitRelateCameraToReport(JSONObject filters);
 }
