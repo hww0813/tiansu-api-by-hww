@@ -206,12 +206,12 @@ public class StatisticsServiceImpl implements IStatisticsService {
 
         operationBehaviorList.stream().forEach(f -> {
             cameraList.stream().forEach(h -> {
-                if (f.getCameraId() == h.getId()) {
+                if (f.getCameraId().longValue() == h.getId().longValue()) {
                     JSONObject j = new JSONObject();
-                    j.put("deviceCode", h.getDeviceCode());
-                    j.put("ipAddress", h.getIpAddress());
-                    j.put("deviceName", h.getDeviceName());
-                    j.put("port", h.getDomainPort());
+                    j.put("dstCode", h.getDeviceCode());
+                    j.put("dstIp", h.getIpAddress());
+                    j.put("dstDeviceName", h.getDeviceName());
+                    j.put("dstPort", h.getDomainPort());
                     j.put("action", f.getAction());
                     j.put("actionDetail", f.getActionDetail());
                     j.put("stamp", f.getStamp());

@@ -75,6 +75,7 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
                 operationBehavior.setCountryRegion(region);
             }
         }
+        operationBehavior.setNum(operationBehavior.getSize() * (operationBehavior.getNum() - 1));
         //总数据
         CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() ->  operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
         //操作行为列表

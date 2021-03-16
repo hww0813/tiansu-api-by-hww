@@ -121,12 +121,7 @@ public class CameraServiceImpl implements ICameraService {
          * 现根据私标作为key来查历史表
          * */
         String dstCode = entity.getDeviceId();
-//        try {
-//            Long dstDeviceIp = IPv4Util.ipToLong(this.replaceBlank(entity.getIpAddress()));
-//        }catch (Exception e) {
-//            System.out.println("------------------------88888888888888888888888-------------------------");
-//            Long dstDeviceIp = null;
-//        }
+
 
         // 导入时更新摄像头主表里的区域信息，ip和摄像头名称。
         String deviceId = StringUtils.replaceBlank(entity.getDeviceId());

@@ -99,6 +99,15 @@ public class BaseController
         return rspData;
     }
 
+    protected TableDataInfo getDataTable(List<?> list, int total)
+    {
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(HttpStatus.SUCCESS);
+        rspData.setList(list);
+        rspData.setTotal(total);
+        return rspData;
+    }
+
     /**
      * 响应返回结果
      *

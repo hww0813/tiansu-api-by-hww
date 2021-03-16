@@ -112,9 +112,4 @@ public class OperationBehavior extends BaseEntity {
 
     private Integer size;
 
-
-
-
-
-
 }

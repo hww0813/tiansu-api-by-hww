@@ -209,7 +209,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         List<ClientTerminal> list = null;
         if (!CollectionUtils.isEmpty(clientList)) {
             List<Long> ipList = clientList.stream().map(f -> f.getIpAddress()).collect(Collectors.toList());
-            list = clientTerminalMapper.getClientTerminalByIpList(ipList,null);
+            list = clientTerminalMapper.getClientTerminalByIpList(ipList,new ClientTerminal());
         }
         return list;
     }

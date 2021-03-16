@@ -108,16 +108,16 @@ public class TerminalVisitedController extends BaseController {
 
 
 
-        //TODO:慢sql
         PageResult pageResult = operationBehaviorService.queryOperationList(operationBehavior);
 
         PageResult data = (PageResult)pageResult.get("data");
+
 
         List<OperationBehavior> operationBehaviorList = (List<OperationBehavior>) data.get("list");
 
         List<JSONObject> terminalVisitedCameraList = statisticsService.associateCameraInfo(operationBehaviorList);
 
-        return AjaxResult.success(terminalVisitedCameraList);
+        return AjaxResult.success(getDataTable(terminalVisitedCameraList, (Integer) data.get("total")));
 
 
     }
