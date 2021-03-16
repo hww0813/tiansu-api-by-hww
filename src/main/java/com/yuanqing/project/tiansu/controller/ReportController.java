@@ -1,10 +1,7 @@
 package com.yuanqing.project.tiansu.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.utils.ExportExcelUtils;
-import com.yuanqing.common.utils.RegionUtil;
-import com.yuanqing.common.utils.ReportUtil;
-import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.*;
 import com.yuanqing.common.utils.poi.ExcelUtil;
 import com.yuanqing.common.utils.spring.SpringContextUtil;
 import com.yuanqing.framework.web.controller.BaseController;
@@ -44,6 +41,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE;
 
 /**
  * 摄像头被访问统计报表
@@ -192,9 +191,9 @@ public class ReportController extends BaseController {
                                          @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
-        filters.put("cityCode", cityCode);
-        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        filters.put("cityCode", cityCode);  // 无用参数
+        filters.put("startDate", startDate);
+        filters.put("endDate", endDate);
 
         if ("xlsx".equals(format)) {
             try {
@@ -3169,7 +3168,7 @@ public class ReportController extends BaseController {
     public void CameraVisitRateExcel(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("摄像头访问率");
-        List<VisitRate> all = visitRateService.getAllToReport(filters);
+
         List<String> titles = new ArrayList();
         titles.add("地区名称");
         titles.add("摄像头数");
@@ -3178,19 +3177,23 @@ public class ReportController extends BaseController {
         titles.add("访问次数");
         titles.add("终端数");
         data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList();
-        for (VisitRate visitRate : all) {
-            List<Object> row = new ArrayList();
-            row.add(visitRate.getCityName());
-            row.add(visitRate.getCameraCnt());
-            row.add(visitRate.getVisitedCnt());
-            row.add(visitRate.getRate());
-            row.add(visitRate.getVisitCnt());
-            row.add(visitRate.getClientCnt());
-            rows.add(row);
-        }
 
-        data.setRows(rows);
+        List<VisitRate> all = visitRateService.getAllToReport(filters);
+        if (!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (VisitRate visitRate : all) {
+                List<Object> row = new ArrayList();
+                row.add(visitRate.getCityName());
+                row.add(visitRate.getCameraCnt());
+                row.add(visitRate.getVisitedCnt());
+                row.add(visitRate.getRate());
+                row.add(visitRate.getVisitCnt());
+                row.add(visitRate.getClientCnt());
+                rows.add(row);
+            }
+
+            data.setRows(rows);
+        }
 
         ExportExcelUtils.exportExcel(response, "访问率统计报表.xlsx", data);
     }

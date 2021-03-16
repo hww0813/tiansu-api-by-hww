@@ -1,30 +1,20 @@
 package com.yuanqing.project.tiansu.controller.analysis;
 
-import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
-import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
-import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
-import com.yuanqing.project.tiansu.service.analysis.IVisitRateService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
-import jdk.nashorn.internal.ir.Terminal;
-import org.aspectj.weaver.loadtime.Aj;
-import org.jfree.data.statistics.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE;
@@ -73,14 +62,14 @@ public class RateVisitController extends BaseController {
     public AjaxResult rateList(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
                                @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
                                @RequestParam(value = "pageNum", required = false) String pageNum,
-                               @RequestParam(value = "pageSize",required = false) String pageSize){
-        String time = DateUtils.getTimeType(startDate,endDate);
-        return AjaxResult.success("success",redisCache.getCacheObject(INDEX_VISITED_RATE_CACHE+"_"+time));
+                               @RequestParam(value = "pageSize", required = false) String pageSize) {
+        String time = DateUtils.getTimeType(startDate, endDate);
+        return AjaxResult.success("success", redisCache.getCacheObject(INDEX_VISITED_RATE_CACHE + "_" + time));
     }
 
     @GetMapping(value = "/region")
     @ApiOperation(value = "首页访问率查询", httpMethod = "GET")
-    public AjaxResult getRegion(){
+    public AjaxResult getRegion() {
         MacsRegion region = macsConfigService.getRegion(null);
         return AjaxResult.success(region);
 
@@ -115,7 +104,7 @@ public class RateVisitController extends BaseController {
 
         startPage();
 
-        List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList,null);
+        List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList, null);
 
         return AjaxResult.success(getDataTable(finalCameraList));
 
@@ -139,16 +128,14 @@ public class RateVisitController extends BaseController {
 
         List<Camera> cameraList = cameraService.getList(camera);
 
-        List<Long> terminalIpList = statisticsService.getTerminalVisited(cameraList,clientTerminal);
+        List<Long> terminalIpList = statisticsService.getTerminalVisited(cameraList, clientTerminal);
 
         startPage();
-        List<ClientTerminal> clientTerminalList = clientTerminalService.getTerminalByIpList(terminalIpList,clientTerminal);
+        List<ClientTerminal> clientTerminalList = clientTerminalService.getTerminalByIpList(terminalIpList, clientTerminal);
 
         return AjaxResult.success(getDataTable(clientTerminalList));
 
     }
-
-
 
 
 }

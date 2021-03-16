@@ -8,10 +8,10 @@ import com.yuanqing.common.constant.DictConstants;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.FlowUtil;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
-import com.yuanqing.project.system.domain.SysDictData;
+import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.system.service.ISysDictDataService;
-import com.yuanqing.project.system.service.ISysDictTypeService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
@@ -20,15 +20,20 @@ import com.yuanqing.project.tiansu.mapper.analysis.VisitRateMapper;
 import com.yuanqing.project.tiansu.service.analysis.IVisitRateService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,6 +50,9 @@ public class VisitRateServiceImpl implements IVisitRateService {
     @Resource
     private ISysDictDataService sysDictDataService;
 //    private static Region region = new Region();
+
+    @Autowired
+    private RedisCache redisCache;
 
     @Override
     public Long save(@Valid @NotNull(message = "保存或更新的实体不能为空") VisitRate entity, SaveType type) {
@@ -93,18 +101,52 @@ public class VisitRateServiceImpl implements IVisitRateService {
 
     @Override
     public List<VisitRate> getAllToReport(JSONObject filters) {
-        String cityCode = macsConfigService.getRegion(filters.getString("cityCode")).getId();
-        filters.put("cityCode", cityCode);
-        if (cityCode.length() == 6){
-            filters.put("length", cityCode.length());
-        } else {
-            filters.put("length", cityCode.length() + 2);
+//        String cityCode = macsConfigService.getRegion(filters.getString("cityCode")).getId();
+//        filters.put("cityCode", cityCode);
+//        if (cityCode.length() == 6){
+//            filters.put("length", cityCode.length());
+//        } else {
+//            filters.put("length", cityCode.length() + 2);
+//        }
+
+        List<VisitRate> visitRateList = new ArrayList<>();
+
+        String time = DateUtils.getTimeType((LocalDate)filters.get("startDate"), (LocalDate)filters.get("endDate"));
+        List<JSONObject> all = redisCache.getCacheObject(INDEX_VISITED_RATE_CACHE + "_" + time);
+        if (!CollectionUtils.isEmpty(all)) {
+            for (JSONObject visitRateObj : all) {
+                Long cityCode = 0L;
+                String cityCodeStr = visitRateObj.getString("cityCode");
+                if(StringUtils.isNotEmpty(cityCodeStr)) {
+                    cityCode = Long.parseLong(cityCodeStr);
+                }
+                Long cameraCnt = 0L;
+                if(visitRateObj.getInteger("cameraCnt") != null) {
+                    cameraCnt = visitRateObj.getInteger("cameraCnt").longValue();
+                }
+                Long visitCnt = 0L;
+                if(visitRateObj.getInteger("visitCnt") != null) {
+                    visitCnt = visitRateObj.getInteger("visitCnt").longValue();
+                }
+                Long clientCnt = 0L;
+                if(visitRateObj.getInteger("clientCnt") != null) {
+                    clientCnt = visitRateObj.getInteger("clientCnt").longValue();
+                }
+                Long visitedCnt = 0L;
+                if(visitRateObj.getInteger("visitedCnt") != null) {
+                    visitedCnt = visitRateObj.getInteger("visitedCnt").longValue();
+                }
+                VisitRate visitRate = new VisitRate(cityCode,
+                        visitRateObj.getString("cityName"),
+                        cameraCnt,
+                        visitRateObj.getString("rate"),
+                        visitCnt,
+                        clientCnt,
+                        visitedCnt);
+                visitRateList.add(visitRate);
+            }
         }
-        List<VisitRate> list = visitRateMapper.getRateList(filters);
-        for (VisitRate visitRate : list) {
-            visitRate.setRate(this.setRate(visitRate.getRate()));
-        }
-        return list;
+        return visitRateList;
     }
 
     @Override
