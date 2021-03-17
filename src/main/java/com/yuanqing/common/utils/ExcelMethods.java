@@ -6,7 +6,7 @@ import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
-import com.yuanqing.project.tiansu.domain.video.VisitRate;
+import com.yuanqing.project.tiansu.domain.report.VisitRate;
 import com.yuanqing.project.tiansu.mapper.analysis.VisitRateMapper;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import com.yuanqing.project.tiansu.service.assets.IClientService;

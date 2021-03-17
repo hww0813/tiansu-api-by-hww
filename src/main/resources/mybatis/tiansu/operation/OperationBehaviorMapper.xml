@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper">
+
+
+    <resultMap id="resultMap" type="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="CLIENT_ID" property="clientId" jdbcType="BIGINT"/>
+        <result column="SRC_CODE" property="srcCode" jdbcType="BIGINT"/>
+        <result column="SRC_IP" property="srcIp" jdbcType="BIGINT"/>
+        <result column="USERNAME" property="username" jdbcType="BIGINT"/>
+        <result column="SRC_PORT" property="srcPort" jdbcType="BIGINT"/>
+        <result column="SRC_MAC" property="srcMac" jdbcType="BIGINT"/>
+        <result column="CAMERA_ID" property="cameraId" jdbcType="BIGINT"/>
+        <result column="DST_CODE" property="dstCode" jdbcType="BIGINT"/>
+        <result column="DST_IP" property="dstIp" jdbcType="BIGINT"/>
+        <result column="DST_PORT" property="dstPort" jdbcType="BIGINT"/>
+        <result column="DST_MAC" property="dstMac" jdbcType="BIGINT"/>
+        <result column="ACTION" property="action"/>
+        <result column="ACTION_DETAIL" property="actionDetail"/>
+        <result column="STAMP" property="stamp" jdbcType="TIMESTAMP"/>
+        <result column="CONTENT" property="content" jdbcType="VARCHAR"/>
+        <result column="SESSION_ID" property="sessionId" jdbcType="BIGINT"/>
+        <result column="DEVICE_NAME" property="dstDeviceName" jdbcType="VARCHAR"/>
+        <result column="DEVICE_IP" property="dstDeviceIp" jdbcType="BIGINT"/>
+        <result column="RESULT" property="result" jdbcType="VARCHAR"/>
+        <result column="UP_FLOW" property="upFlow" jdbcType="BIGINT"/>
+        <result column="DOWN_FLOW" property="downFlow" jdbcType="BIGINT"/>
+        <result column="CALL_ID" property="callId" jdbcType="VARCHAR"/>
+        <result column="UUID" property="uuid" jdbcType="VARCHAR"/>
+        <result column="PLATFORM_KEY" property="platformKey" jdbcType="VARCHAR"/>
+        <result column="TRANSFERED" property="transfered" jdbcType="INTEGER"/>
+        <result column="PLATFORM_NAME" property="platformName" jdbcType="VARCHAR"/>
+        <result column="START_STAMP" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="END_STAMP" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="FILE_URL" property="fileUrl" jdbcType="VARCHAR"/>
+        <result column="BIT_RATE" property="bitRate" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getList" resultMap="resultMap"   parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
+        SELECT v.* FROM busi_oper v
+        <where>
+            <if test="id != null and id != '' ">
+                AND v.ID = #{id}
+            </if>
+            <if test="srcIp != null and srcIp != '' ">
+                AND v.SRC_IP = #{srcIp}
+            </if>
+            <if test="dstIp != null and dstIp != '' ">
+                AND v.DST_IP = #{dstIp}
+            </if>
+            <if test="srcCode != null and srcCode != '' ">
+                AND v.SRC_CODE = #{srcCode}
+            </if>
+            <if test="dstCode != null and dstCode != '' ">
+                AND v.DST_CODE = #{dstCode}
+            </if>
+            <if test="sessionId != null and sessionId != '' ">
+                AND v.SESSION_ID = #{sessionId, jdbcType=BIGINT}
+            </if>
+            <if test="clientId != null and clientId != '' ">
+                AND v.CLIENT_ID = #{clientId}
+            </if>
+            <if test="cameraId != null and cameraId != '' ">
+                AND v.CAMERA_ID = #{cameraId}
+            </if>
+            <if test="action != null and action != '' ">
+                AND v.ACTION = #{action}
+            </if>
+
+            <if test="startDate != null and endDate != null">and v.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and v.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+
+            <if test="dstDeviceIp != null and dstDeviceIp != ''">
+                AND int2ip(v.DEVICE_IP) = #{dstDeviceIp}
+            </if>
+            <if test="callId != null and callId != '' ">
+                AND v.CALL_ID = #{callId}
+            </if>
+            <if test="dstDeviceName != null and dstDeviceName != '' ">
+                AND v.DEVICE_NAME = #{dstDeviceName}
+            </if>
+            <if test="content != null and content != '' ">
+                AND v.CONTENT like concat('%', #{content}, '%')
+            </if>
+            <if test="username != null and username != '' ">
+                AND v.USERNAME = #{username}
+            </if>
+            <if test="provinceRegion != null and provinceRegion != '' ">
+                AND substr(v.DST_CODE,0,2) = #{provinceRegion}
+            </if>
+            <if test="cityRegion != null and cityRegion != '' ">
+                AND substr(v.DST_CODE,0,4) = #{cityRegion}
+            </if>
+            <if test="countryRegion != null and countryRegion != '' ">
+                AND substr(v.DST_CODE,0,6) = #{countryRegion}
+            </if>
+            <if test="connectType != null and connectType != '' ">
+                AND v.CONNECT_TYPE = #{connectType}
+            </if>
+        </where>
+
+        <if test="orderType == null or orderType == ''">
+            ORDER BY v.STAMP DESC
+        </if>
+
+        <if test="orderType != null and orderType != ''">
+            ORDER BY ${orderType}
+        </if>
+
+        limit #{num},#{size}
+    </select>
+
+
+
+    <select id="getCameraidListBySession" resultType="java.lang.Long" parameterType="java.lang.Long">
+        select camera_id from busi_oper where session_id = #{sessionId}
+    </select>
+
+
+    <select id="quertyOperationBehaviorCount" resultType="java.lang.Integer" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior" >
+        select count(1) from busi_oper v
+        <where>
+            <if test="id != null and id != '' ">
+                AND v.ID = #{id}
+            </if>
+            <if test="srcIp != null and srcIp != '' ">
+                AND v.SRC_IP = #{srcIp}
+
+            </if>
+            <if test="dstIp != null and dstIp != '' ">
+                AND v.DST_IP = #{dstIp}
+            </if>
+            <if test="srcCode != null and srcCode != '' ">
+                AND v.SRC_CODE = #{srcCode}
+            </if>
+            <if test="dstCode != null and dstCode != '' ">
+                AND v.DST_CODE = #{dstCode}
+            </if>
+            <if test="sessionId != null and sessionId != '' ">
+                AND v.SESSION_ID = #{sessionId, jdbcType=BIGINT}
+            </if>
+            <if test="clientId != null and clientId != '' ">
+                AND v.CLIENT_ID = #{clientId}
+            </if>
+            <if test="cameraId != null and cameraId != '' ">
+                AND v.CAMERA_ID = #{cameraId}
+            </if>
+            <if test="action != null and action != '' ">
+                AND v.ACTION = #{action}
+            </if>
+            <if test="startDate != null and endDate != null">and v.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+
+            <if test="dstDeviceIp != null and dstDeviceIp != ''">
+                AND int2ip(v.DEVICE_IP) = #{dstDeviceIp}
+            </if>
+            <if test="callId != null and callId != '' ">
+                AND v.CALL_ID = #{callId}
+            </if>
+            <if test="dstDeviceName != null and dstDeviceName != '' ">
+                AND v.DEVICE_NAME = #{dstDeviceName}
+            </if>
+            <if test="content != null and content != '' ">
+                AND v.CONTENT like concat('%', #{content}, '%')
+            </if>
+            <if test="username != null and username != '' ">
+                AND v.USERNAME = #{username}
+            </if>
+            <if test="provinceRegion != null and provinceRegion != '' ">
+                AND substr(v.DST_CODE,0,2) = #{provinceRegion}
+            </if>
+            <if test="cityRegion != null and cityRegion != '' ">
+                AND substr(v.DST_CODE,0,4) = #{cityRegion}
+            </if>
+            <if test="countryRegion != null and countryRegion != '' ">
+                AND substr(v.DST_CODE,0,6) = #{countryRegion}
+            </if>
+            <if test="connectType != null and connectType != '' ">
+                AND v.CONNECT_TYPE = #{connectType}
+            </if>
+            <if test="action != null and action != '' ">
+                AND v.ACTION = #{action}
+            </if>
+        </where>
+    </select>
+
+    <select id="getRealTimeBehaviorList" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch"  resultMap="resultMap" >
+        SELECT * FROM BUSI_OPER bo WHERE 1=1
+        AND bo.ACTION in (0,1,2,3)
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+        ORDER BY bo.STAMP DESC
+        -- 最大只查3000条
+        limit 0, 3000
+    </select>
+
+
+    <update id="updateOperationBehavior" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior" >
+        UPDATE
+            BUSI_OPER_T
+            SET
+            CLIENT_ID     = #{clientId, jdbcType=BIGINT},
+            SRC_CODE      = #{srcCode, jdbcType=VARCHAR},
+            SRC_IP        = #{srcIp, jdbcType=INTEGER},
+            SRC_PORT      = #{srcPort, jdbcType=INTEGER},
+            SRC_MAC       = #{srcMac, jdbcType=VARCHAR},
+            USERNAME      = #{username, jdbcType=VARCHAR},
+            CAMERA_ID     = #{cameraId, jdbcType=BIGINT},
+            DST_CODE      = #{dstCode, jdbcType=VARCHAR},
+            DST_IP        = #{dstIp, jdbcType=INTEGER},
+            DST_PORT      = #{dstPort, jdbcType=INTEGER},
+            DST_MAC       = #{dstMac, jdbcType=VARCHAR},
+            ACTION        = #{action, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+            ACTION_DETAIL = #{actionDetail, jdbcType=INTEGER, typeHandler=com.yuanqing.common.handle.DefaultEnumTypeHandler},
+            STAMP         = #{stamp, jdbcType=TIMESTAMP},
+            CONTENT       = #{content, jdbcType=VARCHAR},
+            SESSION_ID    = #{sessionId, jdbcType=BIGINT},
+            RESULT         = #{result, jdbcType=VARCHAR},
+            UP_FLOW         = #{upFlow, jdbcType=BIGINT},
+            DOWN_FLOW       = #{downFlow, jdbcType=BIGINT},
+            CALL_ID       = #{callId, jdbcType=VARCHAR}
+        WHERE id = #{id}
+    </update>
+
+
+
+    <select id="cameraAnalysisDetail" resultType="java.util.HashMap">
+        SELECT
+        bc.ID as id,
+        bc.DEVICE_CODE as dstCode,
+        bc.IP_ADDRESS as ipAddress,
+        bc.USERNAME as username,
+        bc.CREATE_TIME as createTime,
+        bc.UPDATE_TIME as updateTime,
+        t.count as count
+        FROM (SELECT DISTINCT CLIENT_ID , count(1) AS count
+        FROM
+        busi_oper bo
+        WHERE 1=1 AND bo.ACTION != 6
+        <if test="cameraId != null and cameraId != ''">
+            AND bo.CAMERA_ID = #{cameraId}
+        </if>
+
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+
+        <if test="action != null and action != ''">
+            and bo.ACTION = #{action}
+        </if>
+        GROUP BY CLIENT_ID
+        ) t
+        LEFT JOIN BUSI_CLIENT bc ON bc.ID = t.CLIENT_ID
+
+        limit #{num} , #{size}
+    </select>
+
+    <select id="cameraAnalysisCount" resultType="java.lang.Integer">
+        SELECT count(distinct CLIENT_ID)  AS count
+        FROM
+        busi_oper bo
+        WHERE 1=1 AND bo.ACTION != 6
+        <if test="cameraId != null and cameraId != ''">
+            AND bo.CAMERA_ID = #{cameraId}
+        </if>
+
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+
+        <if test="action != null and action != ''">
+            and bo.ACTION = #{action}
+        </if>
+        GROUP BY CLIENT_ID
+    </select>
+
+    <select id="queryRawCount" resultType="java.lang.Integer" parameterType="java.lang.Object">
+        select count(1) from busi_raw_signal b
+        <where>
+            <if test="startDate != null and endDate != null">and b.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+
+        </where>
+    </select>
+
+
+    <select id="getDstIpBySessionId" resultType="java.lang.Long">
+        select DISTINCT dst_ip from busi_oper where session_id = #{sessionId}
+    </select>
+
+
+</mapper>

@@ -6,7 +6,7 @@ import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
-import com.yuanqing.project.tiansu.domain.video.VisitRate;
+import com.yuanqing.project.tiansu.domain.report.VisitRate;
 
 import java.util.List;
 

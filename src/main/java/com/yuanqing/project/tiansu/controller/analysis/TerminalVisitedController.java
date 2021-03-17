@@ -1,8 +1,6 @@
 package com.yuanqing.project.tiansu.controller.analysis;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
-import com.yuanqing.common.enums.ActionType;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -11,24 +9,18 @@ import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.Statistics;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
-import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
-import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
-import com.yuanqing.project.tiansu.service.video.IOperationBehaviorService;
+import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.aspectj.weaver.loadtime.Aj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,7 +103,6 @@ public class TerminalVisitedController extends BaseController {
         PageResult pageResult = operationBehaviorService.queryOperationList(operationBehavior);
 
         PageResult data = (PageResult)pageResult.get("data");
-
 
         List<OperationBehavior> operationBehaviorList = (List<OperationBehavior>) data.get("list");
 

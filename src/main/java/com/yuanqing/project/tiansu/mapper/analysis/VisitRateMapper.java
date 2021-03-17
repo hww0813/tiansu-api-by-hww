@@ -5,7 +5,7 @@ import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
-import com.yuanqing.project.tiansu.domain.video.VisitRate;
+import com.yuanqing.project.tiansu.domain.report.VisitRate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

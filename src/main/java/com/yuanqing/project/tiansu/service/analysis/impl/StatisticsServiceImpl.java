@@ -11,11 +11,14 @@ import com.yuanqing.project.tiansu.domain.analysis.Statistics;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
+import com.yuanqing.project.tiansu.domain.assets.Client;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.mapper.analysis.StatisticsMapper;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +47,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
 
     @Autowired
     private ICameraService cameraService;
+
+    @Autowired
+    private IClientTerminalService terminalService;
 
     @Autowired
     private StatisticsMapper statisticsMapper;
@@ -221,6 +227,44 @@ public class StatisticsServiceImpl implements IStatisticsService {
         });
 
         return terminalVisitedCameraList;
+    }
+
+
+    @Override
+    public List<JSONObject> associateTerminalInfo(List<OperationBehavior> operationBehaviorList) {
+
+        List<Long> terminalIpList = operationBehaviorList.stream().map(f -> f.getSrcIp()).collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(terminalIpList)) {
+            log.error("terminalIpList为空");
+            return null;
+        }
+
+        List<ClientTerminal> terminalList = terminalService.getTerminalByIpList(terminalIpList,new ClientTerminal());
+
+        if (CollectionUtils.isEmpty(terminalList)) {
+            log.error("查询terminalList为空");
+            return null;
+        }
+
+        List<JSONObject> cameraVisitedTerminalList = new ArrayList<>();
+
+        operationBehaviorList.stream().forEach(f -> {
+            terminalList.stream().forEach(h -> {
+                if (f.getSrcIp().longValue() == h.getIpAddress().longValue()) {
+                    JSONObject j = new JSONObject();
+                    j.put("srcIp", h.getIpAddress());
+                    j.put("srcPort", h.getDomainPort());
+                    j.put("action", f.getAction());
+                    j.put("actionDetail", f.getActionDetail());
+                    j.put("stamp", f.getStamp());
+                    j.put("username",f.getUsername());
+                    cameraVisitedTerminalList.add(j);
+                }
+            });
+        });
+
+        return cameraVisitedTerminalList;
     }
 
     @Override

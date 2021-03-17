@@ -15,7 +15,7 @@ import com.yuanqing.project.system.service.ISysDictDataService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
-import com.yuanqing.project.tiansu.domain.video.VisitRate;
+import com.yuanqing.project.tiansu.domain.report.VisitRate;
 import com.yuanqing.project.tiansu.mapper.analysis.VisitRateMapper;
 import com.yuanqing.project.tiansu.service.analysis.IVisitRateService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;

@@ -1,6 +1,6 @@
 package com.yuanqing.tiansu.event;
 
-import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
+import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

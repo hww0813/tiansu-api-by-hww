@@ -7,7 +7,7 @@ import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.SequenceIdGenerator;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
-import com.yuanqing.project.tiansu.domain.IConstants;
+import com.yuanqing.common.constant.IConstants;
 import com.yuanqing.project.tiansu.domain.assets.*;
 import com.yuanqing.project.tiansu.mapper.assets.CameraMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;

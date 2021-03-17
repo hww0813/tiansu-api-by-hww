@@ -62,6 +62,13 @@ public interface IStatisticsService {
     List<JSONObject> associateCameraInfo(List<OperationBehavior> operationBehaviorList);
 
     /**
+     * 操作行为关联终端信息
+     * @param operationBehaviorList
+     * @return
+     */
+    List<JSONObject> associateTerminalInfo(List<OperationBehavior> operationBehaviorList);
+
+    /**
      * 根据 cameraVisit条件 查询统计表 deviceCodeList中含有相关终端IP
      * @param cameraList 摄像头集合
      * @param baseEntity 过滤条件

@@ -1,7 +1,7 @@
 package com.yuanqing.tiansu.assets;
 
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
-import com.yuanqing.project.tiansu.mapper.assets.OperationBehaviorMapper;
+import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import org.junit.Assert;
 import org.junit.Test;
