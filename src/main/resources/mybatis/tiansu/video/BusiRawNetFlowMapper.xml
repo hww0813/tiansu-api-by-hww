@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.BusiRawNetFlowMapper">
+    
+    <resultMap type="BusiRawNetFlow" id="BusiRawNetFlowResult">
+        <result property="id"    column="id"    />
+        <result property="srcIp"    column="src_ip"    />
+        <result property="srcPort"    column="src_port"    />
+        <result property="srcMac"    column="src_mac"    />
+        <result property="dstIp"    column="dst_ip"    />
+        <result property="dstPort"    column="dst_port"    />
+        <result property="dstMac"    column="dst_mac"    />
+        <result property="stamp"    column="stamp"    />
+        <result property="packetSize"    column="packet_size"    />
+        <result property="packetType"    column="packet_type"    />
+        <result property="packetCount"    column="packet_count"    />
+    </resultMap>
+
+    <sql id="selectBusiRawNetFlowVo">
+        select id, src_ip, src_port, src_mac, dst_ip, dst_port, dst_mac, stamp, packet_size, packet_type, packet_count from busi_raw_net_flow
+    </sql>
+
+    <select id="selectBusiRawNetFlowList" parameterType="BusiRawNetFlow" resultMap="BusiRawNetFlowResult">
+        <include refid="selectBusiRawNetFlowVo"/>
+        <where>  
+            <if test="srcIp != null "> and src_ip = #{srcIp}</if>
+            <if test="srcPort != null  and srcPort != ''"> and src_port = #{srcPort}</if>
+            <if test="srcMac != null  and srcMac != ''"> and src_mac = #{srcMac}</if>
+            <if test="dstIp != null "> and dst_ip = #{dstIp}</if>
+            <if test="dstPort != null  and dstPort != ''"> and dst_port = #{dstPort}</if>
+            <if test="dstMac != null  and dstMac != ''"> and dst_mac = #{dstMac}</if>
+            <if test="stamp != null "> and stamp = #{stamp}</if>
+            <if test="packetSize != null "> and packet_size = #{packetSize}</if>
+            <if test="packetType != null  and packetType != ''"> and packet_type = #{packetType}</if>
+            <if test="packetCount != null "> and packet_count = #{packetCount}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusiRawNetFlowById" parameterType="Long" resultMap="BusiRawNetFlowResult">
+        <include refid="selectBusiRawNetFlowVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusiRawNetFlow" parameterType="BusiRawNetFlow">
+        insert into busi_raw_net_flow
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="srcIp != null ">src_ip,</if>
+            <if test="srcPort != null  and srcPort != ''">src_port,</if>
+            <if test="srcMac != null  and srcMac != ''">src_mac,</if>
+            <if test="dstIp != null ">dst_ip,</if>
+            <if test="dstPort != null  and dstPort != ''">dst_port,</if>
+            <if test="dstMac != null  and dstMac != ''">dst_mac,</if>
+            <if test="stamp != null ">stamp,</if>
+            <if test="packetSize != null ">packet_size,</if>
+            <if test="packetType != null  and packetType != ''">packet_type,</if>
+            <if test="packetCount != null ">packet_count,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="srcIp != null ">#{srcIp},</if>
+            <if test="srcPort != null  and srcPort != ''">#{srcPort},</if>
+            <if test="srcMac != null  and srcMac != ''">#{srcMac},</if>
+            <if test="dstIp != null ">#{dstIp},</if>
+            <if test="dstPort != null  and dstPort != ''">#{dstPort},</if>
+            <if test="dstMac != null  and dstMac != ''">#{dstMac},</if>
+            <if test="stamp != null ">#{stamp},</if>
+            <if test="packetSize != null ">#{packetSize},</if>
+            <if test="packetType != null  and packetType != ''">#{packetType},</if>
+            <if test="packetCount != null ">#{packetCount},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiRawNetFlow" parameterType="BusiRawNetFlow">
+        update busi_raw_net_flow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="srcIp != null ">src_ip = #{srcIp},</if>
+            <if test="srcPort != null  and srcPort != ''">src_port = #{srcPort},</if>
+            <if test="srcMac != null  and srcMac != ''">src_mac = #{srcMac},</if>
+            <if test="dstIp != null ">dst_ip = #{dstIp},</if>
+            <if test="dstPort != null  and dstPort != ''">dst_port = #{dstPort},</if>
+            <if test="dstMac != null  and dstMac != ''">dst_mac = #{dstMac},</if>
+            <if test="stamp != null ">stamp = #{stamp},</if>
+            <if test="packetSize != null ">packet_size = #{packetSize},</if>
+            <if test="packetType != null  and packetType != ''">packet_type = #{packetType},</if>
+            <if test="packetCount != null ">packet_count = #{packetCount},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusiRawNetFlowById" parameterType="Long">
+        delete from busi_raw_net_flow where id = #{id}
+    </delete>
+
+    <delete id="deleteBusiRawNetFlowByIds" parameterType="String">
+        delete from busi_raw_net_flow where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
