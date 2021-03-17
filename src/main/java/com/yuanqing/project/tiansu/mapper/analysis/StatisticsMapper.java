@@ -38,6 +38,14 @@ public interface StatisticsMapper {
 
 
     /**
+     *
+     * @param filter
+     * @return
+     */
+    List<String> getVisitedRateRelatedCamera(JSONObject filter);
+
+
+    /**
      * 获取终端访问列表
      * @param terminalVisit 过滤条件
      * @return

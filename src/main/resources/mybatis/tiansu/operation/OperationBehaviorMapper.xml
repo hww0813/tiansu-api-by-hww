@@ -110,6 +110,37 @@
         limit #{num},#{size}
     </select>
 
+    <select id="getVisitedRateRelatedOperation" resultMap="resultMap">
+        select * from busi_oper bo
+        <where>
+            DST_CODE in
+            <foreach collection="list" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+
+            <if test="filter.startDate != null and filter.endDate != null">
+                AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="filter.srcIp != null and filter.srcIp != '' ">
+                AND bo.SRC_IP = #{filter.srcIp}
+            </if>
+            <if test="filter.dstCode != null and filter.dstCode != '' ">
+                AND bo.DST_CODE = #{filter.dstCode}
+            </if>
+            <if test="filter.action != null and filter.action != '' ">
+                AND bo.ACTION = #{filter.action}
+            </if>
+            <if test="filter.dstIp != null and filter.dstIp != '' ">
+                AND bo.DST_IP = #{filter.dstIp}
+            </if>
+            <if test="filter.username != null and filter.username != '' ">
+                AND bo.USERNAME = #{filter.username}
+            </if>
+
+        </where>
+            ORDER BY bo.STAMP DESC
+            limit #{filter.num},#{filter.size}
+    </select>
 
 
     <select id="getCameraidListBySession" resultType="java.lang.Long" parameterType="java.lang.Long">

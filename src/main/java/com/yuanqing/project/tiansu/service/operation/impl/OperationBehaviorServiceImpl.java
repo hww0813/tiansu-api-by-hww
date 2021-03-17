@@ -204,4 +204,18 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
         }
         return reportList;
     }
+
+    @Override
+    public PageResult getVisitedRateRelatedOperation(List<String> cameraCodeList, OperationBehavior operationBehavior) throws Exception {
+
+        operationBehavior.setNum(operationBehavior.getSize() * (operationBehavior.getNum() - 1));
+
+
+        CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() ->  operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
+        //操作行为列表
+        CompletableFuture<List<OperationBehavior>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.getVisitedRateRelatedOperation(cameraCodeList, operationBehavior));
+
+        return PageResult.success(operationBehaviorsFuture.get(),operationBehavior.getNum(),operationBehavior.getSize(),totalFuter.get());
+
+    }
 }

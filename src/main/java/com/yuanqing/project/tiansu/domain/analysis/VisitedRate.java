@@ -21,4 +21,6 @@ public class VisitedRate {
     private Integer userCnt;
 
     private Integer allCount;
+
+    private Integer visitedCnt;
 }

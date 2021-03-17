@@ -32,6 +32,7 @@
         <result column="terminalCnt" property="terminalCnt"/>
         <result column="userCnt" property="userCnt"/>
         <result column="allCount" property="allCount"/>
+        <result column="visitCnt" property="visitedCnt"/>
     </resultMap>
 
     <sql id="selectBusiStatisticsVo">
@@ -55,7 +56,8 @@
             count( DISTINCT bs.dst_code ) visitedCamera,
             count( DISTINCT bs.src_ip) terminalCnt,
             count( DISTINCT bs.username ) userCnt,
-            (select count(1) from busi_camera bc1 where bc1.REGION = bc.REGION and bc1.device_type = 1) as allCount
+            (select count(1) from busi_camera bc1 where bc1.REGION = bc.REGION and bc1.device_type = 1) as allCount,
+            sum(count) visitCnt
         FROM
             busi_statistics bs
         LEFT JOIN busi_camera bc ON bs.dst_code = bc.DEVICE_CODE

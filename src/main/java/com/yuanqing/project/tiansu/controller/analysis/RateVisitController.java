@@ -5,16 +5,20 @@ import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
+import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
+import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
+import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.ApiOperation;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,13 +58,16 @@ public class RateVisitController extends BaseController {
     private IClientTerminalService clientTerminalService;
 
     @Autowired
+    private IOperationBehaviorService operationBehaviorService;
+
+    @Autowired
     private IClientService clientService;
 
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "首页访问率查询", httpMethod = "GET")
-    public AjaxResult rateList(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                               @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+    public AjaxResult rateList(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDate startDate,
+                               @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDate endDate,
                                @RequestParam(value = "pageNum", required = false) String pageNum,
                                @RequestParam(value = "pageSize", required = false) String pageSize) {
         String time = DateUtils.getTimeType(startDate, endDate);
@@ -107,6 +114,44 @@ public class RateVisitController extends BaseController {
         List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList, null);
 
         return AjaxResult.success(getDataTable(finalCameraList));
+
+    }
+
+    @GetMapping(value = "/visitCnt")
+    @ApiOperation(value = "获取访问分析列表", httpMethod = "GET")
+    public PageResult getVisitCntList(@RequestParam(name = "pageNum", required = false, defaultValue = "1") int pageNum,
+                              @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize,
+                              @RequestParam(value = "cityCode", required = false) Integer region,
+                              @RequestParam(value = "srcIp", required = false) String srcIp,
+                              @RequestParam(value = "dstIp", required = false) String dstIp,
+                              @RequestParam(value = "action", required = false) String action,
+                              @RequestParam(value = "dstCode", required = false) String dstCode,
+                              @RequestParam(value = "username", required = false) String username,
+                              @RequestParam(value = "startDate") String startDate,
+                              @RequestParam(value = "endDate") String  endDate) throws Exception {
+
+        Camera camera = new Camera();
+        camera.setRegion(region);
+        List<Camera> cameraList = cameraService.getList(camera);
+
+        List<String> cameraCodeList = statisticsService.getCameraVisited(cameraList, new CameraVisit());
+
+        OperationBehavior operationBehavior = new OperationBehavior();
+        operationBehavior.setNum(pageNum);
+        operationBehavior.setSize(pageSize);
+        operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
+        operationBehavior.setDstCode(dstCode);
+        operationBehavior.setUsername(username);
+        operationBehavior.setAction(action);
+        operationBehavior.setDstIp(IpUtils.ipToLong(dstIp));
+        operationBehavior.setstartDate(startDate);
+        operationBehavior.setendDate(endDate);
+
+
+        PageResult visitedRateRelatedOperation = operationBehaviorService.getVisitedRateRelatedOperation(cameraCodeList, operationBehavior);
+
+        return visitedRateRelatedOperation;
+
 
     }
 

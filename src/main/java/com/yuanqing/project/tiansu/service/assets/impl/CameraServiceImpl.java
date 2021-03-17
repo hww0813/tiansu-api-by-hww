@@ -326,7 +326,7 @@ public class CameraServiceImpl implements ICameraService {
             return null;
         }
 
-        List<Camera> cameraList = cameraMapper.batchGetCameraByCode(cameraCodeList,camera);
+        List<Camera> cameraList = cameraMapper.batchGetCameraByCode(cameraCodeList,new Camera());
 
         return cameraList;
     }

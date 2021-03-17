@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -39,4 +40,13 @@ public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior,Lo
          * @return
                  */
       List<Long> getDstIpBySessionId(Long sessionId);
+
+    /**
+     * 根据摄像头编号和过滤条件查询操作行为
+     * @param cameraCodeList 摄像头编号集合
+     * @param operationBehavior 过滤条件集合
+     * @return
+     */
+      List<OperationBehavior> getVisitedRateRelatedOperation(@Param("list") List<String> cameraCodeList,
+                                                             @Param("filter") OperationBehavior operationBehavior);
 }
