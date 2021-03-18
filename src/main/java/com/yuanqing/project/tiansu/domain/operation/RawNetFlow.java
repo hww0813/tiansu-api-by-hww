@@ -3,11 +3,13 @@ package com.yuanqing.project.tiansu.domain.operation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yuanqing.framework.aspectj.lang.annotation.Excel;
 import com.yuanqing.framework.web.domain.BaseEntity;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDateTime;
 
+@Data
 public class RawNetFlow extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -39,7 +41,7 @@ public class RawNetFlow extends BaseEntity {
     private String dstMac;
 
     /** 时间 */
-    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss", locale = "zh", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
 //    @Excel(name = "时间", width = 30, dateFormat = "yyyy-MM-dd")
     private LocalDateTime stamp;
 
@@ -55,120 +57,5 @@ public class RawNetFlow extends BaseEntity {
     @Excel(name = "包数量")
     private Long packetCount;
 
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
 
-    public Long getId()
-    {
-        return id;
-    }
-    public void setSrcIp(Long srcIp)
-    {
-        this.srcIp = srcIp;
-    }
-
-    public Long getSrcIp()
-    {
-        return srcIp;
-    }
-    public void setSrcPort(String srcPort)
-    {
-        this.srcPort = srcPort;
-    }
-
-    public String getSrcPort()
-    {
-        return srcPort;
-    }
-    public void setSrcMac(String srcMac)
-    {
-        this.srcMac = srcMac;
-    }
-
-    public String getSrcMac()
-    {
-        return srcMac;
-    }
-    public void setDstIp(Long dstIp)
-    {
-        this.dstIp = dstIp;
-    }
-
-    public Long getDstIp()
-    {
-        return dstIp;
-    }
-    public void setDstPort(String dstPort)
-    {
-        this.dstPort = dstPort;
-    }
-
-    public String getDstPort()
-    {
-        return dstPort;
-    }
-    public void setDstMac(String dstMac)
-    {
-        this.dstMac = dstMac;
-    }
-
-    public String getDstMac()
-    {
-        return dstMac;
-    }
-    public void setStamp(LocalDateTime stamp)
-    {
-        this.stamp = stamp;
-    }
-
-    public LocalDateTime getStamp()
-    {
-        return stamp;
-    }
-    public void setPacketSize(Long packetSize)
-    {
-        this.packetSize = packetSize;
-    }
-
-    public Long getPacketSize()
-    {
-        return packetSize;
-    }
-    public void setPacketType(String packetType)
-    {
-        this.packetType = packetType;
-    }
-
-    public String getPacketType()
-    {
-        return packetType;
-    }
-    public void setPacketCount(Long packetCount)
-    {
-        this.packetCount = packetCount;
-    }
-
-    public Long getPacketCount()
-    {
-        return packetCount;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("id", getId())
-                .append("srcIp", getSrcIp())
-                .append("srcPort", getSrcPort())
-                .append("srcMac", getSrcMac())
-                .append("dstIp", getDstIp())
-                .append("dstPort", getDstPort())
-                .append("dstMac", getDstMac())
-                .append("stamp", getStamp())
-                .append("packetSize", getPacketSize())
-                .append("packetType", getPacketType())
-                .append("packetCount", getPacketCount())
-                .toString();
-    }
 }

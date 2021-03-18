@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.project.system.mapper.BusiRawNetFlowMapper">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.operation.RawNetFlowMapper">
     
-    <resultMap type="BusiRawNetFlow" id="BusiRawNetFlowResult">
+    <resultMap type="RawNetFlow" id="BusiRawNetFlowResult">
         <result property="id"    column="id"    />
         <result property="srcIp"    column="src_ip"    />
         <result property="srcPort"    column="src_port"    />
@@ -22,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, src_ip, src_port, src_mac, dst_ip, dst_port, dst_mac, stamp, packet_size, packet_type, packet_count from busi_raw_net_flow
     </sql>
 
-    <select id="selectBusiRawNetFlowList" parameterType="BusiRawNetFlow" resultMap="BusiRawNetFlowResult">
+    <select id="selectBusiRawNetFlowList" parameterType="RawNetFlow" resultMap="BusiRawNetFlowResult">
         <include refid="selectBusiRawNetFlowVo"/>
         <where>  
             <if test="srcIp != null "> and src_ip = #{srcIp}</if>
@@ -43,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
         
-    <insert id="insertBusiRawNetFlow" parameterType="BusiRawNetFlow">
+    <insert id="insertBusiRawNetFlow" parameterType="RawNetFlow">
         insert into busi_raw_net_flow
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null ">id,</if>
@@ -73,7 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateBusiRawNetFlow" parameterType="BusiRawNetFlow">
+    <update id="updateBusiRawNetFlow" parameterType="RawNetFlow">
         update busi_raw_net_flow
         <trim prefix="SET" suffixOverrides=",">
             <if test="srcIp != null ">src_ip = #{srcIp},</if>
