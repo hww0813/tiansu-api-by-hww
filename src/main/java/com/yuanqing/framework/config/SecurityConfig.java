@@ -109,11 +109,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/api/device/sip-user/import").anonymous()
                 .antMatchers("/api/server/import").anonymous()
                 .antMatchers("/api/reports/**").anonymous()
+                .antMatchers("/tripartite/**").anonymous()
                 //.antMatchers("/api/**").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
                 .and()
-                .headers().frameOptions().disable();
+                .headers().frameOptions().sameOrigin();
         httpSecurity.logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler);
         // 添加JWT filter
         httpSecurity.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);

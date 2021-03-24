@@ -1,13 +1,13 @@
 package com.yuanqing.project.tiansu.controller.operation;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
-import com.yuanqing.project.tiansu.job.IndexStatisticsTask;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.ApiOperation;
@@ -43,10 +43,6 @@ public class OperationBehaviorController extends BaseController   {
     @Autowired
     private IOperationBehaviorService IOperationBehaviorService;
 
-    @Autowired
-    private IndexStatisticsTask indexStatisticsTask;
-
-
     @Resource
     private OperationBehaviorMapper operationBehaviorMapper;
 
@@ -64,6 +60,14 @@ public class OperationBehaviorController extends BaseController   {
                return  PageResult.error("获取操作行为接口报错！");
             }
 
+    }
+
+    @GetMapping("/getOperationBehaviorById")
+    @ApiOperation(value = "获取操作行为列表", httpMethod = "GET")
+    public AjaxResult getOperationBehaviorById(@RequestParam(value = "id", required = false) Long id) {
+
+        OperationBehavior operationBehavior = IOperationBehaviorService.getOperationBehaviorById(id);
+        return AjaxResult.success(operationBehavior);
     }
 
     /**

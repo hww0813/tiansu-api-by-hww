@@ -27,87 +27,53 @@
         <result column="ACTIVE_TIME" property="activeTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="getAll" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession" resultMap="resultMap">
+    <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession" resultMap="resultMap">
         SELECT
-        os.ID,
-        os.CLIENT_ID,
-        os.SRC_CODE,
-        os.SRC_IP,
-        os.SRC_PORT,
-        os.SRC_MAC,
-        c.USERNAME,
-        os.CAMERA_ID,
-        os.DST_CODE,
-        os.DST_IP,
-        os.DST_PORT,
-        os.DST_MAC,
-        os.UP_FLOW,
-        os.DOWN_FLOW,
-        os.START_TIME,
-        os.END_TIME,
-        os.TOTAL_TIME,
-        os.ACTIVE_TIME,
-        (
-        CASE
-        WHEN ex.id IS NOT NULL
-        THEN ex.DEVICE_NAME
-        WHEN ex_gb.id IS NOT NULL
-        THEN ex_gb.DEVICE_NAME
-        ELSE ca.DEVICE_NAME
-        END
-        ) AS DEVICE_NAME,
-        (
-        CASE
-        WHEN ex.IP_ADDRESS IS NOT NULL
-        THEN ex.IP_ADDRESS
-        WHEN ex_gb.IP_ADDRESS IS NOT NULL
-        THEN ex_gb.IP_ADDRESS
-        ELSE ca.IP_ADDRESS
-        END
-        ) AS DEVICE_IP
+        *
         FROM
-        `busi_oper_session` os
-        LEFT JOIN BUSI_CLIENT c
-        ON os.CLIENT_ID = c.ID
-        LEFT JOIN BUSI_CAMERA ca
-        ON os.CAMERA_ID = ca.ID
-        LEFT JOIN BUSI_EXTERNAL_DEVICE ex
-        ON ex.DEVICE_ID = ca.DEVICE_CODE
-        LEFT JOIN BUSI_EXTERNAL_DEVICE ex_gb
-        ON ex_gb.GB_ID = ca.DEVICE_CODE
-        WHERE 1 = 1
-        <if test="srcCode != null and srcCode != '' ">
-            AND os.SRC_CODE = #{srcCode}
-        </if>
-        <if test="dstCode != null and dstCode != '' ">
-            AND os.DST_CODE = #{dstCode}
-        </if>
-        <if test="id != null">
-            AND os.ID = #{id}
-        </if>
-        <if test="startDate != null and endDate != null">
-            and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
-        </if>
+        busi_oper_session os
+       <where>
+            1=1
+           <if test="srcCode != null and srcCode != '' ">
+               AND os.SRC_CODE = #{srcCode}
+           </if>
+           <if test="id != null and id != '' ">
+               AND os.id = #{id}
+           </if>
+           <if test="dstCode != null and dstCode != '' ">
+               AND os.DST_CODE = #{dstCode}
+           </if>
+           <if test="startDate != null and endDate != null">
+               and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+           </if>
 
-        <if test="username != null and username != ''">
-            AND c.USERNAME = #{username}
-        </if>
-        <if test="srcIp != null and srcIp != ''">
-            AND os.SRC_IP= #{srcIp}
-        </if>
-        <if test="connectType != null and connectType != '' ">
-            AND os.CONNECT_TYPE = #{connectType}
-        </if>
-        <if test="status != null and status != '' ">
-            AND v.STATUS = #{status}
-        </if>
-        <if test="orderType == null or orderType == ''">
-            ORDER BY os.START_TIME DESC
-        </if>
-        <if test="orderType != null and orderType != ''">
-            ORDER BY ${orderType}
-        </if>
+           <if test="username != null and username != ''">
+               AND os.USERNAME = #{username}
+           </if>
+           <if test="srcIp != null and srcIp != ''">
+               AND os.SRC_IP= #{srcIp}
+           </if>
+           <if test="connectType != null and connectType != '' ">
+               AND os.CONNECT_TYPE = #{connectType}
+           </if>
+           <if test="status != null and status != '' ">
+               AND v.STATUS = #{status}
+           </if>
+           <if test="orderType == null or orderType == ''">
+               ORDER BY os.START_TIME DESC
+           </if>
+           <if test="orderType != null and orderType != ''">
+               ORDER BY ${orderType}
+           </if>
+       </where>
         limit #{num},#{size}
+    </select>
+
+
+    <select id="findById" parameterType="long" resultMap="resultMap">
+        SELECT *
+        FROM busi_oper_session os
+        WHERE os.ID = #{id}
     </select>
 
    <!-- <select id="findById" parameterType="long" resultMap="resultMap">

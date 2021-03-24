@@ -218,4 +218,9 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
         return PageResult.success(operationBehaviorsFuture.get(),operationBehavior.getNum(),operationBehavior.getSize(),totalFuter.get());
 
     }
+
+    @Override
+    public OperationBehavior getOperationBehaviorById(Long id) {
+        return operationBehaviorMapper.findById(id);
+    }
 }

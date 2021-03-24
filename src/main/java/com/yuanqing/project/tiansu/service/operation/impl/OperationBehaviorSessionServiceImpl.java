@@ -33,12 +33,12 @@ public class OperationBehaviorSessionServiceImpl implements IOperationBehaviorSe
 
 
     @Override
-    public PageResult queryOperationBehaviorSession(OperationBehaviorSession operationBehaviorSession) throws ExecutionException, InterruptedException {
+    public PageResult getList(OperationBehaviorSession operationBehaviorSession) throws ExecutionException, InterruptedException {
 
         //总数据
         CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() ->  operationBehaviorSessionMapper.getCount(operationBehaviorSession));
         //操作行为列表
-        CompletableFuture<List<OperationBehaviorSession>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorSessionMapper.getAll(operationBehaviorSession));
+        CompletableFuture<List<OperationBehaviorSession>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorSessionMapper.getList(operationBehaviorSession));
 
         return  PageResult.success(operationBehaviorsFuture.get(),operationBehaviorSession.getSize(),operationBehaviorSession.getNum(),totalFuter.get());
 
@@ -61,7 +61,7 @@ public class OperationBehaviorSessionServiceImpl implements IOperationBehaviorSe
         }
 
         List<JSONObject> reportList = new ArrayList<JSONObject>();
-        List<OperationBehaviorSession> operationBehaviorSessionList = operationBehaviorSessionMapper.getAll(condOperationBehaviorSession);
+        List<OperationBehaviorSession> operationBehaviorSessionList = operationBehaviorSessionMapper.getList(condOperationBehaviorSession);
         if(!CollectionUtils.isEmpty(operationBehaviorSessionList)) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             for (OperationBehaviorSession operationBehaviorSession : operationBehaviorSessionList) {

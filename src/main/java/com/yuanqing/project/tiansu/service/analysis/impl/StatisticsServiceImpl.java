@@ -112,6 +112,13 @@ public class StatisticsServiceImpl implements IStatisticsService {
                     JSONObject visitedRate = new JSONObject();
                     visitedRate.put("cityName", f.getName());
                     visitedRate.put("cityCode", f.getId());
+
+                    visitedRate.put("cameraCnt", 0);
+                    visitedRate.put("clientCnt", 0);
+                    visitedRate.put("visitCnt", 0);
+                    visitedRate.put("visitedCnt", 0);
+                    visitedRate.put("rate", "0%");
+
                     visitedRateList.stream().forEach(h -> {
                         if (h.getRegionId() == Long.parseLong(f.getId())) {
                             visitedRate.put("cameraCnt", h.getAllCount());
@@ -121,12 +128,6 @@ public class StatisticsServiceImpl implements IStatisticsService {
 //                            visitedRate.put("clientCnt", h.getUserCnt());
                             Double rate = DoubleUtils.roundOff(((double) h.getVisitedCamera() / (double) h.getAllCount()), 2);
                             visitedRate.put("rate", rate * 100 + "%");
-                        } else {
-                            visitedRate.put("cameraCnt", 0);
-                            visitedRate.put("clientCnt", 0);
-                            visitedRate.put("visitCnt", 0);
-                            visitedRate.put("visitedCnt", 0);
-                            visitedRate.put("rate", "0%");
                         }
                     });
                     rateList.add(visitedRate);
@@ -222,6 +223,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
                     j.put("action", f.getAction());
                     j.put("actionDetail", f.getActionDetail());
                     j.put("stamp", f.getStamp());
+                    j.put("callId",f.getCallId());
+                    j.put("id",f.getId());
                     terminalVisitedCameraList.add(j);
                 }
             });
@@ -260,6 +263,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
                     j.put("actionDetail", f.getActionDetail());
                     j.put("stamp", f.getStamp());
                     j.put("username",f.getUsername());
+                    j.put("callId",f.getCallId());
+                    j.put("id",f.getId());
                     cameraVisitedTerminalList.add(j);
                 }
             });

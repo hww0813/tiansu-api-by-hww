@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 public interface IOperationBehaviorSessionService {
 
 
-    PageResult queryOperationBehaviorSession(OperationBehaviorSession operationBehaviorSession) throws ExecutionException, InterruptedException;
+    PageResult getList(OperationBehaviorSession operationBehaviorSession) throws ExecutionException, InterruptedException;
 
     List<JSONObject> getAllToReport(JSONObject filters);
 }

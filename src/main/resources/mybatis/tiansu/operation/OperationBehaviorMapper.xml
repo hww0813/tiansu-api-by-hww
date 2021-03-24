@@ -308,6 +308,11 @@
     </select>
 
 
+    <select id="findById" resultMap="resultMap">
+        select * from busi_oper where id = #{id}
+    </select>
+
+
     <select id="getDstIpBySessionId" resultType="java.lang.Long">
         select DISTINCT dst_ip from busi_oper where session_id = #{sessionId}
     </select>

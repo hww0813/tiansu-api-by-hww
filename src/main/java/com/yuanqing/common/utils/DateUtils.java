@@ -362,7 +362,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
 
     public static String getTimeType(LocalDate startDate,LocalDate endDate){
         int dayCount =  (int) startDate.until(endDate, ChronoUnit.DAYS);
-        //对应事件
+        //        //对应事件
         String timeType;
         switch (dayCount){
             case 0 :
