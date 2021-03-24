@@ -41,5 +41,11 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
      */
     MacsRegion getRegion(String cityCode);
 
+    /**
+     * 获取地区列表
+     * @return
+     */
+    List<MacsRegion> getRegionList();
+
 
 }

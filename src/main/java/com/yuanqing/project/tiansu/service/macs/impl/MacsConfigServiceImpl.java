@@ -33,6 +33,8 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
     private final String selectMacsRegionInfo_URL = "/tripartite/region/regionInfo";
 
+    private final String selectMacsRegionList_URL = "/tripartite/region/regionList";
+
     // TODO: 增加缓存。。。
 
     @Override
@@ -49,7 +51,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         }
 
         JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
-        if(jsonObject == null || !jsonObject.containsKey("data")) {  // || 200 != jsonObject.getIntValue("code")
+        if(jsonObject == null || !jsonObject.containsKey("data")) {
             LOGGER.error("获取配置为空"+macsConfig.toParamsString());
             return null;
         }
@@ -169,5 +171,29 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     @Override
     public List<MacsConfig> getList(MacsConfig macsConfig) {
         return null;
+    }
+
+    @Override
+    public List<MacsRegion> getRegionList() {
+
+        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionList_URL,"");
+
+        if (StringUtils.isEmpty(rspStr))
+        {
+            LOGGER.error("获取区域异常");
+            return null;
+        }
+
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
+
+        // || 200 != jsonObject.getIntValue("code")
+        if(jsonObject == null || !jsonObject.containsKey("data")) {
+            LOGGER.error("获取区域为空");
+            return null;
+        }
+
+        JSONArray data = jsonObject.getJSONArray("data");
+        List<MacsRegion> macsRegion = data.toJavaList(MacsRegion.class);
+        return macsRegion;
     }
 }
