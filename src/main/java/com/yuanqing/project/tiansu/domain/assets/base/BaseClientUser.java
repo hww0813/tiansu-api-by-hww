@@ -1,5 +1,7 @@
 package com.yuanqing.project.tiansu.domain.assets.base;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.Data;
 
@@ -11,6 +13,7 @@ import lombok.Data;
 public class BaseClientUser extends BaseEntity {
 
     /** id */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 登录账号 */
