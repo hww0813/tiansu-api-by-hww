@@ -181,14 +181,18 @@ public class ReportController extends BaseController {
 
     @GetMapping(value = "/analysis/visit/rate")
     public void getCameraVisitRateReport(@RequestParam(value = "cityCode", required = false) String cityCode,
-                                         @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                         @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                         @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                         @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
                                          @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
         filters.put("cityCode", cityCode);  // 无用参数
-        filters.put("startDate", startDate);
-        filters.put("endDate", endDate);
+        if(startDate != null) {
+            filters.put("startDate", startDate.toLocalDate());
+        }
+        if(endDate != null) {
+            filters.put("endDate", endDate.toLocalDate());
+        }
 
         if ("xlsx".equals(format)) {
             try {
