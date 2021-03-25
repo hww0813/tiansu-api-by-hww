@@ -80,15 +80,18 @@
             busi_statistics
         <where>
             1=1
-            <if test="ipAddress != null  and ipAddress != ''"> and src_ip = #{ipAddress}</if>
-            <if test="username != null  and username != ''"> and username = #{username}</if>
-            <if test="action != null  and action != ''"> and action = #{action}</if>
-            <if test="startDate != null and endDate != null"> and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
+            <if test="terminalVisit.ipAddress != null  and terminalVisit.ipAddress != ''"> and src_ip = #{terminalVisit.ipAddress}</if>
+            <if test="terminalVisit.username != null  and terminalVisit.username != ''"> and username = #{terminalVisit.username}</if>
+            <if test="terminalVisit.action != null  and terminalVisit.action != ''"> and action = #{terminalVisit.action}</if>
+            <if test="terminalVisit.startDate != null and terminalVisit.endDate != null"> and stamp >= STR_TO_DATE(#{terminalVisit.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{terminalVisit.endDate}, '%Y-%m-%d')</if>
         </where>
         GROUP BY
         src_ip,
         username,
         action
+        <if test="orderStr != null and orderStr != ''">
+            ORDER BY ${orderStr}
+        </if>
     </select>
 
 

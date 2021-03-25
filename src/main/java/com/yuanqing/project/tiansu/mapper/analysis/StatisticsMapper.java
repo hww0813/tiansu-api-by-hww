@@ -37,12 +37,12 @@ public interface StatisticsMapper {
     List<VisitedRate> visitedRate(JSONObject filter);
 
 
-    /**
-     *
-     * @param filter
-     * @return
-     */
-    List<String> getVisitedRateRelatedCamera(JSONObject filter);
+//    /**
+//     *
+//     * @param filter
+//     * @return
+//     */
+//    List<String> getVisitedRateRelatedCamera(JSONObject filter);
 
 
     /**
@@ -50,7 +50,7 @@ public interface StatisticsMapper {
      * @param terminalVisit 过滤条件
      * @return
      */
-    List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit);
+    List<TerminalVisit> getTerminalVisit(@Param("terminalVisit") TerminalVisit terminalVisit, @Param("orderStr") String orderStr);
 
     /**
      * 获取摄像头访问列表

@@ -39,7 +39,7 @@ public class StatisticsServiceTest {
     public void getTerminalVisit(){
         TerminalVisit terminalVisit = new TerminalVisit();
         terminalVisit.setIpAddress(3232287076L);
-        List<TerminalVisit> terminalVisitList = statisticsService.getTerminalVisit(terminalVisit);
+        List<TerminalVisit> terminalVisitList = statisticsService.getTerminalVisit(terminalVisit, "camera_cnt desc");
 
         System.out.println(terminalVisitList);
     }

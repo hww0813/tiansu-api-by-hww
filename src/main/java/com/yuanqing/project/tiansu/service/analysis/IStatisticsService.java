@@ -32,7 +32,7 @@ public interface IStatisticsService {
      * @param terminalVisit 过滤条件
      * @return
      */
-    List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit);
+    List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit, String orderStr);
 
 
     /**

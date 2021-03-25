@@ -139,9 +139,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
     }
 
     @Override
-    public List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit) {
+    public List<TerminalVisit> getTerminalVisit(TerminalVisit terminalVisit, String orderStr) {
 
-        return statisticsMapper.getTerminalVisit(terminalVisit);
+        return statisticsMapper.getTerminalVisit(terminalVisit, orderStr);
     }
 
 
@@ -302,7 +302,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
         if (StringUtils.isNotEmpty(filters.getString("action"))) {
             condTerminalVisit.setAction(Integer.valueOf(filters.getString("action")));
         }
-        List<TerminalVisit> terminalVisitList = statisticsMapper.getTerminalVisit(condTerminalVisit);
+        // TODO: 这个地方没有传入排序参数
+        List<TerminalVisit> terminalVisitList = statisticsMapper.getTerminalVisit(condTerminalVisit, null);
         if (!CollectionUtils.isEmpty(terminalVisitList)) {
             for (TerminalVisit terminalVisit : terminalVisitList) {
                 JSONObject jsonObject = new JSONObject();

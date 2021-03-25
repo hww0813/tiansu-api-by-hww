@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.controller.analysis;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -54,7 +55,9 @@ public class TerminalVisitedController extends BaseController {
                                          @RequestParam(value = "endDate", required = false) String endDate,
                                          @RequestParam(value = "clientIp", required = false) String clientIp,
                                          @RequestParam(value = "action", required = false) Integer action,
-                                         @RequestParam(value = "user", required = false) String username) {
+                                         @RequestParam(value = "user", required = false) String username,
+                                         @RequestParam(required = false) String orderType,
+                                         @RequestParam(required = false) String orderValue) {
         TerminalVisit terminalVisit = new TerminalVisit();
 
         terminalVisit.setstartDate(startDate);
@@ -63,9 +66,13 @@ public class TerminalVisitedController extends BaseController {
         terminalVisit.setUsername(username);
         terminalVisit.setAction(action);
 
+        String orderStr = null;
+        if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+            orderStr = StringUtils.humpToUnderline(orderValue) + " " + orderType;
+        }
 
         startPage();
-        List<TerminalVisit> visitList = statisticsService.getTerminalVisit(terminalVisit);
+        List<TerminalVisit> visitList = statisticsService.getTerminalVisit(terminalVisit, orderStr);
 
         return AjaxResult.success(getDataTable(visitList));
 
