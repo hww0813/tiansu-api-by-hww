@@ -44,8 +44,8 @@ public class EventController {
     @ApiOperation(value = "获取告警事件列表", httpMethod = "GET")
     public PageResult getAll(@RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                              @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
-                             @RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-                             @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                             @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
                              @RequestParam(value = "eventSource", required = false) String eventSource,
                              @RequestParam(value = "strategyName", required = false) String strategyName,
                              @RequestParam(value = "status", required = false) String status,
@@ -63,10 +63,10 @@ public class EventController {
                              @RequestParam(required = false) String orderValue) {
         JSONObject filters = new JSONObject();
         if (stime != null) {
-            filters.put("startDate", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
         if (etime != null) {
-            filters.put("endDate", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            filters.put("endTime", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
         filters.put("eventSource", eventSource);
         filters.put("strategyName", strategyName);
