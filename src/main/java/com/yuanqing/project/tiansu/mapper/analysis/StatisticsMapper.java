@@ -59,7 +59,8 @@ public interface StatisticsMapper {
      * @return CameraVisit对象
      */
     List<CameraVisit> getCameraVisit(@Param("list") List<String> deviceCodeList,
-                                     @Param("filter") CameraVisit cameraVisit);
+                                     @Param("filter") CameraVisit cameraVisit,
+                                     @Param("orderStr") String orderStr);
 
     /**
      * 根据 cameraVisit条件 查询统计表 deviceCodeList中含有相关摄像头

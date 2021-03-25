@@ -11,7 +11,6 @@ import com.yuanqing.project.tiansu.domain.analysis.Statistics;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
-import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
@@ -150,7 +149,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
      * @return 摄像头被访问对象
      */
     @Override
-    public List<CameraVisit> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit) {
+    public List<CameraVisit> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr) {
 
         if (CollectionUtils.isEmpty(cameraList)) {
             log.error("cameraList为空，根据device_code批量查询摄像头列表为空");
@@ -159,7 +158,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
 
         List<String> deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
 
-        List<CameraVisit> cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit);
+        List<CameraVisit> cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
 
         cameraVisitList.stream().forEach(f -> {
             cameraList.stream().forEach(h -> {
@@ -457,7 +456,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
         CameraVisit condCameraVisit = new CameraVisit();
         condCameraVisit.setstartDate(filters.getString("startDate"));
         condCameraVisit.setendDate(filters.getString("endDate"));
-        List<CameraVisit> cameraVisitList = this.getCameraVisit(cameraList, condCameraVisit);
+        // TODO: 没有传入排序条件
+        List<CameraVisit> cameraVisitList = this.getCameraVisit(cameraList, condCameraVisit, null);
         if (!CollectionUtils.isEmpty(cameraVisitList)) {
             for (CameraVisit cameraVisit : cameraVisitList) {
                 JSONObject jsonObject = new JSONObject();

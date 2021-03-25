@@ -41,7 +41,7 @@ public interface IStatisticsService {
      * @param cameraVisit 过滤条件
      * @return
      */
-    List<CameraVisit> getCameraVisit(List<Camera> cameraList,CameraVisit cameraVisit);
+    List<CameraVisit> getCameraVisit(List<Camera> cameraList,CameraVisit cameraVisit, String orderStr);
 
 
     /**

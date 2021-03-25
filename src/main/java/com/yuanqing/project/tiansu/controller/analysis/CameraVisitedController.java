@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.controller.analysis;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -48,7 +49,9 @@ public class CameraVisitedController extends BaseController {
     @ApiOperation(value = "获取摄像头被访问列表", httpMethod = "GET")
     public AjaxResult getCameraVisitedList(@RequestParam(value = "action",required = false) Integer action,
                                            @RequestParam(value = "cameraIp",required = false) String cameraIp,
-                                           Camera camera) {
+                                           Camera camera,
+                                           @RequestParam(required = false) String orderType,
+                                           @RequestParam(required = false) String orderValue) {
 
         CameraVisit cameraVisit = new CameraVisit();
         cameraVisit.setAction(action);
@@ -60,11 +63,16 @@ public class CameraVisitedController extends BaseController {
         camera.setendDate(null);
         camera.setIpAddress(IpUtils.ipToLong(cameraIp));
 
+        String orderStr = null;
+        if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+            orderStr = orderValue + " " + orderType;
+        }
+
         startPage();
 
         List<Camera> cameraList = cameraService.getList(camera);
 
-        List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList,cameraVisit);
+        List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList, cameraVisit, orderStr);
 
         return AjaxResult.success(getDataTable(cameraVisitList));
 

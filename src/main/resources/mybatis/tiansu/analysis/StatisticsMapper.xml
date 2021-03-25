@@ -115,7 +115,9 @@
         GROUP BY
             dst_code,
             action
-
+        <if test="orderStr != null and orderStr != ''">
+            ORDER BY ${orderStr}
+        </if>
     </select>
 
     <select id="getCameraVisited" resultType="java.lang.String">
