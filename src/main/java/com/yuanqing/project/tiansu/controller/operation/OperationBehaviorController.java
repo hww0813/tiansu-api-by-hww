@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.controller.operation;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
@@ -49,11 +50,48 @@ public class OperationBehaviorController extends BaseController   {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取操作行为列表", httpMethod = "GET")
-    public PageResult getAll(@RequestParam(value = "pageNum", defaultValue = "1") int num,
-                             @RequestParam(value = "pageSize", defaultValue = "20") int size,
-                             OperationBehavior operationBehavior){
-            operationBehavior.setNum(num);
-            operationBehavior.setSize(size);
+    public PageResult getAll(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                             @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                             @RequestParam(value = "startDate", required = false) String startDate,
+                             @RequestParam(value = "endDate", required = false) String endDate,
+                             @RequestParam(value = "srcIp", required = false) String srcIp,
+                             @RequestParam(value = "dstIp", required = false) String dstIp,
+                             @RequestParam(value = "srcCode", required = false) String srcCode,
+                             @RequestParam(value = "dstCode", required = false) String dstCode,
+                             @RequestParam(value = "sessionId", required = false) Long sessionId,
+                             @RequestParam(value = "clientId", required = false) Long clientId,
+                             @RequestParam(value = "cameraId", required = false) Long cameraId,
+                             @RequestParam(value = "action", required = false) String action,
+                             @RequestParam(value = "dstDeviceIp", required = false) String dstDeviceIp,
+                             @RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
+                             @RequestParam(value = "content", required = false) String content,
+                             @RequestParam(value = "username", required = false) String username,
+                             @RequestParam(value = "connectType", required = false) String connectType,
+                             @RequestParam(required = false) String orderType,
+                             @RequestParam(required = false) String orderValue){
+
+            OperationBehavior operationBehavior = new OperationBehavior();
+            operationBehavior.setNum(pageNum);
+            operationBehavior.setSize(pageSize);
+            operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
+            operationBehavior.setDstIp(IpUtils.ipToLong(dstIp));
+            operationBehavior.setstartDate(startDate);
+            operationBehavior.setendDate(endDate);
+            operationBehavior.setDstDeviceIp(IpUtils.ipToLong(dstDeviceIp));
+            operationBehavior.setAction(action);
+            operationBehavior.setUsername(username);
+            operationBehavior.setOrderType(orderType);
+            operationBehavior.setOrderValue(orderValue);
+            operationBehavior.setDstCode(dstCode);
+            operationBehavior.setSrcCode(srcCode);
+            operationBehavior.setSessionId(sessionId);
+            operationBehavior.setClientId(clientId);
+            operationBehavior.setCameraId(cameraId);
+            operationBehavior.setDstDeviceName(dstDeviceName);
+            operationBehavior.setContent(content);
+            operationBehavior.setConnectType(connectType);
+
+
             try {
                 return IOperationBehaviorService.queryOperationList(operationBehavior);
             } catch (Exception e) {

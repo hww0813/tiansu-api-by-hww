@@ -71,7 +71,7 @@
             <if test="startDate != null and endDate != null">and v.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and v.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
 
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
-                AND int2ip(v.DEVICE_IP) = #{dstDeviceIp}
+                AND v.dst_device_ip = #{dstDeviceIp}
             </if>
             <if test="callId != null and callId != '' ">
                 AND v.CALL_ID = #{callId}
@@ -182,7 +182,7 @@
             <if test="startDate != null and endDate != null">and v.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
 
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
-                AND int2ip(v.DEVICE_IP) = #{dstDeviceIp}
+                AND v.dst_device_ip = #{dstDeviceIp}
             </if>
             <if test="callId != null and callId != '' ">
                 AND v.CALL_ID = #{callId}

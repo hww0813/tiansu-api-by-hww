@@ -226,9 +226,9 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     @Override
     public Long save(ClientTerminal clientTerminal, SaveType type) {
 
-        if (type.getCode() == 1) {
+        if (type.getCode() == SaveType.INSERT.getCode()) {
             clientTerminalMapper.insert(clientTerminal);
-        } else if (type.getCode() == 0) {
+        } else if (type.getCode() == SaveType.UPDATE.getCode()) {
             clientTerminalMapper.update(clientTerminal);
         }
         return clientTerminal.getId();
