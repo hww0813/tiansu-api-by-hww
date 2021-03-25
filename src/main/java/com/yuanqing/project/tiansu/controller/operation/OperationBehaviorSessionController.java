@@ -34,7 +34,7 @@ public class OperationBehaviorSessionController extends BaseController {
                              @RequestParam(value = "pageSize", defaultValue = "20") int size,
                              @RequestParam(value = "sessionId", required = false) Long sessionId,
                              @RequestParam(value = "srcCode", required = false) String srcCode,
-                             @RequestParam(value = "srcIp", required = false) String srcIp,
+                             @RequestParam(value = "ipAddress", required = false) String ipAddress,
                              @RequestParam(value = "username", required = false) String username,
                              @RequestParam(required = false) String orderType,
                              @RequestParam(required = false) String orderValue, OperationBehaviorSession operationBehaviorSession) {
@@ -43,7 +43,7 @@ public class OperationBehaviorSessionController extends BaseController {
         operationBehaviorSession.setSize(size);
         operationBehaviorSession.setId(sessionId);
         operationBehaviorSession.setUsername(username);
-        operationBehaviorSession.setSrcIp(IpUtils.ipToLong(srcIp));
+        operationBehaviorSession.setSrcIp(IpUtils.ipToLong(ipAddress));
         if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
             operationBehaviorSession.setOrderType(orderValue + " " + orderType);
         }
