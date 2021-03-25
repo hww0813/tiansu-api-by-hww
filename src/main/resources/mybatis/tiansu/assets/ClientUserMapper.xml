@@ -37,6 +37,21 @@
         </where>
     </select>
 
+    <select id="getListWithOrder" resultMap="BusiClientUserResult">
+        <include refid="selectBusiClientUserVo"/>
+        <where>
+            <if test="clientUser.username != null  and clientUser.username != ''"> and bcu.USERNAME = #{clientUser.username}</if>
+            <if test="clientUser.status != null"> and bcu.STATUS = #{clientUser.status}</if>
+            <if test="clientUser.createTime != null "> and bcu.CREATE_TIME = #{clientUser.createTime}</if>
+            <if test="clientUser.updateTime != null "> and bcu.UPDATE_TIME = #{clientUser.updateTime}</if>
+            <if test="clientUser.source != null  and clientUser.source != ''"> and bcu.SOURCE = #{clientUser.source}</if>
+            <if test="clientUser.startDate != null and clientUser.endDate != null">and bcu.update_time between STR_TO_DATE(#{clientUser.startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{clientUser.endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+        </where>
+        <if test="orderStr != null and orderStr != ''">
+            ORDER BY ${orderStr}
+        </if>
+    </select>
+
     <select id="findById" parameterType="Long" resultMap="BusiClientUserResult">
         <include refid="selectBusiClientUserVo"/>
         where ID = #{id}
@@ -44,10 +59,13 @@
     <select id="getClientUserByUsername" resultMap="BusiClientUserResult">
         <include refid="selectBusiClientUserVo"/>
         <where> username in
-            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            <foreach collection="clientList" index="index" item="item" open="(" separator="," close=")">
                 #{item.username}
             </foreach>
         </where>
+        <if test="orderStr != null and orderStr != ''">
+            ORDER BY ${orderStr}
+        </if>
     </select>
 
     <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser">

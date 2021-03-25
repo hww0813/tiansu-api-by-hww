@@ -61,6 +61,8 @@ public class ClientUserServiceImpl implements IClientUserService {
         condClientUser.setUsername(filters.getString("username"));
         condClientUser.setStatus(filters.getInteger("status"));
 
+        String orderStr = filters.getString("orderStr");
+
         Long ipAddress = IpUtils.ipToLong(filters.getString("ipAddress"));
 
         List<ClientUser> list = null;
@@ -72,10 +74,10 @@ public class ClientUserServiceImpl implements IClientUserService {
             // 根据用户名查询client列表  需要用IP
             List<Client> clientList = clientService.getList(client);
 
-            list = getClientUserByUsername(clientList);
+            list = getClientUserByUsername(clientList, orderStr);
 
         } else {
-            list = getList(condClientUser);
+            list = getList(condClientUser, orderStr);
         }
 
         //查询终端数量
@@ -247,10 +249,10 @@ public class ClientUserServiceImpl implements IClientUserService {
     }
 
     @Override
-    public List<ClientUser> getClientUserByUsername(List<Client> clientList) {
+    public List<ClientUser> getClientUserByUsername(List<Client> clientList, String orderStr) {
         List<ClientUser> clientUserList = null;
         if (!CollectionUtils.isEmpty(clientList)) {
-            clientUserList = clientUserMapper.getClientUserByUsername(clientList);
+            clientUserList = clientUserMapper.getClientUserByUsername(clientList, orderStr);
         }
         return clientUserList;
     }
@@ -294,6 +296,11 @@ public class ClientUserServiceImpl implements IClientUserService {
     @Override
     public List<ClientUser> getList(ClientUser clientUser) {
         return clientUserMapper.getList(clientUser);
+    }
+
+    @Override
+    public List<ClientUser> getList(ClientUser clientUser, String orderStr) {
+        return clientUserMapper.getListWithOrder(clientUser, orderStr);
     }
 
 

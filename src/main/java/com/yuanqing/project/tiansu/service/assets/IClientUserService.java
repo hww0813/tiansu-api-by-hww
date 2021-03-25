@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface IClientUserService extends BaseService<ClientUser,Long> {
 
+    List<ClientUser> getList(ClientUser clientUser, String orderStr);
+
     List<JSONObject> getAllToReport(JSONObject filters);
 
     /**
@@ -61,5 +63,5 @@ public interface IClientUserService extends BaseService<ClientUser,Long> {
      * @param clientList
      * @return
      */
-    List<ClientUser> getClientUserByUsername(List<Client> clientList);
+    List<ClientUser> getClientUserByUsername(List<Client> clientList, String orderStr);
 }

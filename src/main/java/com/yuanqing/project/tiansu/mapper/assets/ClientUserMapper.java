@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.mapper.assets;
 import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +14,14 @@ import java.util.List;
  */
 @Repository
 public interface ClientUserMapper extends BaseMapper<ClientUser,Long> {
+
+    /**
+     * 带排序条件的查询
+     * @param t
+     * @param orderStr
+     * @return
+     */
+    List<ClientUser> getListWithOrder(@Param("clientUser") ClientUser clientUser, @Param("orderStr") String orderStr);
 
 
     /**
@@ -28,5 +37,5 @@ public interface ClientUserMapper extends BaseMapper<ClientUser,Long> {
      * @param clientList
      * @return
      */
-    List<ClientUser> getClientUserByUsername(List<Client> clientList);
+    List<ClientUser> getClientUserByUsername(@Param("clientList") List<Client> clientList, @Param("orderStr") String orderStr);
 }

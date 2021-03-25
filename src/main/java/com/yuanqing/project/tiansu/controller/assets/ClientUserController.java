@@ -2,6 +2,7 @@ package com.yuanqing.project.tiansu.controller.assets;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -51,20 +52,26 @@ public class ClientUserController extends BaseController {
     @GetMapping("/list")
     @ApiOperation(value = "获取终端用户列表", httpMethod = "GET")
     public AjaxResult getAll(@RequestParam(value = "status", required = false) Integer status,
-                                @RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "username", required = false) String username,
-                                @RequestParam(value = "ipAddress", required = false) Long ipAddress)
-    {
+                             @RequestParam(value = "id", required = false) Long id,
+                             @RequestParam(value = "username", required = false) String username,
+                             @RequestParam(value = "ipAddress", required = false) Long ipAddress,
+                             @RequestParam(required = false) String orderType,
+                             @RequestParam(required = false) String orderValue) {
         ClientUser clientUser = new ClientUser();
 
         clientUser.setStatus(status);
         clientUser.setUsername(username);
         clientUser.setId(id);
 
+        String orderStr = null;
+        if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+            orderStr = StringUtils.humpToUnderline(orderValue) + " " + orderType;
+        }
+
         List<ClientUser> list = null;
 
         //判断 ipAddress 是否为空
-        if(ipAddress != null){
+        if (ipAddress != null) {
             Client client = new Client();
             client.setIpAddress(ipAddress);
 
@@ -72,20 +79,20 @@ public class ClientUserController extends BaseController {
             List<Client> clientList = clientService.getList(client);
 
             startPage();
-            list = clientUserService.getClientUserByUsername(clientList);
+            list = clientUserService.getClientUserByUsername(clientList, orderStr);
 
-        }else{
+        } else {
             startPage();
-            list = clientUserService.getList(clientUser);
+            list = clientUserService.getList(clientUser, orderStr);
         }
 
         //查询终端数量
         List<ClientUserDto> clientUserDtoList = clientUserService.handleClientUserTerminalNum(list);
-        if(clientUserDtoList == null) {
+        if (clientUserDtoList == null) {
             clientUserDtoList = new ArrayList<>();
         }
 
-        return AjaxResult.success(getDataTable(clientUserDtoList,list));
+        return AjaxResult.success(getDataTable(clientUserDtoList, list));
     }
 
     @DeleteMapping
@@ -93,7 +100,7 @@ public class ClientUserController extends BaseController {
     public AjaxResult deleteSipClient(@Valid @RequestParam(value = "id") Long id,
                                       @Valid @RequestParam(value = "username") String username) {
 
-        clientUserService.delete(id,username);
+        clientUserService.delete(id, username);
         return AjaxResult.success();
     }
 
@@ -147,7 +154,7 @@ public class ClientUserController extends BaseController {
     @GetMapping("/getUserDatas")
     @ApiOperation(value = "获取用户数据", httpMethod = "GET")
     public AjaxResult getUserDatas() {
-        return AjaxResult.success("success",redisCache.getCacheObject(INDEX_USER_COUNTS_CACHE));
+        return AjaxResult.success("success", redisCache.getCacheObject(INDEX_USER_COUNTS_CACHE));
     }
 
 }

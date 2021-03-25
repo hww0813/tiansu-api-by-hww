@@ -598,10 +598,15 @@ public class ReportController extends BaseController {
     @GetMapping(value = "/SipUser")
     public void getSipUserReport(@RequestParam(value = "username", required = false) String username,
                                  @RequestParam(value = "status", required = false) String status,
-                                 @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+                                 @RequestParam(value = "format", required = false) String format,
+                                 @RequestParam(required = false) String orderType,
+                                 @RequestParam(required = false) String orderValue, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("status", status);
         filters.put("username", username);
+        if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+            filters.put("orderStr", StringUtils.humpToUnderline(orderValue) + " " + orderType);
+        }
 
         if ("xlsx".equals(format)) {
             try {
