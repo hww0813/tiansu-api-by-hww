@@ -54,6 +54,7 @@ public class ServerTreeController extends BaseController {
         serverTree.setServerIp(serverIp);
         serverTree.setServerType(deviceType);
         serverTree.setIsDelete(isDelete);
+        startPage();
         List<ServerTree> list = serverTreeService.getList(serverTree);
         return AjaxResult.success(getDataTable(list));
     }
