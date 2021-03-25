@@ -1,6 +1,5 @@
 package com.yuanqing.project.tiansu.domain.statistics;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
