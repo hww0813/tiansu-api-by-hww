@@ -43,7 +43,7 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     public PageResult queryOperationList(OperationBehavior operationBehavior) throws Exception {
 
         if (StringUtils.isNotBlank(operationBehavior.getOrderType()) && StringUtils.isNotBlank(operationBehavior.getOrderValue())) {
-            operationBehavior.setOrderType(operationBehavior.getOrderType()+ " " +operationBehavior.getOrderValue());
+            operationBehavior.setOrderType(operationBehavior.getOrderValue() + " " + operationBehavior.getOrderType());
         }
         //地区码判断
         if (operationBehavior.getRegionList() != null) {
@@ -76,38 +76,36 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
         }
         operationBehavior.setNum(operationBehavior.getSize() * (operationBehavior.getNum() - 1));
         //总数据
-        CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() ->  operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
+        CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
         //操作行为列表
         CompletableFuture<List<OperationBehavior>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.getList(operationBehavior));
 
-        return PageResult.success(operationBehaviorsFuture.get(),operationBehavior.getNum(),operationBehavior.getSize(),totalFuter.get());
+        return PageResult.success(operationBehaviorsFuture.get(), operationBehavior.getNum(), operationBehavior.getSize(), totalFuter.get());
     }
 
     @Override
     public AjaxResult getCharts(LocalDate startDate, LocalDate endDate, String action, String sort, String type) {
-        String timeType = DateUtils.getTimeType(startDate,endDate);
+        String timeType = DateUtils.getTimeType(startDate, endDate);
         Long actionType = getActionType(action);
         //拼 redis Key
-        if (StringUtils.isNotBlank(type)){
+        if (StringUtils.isNotBlank(type)) {
             type += "_";
-        }else{
+        } else {
             type = "";
         }
-        String cacheKey = type+timeType+"_"+actionType;
-        if (!"desc".equals(sort)){
+        String cacheKey = type + timeType + "_" + actionType;
+        if (!"desc".equals(sort)) {
             cacheKey = cacheKey + "_REVERSE";
         }
-       return AjaxResult.success("success",redisCache.getCacheObject(cacheKey));
+        return AjaxResult.success("success", redisCache.getCacheObject(cacheKey));
     }
 
 
-
-
-    public Long getActionType(String action){
+    public Long getActionType(String action) {
         Long actionType = null;
-        if (StringUtils.isBlank(action)){
+        if (StringUtils.isBlank(action)) {
             actionType = -1L;
-        }else{
+        } else {
             actionType = Long.parseLong(action);
         }
         return actionType;
@@ -118,14 +116,14 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
         List<JSONObject> reportList = new ArrayList<JSONObject>();
 
         OperationBehavior condOperationBehavior = new OperationBehavior();
-        condOperationBehavior.setStartTime((LocalDateTime)filters.get("stime"));
-        condOperationBehavior.setEndTime((LocalDateTime)filters.get("etime"));
+        condOperationBehavior.setStartTime((LocalDateTime) filters.get("stime"));
+        condOperationBehavior.setEndTime((LocalDateTime) filters.get("etime"));
         condOperationBehavior.setSrcIp(IpUtils.ipToLong(filters.getString("srcIp")));
         condOperationBehavior.setDstDeviceIp(IpUtils.ipToLong(filters.getString("dstDeviceIp")));
         condOperationBehavior.setAction(filters.getString("action"));
         condOperationBehavior.setNum(0);
         Integer count = operationBehaviorMapper.quertyOperationBehaviorCount(condOperationBehavior);
-        if(count > 20000) {
+        if (count > 20000) {
             condOperationBehavior.setSize(20000);
         } else {
             condOperationBehavior.setSize(count);
@@ -211,11 +209,11 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
         operationBehavior.setNum(operationBehavior.getSize() * (operationBehavior.getNum() - 1));
 
 
-        CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() ->  operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
+        CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
         //操作行为列表
         CompletableFuture<List<OperationBehavior>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.getVisitedRateRelatedOperation(cameraCodeList, operationBehavior));
 
-        return PageResult.success(operationBehaviorsFuture.get(),operationBehavior.getNum(),operationBehavior.getSize(),totalFuter.get());
+        return PageResult.success(operationBehaviorsFuture.get(), operationBehavior.getNum(), operationBehavior.getSize(), totalFuter.get());
 
     }
 

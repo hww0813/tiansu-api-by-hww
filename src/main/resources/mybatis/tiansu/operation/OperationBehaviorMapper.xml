@@ -208,9 +208,6 @@
             <if test="connectType != null and connectType != '' ">
                 AND v.CONNECT_TYPE = #{connectType}
             </if>
-            <if test="action != null and action != '' ">
-                AND v.ACTION = #{action}
-            </if>
         </where>
     </select>
 
