@@ -46,18 +46,22 @@ public class CameraVisitedController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头被访问列表", httpMethod = "GET")
-    public AjaxResult getCameraVisitedList(Camera camera) {
+    public AjaxResult getCameraVisitedList(@RequestParam(value = "action",required = false) Integer action,
+                                           @RequestParam(value = "cameraIp",required = false) String cameraIp,
+                                           Camera camera) {
 
         CameraVisit cameraVisit = new CameraVisit();
+        cameraVisit.setAction(action);
 
         cameraVisit.setstartDate(camera.getstartDate());
         cameraVisit.setendDate(camera.getendDate());
 
         camera.setstartDate(null);
         camera.setendDate(null);
+        camera.setIpAddress(IpUtils.ipToLong(cameraIp));
 
         startPage();
-        // TODO: camera中开始结束时间没有值
+
         List<Camera> cameraList = cameraService.getList(camera);
 
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList,cameraVisit);

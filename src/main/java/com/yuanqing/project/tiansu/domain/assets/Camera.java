@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.domain.assets;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yuanqing.framework.aspectj.lang.annotation.Excel;
 import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
 import lombok.Data;

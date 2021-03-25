@@ -142,7 +142,7 @@ public class CameraController extends BaseController {
     @PutMapping
     @ApiOperation(value = "更新一个摄像头", httpMethod = "PUT")
     public AjaxResult putSipDevice(@Valid @RequestBody CameraDto dto) {
-        cameraService.save(doForward(dto), SaveType.UPDATE);
+        cameraService.save(doForward(dto));
         return AjaxResult.success();
     }
 

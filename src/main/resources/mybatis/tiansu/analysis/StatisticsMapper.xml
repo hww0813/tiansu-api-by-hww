@@ -107,6 +107,7 @@
                 #{item}
             </foreach>
             <if test="filter.startDate != null and filter.endDate != null"> and stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')</if>
+            <if test="filter.action != null">and action = #{filter.action}</if>
         </where>
         GROUP BY
             dst_code,
