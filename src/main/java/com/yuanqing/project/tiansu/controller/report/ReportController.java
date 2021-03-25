@@ -2793,9 +2793,8 @@ public class ReportController extends BaseController {
         data.setName("终端访问");
 
         List<String> titles = new ArrayList();
-        titles.add("终端编号");
-        titles.add("IP地址");
-        titles.add("登录用户");
+        titles.add("终端IP");
+        titles.add("用户名");
         titles.add("操作类型");
         titles.add("访问次数");
         titles.add("相关摄像头数");
@@ -2806,7 +2805,6 @@ public class ReportController extends BaseController {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
-                row.add(j.get("CLIENT_CODE"));
                 row.add(j.get("CLIENT_IP"));
                 row.add(j.get("USERNAME"));
                 row.add(j.get("ACTION"));

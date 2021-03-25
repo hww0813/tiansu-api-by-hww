@@ -328,9 +328,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
                 } else if (3 == action) {
                     jsonObject.put("ACTION", "控制设备");
                 } else if (4 == action) {
-                    jsonObject.put("ACTION", "SIGN_IN");
+                    jsonObject.put("ACTION", "登录");
                 } else if (5 == action) {
-                    jsonObject.put("ACTION", "SIGN_OUT");
+                    jsonObject.put("ACTION", "登出");
                 } else if (6 == action) {
                     jsonObject.put("ACTION", "其他操作");
                 } else if (7 == action) {
