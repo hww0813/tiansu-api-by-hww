@@ -111,6 +111,8 @@ public class ClientUserServiceImpl implements IClientUserService {
     @Override
     public List<ClientUserDto> handleClientUserTerminalNum(List<ClientUser> clientUserList) {
 
+        List<ClientUserDto> dtoList = new ArrayList<>();
+
         if (CollectionUtils.isEmpty(clientUserList)) {
             log.error("用户列表为空");
             return null;
@@ -127,7 +129,12 @@ public class ClientUserServiceImpl implements IClientUserService {
 
         if (CollectionUtils.isEmpty(originalTerminalNum)) {
             log.error("获取用户名对应的终端数，结果为空");
-            return null;
+            clientUserList.stream().forEach(f -> {
+                ClientUserDto dto = doBackward(f);
+                dto.setTerminalCnt(0);
+                dtoList.add(dto);
+            });
+            return dtoList;
         }
 
         Map<String, Integer> map = new HashMap<>();
@@ -139,7 +146,6 @@ public class ClientUserServiceImpl implements IClientUserService {
             return null;
         }
 
-        List<ClientUserDto> dtoList = new ArrayList<>();
 
         clientUserList.stream().forEach(f -> {
             ClientUserDto dto = doBackward(f);

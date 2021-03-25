@@ -82,7 +82,7 @@ public class ClientUserController extends BaseController {
         //查询终端数量
         List<ClientUserDto> clientUserDtoList = clientUserService.handleClientUserTerminalNum(list);
         if(clientUserDtoList == null) {
-            clientUserDtoList = new ArrayList<ClientUserDto>();
+            clientUserDtoList = new ArrayList<>();
         }
 
         return AjaxResult.success(getDataTable(clientUserDtoList,list));

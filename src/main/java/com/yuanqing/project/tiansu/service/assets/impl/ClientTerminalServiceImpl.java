@@ -161,6 +161,9 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     @Override
     public List<ClientTerminalDto> handleTerminalUserNum(List<ClientTerminal> clientTerminalList) {
 
+        //将带有用户数的信息转换为dto
+        List<ClientTerminalDto> dtoList = new ArrayList<>();
+
         if (CollectionUtils.isEmpty(clientTerminalList)) {
             log.error("终端列表为空");
             return null;
@@ -171,6 +174,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
         if (CollectionUtils.isEmpty(ipList)) {
             log.error("提取集合IP异常,集合为空");
+
             return null;
         }
 
@@ -179,7 +183,12 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
 
         if (CollectionUtils.isEmpty(originalUserNum)) {
             log.error("获取IP对应的用户数结果为空");
-            return null;
+            clientTerminalList.stream().forEach(f -> {
+                ClientTerminalDto dto = doBackward(f);
+                dto.setUserCnt(0);
+                dtoList.add(dto);
+            });
+            return dtoList;
         }
 
         Map<Long, Integer> map = new HashMap<>();
@@ -192,8 +201,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
             return null;
         }
 
-        //将带有用户数的信息转换为dto
-        List<ClientTerminalDto> dtoList = new ArrayList<>();
+
 
         clientTerminalList.stream().forEach(f -> {
             ClientTerminalDto dto = doBackward(f);

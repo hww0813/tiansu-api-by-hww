@@ -1,5 +1,7 @@
 package com.yuanqing.project.tiansu.domain.assets.base;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yuanqing.framework.aspectj.lang.annotation.Excel;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import lombok.Data;
@@ -17,6 +19,7 @@ import java.io.Serializable;
 public class BaseCamera extends BaseEntity {
 
     /** 主键ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /** 设备名称 */
