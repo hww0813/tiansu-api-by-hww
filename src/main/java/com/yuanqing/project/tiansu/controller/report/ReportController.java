@@ -2925,13 +2925,13 @@ public class ReportController extends BaseController {
         data.setName("行为会话");
 
         List<String> titles = new ArrayList();
-        titles.add("源设备编号");
+//        titles.add("源设备编号");
         titles.add("源设备IP");
         titles.add("登录帐号");
-        titles.add("上行流量");
-        titles.add("下行流量");
+//        titles.add("上行流量");
+//        titles.add("下行流量");
         titles.add("开始时间");
-        titles.add("时长");
+        titles.add("最近活跃时间");
         data.setTitles(titles);
 
         List<JSONObject> all = operationBehaviorSessionService.getAllToReport(filters);
@@ -2939,13 +2939,13 @@ public class ReportController extends BaseController {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
-                row.add(j.get("srcCode"));
+//                row.add(j.get("srcCode"));
                 row.add(j.get("srcIp"));
                 row.add(j.get("username"));
-                row.add(j.get("upFlow"));
-                row.add(j.get("downFlow"));
+//                row.add(j.get("upFlow"));
+//                row.add(j.get("downFlow"));
                 row.add(j.get("startTime"));
-                row.add(j.get("totalTime"));
+                row.add(j.get("activeTime"));
                 rows.add(row);
             }
 

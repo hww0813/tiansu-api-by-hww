@@ -102,6 +102,11 @@ public class OperationBehaviorSessionServiceImpl implements IOperationBehaviorSe
                 } else {
                     jsonObject.put("startTime", "");
                 }
+                if (operationBehaviorSession.getActiveTime() != null) {
+                    jsonObject.put("activeTime", DateUtils.getStrFromLocalDateTime(operationBehaviorSession.getActiveTime()));
+                } else {
+                    jsonObject.put("activeTime", "");
+                }
 
                 reportList.add(jsonObject);
             }

@@ -374,6 +374,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     };
 
 
+    public static String getStrFromLocalDateTime(LocalDateTime time){
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return df.format(time);
+    }
+
 
     public static void main(String[] args) {
         System.out.println(getNowMonday());

@@ -40,6 +40,9 @@
 	<field name="totalTime">
 		<fieldDescription><![CDATA[totalTime]]></fieldDescription>
 	</field>
+	<field name="activeTime">
+		<fieldDescription><![CDATA[activeTime]]></fieldDescription>
+	</field>
 	<title>
 		<band height="80">
 			<frame>
@@ -67,23 +70,23 @@
 	<columnHeader>
 		<band height="30">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+<!--			<staticText>-->
+<!--				<reportElement x="0" y="0" width="137" height="30" uuid="0a600b30-9bd3-48ab-b8ff-1871f0a84bf8">-->
+<!--					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe5c5d20-1786-4fd4-b2ef-fa1ede5574fc"/>-->
+<!--				</reportElement>-->
+<!--				<box>-->
+<!--					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--				</box>-->
+<!--				<textElement textAlignment="Center" verticalAlignment="Middle">-->
+<!--					<font fontName="my"/>-->
+<!--				</textElement>-->
+<!--				<text><![CDATA[源设备编号]]></text>-->
+<!--			</staticText>-->
 			<staticText>
-				<reportElement x="0" y="0" width="137" height="30" uuid="0a600b30-9bd3-48ab-b8ff-1871f0a84bf8">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe5c5d20-1786-4fd4-b2ef-fa1ede5574fc"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="my"/>
-				</textElement>
-				<text><![CDATA[源设备编号]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="137" y="0" width="68" height="30" uuid="99cae694-a60f-4597-ad84-05be95c826e9">
+				<reportElement x="0" y="0" width="205" height="30" uuid="99cae694-a60f-4597-ad84-05be95c826e9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e245678-2b6d-4259-9e80-efbdb7053be6"/>
 				</reportElement>
 				<box>
@@ -112,38 +115,38 @@
 				</textElement>
 				<text><![CDATA[登录账号]]></text>
 			</staticText>
+<!--			<staticText>-->
+<!--				<reportElement x="273" y="0" width="40" height="30" uuid="145aa0bd-3fdb-4e15-942c-876a64b1f423">-->
+<!--					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0e17122c-5b0b-43b3-baaf-b8a804d49154"/>-->
+<!--				</reportElement>-->
+<!--				<box>-->
+<!--					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--				</box>-->
+<!--				<textElement textAlignment="Center" verticalAlignment="Middle">-->
+<!--					<font fontName="my"/>-->
+<!--				</textElement>-->
+<!--				<text><![CDATA[上行流量]]></text>-->
+<!--			</staticText>-->
+<!--			<staticText>-->
+<!--				<reportElement x="313" y="0" width="40" height="30" uuid="27aac246-c410-4b26-beee-fc7ba0bdd9db">-->
+<!--					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="71c470d8-5f7f-4673-9b16-1e0972b74703"/>-->
+<!--				</reportElement>-->
+<!--				<box>-->
+<!--					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--				</box>-->
+<!--				<textElement textAlignment="Center" verticalAlignment="Middle">-->
+<!--					<font fontName="my"/>-->
+<!--				</textElement>-->
+<!--				<text><![CDATA[下行流量]]></text>-->
+<!--			</staticText>-->
 			<staticText>
-				<reportElement x="273" y="0" width="40" height="30" uuid="145aa0bd-3fdb-4e15-942c-876a64b1f423">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0e17122c-5b0b-43b3-baaf-b8a804d49154"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="my"/>
-				</textElement>
-				<text><![CDATA[上行流量]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="313" y="0" width="40" height="30" uuid="27aac246-c410-4b26-beee-fc7ba0bdd9db">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="71c470d8-5f7f-4673-9b16-1e0972b74703"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="my"/>
-				</textElement>
-				<text><![CDATA[下行流量]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="353" y="0" width="110" height="30" uuid="5eb25536-640e-4056-8e1c-de1795e3b696">
+				<reportElement x="273" y="0" width="110" height="30" uuid="5eb25536-640e-4056-8e1c-de1795e3b696">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="af344957-eb2f-41e0-ba98-709dad330195"/>
 				</reportElement>
 				<box>
@@ -158,7 +161,7 @@
 				<text><![CDATA[开始时间]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="463" y="0" width="60" height="30" uuid="5eb25536-640e-4056-8e1c-de1795e3b696">
+				<reportElement x="383" y="0" width="110" height="30" uuid="5eb25536-640e-4056-8e1c-de1795e3b696">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="af344957-eb2f-41e0-ba98-709dad330195"/>
 				</reportElement>
 				<box>
@@ -170,30 +173,30 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="my"/>
 				</textElement>
-				<text><![CDATA[时长]]></text>
+				<text><![CDATA[最近活跃时间]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="30">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+<!--			<textField>-->
+<!--				<reportElement x="0" y="0" width="137" height="30" uuid="e139227c-720e-4eb4-94c5-7f457e021c3a">-->
+<!--					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe5c5d20-1786-4fd4-b2ef-fa1ede5574fc"/>-->
+<!--				</reportElement>-->
+<!--				<box>-->
+<!--					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--				</box>-->
+<!--				<textElement textAlignment="Center" verticalAlignment="Middle">-->
+<!--					<font fontName="my" size="7"/>-->
+<!--				</textElement>-->
+<!--				<textFieldExpression><![CDATA[$F{srcCode}]]></textFieldExpression>-->
+<!--			</textField>-->
 			<textField>
-				<reportElement x="0" y="0" width="137" height="30" uuid="e139227c-720e-4eb4-94c5-7f457e021c3a">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe5c5d20-1786-4fd4-b2ef-fa1ede5574fc"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="my" size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{srcCode}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="137" y="0" width="68" height="30" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
+				<reportElement x="0" y="0" width="205" height="30" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e245678-2b6d-4259-9e80-efbdb7053be6"/>
 				</reportElement>
 				<box>
@@ -222,38 +225,38 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
 			</textField>
+<!--			<textField>-->
+<!--				<reportElement x="273" y="0" width="40" height="30" uuid="0983b933-bf18-4c52-ad6e-dc74ef51c722">-->
+<!--					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0e17122c-5b0b-43b3-baaf-b8a804d49154"/>-->
+<!--				</reportElement>-->
+<!--				<box>-->
+<!--					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--				</box>-->
+<!--				<textElement textAlignment="Center" verticalAlignment="Middle">-->
+<!--					<font fontName="my" size="7"/>-->
+<!--				</textElement>-->
+<!--				<textFieldExpression><![CDATA[$F{upFlow}]]></textFieldExpression>-->
+<!--			</textField>-->
+<!--			<textField>-->
+<!--				<reportElement x="313" y="0" width="40" height="30" uuid="3a6e1f11-b922-4299-989a-e4780823ad9b">-->
+<!--					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="71c470d8-5f7f-4673-9b16-1e0972b74703"/>-->
+<!--				</reportElement>-->
+<!--				<box>-->
+<!--					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>-->
+<!--				</box>-->
+<!--				<textElement textAlignment="Center" verticalAlignment="Middle">-->
+<!--					<font fontName="my" size="7"/>-->
+<!--				</textElement>-->
+<!--				<textFieldExpression><![CDATA[$F{downFlow}]]></textFieldExpression>-->
+<!--			</textField>-->
 			<textField>
-				<reportElement x="273" y="0" width="40" height="30" uuid="0983b933-bf18-4c52-ad6e-dc74ef51c722">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0e17122c-5b0b-43b3-baaf-b8a804d49154"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="my" size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{upFlow}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="313" y="0" width="40" height="30" uuid="3a6e1f11-b922-4299-989a-e4780823ad9b">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="71c470d8-5f7f-4673-9b16-1e0972b74703"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="my" size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{downFlow}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="353" y="0" width="110" height="30" uuid="f7bd66ab-a2bd-43be-9d07-ca366569b869">
+				<reportElement x="273" y="0" width="110" height="30" uuid="f7bd66ab-a2bd-43be-9d07-ca366569b869">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="af344957-eb2f-41e0-ba98-709dad330195"/>
 				</reportElement>
 				<box>
@@ -268,7 +271,7 @@
 				<textFieldExpression><![CDATA[$F{startTime}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="463" y="0" width="60" height="30" uuid="f7bd66ab-a2bd-43be-9d07-ca366569b869">
+				<reportElement x="383" y="0" width="110" height="30" uuid="f7bd66ab-a2bd-43be-9d07-ca366569b869">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="af344957-eb2f-41e0-ba98-709dad330195"/>
 				</reportElement>
 				<box>
@@ -280,7 +283,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="my" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{totalTime}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{activeTime}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
