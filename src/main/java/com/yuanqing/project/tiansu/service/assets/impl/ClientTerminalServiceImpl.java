@@ -64,6 +64,11 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     }
 
     @Override
+    public List<ClientTerminal> getListWithOrder(ClientTerminal clientTerminal, String orderStr) {
+        return clientTerminalMapper.getListWithOrder(clientTerminal, orderStr);
+    }
+
+    @Override
     public List<JSONObject> getAllToReport(JSONObject filters) {
         ClientTerminal condClientTerminal = new ClientTerminal();
         condClientTerminal.setIpAddress(IpUtils.ipToLong(filters.getString("ipAddress")));

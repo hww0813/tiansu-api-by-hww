@@ -60,6 +60,38 @@
         </where>
     </select>
 
+
+
+    <select id="getListWithOrder" resultMap="BusiCameraResult">
+        <include refid="selectBusiCameraVo"/>
+        <where>
+            device_type = 1
+            <if test="camera.deviceCode != null  and camera.deviceCode != ''"> and DEVICE_CODE = #{camera.deviceCode}</if>
+            <if test="camera.deviceDomain != null  and camera.deviceDomain != ''"> and DEVICE_DOMAIN = #{camera.deviceDomain}</if>
+            <if test="camera.deviceName != null  and camera.deviceName != ''"> and DEVICE_NAME like concat('%', #{camera.deviceName}, '%')</if>
+            <if test="camera.macAddress != null  and camera.macAddress != ''"> and MAC_ADDRESS = #{camera.macAddress}</if>
+            <if test="camera.longitude != null "> and LONGITUDE = #{camera.longitude}</if>
+            <if test="camera.latitude != null "> and LATITUDE = #{camera.latitude}</if>
+            <if test="camera.region != null "> and REGION = #{camera.region}</if>
+            <if test="camera.createTime != null "> and CREATE_TIME = #{camera.createTime}</if>
+            <if test="camera.updateTime != null "> and UPDATE_TIME = #{camera.updateTime}</if>
+            <if test="camera.ipAddress != null "> and IP_ADDRESS = #{camera.ipAddress}</if>
+            <if test="camera.status != null"> and STATUS = #{camera.status}</if>
+            <if test="camera.sipServerId != null "> and SIP_SERVER_ID = #{camera.sipServerId}</if>
+            <if test="camera.domainIp != null "> and DOMAIN_IP = #{camera.domainIp}</if>
+            <if test="camera.domainPort != null "> and DOMAIN_PORT = #{camera.domainPort}</if>
+            <if test="camera.isGb != null "> and IS_GB = #{camera.isGb}</if>
+            <if test="camera.manufacturer != null  and camera.manufacturer != ''"> and MANUFACTURER = #{camera.manufacturer}</if>
+            <if test="camera.isProbe != null  and camera.isProbe != ''"> and IS_PROBE = #{camera.isProbe}</if>
+            <if test="camera.isImport != null  and camera.isImport != ''"> and IS_IMPORT = #{camera.isImport}</if>
+            <if test="camera.isCheck != null "> and IS_CHECK = #{isCheck}</if>
+            <if test="camera.startDate != null and camera.endDate != null">and update_time between STR_TO_DATE(#{camera.startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{camera.endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+        </where>
+        <if test="orderStr != null and orderStr != ''">
+            ORDER BY ${orderStr}
+        </if>
+    </select>
+
     <select id="batchGetCameraById" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         <where>

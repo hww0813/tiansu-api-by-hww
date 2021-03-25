@@ -16,6 +16,13 @@ import java.util.List;
 public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
+     * 带排序条件
+     * @param camera
+     * @return
+     */
+    List<Camera> getListWithOrder(@Param("camera") Camera camera, @Param("orderStr") String orderStr);
+
+    /**
      * 获取摄像头国标和非国标数
      * @return
      */

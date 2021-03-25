@@ -17,6 +17,13 @@ import java.util.Map;
 
 public interface ICameraService extends BaseService<Camera,Long> {
 
+    /**
+     * 带排序条件
+     * @param camera
+     * @param orderStr
+     * @return
+     */
+    List<Camera> getListWithOrder(Camera camera, String orderStr);
 
     /**
      * 判断camera在数据库中是否不存在

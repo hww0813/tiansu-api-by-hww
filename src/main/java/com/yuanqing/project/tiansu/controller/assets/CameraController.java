@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.controller.assets;
 import com.alibaba.fastjson.JSONObject;
 
 import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
@@ -76,8 +77,13 @@ public class CameraController extends BaseController {
         camera.setManufacturer(manufacturer);
         camera.setId(id);
 
+        String orderStr = null;
+        if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+            orderStr = orderValue + " " + orderType;
+        }
+
         startPage();
-        List<Camera> getList = cameraService.getList(camera);
+        List<Camera> getList = cameraService.getListWithOrder(camera, orderStr);
 
         AjaxResult success = AjaxResult.success(getDataTable(getList));
         return success;

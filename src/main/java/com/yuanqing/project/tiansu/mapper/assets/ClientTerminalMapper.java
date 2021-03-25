@@ -1,10 +1,7 @@
 package com.yuanqing.project.tiansu.mapper.assets;
 
-import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
-import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
-import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +17,8 @@ import java.util.List;
 
 @Component
 public interface ClientTerminalMapper extends BaseMapper<ClientTerminal, Long> {
+
+    List<ClientTerminal> getListWithOrder(@Param("clientTerminal") ClientTerminal clientTerminal, @Param("orderStr") String orderStr);
 
     /**
      * 批量更新终端状态

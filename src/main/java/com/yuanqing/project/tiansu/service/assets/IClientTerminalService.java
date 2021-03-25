@@ -18,6 +18,8 @@ import java.util.List;
 @Validated
 public interface IClientTerminalService extends BaseService<ClientTerminal, Long> {
 
+    List<ClientTerminal> getListWithOrder(ClientTerminal clientTerminal, String orderStr);
+
     /**
      *
      * @param ids

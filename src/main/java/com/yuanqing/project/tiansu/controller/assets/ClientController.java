@@ -53,12 +53,14 @@ public class ClientController extends BaseController {
     @GetMapping("/list")
     @ApiOperation(value = "获取终端列表", httpMethod = "GET")
     public AjaxResult getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                @RequestParam(value = "region[]", required = false) Integer regionId,
-                                @RequestParam(value = "status", required = false) Integer status,
-                                @RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "username", required = false) String username,
-                                @RequestParam(value = "sipServerId", required = false) Long sipServerId) {
+                             @RequestParam(value = "deviceCode", required = false) String deviceCode,
+                             @RequestParam(value = "region[]", required = false) Integer regionId,
+                             @RequestParam(value = "status", required = false) Integer status,
+                             @RequestParam(value = "id", required = false) Long id,
+                             @RequestParam(value = "username", required = false) String username,
+                             @RequestParam(value = "sipServerId", required = false) Long sipServerId,
+                             @RequestParam(required = false) String orderType,
+                             @RequestParam(required = false) String orderValue) {
 
         ClientTerminal clientTerminal = new ClientTerminal();
         clientTerminal.setStatus(status);
@@ -68,10 +70,14 @@ public class ClientController extends BaseController {
         clientTerminal.setId(id);
         clientTerminal.setRegionId(regionId);
 
+        String orderStr = null;
+        if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+            orderStr = StringUtils.humpToUnderline(orderValue) + " " + orderType;
+        }
 
         List<ClientTerminal> list = null;
         //判断 username 是否为空
-        if(StringUtils.isNotEmpty(username)){
+        if (StringUtils.isNotEmpty(username)) {
             Client client = new Client();
             client.setUsername(username);
 
@@ -81,29 +87,29 @@ public class ClientController extends BaseController {
             startPage();
             list = clientTerminalService.getTerminalByClientList(clientList);
 
-        }else{
+        } else {
             startPage();
-            list = clientTerminalService.getList(clientTerminal);
+            list = clientTerminalService.getListWithOrder(clientTerminal, orderStr);
         }
 
         //用户数
         List<ClientTerminalDto> clientTerminalDtoList = clientTerminalService.handleTerminalUserNum(list);
-        if(clientTerminalDtoList == null) {
+        if (clientTerminalDtoList == null) {
             clientTerminalDtoList = new ArrayList<>();
         }
 
-        return AjaxResult.success(getDataTable(clientTerminalDtoList,list));
+        return AjaxResult.success(getDataTable(clientTerminalDtoList, list));
     }
 
     @GetMapping("/clientList")
     @ApiOperation(value = "获取客户端列表", httpMethod = "GET")
     public AjaxResult getAll(@RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                @RequestParam(value = "region[]", required = false) Integer regionId,
-                                @RequestParam(value = "status", required = false) Integer status,
-                                @RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "sipServerId", required = false) Long sipServerId,
-                                @RequestParam(value = "username", required = false) String username) {
+                             @RequestParam(value = "deviceCode", required = false) String deviceCode,
+                             @RequestParam(value = "region[]", required = false) Integer regionId,
+                             @RequestParam(value = "status", required = false) Integer status,
+                             @RequestParam(value = "id", required = false) Long id,
+                             @RequestParam(value = "sipServerId", required = false) Long sipServerId,
+                             @RequestParam(value = "username", required = false) String username) {
         Client client = new Client();
         client.setStatus(status);
         client.setIpAddress(IpUtils.ipToLong(ipAddress));
@@ -139,7 +145,7 @@ public class ClientController extends BaseController {
     @PutMapping
     @ApiOperation(value = "更新客户端", httpMethod = "PUT")
     public AjaxResult putSipClient(@Valid @RequestBody ClientTerminal dto) {
-        clientTerminalService.save(dto,SaveType.UPDATE);
+        clientTerminalService.save(dto, SaveType.UPDATE);
         return AjaxResult.success();
     }
 
@@ -148,7 +154,7 @@ public class ClientController extends BaseController {
     public AjaxResult deleteSipClient(@Valid @RequestParam(value = "id") Long id,
                                       @Valid @RequestParam(value = "ipAddress") Long ipAddress) {
 
-        clientTerminalService.delete(id,ipAddress);
+        clientTerminalService.delete(id, ipAddress);
         return AjaxResult.success();
     }
 
@@ -161,7 +167,6 @@ public class ClientController extends BaseController {
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(activeTerminal);
         return getDataTable(dtoList);
     }
-
 
 
     @GetMapping("/getByIpAndPort")
@@ -182,7 +187,7 @@ public class ClientController extends BaseController {
     @GetMapping("/getClientDatas")
     @ApiOperation(value = "获取客户端数据", httpMethod = "GET")
     public AjaxResult getClientDatas() {
-        return AjaxResult.success("success",redisCache.getCacheObject(INDEX_CLIENT_COUNTS_CACHE));
+        return AjaxResult.success("success", redisCache.getCacheObject(INDEX_CLIENT_COUNTS_CACHE));
     }
 
 

@@ -61,6 +61,11 @@ public class CameraServiceImpl implements ICameraService {
     private static SequenceIdGenerator extDeviceIdGenerator = new SequenceIdGenerator(1, 1);
 
     @Override
+    public List<Camera> getListWithOrder(Camera camera, String orderStr) {
+        return cameraMapper.getListWithOrder(camera, orderStr);
+    }
+
+    @Override
     public boolean findCamera(Camera camera) {
         List<Camera> list = getList(camera);
         return (list.size() == 0);
