@@ -20,6 +20,13 @@ public interface IStatisticsService {
     List<Statistics> getList(Statistics statistics);
 
     /**
+     * 查询 相关终端操作
+     * @param statistics
+     * @return
+     */
+    List<Statistics> getClientUserList(Statistics statistics);
+
+    /**
      * 获取下级地区访问率
      * @param regionId 地区代码
      * @param dateType 时间范围 （日/月/年）

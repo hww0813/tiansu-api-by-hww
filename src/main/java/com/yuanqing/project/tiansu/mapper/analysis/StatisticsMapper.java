@@ -29,6 +29,13 @@ public interface StatisticsMapper {
     List<Statistics> getList(Statistics statistics);
 
     /**
+     * 查询 相关终端操作
+     * @param statistics
+     * @return
+     */
+    List<Statistics> getClientUserList(Statistics statistics);
+
+    /**
      * 根据地区统计访问率
      * 根据摄像头表中的region字段分组统计
      * @param filter 过滤条件

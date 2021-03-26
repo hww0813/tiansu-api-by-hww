@@ -93,7 +93,7 @@ public class CameraVisitedController extends BaseController {
         statistics.setDstCode(deviceCode);
 
         startPage();
-        List<Statistics> statisticsList = statisticsService.getList(statistics);
+        List<Statistics> statisticsList = statisticsService.getClientUserList(statistics);
 
         return AjaxResult.success(getDataTable(statisticsList));
 

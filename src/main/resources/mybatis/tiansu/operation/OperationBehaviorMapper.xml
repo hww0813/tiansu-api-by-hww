@@ -156,7 +156,6 @@
             </if>
             <if test="srcIp != null and srcIp != '' ">
                 AND v.SRC_IP = #{srcIp}
-
             </if>
             <if test="dstIp != null and dstIp != '' ">
                 AND v.DST_IP = #{dstIp}
@@ -180,7 +179,6 @@
                 AND v.ACTION = #{action}
             </if>
             <if test="startDate != null and endDate != null">and v.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
-
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
                 AND v.dst_device_ip = #{dstDeviceIp}
             </if>

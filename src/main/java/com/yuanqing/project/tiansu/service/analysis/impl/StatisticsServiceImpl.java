@@ -60,6 +60,12 @@ public class StatisticsServiceImpl implements IStatisticsService {
         return statisticsMapper.getList(statistics);
     }
 
+    @Override
+    public List<Statistics> getClientUserList(Statistics statistics) {
+
+        return statisticsMapper.getClientUserList(statistics);
+    }
+
     /**
      * 1.根据regionID 查询区域信息
      * 2.查询区域下级地区信息

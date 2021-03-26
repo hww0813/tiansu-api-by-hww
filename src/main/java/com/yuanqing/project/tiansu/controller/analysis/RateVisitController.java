@@ -125,30 +125,30 @@ public class RateVisitController extends BaseController {
                               @RequestParam(value = "srcIp", required = false) String srcIp,
                               @RequestParam(value = "dstIp", required = false) String dstIp,
                               @RequestParam(value = "action", required = false) String action,
-                              @RequestParam(value = "dstCode", required = false) String dstCode,
+                              @RequestParam(value = "deviceCode", required = false) String deviceCode,
                               @RequestParam(value = "username", required = false) String username,
                               @RequestParam(value = "startDate") String startDate,
                               @RequestParam(value = "endDate") String  endDate) throws Exception {
 
-        Camera camera = new Camera();
-        camera.setRegion(region);
-        List<Camera> cameraList = cameraService.getList(camera);
-
-        List<String> cameraCodeList = statisticsService.getCameraVisited(cameraList, new CameraVisit());
+        // TODO: 没看懂这里是干嘛用的？还搞一个cameraCodeList？
+//        Camera camera = new Camera();
+//        camera.setRegion(region);
+//        List<Camera> cameraList = cameraService.getList(camera);
+//
+//        List<String> cameraCodeList = statisticsService.getCameraVisited(cameraList, new CameraVisit());
 
         OperationBehavior operationBehavior = new OperationBehavior();
         operationBehavior.setNum(pageNum);
         operationBehavior.setSize(pageSize);
         operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
-        operationBehavior.setDstCode(dstCode);
+        operationBehavior.setDstCode(deviceCode);
         operationBehavior.setUsername(username);
         operationBehavior.setAction(action);
         operationBehavior.setDstIp(IpUtils.ipToLong(dstIp));
         operationBehavior.setstartDate(startDate);
         operationBehavior.setendDate(endDate);
 
-
-        PageResult visitedRateRelatedOperation = operationBehaviorService.getVisitedRateRelatedOperation(cameraCodeList, operationBehavior);
+        PageResult visitedRateRelatedOperation = operationBehaviorService.getVisitedRateRelatedOperation(null, operationBehavior);
 
         return visitedRateRelatedOperation;
 
