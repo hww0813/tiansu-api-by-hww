@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.service.operation;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
 
 import java.util.List;
@@ -53,4 +54,9 @@ public interface IRawNetFlowService {
      * @return 结果
      */
     public int deleteBusiRawNetFlowById(Long id);
+
+
+    public  List<JSONObject>getServerFlowTrend (RawNetFlow rawNetFlow);
+
+    public List<JSONObject>getServerFlowRelationClient (RawNetFlow rawNetFlow);
 }

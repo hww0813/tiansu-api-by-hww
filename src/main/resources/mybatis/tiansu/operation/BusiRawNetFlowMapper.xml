@@ -100,5 +100,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="getServerRelationPort" resultType="com.alibaba.fastjson.JSONObject" >
+       select *,sum(packet_count)
+       from busi_raw_net_flow
+        where
+        1=1
+        AND
+        and dst_ip = #{dstIp}
+        and stamp between #{startDate} and #{endDate}
+        GROUP BY dst_port,dst_ip
+    </select>
+
+    <select id="getRawFlowTrend" parameterType="RawNetFlow" resultType="com.alibaba.fastjson.JSONObject"  >
+        SELECT HOUR(e.stamp) as Hour,sum(e.packet_size) as Size ,sum(e.packet_count)as Count
+	     FROM busi_raw_net_flow e
+	       WHERE DATE_FORMAT(e.stamp, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+         and e.dst_ip = #{dstIp}
+	       GROUP BY HOUR(e.stamp) ORDER BY Hour(e.stamp);
+    </select>
+
+    <select id="getServerFlowRelationClient" parameterType="RawNetFlow" resultType="com.alibaba.fastjson.JSONObject"  >
+       SELECT  src_ip,sum(packet_count) as packetCount
+       from busi_raw_net_flow e
+       where
+       1=1
+       and e.dst_ip = #{dstIp}
+       and e.stamp = #{stamp}
+      GROUP BY  dst_ip ,src_ip
+      order BY packetCount;
+    </select>
     
 </mapper>

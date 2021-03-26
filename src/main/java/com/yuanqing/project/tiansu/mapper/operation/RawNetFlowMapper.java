@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.mapper.operation;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
 
 import java.util.List;
@@ -53,4 +54,20 @@ public interface RawNetFlowMapper {
      * @return 结果
      */
     public int deleteBusiRawNetFlowByIds(Long... ids);
+
+    /**
+     * 获取服务器相关访问的端口
+     *
+     * @return 结果
+     */
+    List<JSONObject>getServerRelationPort (JSONObject jsonObject);
+    /**
+     *
+     *获取服务器当天的流量趋势
+     *
+     */
+    List<JSONObject>getRawFlowTrend (RawNetFlow rawNetFlow);
+
+
+    List<JSONObject>getServerFlowRelationClient (RawNetFlow rawNetFlow);
 }

@@ -1,11 +1,13 @@
 package com.yuanqing.project.tiansu.service.operation.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
 import com.yuanqing.project.tiansu.mapper.operation.RawNetFlowMapper;
 import com.yuanqing.project.tiansu.service.operation.IRawNetFlowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -85,5 +87,38 @@ public class RawNetFlowServiceImpl implements IRawNetFlowService {
     public int deleteBusiRawNetFlowById(Long id)
     {
         return busiRawNetFlowMapper.deleteBusiRawNetFlowById(id);
+    }
+
+
+    /**
+     * 获取服务器原始流量趋势
+     *
+     * @return 结果
+     */
+    public  List<JSONObject>getServerFlowTrend (RawNetFlow rawNetFlow){
+
+        List<JSONObject> trendList = busiRawNetFlowMapper.getRawFlowTrend(rawNetFlow);
+        List<String> hourList = new ArrayList<>();
+
+
+        for(JSONObject json :trendList){
+            hourList.add(json.getString("Hour"));
+        }
+        for(int i=0;i<24;i++) {
+            if (hourList.contains(String.valueOf(i))) {
+
+            } else {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("Hour", i);
+                jsonObject.put("Size", "0");
+                jsonObject.put("Count", "0");
+                trendList.add(jsonObject);
+            }
+        }
+        return  trendList;
+    }
+
+    public  List<JSONObject>getServerFlowRelationClient (RawNetFlow rawNetFlow){
+        return  busiRawNetFlowMapper.getServerFlowRelationClient(rawNetFlow);
     }
 }

@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.controller.operation;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.constant.HttpStatus;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -44,11 +47,13 @@ public class RawNetFlowController extends BaseController {
     @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
     public AjaxResult getAll(@RequestParam(value = "srcIp", required = false) String srcIp,
                              @RequestParam(value = "dstIp", required = false) String dstIp,
+                             @RequestParam(value = "stamp", required = false) LocalDateTime stamp,
                              @RequestParam(required = false) String orderType,
                              @RequestParam(required = false) String orderValue) {
         RawNetFlow rawNetFlow = new RawNetFlow();
         rawNetFlow.setSrcIp(IpUtils.ipToLong(srcIp));
         rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
+        rawNetFlow.setStamp(stamp);
         startPage();
 //        if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
 //            rawNetFlow.setOrderType(orderValue + " " + orderType);
@@ -56,7 +61,6 @@ public class RawNetFlowController extends BaseController {
         List<RawNetFlow> rawNetFlowList = busiRawNetFlowService.selectBusiRawNetFlowList(rawNetFlow);
 
         return AjaxResult.success(getDataTable(rawNetFlowList));
-
     }
     /**
      * 导出原始流量列表
@@ -70,6 +74,42 @@ public class RawNetFlowController extends BaseController {
         ExcelUtil<RawNetFlow> util = new ExcelUtil<RawNetFlow>(RawNetFlow.class);
         return util.exportExcel(list, "flow");
     }
+
+
+    /**
+     * 获取服务器流量趋势统计
+     */
+    @GetMapping("/ServerFlowTrend")
+    @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
+    public AjaxResult getServerFlowTrend(@RequestParam(value = "dstIp", required = false) String dstIp,
+                             @RequestParam(required = false) String orderType,
+                             @RequestParam(required = false) String orderValue) {
+        RawNetFlow rawNetFlow = new RawNetFlow();
+        rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
+        startPage();
+        List<JSONObject> rawNetFlowList = busiRawNetFlowService.getServerFlowTrend(rawNetFlow);
+        return AjaxResult.success(rawNetFlowList);
+    }
+
+    /**
+     * 获取服务器流量相关终端
+     */
+    @GetMapping("/ServerFlowRelationClient")
+    @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
+    public AjaxResult getServerFlowRelationClient(@RequestParam(value = "dstIp", required = false) String dstIp,
+                                                  @RequestParam(value = "stamp", required = false) String stamp,
+                                            @RequestParam(required = false) String orderType,
+                                            @RequestParam(required = false) String orderValue) {
+        RawNetFlow rawNetFlow = new RawNetFlow();
+        rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.parse(stamp,df);
+        rawNetFlow.setStamp(localDateTime);
+        startPage();
+        List<JSONObject> rawNetFlowList = busiRawNetFlowService.getServerFlowRelationClient(rawNetFlow);
+        return AjaxResult.success(rawNetFlowList);
+    }
+
 
 
 //    /**
