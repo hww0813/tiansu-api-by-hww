@@ -2022,7 +2022,9 @@ public class ReportController extends BaseController {
 
 
     @GetMapping(value = "analysis/visit/rate/cameraCnt")
-    public void getRateCameraCntReport(@RequestParam(value = "cityCode", required = false) String cityCode,
+    public void getRateCameraCntReport(@RequestParam(value = "region", required = false) Integer region,
+                                       @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                       @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
                                        @RequestParam(value = "deviceCode", required = false) String deviceCode,
                                        @RequestParam(value = "deviceName", required = false) String deviceName,
                                        @RequestParam(value = "ipAddress", required = false) String ipAddress,
@@ -2036,11 +2038,10 @@ public class ReportController extends BaseController {
         filters.put("ipAddress", ipAddress);
         filters.put("status", status);
         filters.put("manufacturer", manufacturer);
-        if (cityCode == null) {
-            cityCode = macsConfigService.getRegion(cityCode).getId();
-        }
-        filters.put("cityCode", cityCode);
-        filters.put("length", cityCode.length());
+        filters.put("region", region);
+        // 不用时间，就是查区域全部的摄像头
+//        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+//        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         if ("xlsx".equals(format)) {
             try {
@@ -2124,8 +2125,8 @@ public class ReportController extends BaseController {
                                       @RequestParam(value = "ipAddress", required = false) String ipAddress,
                                       @RequestParam(value = "status", required = false) String status,
                                       @RequestParam(value = "manufacturer", required = false) String manufacturer,
-                                      @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                      @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                      @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime startDate,
+                                      @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime endDate,
                                       @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("manufacturer", manufacturer);
@@ -2221,8 +2222,8 @@ public class ReportController extends BaseController {
                                         @RequestParam(value = "action", required = false) String action,
                                         @RequestParam(value = "dstCode", required = false) String dstCode,
                                         @RequestParam(value = "username", required = false) String username,
-                                        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
                                         @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("cityCode", cityCode);
@@ -2234,8 +2235,8 @@ public class ReportController extends BaseController {
         filters.put("dstCode", dstCode);
         filters.put("username", username);
         filters.put("length", cityCode.length());
-        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         if ("xlsx".equals(format)) {
             try {
@@ -2604,7 +2605,7 @@ public class ReportController extends BaseController {
     public void getRateCameraCntExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("访问率相关摄像头总数");
-        List<JSONObject> all = visitRateService.getRateCameraCntToReport(filters);
+
         List<String> titles = new ArrayList();
         titles.add("设备编号");
         titles.add("摄像头名称");
@@ -2614,20 +2615,24 @@ public class ReportController extends BaseController {
         titles.add("状态");
         titles.add("最后更新时间");
         data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : all) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("deviceCode"));
-            row.add(j.get("deviceName"));
-            row.add(j.get("ipAddress"));
-            row.add(j.get("manufacturer"));
-            row.add(j.get("region"));
-            row.add(j.get("status"));
-            row.add(j.get("updateTime"));
-            rows.add(row);
-        }
 
-        data.setRows(rows);
+        List<JSONObject> all = visitRateService.getRateCameraCntToReport(filters);
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("deviceCode"));
+                row.add(j.get("deviceName"));
+                row.add(j.get("ipAddress"));
+                row.add(j.get("manufacturer"));
+                row.add(j.get("region"));
+                row.add(j.get("status"));
+                row.add(j.get("updateTime"));
+                rows.add(row);
+            }
+
+            data.setRows(rows);
+        }
 
         ExportExcelUtils.exportExcel(response, "访问率相关摄像头总数报表.xlsx", data);
     }

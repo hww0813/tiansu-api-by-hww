@@ -86,8 +86,11 @@ public class RateVisitController extends BaseController {
     @ApiOperation(value = "获取访问率相关摄像头列表", httpMethod = "GET")
     public AjaxResult getCameraCntList(Camera camera) {
 
+        // TODO: 时间范围没有传参
         startPage();
         List<Camera> cameraList = cameraService.getList(camera);
+
+        // TODO: 状态还是数字，需要转换
 
         return AjaxResult.success(getDataTable(cameraList));
 
