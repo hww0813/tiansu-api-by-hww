@@ -113,11 +113,12 @@
     <select id="getVisitedRateRelatedOperation" resultMap="resultMap">
         select * from busi_oper bo
         <where>
+            <if test="list!=null and list.size()>0">
             DST_CODE in
             <foreach collection="list" open="(" separator="," close=")" item="item">
                 #{item}
             </foreach>
-
+            </if>
             <if test="filter.startDate != null and filter.endDate != null">
                 AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
             </if>

@@ -122,27 +122,31 @@ public class RateVisitController extends BaseController {
     @GetMapping(value = "/visitCnt")
     @ApiOperation(value = "获取访问分析列表", httpMethod = "GET")
     public PageResult getVisitCntList(@RequestParam(name = "pageNum", required = false, defaultValue = "1") int pageNum,
-                              @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize,
-                              @RequestParam(value = "cityCode", required = false) Integer region,
-                              @RequestParam(value = "srcIp", required = false) String srcIp,
-                              @RequestParam(value = "dstIp", required = false) String dstIp,
-                              @RequestParam(value = "action", required = false) String action,
-                              @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                              @RequestParam(value = "username", required = false) String username,
-                              @RequestParam(value = "startDate") String startDate,
-                              @RequestParam(value = "endDate") String  endDate) throws Exception {
+                                      @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize,
+                                      @RequestParam(value = "cityCode", required = false) Integer region,
+                                      @RequestParam(value = "srcIp", required = false) String srcIp,
+                                      @RequestParam(value = "dstIp", required = false) String dstIp,
+                                      @RequestParam(value = "action", required = false) String action,
+                                      @RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                      @RequestParam(value = "username", required = false) String username,
+                                      @RequestParam(value = "startDate") String startDate,
+                                      @RequestParam(value = "endDate") String endDate) throws Exception {
 
-        // TODO: 没看懂这里是干嘛用的？还搞一个cameraCodeList？
-//        Camera camera = new Camera();
-//        camera.setRegion(region);
-//        List<Camera> cameraList = cameraService.getList(camera);
-//
-//        List<String> cameraCodeList = statisticsService.getCameraVisited(cameraList, new CameraVisit());
+        // 从 访问率报表 -> 下级地区访问率 -> 访问次数过来时，会只传地区字段
+        List<String> cameraCodeList = null;
+        if (region != null) {
+            Camera camera = new Camera();
+            camera.setRegion(region);
+            List<Camera> cameraList = cameraService.getList(camera);
+
+            cameraCodeList = statisticsService.getCameraVisited(cameraList, new CameraVisit());
+        }
 
         OperationBehavior operationBehavior = new OperationBehavior();
         operationBehavior.setNum(pageNum);
         operationBehavior.setSize(pageSize);
         operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
+        // 从摄像头被访问 -> 相关终端数 -> 访问次数 过来时，会传摄像头编码
         operationBehavior.setDstCode(deviceCode);
         operationBehavior.setUsername(username);
         operationBehavior.setAction(action);
@@ -150,7 +154,7 @@ public class RateVisitController extends BaseController {
         operationBehavior.setstartDate(startDate);
         operationBehavior.setendDate(endDate);
 
-        PageResult visitedRateRelatedOperation = operationBehaviorService.getVisitedRateRelatedOperation(null, operationBehavior);
+        PageResult visitedRateRelatedOperation = operationBehaviorService.getVisitedRateRelatedOperation(cameraCodeList, operationBehavior);
 
         return visitedRateRelatedOperation;
 
