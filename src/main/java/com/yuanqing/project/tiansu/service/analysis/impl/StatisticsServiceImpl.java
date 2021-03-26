@@ -5,6 +5,7 @@ import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.DoubleUtils;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.BaseEntity;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.Statistics;
@@ -434,7 +435,68 @@ public class StatisticsServiceImpl implements IStatisticsService {
 
     @Override
     public List<JSONObject> getClientVisitRelateCameraToReport(JSONObject filters) {
+        Statistics condStatistics = new Statistics();
+        condStatistics.setAction(filters.getInteger("action"));
+        condStatistics.setDstCode(filters.getString("cameraCode"));
+        condStatistics.setUsername(filters.getString("username"));
+        condStatistics.setSrcIp(IpUtils.ipToLong(filters.getString("cameraIp")));
+        condStatistics.setstartDate(filters.getString("startDate"));
+        condStatistics.setendDate(filters.getString("endDate"));
+
+        Camera condCamera = new Camera();
+        condCamera.setDeviceName(filters.getString("cameraName"));
+        condCamera.setIpAddress(IpUtils.ipToLong(filters.getString("cameraIp")));
+        condCamera.setRegion(filters.getInteger("region"));
+
+        List<Statistics> statisticsList = this.getList(condStatistics);
+
+        List<String> cameraCodeList = statisticsList.stream().map(f -> f.getDstCode()).collect(Collectors.toList());
+
+        List<Camera> cameraList = cameraService.batchGetCameraByCode(cameraCodeList,condCamera);
+
+//        List<CameraVisit> cameraVisitList = new ArrayList<>();
+
         List<JSONObject> list = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(cameraList)){
+            cameraList.stream().forEach(f ->{
+
+                Long sum = statisticsList.stream()
+                        .filter(h -> h.getDstCode().equals(f.getDeviceCode()))
+                        .mapToLong(h -> h.getCount())
+                        .sum();
+
+                JSONObject jsonObject = new JSONObject();
+                if(f.getDeviceCode() != null) {
+                    jsonObject.put("CAMERA_CODE", f.getDeviceCode());
+                } else {
+                    jsonObject.put("CAMERA_CODE", "");
+                }
+                if(f.getDeviceName() != null) {
+                    jsonObject.put("CAMERA_NAME", f.getDeviceName());
+                } else {
+                    jsonObject.put("CAMERA_NAME", "");
+                }
+                if(f.getIpAddress() != null) {
+                    jsonObject.put("CAMERA_IP", IpUtils.longToIPv4(f.getIpAddress()));
+                } else {
+                    jsonObject.put("CAMERA_IP", "");
+                }
+                if(f.getRegionName() != null) {
+                    jsonObject.put("CAMERA_REGION", f.getRegionName());
+                } else {
+                    jsonObject.put("CAMERA_REGION", "");
+                }
+                if(sum != null) {
+                    jsonObject.put("VISITED_CNT", sum.toString());
+                } else {
+                    jsonObject.put("VISITED_CNT", "0");
+                }
+
+                list.add(jsonObject);
+            });
+        }
+
+
 //        List<JSONObject> list = clientVisitMapper.getClientVisitRelatedCameraList(filters);
 //        for (JSONObject jsonObject : list) {
 //            if (jsonObject.getString("CAMERA_NAME") == null) jsonObject.put("CAMERA_NAME", "");
