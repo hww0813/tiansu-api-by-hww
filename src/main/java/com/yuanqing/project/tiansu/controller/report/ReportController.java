@@ -776,18 +776,18 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/operationBehaviorSession")
-    public void getoperationBehaviorSessionReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date stime,
-                                                  @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date etime,
+    public void getoperationBehaviorSessionReport(@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+                                                  @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
                                                   @RequestParam(value = "sessionId", required = false) Long sessionId,
                                                   @RequestParam(value = "srcCode", required = false) String srcCode,
                                                   @RequestParam(value = "username", required = false) String username,
                                                   @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
-        if (stime != null) {
-            filters.put("stime", stime);
+        if (startDate != null) {
+            filters.put("stime", startDate);
         }
-        if (etime != null) {
-            filters.put("etime", etime);
+        if (endDate != null) {
+            filters.put("etime", endDate);
         }
         filters.put("sessionId", sessionId);
         filters.put("srcCode", srcCode);

@@ -46,6 +46,9 @@
            <if test="startDate != null and endDate != null">
                and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
            </if>
+           <if test="stime != null and etime != null">
+               and os.START_TIME between STR_TO_DATE(#{stime}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{etime}, '%Y-%m-%d %H:%i:%s')
+           </if>
 
            <if test="username != null and username != ''">
                AND os.USERNAME = #{username}
@@ -178,6 +181,9 @@
 
         <if test="startDate != null and endDate != null">
             and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="stime != null and etime != null">
+            and os.START_TIME between STR_TO_DATE(#{stime}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{etime}, '%Y-%m-%d %H:%i:%s')
         </if>
 
         <if test="username != null">
