@@ -1,6 +1,8 @@
 package com.yuanqing.framework.security.service;
 
 import javax.annotation.Resource;
+
+import com.yuanqing.common.exception.user.UserNotRoleException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,8 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.exception.CustomException;
-import com.yuanqing.common.exception.user.CaptchaException;
-import com.yuanqing.common.exception.user.CaptchaExpireException;
 import com.yuanqing.common.exception.user.UserPasswordNotMatchException;
 import com.yuanqing.common.utils.MessageUtils;
 import com.yuanqing.framework.manager.AsyncManager;
@@ -80,8 +80,15 @@ public class SysLoginService
                 throw new CustomException(e.getMessage());
             }
         }
+
+
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+
+        if(loginUser.getUser().getRoles().size()<1){
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.role.not.match")));
+            throw new UserNotRoleException();
+        }
         // 生成token
         return tokenService.createToken(loginUser);
     }
