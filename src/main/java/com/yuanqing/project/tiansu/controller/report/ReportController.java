@@ -2119,14 +2119,14 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/visit/rate/visitedCnt")
-    public void getRateVisitCntReport(@RequestParam(value = "cityCode", required = false) String cityCode,
+    public void getRateVisitCntReport(@RequestParam(value = "region", required = false) Integer region,
                                       @RequestParam(value = "deviceCode", required = false) String deviceCode,
                                       @RequestParam(value = "deviceName", required = false) String deviceName,
                                       @RequestParam(value = "ipAddress", required = false) String ipAddress,
                                       @RequestParam(value = "status", required = false) String status,
                                       @RequestParam(value = "manufacturer", required = false) String manufacturer,
-                                      @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime startDate,
-                                      @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime endDate,
+                                      @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                      @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
                                       @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("manufacturer", manufacturer);
@@ -2134,9 +2134,9 @@ public class ReportController extends BaseController {
         filters.put("deviceName", deviceName);
         filters.put("ipAddress", ipAddress);
         filters.put("status", status);
-        filters.put("cityCode", cityCode);
-        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        filters.put("region", region);
+        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         if ("xlsx".equals(format)) {
             try {
@@ -2214,7 +2214,7 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/visit/rate/visitCnt")
-    public void getAnalysisCameraReport(@RequestParam(value = "cityCode", required = false) String cityCode,
+    public void getAnalysisCameraReport(@RequestParam(value = "region", required = false) Integer region,
                                         @RequestParam(value = "srcIp", required = false) String srcIp,
                                         @RequestParam(value = "dstIp", required = false) String dstIp,
                                         @RequestParam(value = "clientId", required = false) String clientId,
@@ -2226,7 +2226,7 @@ public class ReportController extends BaseController {
                                         @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
                                         @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
-        filters.put("cityCode", cityCode);
+        filters.put("region", region);
         filters.put("srcIp", srcIp);
         filters.put("dstIp", dstIp);
         filters.put("clientId", clientId);
@@ -2234,7 +2234,6 @@ public class ReportController extends BaseController {
         filters.put("action", action);
         filters.put("dstCode", dstCode);
         filters.put("username", username);
-        filters.put("length", cityCode.length());
         filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
@@ -2314,23 +2313,22 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/visit/rate/clientCnt")
-    public void getRateClientCntReport(@RequestParam(value = "cityCode", required = false) String cityCode,
+    public void getRateClientCntReport(@RequestParam(value = "region", required = false) Integer region,
                                        @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                       @RequestParam(value = "status", required = false) String status,
+                                       @RequestParam(value = "status", required = false) Integer status,
                                        @RequestParam(value = "ipAddress", required = false) String ipAddress,
                                        @RequestParam(value = "sipServerId", required = false) String sipServerId,
-                                       @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                       @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                       @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                       @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
                                        @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
-        filters.put("cityCode", cityCode);
+        filters.put("region", region);
         filters.put("deviceCode", deviceCode);
         filters.put("status", status);
         filters.put("ipAddress", ipAddress);
         filters.put("sipServerId", sipServerId);
-        filters.put("length", cityCode.length());
-        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         if ("xlsx".equals(format)) {
             try {
                 this.getRateClientCntExcelReport(response, filters);
@@ -2506,28 +2504,32 @@ public class ReportController extends BaseController {
     public void getRateClientCntExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("访问率相关终端个数");
-        List<JSONObject> all = visitRateService.getRateClientCntToReport(filters);
+
         List<String> titles = new ArrayList();
-        titles.add("设备编号");
+//        titles.add("设备编号");
         titles.add("IP地址");
         titles.add("MAC地址");
-        titles.add("登陆账号");
+//        titles.add("登陆账号");
         titles.add("状态");
         titles.add("最后更新时间");
         data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : all) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("deviceCode"));
-            row.add(j.get("ipAddress"));
-            row.add(j.get("macAddress"));
-            row.add(j.get("username"));
-            row.add(j.get("status"));
-            row.add(j.get("updateTime"));
-            rows.add(row);
-        }
 
-        data.setRows(rows);
+        List<JSONObject> all = visitRateService.getRateClientCntToReport(filters);
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+//                row.add(j.get("deviceCode"));
+                row.add(j.get("ipAddress"));
+                row.add(j.get("macAddress"));
+//                row.add(j.get("username"));
+                row.add(j.get("status"));
+                row.add(j.get("updateTime"));
+                rows.add(row);
+            }
+
+            data.setRows(rows);
+        }
 
         ExportExcelUtils.exportExcel(response, "访问率相关终端报表.xlsx", data);
     }
@@ -2574,7 +2576,7 @@ public class ReportController extends BaseController {
     public void getRateVisitedCntExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("访问率被访问摄像头个数");
-        List<JSONObject> all = visitRateService.getRateVisitedCntToReport(filters);
+
         List<String> titles = new ArrayList();
         titles.add("设备编号");
         titles.add("摄像头名称");
@@ -2584,20 +2586,24 @@ public class ReportController extends BaseController {
         titles.add("状态");
         titles.add("最后更新时间");
         data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : all) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("deviceCode"));
-            row.add(j.get("deviceName"));
-            row.add(j.get("ipAddress"));
-            row.add(j.get("manufacturer"));
-            row.add(j.get("region"));
-            row.add(j.get("status"));
-            row.add(j.get("updateTime"));
-            rows.add(row);
-        }
 
-        data.setRows(rows);
+        List<JSONObject> all = visitRateService.getRateVisitedCntToReport(filters);
+        if(!CollectionUtils.isEmpty(all)) {
+            List<List<Object>> rows = new ArrayList();
+            for (JSONObject j : all) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("deviceCode"));
+                row.add(j.get("deviceName"));
+                row.add(j.get("ipAddress"));
+                row.add(j.get("manufacturer"));
+                row.add(j.get("region"));
+                row.add(j.get("status"));
+                row.add(j.get("updateTime"));
+                rows.add(row);
+            }
+
+            data.setRows(rows);
+        }
 
         ExportExcelUtils.exportExcel(response, "访问率被访问摄像头个数报表.xlsx", data);
     }

@@ -12,13 +12,17 @@ import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.system.service.ISysDictDataService;
+import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.Client;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.report.VisitRate;
 import com.yuanqing.project.tiansu.mapper.analysis.VisitRateMapper;
+import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.analysis.IVisitRateService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +62,12 @@ public class VisitRateServiceImpl implements IVisitRateService {
     @Autowired
     private ICameraService cameraService;
 
+    @Autowired
+    private IStatisticsService statisticsService;
+
+    @Autowired
+    private IClientTerminalService clientTerminalService;
+
     @Override
     public Long save(@Valid @NotNull(message = "保存或更新的实体不能为空") VisitRate entity, SaveType type) {
         return null;
@@ -90,14 +100,14 @@ public class VisitRateServiceImpl implements IVisitRateService {
         filters.put("cityCode", cityCode);
         filters.put("codeLength", cityCode.length());
         List<VisitRate> list = new ArrayList<>();
-        if (cityCode.length() == 6){
+        if (cityCode.length() == 6) {
             filters.put("length", cityCode.length());
             list = visitRateMapper.getRateLastList(filters);
         } else {
             filters.put("length", cityCode.length() + 2);
             list = visitRateMapper.getRateList(filters);
         }
-        LOGGER.error("===="+filters.toJSONString());
+        LOGGER.error("====" + filters.toJSONString());
 //        List<VisitRate> list = visitRateMapper.getRateList(filters);
         return new PageInfo<>(list);
     }
@@ -115,29 +125,29 @@ public class VisitRateServiceImpl implements IVisitRateService {
 
         List<VisitRate> visitRateList = new ArrayList<>();
 
-        String time = DateUtils.getTimeType((LocalDate)filters.get("startDate"), (LocalDate)filters.get("endDate"));
+        String time = DateUtils.getTimeType((LocalDate) filters.get("startDate"), (LocalDate) filters.get("endDate"));
         List<JSONObject> all = redisCache.getCacheObject(INDEX_VISITED_RATE_CACHE + "_" + time);
         if (!CollectionUtils.isEmpty(all)) {
             for (JSONObject visitRateObj : all) {
                 Long cityCode = 0L;
                 String cityCodeStr = visitRateObj.getString("cityCode");
-                if(StringUtils.isNotEmpty(cityCodeStr)) {
+                if (StringUtils.isNotEmpty(cityCodeStr)) {
                     cityCode = Long.parseLong(cityCodeStr);
                 }
                 Long cameraCnt = 0L;
-                if(visitRateObj.getInteger("cameraCnt") != null) {
+                if (visitRateObj.getInteger("cameraCnt") != null) {
                     cameraCnt = visitRateObj.getInteger("cameraCnt").longValue();
                 }
                 Long visitCnt = 0L;
-                if(visitRateObj.getInteger("visitCnt") != null) {
+                if (visitRateObj.getInteger("visitCnt") != null) {
                     visitCnt = visitRateObj.getInteger("visitCnt").longValue();
                 }
                 Long clientCnt = 0L;
-                if(visitRateObj.getInteger("clientCnt") != null) {
+                if (visitRateObj.getInteger("clientCnt") != null) {
                     clientCnt = visitRateObj.getInteger("clientCnt").longValue();
                 }
                 Long visitedCnt = 0L;
-                if(visitRateObj.getInteger("visitedCnt") != null) {
+                if (visitRateObj.getInteger("visitedCnt") != null) {
                     visitedCnt = visitRateObj.getInteger("visitedCnt").longValue();
                 }
                 VisitRate visitRate = new VisitRate(cityCode,
@@ -204,7 +214,7 @@ public class VisitRateServiceImpl implements IVisitRateService {
 //        List<Camera> cameraList = visitRateMapper.getCameraCntList(filters);
 
         List<JSONObject> list = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(cameraList)) {
+        if (!CollectionUtils.isEmpty(cameraList)) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             for (Camera camera : cameraList) {
                 JSONObject jsonObject = new JSONObject();
@@ -252,46 +262,60 @@ public class VisitRateServiceImpl implements IVisitRateService {
 
     @Override
     public List<JSONObject> getRateVisitedCntToReport(JSONObject filters) {
-        List<Camera> cameraList = visitRateMapper.getVisitedCntList(filters);
+        CameraVisit condCameraVisit = new CameraVisit();
+        condCameraVisit.setstartDate(filters.getString("startDate"));
+        condCameraVisit.setendDate(filters.getString("endDate"));
+
+        Camera condCamera = new Camera();
+        condCamera.setstartDate(filters.getString("startDate"));
+        condCamera.setendDate(filters.getString("endDate"));
+        condCamera.setIpAddress(IpUtils.ipToLong(filters.getString("ipAddress")));
+        condCamera.setRegion(filters.getInteger("region"));
+
+        List<Camera> cameraList = cameraService.getList(condCamera);
+        List<String> cameraCodeList = statisticsService.getCameraVisited(cameraList, condCameraVisit);
+        List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList, new Camera());
+
+//        List<Camera> cameraList = visitRateMapper.getVisitedCntList(filters);
         List<JSONObject> list = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        for (int i = 0; i < cameraList.size(); i++) {
-            if (cameraList.get(i) == null){
+        for (Camera camera : finalCameraList) {
+            if (camera == null) {
                 continue;
             }
             JSONObject jsonObject = new JSONObject();
-            if (cameraList.get(i).getDeviceCode() == null) {
+            if (camera.getDeviceCode() != null) {
+                jsonObject.put("deviceCode", camera.getDeviceCode());
+            } else {
                 jsonObject.put("deviceCode", "");
-            } else {
-                jsonObject.put("deviceCode", cameraList.get(i).getDeviceCode());
             }
-            if (cameraList.get(i).getDeviceName() == null) {
+            if (camera.getDeviceName() != null) {
+                jsonObject.put("deviceName", camera.getDeviceName());
+            } else {
                 jsonObject.put("deviceName", "");
-            } else {
-                jsonObject.put("deviceName", cameraList.get(i).getDeviceName());
             }
-            if (cameraList.get(i).getIpAddress() != null) {
-                jsonObject.put("ipAddress", IpUtils.longToIPv4(cameraList.get(i).getIpAddress()));
+            if (camera.getIpAddress() != null) {
+                jsonObject.put("ipAddress", IpUtils.longToIPv4(camera.getIpAddress()));
             } else {
                 jsonObject.put("ipAddress", "");
             }
-            if (cameraList.get(i).getRegion() != null && !cameraList.get(i).getRegion().equals("")) {
-                if (cameraList.get(i).getRegion() != null) {
-                    jsonObject.put("region", cameraList.get(i).getRegion());
-                } else {
-                    jsonObject.put("region", " ");
-                }
+            if (StringUtils.isNotEmpty(camera.getRegionName())) {
+                jsonObject.put("region", camera.getRegionName());
             } else {
                 jsonObject.put("region", " ");
             }
-            if (cameraList.get(i).getManufacturer() == null) {
-                jsonObject.put("manufacturer", "");
+            if (camera.getManufacturer() != null) {
+                jsonObject.put("manufacturer", camera.getManufacturer());
             } else {
-                jsonObject.put("manufacturer", cameraList.get(i).getManufacturer());
+                jsonObject.put("manufacturer", "");
             }
-            jsonObject.put("status", cameraList.get(i).getStatus());
-            if (cameraList.get(i).getUpdateTime() != null) {
-                jsonObject.put("updateTime", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, cameraList.get(i).getUpdateTime()));
+            if (camera.getStatus() != null && 0 == camera.getStatus()) {
+                jsonObject.put("status", "已确认");
+            } else if (camera.getStatus() == null || 1 == camera.getStatus()) {
+                jsonObject.put("status", "新发现");
+            }
+            if (camera.getUpdateTime() != null) {
+                jsonObject.put("updateTime", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, camera.getUpdateTime()));
             } else {
                 jsonObject.put("updateTime", "");
             }
@@ -368,24 +392,48 @@ public class VisitRateServiceImpl implements IVisitRateService {
 
     @Override
     public List<JSONObject> getRateClientCntToReport(JSONObject filters) {
-        List<Client> clientList = visitRateMapper.getClientCntList(filters);
+        Camera condCamera = new Camera();
+        condCamera.setRegion(filters.getInteger("region"));
+
+        ClientTerminal condClientTerminal = new ClientTerminal();
+        condClientTerminal.setStatus(filters.getInteger("status"));
+        condClientTerminal.setIpAddress(IpUtils.ipToLong(filters.getString("ipAddress")));
+        condClientTerminal.setstartDate(filters.getString("startDate"));
+        condClientTerminal.setendDate(filters.getString("endDate"));
+
+        List<Camera> cameraList = cameraService.getList(condCamera);
+        List<Long> terminalIpList = statisticsService.getTerminalVisited(cameraList, condClientTerminal);
+        List<ClientTerminal> clientTerminalList = clientTerminalService.getTerminalByIpList(terminalIpList, condClientTerminal);
+
+//        List<Client> clientList = visitRateMapper.getClientCntList(filters);
         List<JSONObject> list = new ArrayList<JSONObject>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        for (int i = 0; i < clientList.size(); i++) {
+        for (ClientTerminal clientTerminal : clientTerminalList) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("deviceCode", clientList.get(i).getDeviceCode());
-            if (clientList.get(i).getIpAddress() != null && !clientList.get(i).getIpAddress().equals("")) {
-                jsonObject.put("ipAddress", IpUtils.longToIPv4(clientList.get(i).getIpAddress()));
-            }
-            jsonObject.put("macAddress", clientList.get(i).getMacAddress());
-            if (clientList.get(i).getUsername() != null && !clientList.get(i).getUsername().equals("")) {
-                jsonObject.put("username", clientList.get(i).getUsername());
+//            if(clientTerminal.getDeviceCode() != null) {
+//                jsonObject.put("deviceCode", clientTerminal.getDeviceCode());
+//            } else {
+//                jsonObject.put("deviceCode", "");
+//            }
+            if (clientTerminal.getIpAddress() != null) {
+                jsonObject.put("ipAddress", IpUtils.longToIPv4(clientTerminal.getIpAddress()));
             } else {
-                jsonObject.put("username", "");
+                jsonObject.put("ipAddress", "");
             }
-            jsonObject.put("status", clientList.get(i).getStatus());
-            if (clientList.get(i).getUpdateTime() != null && !clientList.get(i).getUpdateTime().equals("")) {
-                jsonObject.put("updateTime", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, clientList.get(i).getUpdateTime()));
+            if (clientTerminal.getMacAddress() != null) {
+                jsonObject.put("macAddress", clientTerminal.getMacAddress());
+            } else {
+                jsonObject.put("macAddress", "");
+            }
+            if (clientTerminal.getStatus() != null && 0 == clientTerminal.getStatus()) {
+                jsonObject.put("status", "已确认");
+            } else if (clientTerminal.getStatus() == null || 1 == clientTerminal.getStatus()) {
+                jsonObject.put("status", "新发现");
+            }
+            if (clientTerminal.getUpdateTime() != null) {
+                jsonObject.put("updateTime", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, clientTerminal.getUpdateTime()));
+            } else {
+                jsonObject.put("updateTime", "");
             }
             list.add(jsonObject);
         }
@@ -397,9 +445,9 @@ public class VisitRateServiceImpl implements IVisitRateService {
         visitRateMapper.updateStatisticsTable();
     }
 
-    private String setRate(String rate){
-        rate = rate.replace("%","");
-        if (Double.parseDouble(rate) > 100){
+    private String setRate(String rate) {
+        rate = rate.replace("%", "");
+        if (Double.parseDouble(rate) > 100) {
             return "100%";
         } else {
             return rate + "%";
