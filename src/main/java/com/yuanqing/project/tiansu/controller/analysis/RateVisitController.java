@@ -95,7 +95,8 @@ public class RateVisitController extends BaseController {
 
     @GetMapping(value = "/visitedCnt")
     @ApiOperation(value = "获取访问分析列表", httpMethod = "GET")
-    public AjaxResult getVisitedCntList(Camera camera) {
+    public AjaxResult getVisitedCntList(@RequestParam(value = "cameraIp",required = false) String cameraIp,
+                                        Camera camera) {
 
         CameraVisit cameraVisit = new CameraVisit();
 
@@ -104,6 +105,7 @@ public class RateVisitController extends BaseController {
 
         camera.setstartDate(null);
         camera.setendDate(null);
+        camera.setIpAddress(IpUtils.ipToLong(cameraIp));
 
         List<Camera> cameraList = cameraService.getList(camera);
 
@@ -111,7 +113,7 @@ public class RateVisitController extends BaseController {
 
         startPage();
 
-        List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList, null);
+        List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList, new Camera());
 
         return AjaxResult.success(getDataTable(finalCameraList));
 
