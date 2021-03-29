@@ -14,7 +14,9 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -113,4 +115,52 @@ public class OperationBehaviorSessionServiceImpl implements IOperationBehaviorSe
         }
         return reportList;
     }
+
+    @Override
+    public Map<String, Integer> getBehaviorCategory(JSONObject filters) {
+        List<JSONObject> list=operationBehaviorSessionMapper.getBehaviorCategory(filters);
+        Map<String, Integer> map=countBehavior(list);
+        return map;
+    }
+
+    /**
+     * 统计不同操作行为的数量
+     *
+     * @param list
+     * @return
+     */
+    private Map<String, Integer> countBehavior(List<JSONObject> list) {
+
+        Map<String, Integer> group = new HashMap<>();
+
+        int play = 0, download = 0, control = 0,playback = 0,other = 0;
+
+        for (JSONObject jsonObject : list) {
+            int action = Integer.parseInt(jsonObject.get("action").toString());
+            switch (action){
+                case 0:
+                    play = Integer.parseInt(jsonObject.get("cnt").toString());
+                    break;
+                case 1:
+                    download = Integer.parseInt(jsonObject.get("cnt").toString());
+                    break;
+                case 2:
+                    playback = Integer.parseInt(jsonObject.get("cnt").toString());
+                    break;
+                case 3:
+                    control = Integer.parseInt(jsonObject.get("cnt").toString());
+                    break;
+                case 6:
+                    other = Integer.parseInt(jsonObject.get("cnt").toString());
+                    break;
+            }
+        }
+        group.put("play", play);
+        group.put("download", download);
+        group.put("playback", playback);
+        group.put("control", control);
+        group.put("other", other);
+        return group;
+    }
+
 }

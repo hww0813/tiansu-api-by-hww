@@ -5,6 +5,7 @@ import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -20,4 +21,11 @@ public interface IOperationBehaviorSessionService {
     PageResult getList(OperationBehaviorSession operationBehaviorSession) throws ExecutionException, InterruptedException;
 
     List<JSONObject> getAllToReport(JSONObject filters);
+
+    /**
+     * 统计操作行为分类
+     * @param filters
+     * @return
+     */
+    Map<String, Integer> getBehaviorCategory(JSONObject filters);
 }

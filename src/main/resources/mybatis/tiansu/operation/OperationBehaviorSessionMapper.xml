@@ -225,4 +225,18 @@
         WHERE id = #{id}
     </update>-->
 
+    <select id="getBehaviorCategory" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT sum(count) cnt ,action
+        FROM busi_statistics v
+        WHERE
+        1 = 1
+        <if test="startDate != null and startDate != ''">
+            AND v.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND v.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by action
+    </select>
+
 </mapper>

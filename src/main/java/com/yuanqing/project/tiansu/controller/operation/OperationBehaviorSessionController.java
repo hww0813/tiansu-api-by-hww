@@ -1,15 +1,22 @@
 package com.yuanqing.project.tiansu.controller.operation;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
+import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorSessionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 /**
  * @author Dong.Chao
@@ -56,5 +63,15 @@ public class OperationBehaviorSessionController extends BaseController {
         }
     }
 
+    @GetMapping("/behaviorCategory")
+    @ApiOperation(value = "获取行为类别占比", httpMethod = "GET")
+    public AjaxResult getBehaviorCategory(@RequestParam(value = "startDate") String startDate,
+                                          @RequestParam(value = "endDate") String endDate ) {
+        JSONObject filters = new JSONObject();
+        filters.put("startDate", startDate);
+        filters.put("endDate", endDate);
+        Map<String, Integer> map=operationBehaviorSessionService.getBehaviorCategory(filters);
+        return AjaxResult.success(map);
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.mapper.operation;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
 
@@ -16,4 +17,12 @@ public interface OperationBehaviorSessionMapper  extends BaseMapper<OperationBeh
 
 
     Integer getCount(OperationBehaviorSession operationBehaviorSession);
+
+
+    /**
+     * 获取操作行为分类
+     * @param filters
+     * @return
+     */
+    List<JSONObject> getBehaviorCategory(JSONObject filters);
 }
