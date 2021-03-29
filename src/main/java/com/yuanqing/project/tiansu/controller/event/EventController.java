@@ -7,6 +7,8 @@ import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
+import com.yuanqing.project.tiansu.domain.event.Event;
+import com.yuanqing.project.tiansu.service.event.impl.EventManagerImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +16,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 
 import static com.yuanqing.common.constant.Constants.ALARM_CAMERA_COUNTS_CACHE;
 
@@ -39,6 +47,9 @@ public class EventController {
 
     @Autowired
     private RedisCache redisCache;
+
+    @Resource
+    private EventManagerImpl eventManager;
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "获取告警事件列表", httpMethod = "GET")
@@ -97,6 +108,24 @@ public class EventController {
     @ApiOperation(value = "获取用户数据", httpMethod = "GET")
     public AjaxResult getUserDatas() {
         return AjaxResult.success("success",redisCache.getCacheObject(ALARM_CAMERA_COUNTS_CACHE));
+    }
+
+    @PutMapping("/updateStatus")
+    @ApiOperation(value = "批量确认告警事件", httpMethod = "PUT")
+    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject) throws IOException {
+        String str1 = String.valueOf(jsonObject.get("id"));
+        String str = str1.substring(1, str1.length() - 1);
+        List<Event> list = new ArrayList<Event>();
+        String[] array = str.split(",");
+        for (String i : array) {
+            Event event = new Event();
+            Long l = 0L;
+            l = Long.valueOf(i.trim());
+            event.setId(l);
+            list.add(event);
+        }
+        eventManager.batchChangStatus(list);
+        return AjaxResult.success();
     }
 
 }
