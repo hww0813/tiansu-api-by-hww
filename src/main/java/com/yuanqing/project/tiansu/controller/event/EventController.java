@@ -11,9 +11,11 @@ import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.service.event.impl.EventManagerImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -95,26 +97,38 @@ public class EventController {
         if (StringUtils.isNotBlank(orderType) && StringUtils.isNotBlank(orderValue)) {
             filters.put("orderType", orderValue + " " + orderType);
         }
-        String url = alarmHost+"/BusiEvent/listT?pageSize="+pageSize+"&pageNum="+pageNum;
-        String result = HttpUtils.sendGet(url,filters);
+        String url = alarmHost + "/BusiEvent/listT?pageSize=" + pageSize + "&pageNum=" + pageNum;
+        String result = HttpUtils.sendGet(url, filters);
         JSONObject resultObj = JSONObject.parseObject(result);
         JSONArray datas = resultObj.getJSONArray("rows");
         Integer total = resultObj.getInteger("total");
-        return PageResult.success(datas,pageSize,pageNum,total);
+        return PageResult.success(datas, pageSize, pageNum, total);
     }
 
 
     @GetMapping("/getEventDatas")
     @ApiOperation(value = "获取用户数据", httpMethod = "GET")
     public AjaxResult getUserDatas() {
-        return AjaxResult.success("success",redisCache.getCacheObject(ALARM_CAMERA_COUNTS_CACHE));
+        return AjaxResult.success("success", redisCache.getCacheObject(ALARM_CAMERA_COUNTS_CACHE));
     }
 
     @PutMapping
-    @ApiOperation(value = "批量确认告警事件", httpMethod = "PUT")
-    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject){
+    @ApiOperation(value = "更新一个事件", httpMethod = "PUT")
+    public AjaxResult putEvent(@Valid @RequestBody JSONObject jsonObject) {
         String str = String.valueOf(jsonObject.get("id"));
-//        String str = str1.substring(1, str1.length() - 1);
+        List<Event> list = new ArrayList<Event>();
+        Event event = new Event();
+        event.setId(Long.valueOf(str.trim()));
+        list.add(event);
+        eventManager.batchChangStatus(list);
+        return AjaxResult.success();
+    }
+
+    @PutMapping("/updateStatus")
+    @ApiOperation(value = "批量确认告警事件", httpMethod = "PUT")
+    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject) {
+        String str1 = String.valueOf(jsonObject.get("id"));
+        String str = str1.substring(1, str1.length() - 1);
         List<Event> list = new ArrayList<Event>();
         String[] array = str.split(",");
         for (String i : array) {
