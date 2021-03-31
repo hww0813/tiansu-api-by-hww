@@ -113,8 +113,8 @@ public class EventController {
     @PutMapping
     @ApiOperation(value = "批量确认告警事件", httpMethod = "PUT")
     public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject){
-        String str1 = String.valueOf(jsonObject.get("id"));
-        String str = str1.substring(1, str1.length() - 1);
+        String str = String.valueOf(jsonObject.get("id"));
+//        String str = str1.substring(1, str1.length() - 1);
         List<Event> list = new ArrayList<Event>();
         String[] array = str.split(",");
         for (String i : array) {
