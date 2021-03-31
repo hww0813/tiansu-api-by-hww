@@ -49,7 +49,7 @@
         <include refid="selectBusiClientTerminalVo"/>
         <where>
             1=1
-            and device_type = 1
+            and device_type = 6
             <if test="deviceCode != null  and deviceCode != ''"> and bct.DEVICE_CODE = #{deviceCode}</if>
             <if test="deviceName != null  and deviceName != ''"> and bct.DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
             <if test="macAddress != null  and macAddress != ''"> and bct.MAC_ADDRESS = #{macAddress}</if>
@@ -73,7 +73,7 @@
         <include refid="selectBusiClientTerminalVo"/>
         <where>
             1=1
-            and device_type = 1
+            and device_type = 6
             <if test="clientTerminal.deviceCode != null  and clientTerminal.deviceCode != ''"> and bct.DEVICE_CODE = #{clientTerminal.deviceCode}</if>
             <if test="clientTerminal.deviceName != null  and clientTerminal.deviceName != ''"> and bct.DEVICE_NAME like concat('%', #{clientTerminal.deviceName}, '%')</if>
             <if test="clientTerminal.macAddress != null  and clientTerminal.macAddress != ''"> and bct.MAC_ADDRESS = #{clientTerminal.macAddress}</if>
@@ -219,7 +219,7 @@
     <update id="updateMark" parameterType="long">
         update BUSI_CLIENT_TERMINAL
         <set>
-            DEVICE_TYPE = null
+            DEVICE_TYPE = 6
         </set>
         WHERE IP_ADDRESS = #{ipAddress, jdbcType=BIGINT}
     </update>
