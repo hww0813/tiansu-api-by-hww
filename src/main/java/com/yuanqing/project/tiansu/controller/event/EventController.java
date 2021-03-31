@@ -110,9 +110,9 @@ public class EventController {
         return AjaxResult.success("success",redisCache.getCacheObject(ALARM_CAMERA_COUNTS_CACHE));
     }
 
-    @PutMapping("/updateStatus")
+    @PutMapping
     @ApiOperation(value = "批量确认告警事件", httpMethod = "PUT")
-    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject) throws IOException {
+    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject){
         String str1 = String.valueOf(jsonObject.get("id"));
         String str = str1.substring(1, str1.length() - 1);
         List<Event> list = new ArrayList<Event>();

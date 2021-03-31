@@ -11,7 +11,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.StringUtils;
 import org.slf4j.Logger;
@@ -190,6 +189,8 @@ public class HttpUtils
         }
         return result.toString();
     }
+
+
 
     public static String sendSSLPost(String url, String param)
     {
