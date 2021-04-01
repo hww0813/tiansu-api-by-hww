@@ -67,6 +67,9 @@
             ORDER BY ${orderStr}
         </if>
     </select>
+    <select id="getRealTotal" resultType="java.lang.Integer">
+        select count(*) from busi_client_user;
+    </select>
 
     <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser">
         insert into busi_client_user

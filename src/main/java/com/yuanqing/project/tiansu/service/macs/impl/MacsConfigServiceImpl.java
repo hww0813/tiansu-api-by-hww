@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * 获取配置中心配置
+ * @author xucan
  */
 @Service
 public class MacsConfigServiceImpl implements IMacsConfigService {

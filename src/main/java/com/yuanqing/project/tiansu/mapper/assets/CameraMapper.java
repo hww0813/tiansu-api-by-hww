@@ -136,7 +136,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
     /**
      * 获取物理实际总数
      */
-//    List<JSONObject> getRealTotal();
+    Integer getRealTotal();
 
     /**
      * 获取审计到的摄像头总数

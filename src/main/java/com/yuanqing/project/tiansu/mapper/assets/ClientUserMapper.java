@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.mapper.assets;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientUser;
@@ -38,4 +39,10 @@ public interface ClientUserMapper extends BaseMapper<ClientUser,Long> {
      * @return
      */
     List<ClientUser> getClientUserByUsername(@Param("clientList") List<Client> clientList, @Param("orderStr") String orderStr);
+
+    /**
+     * 获取总条数
+     * @return
+     */
+    Integer getRealTotal();
 }
