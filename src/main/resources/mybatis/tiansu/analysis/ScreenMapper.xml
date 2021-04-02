@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanqing.project.tiansu.mapper.analysis.ScreenMapper" >
+
+
+    <select id="getOperCategory" resultType="com.alibaba.fastjson.JSONObject">
+
+        SELECT
+            hour(stamp) dt,
+            action,
+            count(action) dtcnt,
+        FROM
+            busi_oper
+        WHERE
+            stamp BETWEEN SUBDATE(now(),interval 7 hour) and now();
+            GROUP BY hour(stamp),action
+
+    </select>
+
+
+    <select id="getOperCountByDay" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        sum( count ) actionCnt,
+        action
+        FROM
+        busi_statistics
+        WHERE 1=1
+        <if test="startDate != null and endDate != null">and  stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
+        GROUP BY
+        ACTION
+    </select>
+
+
+    <select id="getUserTop" resultType="com.alibaba.fastjson.JSONObject">
+
+        SELECT
+            username idCard,
+            sum( count ) count
+        FROM
+            busi_statistics
+        WHERE
+            1=1
+            and  stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        GROUP BY
+            username
+        ORDER BY
+            count desc
+            LIMIT 0,5
+
+    </select>
+
+    <select id="getTerminalTop" resultType="com.alibaba.fastjson.JSONObject">
+
+        SELECT
+            src_ip ip,
+            sum( count ) count
+        FROM
+            busi_statistics
+        WHERE
+            1=1
+            and  stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        GROUP BY
+            src_ip
+        ORDER BY
+            count desc
+            LIMIT 0,5
+    </select>
+
+    <select id="getCameraTop" resultType="com.alibaba.fastjson.JSONObject">
+
+        SELECT
+            dst_code ip,
+            sum( count ) count,
+            null as name
+        FROM
+            busi_statistics
+        WHERE
+            1=1
+            and  stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        GROUP BY
+            dst_code
+        ORDER BY
+            count desc
+            LIMIT 0,5
+
+    </select>
+
+
+
+
+</mapper>

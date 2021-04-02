@@ -229,6 +229,7 @@ public class Constants
     public static final String INDEX_CAMERA_COUNTS_CACHE = "INDEX_CAMERA_COUNTS_CACHE";
 
     public static final String ALARM_CAMERA_COUNTS_CACHE = "ALARM_CAMERA_COUNTS_CACHE";
+
     public static final String INDEX_VISITED_RATE_CACHE = "INDEX_VISITED_RATE_CACHE";
     /** 首页区县缓存 月 */
     public static final String INDEX_VISITED_RATE_CACHE_MONTH = "INDEX_VISITED_RATE_CACHE_MONTH";

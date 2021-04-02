@@ -34,7 +34,6 @@ public interface HomePageMapper {
 
     Map queryUserStatisticsCount(Date date);
 
-
     Map queryCameraStatisticsCount(Date date);
 
 

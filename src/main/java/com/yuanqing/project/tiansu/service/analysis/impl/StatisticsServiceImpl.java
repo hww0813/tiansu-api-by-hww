@@ -94,6 +94,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
             case "month":
                 filter = DateUtils.getMonth();
                 break;
+            case "all":
+                filter = null;
+                break;
         }
 
         MacsRegion region = macsConfigService.getRegion(regionId);
