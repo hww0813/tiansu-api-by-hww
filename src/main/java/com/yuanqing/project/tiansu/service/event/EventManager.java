@@ -7,4 +7,5 @@ import java.util.List;
 public interface EventManager{
 
     boolean batchChangStatus(List<Event> list);
+    public Event findById(Long id);
 }

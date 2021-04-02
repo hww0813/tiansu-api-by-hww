@@ -2,8 +2,10 @@ package com.yuanqing.project.tiansu.controller.assets;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
@@ -18,10 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,7 @@ import static com.yuanqing.common.constant.Constants.*;
 
 /**
  * 摄像头Controller
+ *
  * @author xucan
  */
 @RestController
@@ -40,6 +45,9 @@ public class CameraController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CameraController.class);
 
+    @Value("${tiansu.alarmhost}")
+    private String alarmHost;
+
     @Autowired
     private ICameraService cameraService;
 
@@ -49,18 +57,18 @@ public class CameraController extends BaseController {
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
     public AjaxResult getAll(@RequestParam(value = "status", required = false) Integer status,
-                                @RequestParam(value = "isGb", required = false) Integer isGb,
-                                @RequestParam(value = "deviceName", required = false) String deviceName,
-                                @RequestParam(value = "deviceDomain", required = false) String deviceDomain,
-                                @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                @RequestParam(value = "region[]", required = false) Integer regionId,
-                                @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                @RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "manufacturer", required = false) String manufacturer,
-                                @RequestParam(value = "sipServerId", required = false) Long sipServerId,
-                                @RequestParam(value = "source", required = false) Long source,
-                                @RequestParam(required = false) String orderType,
-                                @RequestParam(required = false) String orderValue) {
+                             @RequestParam(value = "isGb", required = false) Integer isGb,
+                             @RequestParam(value = "deviceName", required = false) String deviceName,
+                             @RequestParam(value = "deviceDomain", required = false) String deviceDomain,
+                             @RequestParam(value = "deviceCode", required = false) String deviceCode,
+                             @RequestParam(value = "region[]", required = false) Integer regionId,
+                             @RequestParam(value = "ipAddress", required = false) String ipAddress,
+                             @RequestParam(value = "id", required = false) Long id,
+                             @RequestParam(value = "manufacturer", required = false) String manufacturer,
+                             @RequestParam(value = "sipServerId", required = false) Long sipServerId,
+                             @RequestParam(value = "source", required = false) Long source,
+                             @RequestParam(required = false) String orderType,
+                             @RequestParam(required = false) String orderValue) {
 
         Camera camera = new Camera();
         camera.setStatus(status);
@@ -120,28 +128,36 @@ public class CameraController extends BaseController {
 //        return AjaxResult.success(getList);
 //    }
 //
-//    @GetMapping("/findEventCameras")
-//    @ApiOperation(value = "获取告警摄像头列表", httpMethod = "GET")
-//    public AjaxResult findEventCameras(@RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
-//                                   @RequestParam(value = "getListSize", defaultValue = "20") int getListSize,
-//                                   @RequestParam(value = "deviceCode", required = false) String deviceCode,
-//                                   @RequestParam(value = "ipAddress", required = false) String ipAddress,
-//                                   @RequestParam(value = "id", required = false) Long id) throws Exception {
-//
-//        JSONObject filters = new JSONObject();
-//        filters.put("deviceCode", deviceCode);
-//        filters.put("ipAddress", ipAddress);
-//        filters.put("id", id);
-//        LOGGER.debug("getListNum:{} getListSize:{} filters:{}", getListNum, getListSize, filters);
-//        List<Camera> getList = cameraService.findEventCameras(getListNum, getListSize, filters);
-//        return AjaxResult.success(getList);
-//
-//    }
-//
+
+    @GetMapping("/findEventCameras")
+    @ApiOperation(value = "获取告警摄像头列表", httpMethod = "GET")
+    public AjaxResult findEventCameras(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                       @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                       @RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                       @RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                       @RequestParam(value = "id", required = false) Long id) {
+        List<Camera> list = new ArrayList<>();
+        String url = alarmHost + "/BusiEvent/getCameraId";
+        String result = HttpUtils.sendGet(url, "event_id=" + id);
+        JSONObject resultObj = JSONObject.parseObject(result);
+
+        Long code = resultObj.getLong("code");
+        if (code == 200) {
+            String ids = resultObj.getString("msg");
+            JSONObject filters = new JSONObject();
+            filters.put("deviceCode", deviceCode);
+            filters.put("ipAddress", ipAddress);
+            filters.put("id", ids);
+            startPage();
+            list = cameraService.findEventCameras(filters);
+        }
+        return AjaxResult.success(getDataTable(list));
+    }
+
     @PostMapping
     @ApiOperation(value = "新增一个摄像头", httpMethod = "POST")
     public AjaxResult postSipDevice(@Valid @RequestBody CameraDto dto) {
-        cameraService.save(doForward(dto),SaveType.INSERT);
+        cameraService.save(doForward(dto), SaveType.INSERT);
         return AjaxResult.success();
     }
 
@@ -152,7 +168,7 @@ public class CameraController extends BaseController {
         return AjaxResult.success();
     }
 
-//
+    //
     @PutMapping("/changAllStatus")
     @ApiOperation(value = "更新所有摄像头状态为已确认摄像头", httpMethod = "PUT")
     public AjaxResult putAllCameraStatus() {
@@ -199,12 +215,10 @@ public class CameraController extends BaseController {
     }
 
 
-
-
     @GetMapping("/getCameraDatas")
     @ApiOperation(value = "获取首页摄像头数据", httpMethod = "GET")
     public AjaxResult getCameraDatas() {
-        return AjaxResult.success("success",redisCache.getCacheObject(INDEX_CAMERA_COUNTS_CACHE));
+        return AjaxResult.success("success", redisCache.getCacheObject(INDEX_CAMERA_COUNTS_CACHE));
     }
 
 

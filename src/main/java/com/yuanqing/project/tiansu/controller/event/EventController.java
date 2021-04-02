@@ -11,16 +11,12 @@ import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.service.event.impl.EventManagerImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -133,9 +129,7 @@ public class EventController {
         String[] array = str.split(",");
         for (String i : array) {
             Event event = new Event();
-            Long l = 0L;
-            l = Long.valueOf(i.trim());
-            event.setId(l);
+            event.setId(Long.valueOf(i.trim()));
             list.add(event);
         }
         eventManager.batchChangStatus(list);

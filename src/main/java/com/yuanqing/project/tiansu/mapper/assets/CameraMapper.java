@@ -63,6 +63,8 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      */
     boolean changAllStatus();
 
+    List<Camera> findEventCameras(JSONObject jsonObject);
+
     /**
      * getList
      * 根据摄像头编码查询摄像头

@@ -208,11 +208,20 @@ public class IndexStatisticsTask {
         String alarmAllCount = HttpUtils.sendGet(url, "status=0");
         url = alarmHost + "/BusiEvent/getEventActive";
         String alarmActiveCount = HttpUtils.sendGet(url, "");
+        if(alarmDiscoveryCount.isEmpty()){
+            alarmDiscoveryCount = "0";
+        }
+        if(alarmAllCount.isEmpty()){
+            alarmAllCount = "0";
+        }
+        if(alarmActiveCount.isEmpty()){
+            alarmActiveCount = "0";
+        }
         HashMap map = new HashMap();
         map.put("discovery", Integer.parseInt(alarmDiscoveryCount));
         map.put("count", Integer.parseInt(alarmAllCount));
         map.put("active", Integer.parseInt(alarmActiveCount));
-        redisCache.setCacheObject(Constants.ALARM_CAMERA_COUNTS_CACHE, cameraCounts);
+        redisCache.setCacheObject(Constants.ALARM_CAMERA_COUNTS_CACHE, map);
 
     }
 

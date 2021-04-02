@@ -1,6 +1,8 @@
 package com.yuanqing.project.tiansu.service.assets.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.enums.*;
 import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.utils.DateUtils;
@@ -710,5 +712,11 @@ public class CameraServiceImpl implements ICameraService {
         }
 
         return reportList;
+    }
+
+    @Override
+    public List<Camera> findEventCameras(JSONObject filters) {
+        List<Camera> list = cameraMapper.findEventCameras(filters);
+        return list;
     }
 }

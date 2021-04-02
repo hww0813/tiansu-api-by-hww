@@ -149,6 +149,22 @@
         UPDATE BUSI_CAMERA SET STATUS= '0',UPDATE_TIME=now() WHERE STATUS!='0'
     </update>
 
+    <select id="findEventCameras" resultMap="BusiCameraResult">
+        select
+        *
+        from
+        BUSI_CAMERA
+        where
+        ID in (${id})
+        and DEVICE_TYPE = 1
+        <if test="deviceCode != null and deviceCode != '' ">
+            AND DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="ipAddress != null and ipAddress != '' ">
+            AND IP_ADDRESS = #{ipAddress}
+        </if>
+    </select>
+
     <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera">
         insert into busi_camera
         <trim prefix="(" suffix=")" suffixOverrides=",">
