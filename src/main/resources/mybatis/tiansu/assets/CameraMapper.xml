@@ -129,6 +129,9 @@
         select is_gb type,count(*) count  from busi_camera where device_type = 1 GROUP BY IS_GB
 
     </select>
+    <select id="getRealTotal" resultType="java.lang.Integer">
+        select count(*) from busi_camera
+    </select>
 
     <update id="updateIsNotServer" parameterType="long">
         update busi_camera

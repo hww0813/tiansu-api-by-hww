@@ -28,12 +28,24 @@ public class ProbeController {
 
     @GetMapping("/sysname")
     public AjaxResult getSysName(){
-        List<MacsConfig> macsConfigList = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig("system","title"));
+                List<MacsConfig> macsConfigList = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig("system","title"));
 
-        if(!CollectionUtils.isEmpty(macsConfigList)) {
-            return AjaxResult.success(macsConfigList.get(0));
-        }else{
-            return AjaxResult.error("获取失败，结果为空");
+                if(!CollectionUtils.isEmpty(macsConfigList)) {
+                    return AjaxResult.success(macsConfigList.get(0));
+                }else{
+                    return AjaxResult.error("获取失败，结果为空");
+        }
+    }
+
+    @GetMapping("/version")
+    public AjaxResult getVersion(){
+                List<MacsConfig> macsConfigList = macsConfigService.selectMacsConfigByTypeAndName(new MacsConfig("system","version"));
+
+                if(!CollectionUtils.isEmpty(macsConfigList)) {
+                    String value = macsConfigList.get(0).getValue();
+                    return AjaxResult.success("请求成功",value);
+                }else{
+                    return AjaxResult.error("获取失败，结果为空");
         }
     }
 
