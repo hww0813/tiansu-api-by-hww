@@ -13,7 +13,7 @@ spring:
         host: 192.168.1.20
         port: 5672
         username: admin
-        password: YQHbst4201
+        password: admin
     redis:
         # 地址
         host: 192.168.1.20
