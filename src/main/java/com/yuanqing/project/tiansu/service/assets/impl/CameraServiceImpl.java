@@ -68,6 +68,12 @@ public class CameraServiceImpl implements ICameraService {
     }
 
     @Override
+    public List<Camera> getSessionCameraList(JSONObject filters) {
+        List<Camera> list = cameraMapper.getSessionCameraList(filters);
+        return list;
+    }
+
+    @Override
     public boolean findCamera(Camera camera) {
         List<Camera> list = getList(camera);
         return (list.size() == 0);

@@ -56,4 +56,6 @@ public class ServerTree extends BaseEntity {
 
     /** 是否删除 */
     private Short isDelete;
+
+    private String orderType;
 }

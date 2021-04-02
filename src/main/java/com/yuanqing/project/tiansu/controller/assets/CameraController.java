@@ -21,10 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -135,7 +138,9 @@ public class CameraController extends BaseController {
                                        @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
                                        @RequestParam(value = "deviceCode", required = false) String deviceCode,
                                        @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                       @RequestParam(value = "id", required = false) Long id) {
+                                       @RequestParam(value = "id", required = false) Long id,
+                                       @RequestParam(required = false) String orderType,
+                                       @RequestParam(required = false) String orderValue) {
         List<Camera> list = new ArrayList<>();
         String url = alarmHost + "/BusiEvent/getCameraId";
         String result = HttpUtils.sendGet(url, "event_id=" + id);
@@ -148,6 +153,11 @@ public class CameraController extends BaseController {
             filters.put("deviceCode", deviceCode);
             filters.put("ipAddress", ipAddress);
             filters.put("id", ids);
+            String orderStr = null;
+            if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+                orderStr = orderValue + " " + orderType;
+            }
+            filters.put("orderType", orderStr);
             startPage();
             list = cameraService.findEventCameras(filters);
         }
@@ -228,29 +238,30 @@ public class CameraController extends BaseController {
         return AjaxResult.success(cameraService.getNonNationalCamera());
     }
 
-//
-//    @GetMapping("/sessionCameraList")
-//    @ApiOperation(value = "获取会话相关的摄像头列表", httpMethod = "GET")
-//    public AjaxResult getSessionCameraList(@RequestParam(value = "getListNum", defaultValue = "1") int getListNum,
-//                                       @RequestParam(value = "getListSize", defaultValue = "20") int getListSize,
-//                                       @RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//                                       @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//                                       @RequestParam(value = "sessionId", required = false) Long sessionId,
-//                                       @RequestParam(value = "deviceCode", required = false) String deviceCode,
-//                                       @RequestParam(value = "ipAddress", required = false) String ipAddress) {
-//        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("sessionId", sessionId);
-//        jsonObject.put("deviceCode", deviceCode);
-//        jsonObject.put("ip", ipAddress);
-//        if(stime != null) {
-//            jsonObject.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        }
-//        if(etime != null) {
-//            jsonObject.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        }
-//        List<Camera> List = cameraService.getSessionCameraList(getListNum, getListSize, jsonObject);
-//        return AjaxResult.success(List);
-//    }
+
+    @GetMapping("/sessionCameraList")
+    @ApiOperation(value = "获取会话相关的摄像头列表", httpMethod = "GET")
+    public AjaxResult getSessionCameraList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                           @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                           @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                                           @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                                           @RequestParam(value = "sessionId", required = false) Long sessionId,
+                                           @RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                           @RequestParam(value = "ipAddress", required = false) String ipAddress) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("sessionId", sessionId);
+        jsonObject.put("deviceCode", deviceCode);
+        jsonObject.put("ip", ipAddress);
+        if (stime != null) {
+            jsonObject.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        }
+        if (etime != null) {
+            jsonObject.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        }
+        startPage();
+        List<Camera> list = cameraService.getSessionCameraList(jsonObject);
+        return AjaxResult.success(getDataTable(list));
+    }
 
     //导入外部设备表excel
     @PostMapping(value = "/importExt")

@@ -78,18 +78,18 @@ public class EventController {
             filters.put("endTime", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
         filters.put("eventSource", eventSource);
-        filters.put("strategyName", strategyName);
+//        filters.put("strategyName", strategyName);
         filters.put("status", status);
         filters.put("eventCategory", eventCategory);
         filters.put("eventLevel", eventLevel);
         filters.put("clientIp", clientIp);
-        filters.put("cameraName", cameraName);
-        filters.put("content", content);
-        filters.put("eventSubject", eventSubject);
-        filters.put("ruleName", ruleName);
+//        filters.put("cameraName", cameraName);
+//        filters.put("content", content);
+//        filters.put("eventSubject", eventSubject);
+//        filters.put("ruleName", ruleName);
         filters.put("action", action);
         filters.put("id", id);
-        filters.put("connectType", connectType);
+//        filters.put("connectType", connectType);
         if (StringUtils.isNotBlank(orderType) && StringUtils.isNotBlank(orderValue)) {
             filters.put("orderType", orderValue + " " + orderType);
         }

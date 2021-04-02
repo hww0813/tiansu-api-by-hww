@@ -11,11 +11,7 @@ import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorSessionSe
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
@@ -46,7 +42,7 @@ public class OperationBehaviorSessionController extends BaseController {
                              @RequestParam(required = false) String orderType,
                              @RequestParam(required = false) String orderValue, OperationBehaviorSession operationBehaviorSession) {
 
-        operationBehaviorSession.setNum(num -1);
+        operationBehaviorSession.setNum(num - 1);
         operationBehaviorSession.setSize(size);
         operationBehaviorSession.setId(sessionId);
         operationBehaviorSession.setUsername(username);
@@ -57,7 +53,7 @@ public class OperationBehaviorSessionController extends BaseController {
         try {
             PageResult pageResult = operationBehaviorSessionService.getList(operationBehaviorSession);
             return pageResult;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return PageResult.error("获取获取操作行为会话列表异常！");
         }
@@ -66,11 +62,11 @@ public class OperationBehaviorSessionController extends BaseController {
     @GetMapping("/behaviorCategory")
     @ApiOperation(value = "获取行为类别占比", httpMethod = "GET")
     public AjaxResult getBehaviorCategory(@RequestParam(value = "startDate") String startDate,
-                                          @RequestParam(value = "endDate") String endDate ) {
+                                          @RequestParam(value = "endDate") String endDate) {
         JSONObject filters = new JSONObject();
         filters.put("startDate", startDate);
         filters.put("endDate", endDate);
-        Map<String, Integer> map=operationBehaviorSessionService.getBehaviorCategory(filters);
+        Map<String, Integer> map = operationBehaviorSessionService.getBehaviorCategory(filters);
         return AjaxResult.success(map);
     }
 

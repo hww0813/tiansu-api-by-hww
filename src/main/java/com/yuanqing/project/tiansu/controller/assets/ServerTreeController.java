@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.controller.assets;
 
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -65,7 +66,8 @@ public class ServerTreeController extends BaseController {
                                            @RequestParam(value = "endDate", required = false) String endDate,
                                            @RequestParam(value = "sessionId", required = false) Long sessionId,
                                            @RequestParam(value = "serverCode", required = false) String serverCode,
-                                           @RequestParam(value = "serverIp", required = false) String serverIp) {
+                                           @RequestParam(value = "serverIp", required = false) String serverIp
+                                           ) {
 
         ServerTree serverTree = new ServerTree();
         serverTree.setServerCode(serverCode);

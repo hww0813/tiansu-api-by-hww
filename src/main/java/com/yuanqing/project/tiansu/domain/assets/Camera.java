@@ -6,6 +6,7 @@ import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Camera扩展对象
@@ -22,6 +23,18 @@ public class Camera extends BaseCamera {
      */
     @Excel(name = "设备编码")
     private String deviceCode;
+
+    /** 设备名称 */
+    @Excel(name = "设备名称")
+    private String deviceName;
+
+    /** IP地址 */
+    @Excel(name = "IP地址")
+    private Long ipAddress;
+
+    /** 创建时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
     /**
      * 域

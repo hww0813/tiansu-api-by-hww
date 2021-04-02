@@ -1,6 +1,8 @@
 package com.yuanqing.project.tiansu.domain.operation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yuanqing.common.enums.ConnectTypeEnum;
 import com.yuanqing.common.enums.SessionStatusEnum;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OperationBehaviorSession extends OperationBehaviorSearch {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     /**客户端ID*/
     private Long clientId;
@@ -58,4 +61,5 @@ public class OperationBehaviorSession extends OperationBehaviorSearch {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime activeTime;
+
 }

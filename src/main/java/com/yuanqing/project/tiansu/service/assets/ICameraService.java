@@ -26,6 +26,8 @@ public interface ICameraService extends BaseService<Camera,Long> {
      */
     List<Camera> getListWithOrder(Camera camera, String orderStr);
 
+    List<Camera> getSessionCameraList(JSONObject filters);
+
     /**
      * 判断camera在数据库中是否不存在
      * @param camera

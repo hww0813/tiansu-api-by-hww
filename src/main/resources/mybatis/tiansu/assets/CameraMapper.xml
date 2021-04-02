@@ -92,6 +92,28 @@
         </if>
     </select>
 
+    <select id="getSessionCameraList" resultMap="BusiCameraResult">
+        SELECT DEVICE_CODE ,DEVICE_NAME ,IP_ADDRESS ,REGION_NAME ,CREATE_TIME
+        from busi_camera
+        WHERE 1 = 1
+        AND DEVICE_TYPE = 1
+        <if test="stime != null and stime != ''">
+            AND create_time &gt;= #{stime}
+        </if>
+        <if test="etime != null and etime != ''">
+            AND create_time &lt;= #{etime}
+        </if>
+        <if test="ip != null and ip != ''">
+            AND IP_ADDRESS = #{ip}
+        </if>
+        <if test="deviceCode != null and deviceCode != ''">
+            AND DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="sessionId != null and sessionId != ''">
+            AND id in (select DISTINCT camera_id from busi_oper where session_id = #{sessionId})
+        </if>
+    </select>
+
     <select id="batchGetCameraById" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         <where>
@@ -165,6 +187,9 @@
         </if>
         <if test="ipAddress != null and ipAddress != '' ">
             AND IP_ADDRESS = #{ipAddress}
+        </if>
+        <if test="orderType != null and orderType != '' ">
+            order by ${orderType}
         </if>
     </select>
 

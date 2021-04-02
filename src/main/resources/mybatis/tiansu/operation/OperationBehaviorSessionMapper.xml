@@ -29,41 +29,41 @@
 
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession" resultMap="resultMap">
         SELECT
-        *
+        id,START_TIME,ACTIVE_TIME,TOTAL_TIME,SRC_IP,SRC_PORT,USERNAME,SRC_MAC
         FROM
-        busi_oper_session os
+        busi_oper_session
        <where>
             1=1
            <if test="srcCode != null and srcCode != '' ">
-               AND os.SRC_CODE = #{srcCode}
+               AND SRC_CODE = #{srcCode}
            </if>
            <if test="id != null and id != '' ">
-               AND os.id = #{id}
+               AND id = #{id}
            </if>
            <if test="dstCode != null and dstCode != '' ">
-               AND os.DST_CODE = #{dstCode}
+               AND DST_CODE = #{dstCode}
            </if>
            <if test="startDate != null and endDate != null">
-               and os.START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+               and START_TIME between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
            </if>
            <if test="stime != null and etime != null">
-               and os.START_TIME between STR_TO_DATE(#{stime}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{etime}, '%Y-%m-%d %H:%i:%s')
+               and START_TIME between STR_TO_DATE(#{stime}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{etime}, '%Y-%m-%d %H:%i:%s')
            </if>
 
            <if test="username != null and username != ''">
-               AND os.USERNAME = #{username}
+               AND USERNAME = #{username}
            </if>
            <if test="srcIp != null and srcIp != ''">
-               AND os.SRC_IP= #{srcIp}
+               AND SRC_IP= #{srcIp}
            </if>
            <if test="connectType != null and connectType != '' ">
-               AND os.CONNECT_TYPE = #{connectType}
+               AND CONNECT_TYPE = #{connectType}
            </if>
            <if test="status != null and status != '' ">
-               AND v.STATUS = #{status}
+               AND STATUS = #{status}
            </if>
            <if test="orderType == null or orderType == ''">
-               ORDER BY os.START_TIME DESC
+               ORDER BY START_TIME DESC
            </if>
            <if test="orderType != null and orderType != ''">
                ORDER BY ${orderType}

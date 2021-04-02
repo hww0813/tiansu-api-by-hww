@@ -22,6 +22,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
      */
     List<Camera> getListWithOrder(@Param("camera") Camera camera, @Param("orderStr") String orderStr);
 
+    List<Camera> getSessionCameraList(JSONObject jsonObject);
     /**
      * 获取摄像头国标和非国标数
      * @return
