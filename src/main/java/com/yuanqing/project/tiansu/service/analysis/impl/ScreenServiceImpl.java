@@ -209,25 +209,25 @@ public class ScreenServiceImpl implements IScreenService {
         jsonObject.put("download",0);
         jsonObject.put("control",0);
         for(JSONObject obj : list){
-            BigDecimal action = (BigDecimal)obj.get("ACTION");
-            if(obj.get("ACTION") != null){
-                if(action.intValue()==0){
-                    jsonObject.put("play",obj.get("ACTIONCNT"));
+            int action = (int)obj.get("action");
+            if(obj.get("action") != null){
+                if(action==0){
+                    jsonObject.put("play",obj.get("actionCnt"));
                 }
-                if(action.intValue()==1){
-                    jsonObject.put("download",obj.get("ACTIONCNT"));
+                if(action==1){
+                    jsonObject.put("download",obj.get("actionCnt"));
                 }
-                if(action.intValue()==2){
-                    jsonObject.put("playback",obj.get("ACTIONCNT"));
+                if(action==2){
+                    jsonObject.put("playback",obj.get("actionCnt"));
                 }
-                if(action.intValue()==3){
-                    jsonObject.put("control",obj.get("ACTIONCNT"));
+                if(action==3){
+                    jsonObject.put("control",obj.get("actionCnt"));
                 }
-                if(action.intValue()==4){
-                    jsonObject.put("login",obj.get("ACTIONCNT"));
+                if(action==4){
+                    jsonObject.put("login",obj.get("actionCnt"));
                 }
-                if(action.intValue()==5){
-                    jsonObject.put("logout",obj.get("ACTIONCNT"));
+                if(action==5){
+                    jsonObject.put("logout",obj.get("actionCnt"));
                 }
 }
         }

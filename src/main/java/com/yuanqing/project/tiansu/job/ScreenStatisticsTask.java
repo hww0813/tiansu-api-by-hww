@@ -40,8 +40,7 @@ public class ScreenStatisticsTask {
 
         String value = screenService.getOperCategory(new Date());
 
-        JSONObject object = new JSONObject();
-        object.put("value",value);
+        JSONArray object = JSONArray.parseArray(value);
         redisCache.setCacheObject(ScreenConstants.OPERATION_CATEGORY, object);
         LOGGER.info("定时任务执行完成:统计操作行为分类(分时段)");
 
@@ -78,8 +77,7 @@ public class ScreenStatisticsTask {
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getOperCount(filter);
 
-        JSONArray object;
-        object = JSONArray.parseArray(value);
+        JSONObject object =  JSONObject.parseObject(value);
         redisCache.setCacheObject(ScreenConstants.OPERATION_NUM_DAY, object);
         LOGGER.info("定时任务执行完成:分类统计操作行为(今日)");
 
@@ -87,14 +85,14 @@ public class ScreenStatisticsTask {
         filter = DateUtils.getWeek();
         String week = screenService.getOperCount(filter);
 
-        object = JSONArray.parseArray(week);
+        object = JSONObject.parseObject(week);
         redisCache.setCacheObject(ScreenConstants.OPERATION_NUM_WEEK, object);
         LOGGER.info("定时任务执行完成:分类统计操作行为(本周)");
 
         filter = DateUtils.getMonth();
         String month = screenService.getOperCount(filter);
 
-        object = JSONArray.parseArray(month);
+        object = JSONObject.parseObject(month);
         redisCache.setCacheObject(ScreenConstants.OPERATION_NUM_MONTH, object);
         LOGGER.info("定时任务执行完成:分类统计操作行为(本月)");
 
