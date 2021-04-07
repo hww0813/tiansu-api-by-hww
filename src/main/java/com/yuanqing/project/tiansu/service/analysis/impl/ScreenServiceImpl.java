@@ -1,7 +1,8 @@
 package com.yuanqing.project.tiansu.service.analysis.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.project.tiansu.mapper.analysis.ScreenMapper;
 import com.yuanqing.project.tiansu.mapper.assets.CameraMapper;
@@ -9,14 +10,11 @@ import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientUserMapper;
 import com.yuanqing.project.tiansu.service.analysis.IScreenService;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
-import com.yuanqing.project.tiansu.service.assets.ICameraService;
-import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
-import com.yuanqing.project.tiansu.service.assets.IClientUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +44,9 @@ public class ScreenServiceImpl implements IScreenService {
     @Autowired
     private ClientUserMapper clientUserMapper;
 
+    @Value("${tiansu.alarmhost}")
+    private String prefix;
+
 
     @Override
     public String getCameraMap(String dateType){
@@ -69,48 +70,47 @@ public class ScreenServiceImpl implements IScreenService {
         long date = dateTime.getTime();
         JSONObject filter = new JSONObject();
 
-        String now = convertTimestamp2Date(date,"yyyy-MM-dd HH:mm:ss");
+        String now = convertTimestamp2Date(date,"yyyy-MM-dd HH:mm");
         filter.put("startDate",now);
 
-        long lastTime = date+1000*30;
+        long lastTime = date+1000*60;
 
         List<JSONObject> list = new ArrayList<>();
         for(int i = 1;i<=30;i++){
-            lastTime = lastTime-1000*30;
+            lastTime = lastTime-1000*60;
             JSONObject jsonObject = new JSONObject();
-            String last = convertTimestamp2Date(lastTime,"HH:mm:ss");
+            String last = convertTimestamp2Date(lastTime,"HH:mm");
             jsonObject.put("time",last);
             jsonObject.put("warnCount",0);
             jsonObject.put("operCount",0);
             list.add(jsonObject);
         }
-        List<JSONObject> operList = screenMapper.getOperWarnByOper(filter);
-        List<JSONObject> warnList = screenMapper.getOperWarnByWarn(filter);
+        List<JSONObject> operList = screenMapper.getOperWarnByOper();
+
+        String url = prefix + "/analysisEvent/queryEventCntPerMinute?intervalMinutes=30";
+
+        String result = HttpUtils.sendGet(url,"");
+
+        List<JSONObject> warnList = JSONArray.parseArray(result, JSONObject.class);
+
 
         for(JSONObject j : list){
             String time = (String) j.get("time");
 
             for(int i=0;i<operList.size();i++){
 
-                Timestamp oTime = (Timestamp)operList.get(i).get("TIME");
-
-                Long operTime = oTime.getTime();
-
-                String strOperTime = convertTimestamp2Date(operTime,"HH:mm:ss");
+                String strOperTime = (String) operList.get(i).get("minuteTime");
 
                 if(strOperTime.equals(time)){
-                    j.put("operCount",operList.get(i).get("OPERCOUNT"));
+                    j.put("operCount",operList.get(i).get("operCnt"));
                 }
 
                 if(i<warnList.size()){
-                    Timestamp wTime = (Timestamp)warnList.get(i).get("TIME");
 
-                    Long warnTime = wTime.getTime();
-
-                    String strWarnTime = convertTimestamp2Date(warnTime,"HH:mm:ss");
+                    String strWarnTime = (String) warnList.get(i).get("minuteTime");
 
                     if(strWarnTime.equals(time)){
-                        j.put("warnCount",warnList.get(i).get("WARNCOUNT"));
+                        j.put("warnCount",warnList.get(i).get("eventCnt"));
                     }
                 }
             }
@@ -120,7 +120,7 @@ public class ScreenServiceImpl implements IScreenService {
 
     @Override
     public String getOperCount(JSONObject filter){
-        List<JSONObject> list = screenMapper.getOperCountByDay(filter);
+        List<JSONObject> list = screenMapper.getOperCount(filter);
         JSONObject jsonObject = formatOperCount(list);
         return jsonObject.toString();
     }
@@ -161,7 +161,11 @@ public class ScreenServiceImpl implements IScreenService {
 
     @Override
     public JSONObject getWarn(){
-        JSONObject jsonObject = screenMapper.getWarn();
+        JSONObject jsonObject = new JSONObject();
+//        return jsonObject;
+        String url = prefix + "/BusiEvent/getEventActive";
+        String count = HttpUtils.sendGet(url, "");
+        jsonObject.put("WARNCOUNT",count);
         return jsonObject;
     }
 

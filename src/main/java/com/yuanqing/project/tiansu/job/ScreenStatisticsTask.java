@@ -64,14 +64,12 @@ public class ScreenStatisticsTask {
     @Scheduled(cron = "0/30 * * * * ?")
     public void getOperWarn(){
 
-//        String value = screenService.getOperWarn(new Date());
-//
-//        JSONObject object = new JSONObject();
-//        object.put("value",value);
-//        object.put("type","warn_oper");
-//        object.put("name","warn_oper");
-//      redisCache.setCacheObject(Key, object);
-//        LOGGER.info("定时任务执行完成:统计操作行为/告警事件(分时段)");
+        String value = screenService.getOperWarn(new Date());
+
+        JSONObject object = new JSONObject();
+        object.put("value",value);
+        redisCache.setCacheObject(ScreenConstants.REAL_OPERATION_WARN, object);
+        LOGGER.info("定时任务执行完成:统计操作行为/告警事件(分时段)");
 
     }
 

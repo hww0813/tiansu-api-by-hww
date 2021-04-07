@@ -8,17 +8,17 @@
         SELECT
             hour(stamp) dt,
             action,
-            count(action) dtcnt,
+            count(action) dtcnt
         FROM
             busi_oper
         WHERE
-            stamp BETWEEN SUBDATE(now(),interval 7 hour) and now();
+            stamp BETWEEN SUBDATE(now(),interval 7 hour) and now()
             GROUP BY hour(stamp),action
 
     </select>
 
 
-    <select id="getOperCountByDay" resultType="com.alibaba.fastjson.JSONObject">
+    <select id="getOperCount" resultType="com.alibaba.fastjson.JSONObject">
         SELECT
         sum( count ) actionCnt,
         action
@@ -84,8 +84,17 @@
             LIMIT 0,5
 
     </select>
-
-
+    <select id="getOperWarnByOper" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+         date_format( stamp, '%H:%i' ) AS minuteTime,
+         count( id ) operCnt
+        FROM
+         ( SELECT id, stamp FROM busi_oper WHERE stamp > DATE_SUB( now( ), INTERVAL 30 MINUTE ) ) b
+        GROUP BY
+         minuteTime
+        ORDER BY
+         minuteTime DESC
+    </select>
 
 
 </mapper>

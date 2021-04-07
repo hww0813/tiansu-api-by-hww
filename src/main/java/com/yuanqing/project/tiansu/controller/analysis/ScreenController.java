@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @author xucan
+ */
 @RestController
 @RequestMapping(value = "/api")
 @CrossOrigin
