@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.job;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.ScreenConstants;
 import com.yuanqing.common.utils.DateUtils;
@@ -65,10 +66,8 @@ public class ScreenStatisticsTask {
     public void getOperWarn(){
 
         String value = screenService.getOperWarn(new Date());
-
-        JSONObject object = new JSONObject();
-        object.put("value",value);
-        redisCache.setCacheObject(ScreenConstants.REAL_OPERATION_WARN, object);
+        JSONArray jsonArray = JSONArray.parseArray(value);
+        redisCache.setCacheObject(ScreenConstants.REAL_OPERATION_WARN, jsonArray);
         LOGGER.info("定时任务执行完成:统计操作行为/告警事件(分时段)");
 
     }
@@ -79,8 +78,8 @@ public class ScreenStatisticsTask {
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getOperCount(filter);
 
-        JSONObject object = new JSONObject();
-        object.put("value",value);
+        JSONArray object;
+        object = JSONArray.parseArray(value);
         redisCache.setCacheObject(ScreenConstants.OPERATION_NUM_DAY, object);
         LOGGER.info("定时任务执行完成:分类统计操作行为(今日)");
 
@@ -88,16 +87,14 @@ public class ScreenStatisticsTask {
         filter = DateUtils.getWeek();
         String week = screenService.getOperCount(filter);
 
-        object = new JSONObject();
-        object.put("value",week);;
+        object = JSONArray.parseArray(week);
         redisCache.setCacheObject(ScreenConstants.OPERATION_NUM_WEEK, object);
         LOGGER.info("定时任务执行完成:分类统计操作行为(本周)");
 
         filter = DateUtils.getMonth();
         String month = screenService.getOperCount(filter);
 
-        object = new JSONObject();
-        object.put("value",month);
+        object = JSONArray.parseArray(month);
         redisCache.setCacheObject(ScreenConstants.OPERATION_NUM_MONTH, object);
         LOGGER.info("定时任务执行完成:分类统计操作行为(本月)");
 
@@ -110,23 +107,21 @@ public class ScreenStatisticsTask {
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getUserTop(filter);
 
-        JSONObject object = new JSONObject();
-        object.put("value",value);
+        JSONArray object = JSONArray.parseArray(value);
         redisCache.setCacheObject(ScreenConstants.USER_DAY, object);
         LOGGER.info("定时任务执行完成:活跃用户TOP(今日)");
 
         filter = DateUtils.getWeek();
         String week = screenService.getUserTop(filter);
 
-        object = new JSONObject();
-        object.put("value",week);
+        object = JSONArray.parseArray(week);
         redisCache.setCacheObject(ScreenConstants.USER_WEEK, object);
         LOGGER.info("定时任务执行完成:活跃用户TOP(本周)");
 
         filter = DateUtils.getMonth();
         String month = screenService.getUserTop(filter);
 
-        object.put("value",month);
+        object = JSONArray.parseArray(month);
         redisCache.setCacheObject(ScreenConstants.USER_MONTH, object);
         LOGGER.info("定时任务执行完成:活跃用户TOP(本月)");
 
@@ -138,29 +133,21 @@ public class ScreenStatisticsTask {
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getTerminalTop(filter);
 
-        JSONObject object = new JSONObject();
-        object.put("value",value);
-        object.put("type","terminal_top_screen");
-        object.put("name","one_day");
+        JSONArray object = new JSONArray();
+        object = JSONArray.parseArray(value);
         redisCache.setCacheObject(ScreenConstants.TERMINAL_DAY, object);
         LOGGER.info("定时任务执行完成:活跃终端TOP(今日)");
 
         filter = DateUtils.getWeek();
         String week = screenService.getTerminalTop(filter);
 
-        object = new JSONObject();
-        object.put("value",week);
-        object.put("type","terminal_top_screen");
-        object.put("name","hebdomad");
+        object = JSONArray.parseArray(week);
         redisCache.setCacheObject(ScreenConstants.TERMINAL_WEEK, object);
         LOGGER.info("定时任务执行完成:活跃终端TOP(本周)");
 
         filter = DateUtils.getMonth();
         String month = screenService.getTerminalTop(filter);
-
-        object.put("value",month);
-        object.put("type","terminal_top_screen");
-        object.put("name","one_month");
+        object = JSONArray.parseArray(month);
         redisCache.setCacheObject(ScreenConstants.TERMINAL_MONTH, object);
         LOGGER.info("定时任务执行完成:活跃终端TOP(本月)");
 
@@ -172,10 +159,7 @@ public class ScreenStatisticsTask {
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getCameraTop(filter);
 
-        JSONObject object = new JSONObject();
-        object.put("value",value);
-        object.put("type","camera_top_screen");
-        object.put("name","one_day");
+        JSONArray object = JSONArray.parseArray(value);
         redisCache.setCacheObject(ScreenConstants.CAMERA_DAY, object);
         LOGGER.info("定时任务执行完成:活跃摄像头TOP(今日)");
 
@@ -183,19 +167,14 @@ public class ScreenStatisticsTask {
         filter = DateUtils.getWeek();
         String week = screenService.getCameraTop(filter);
 
-        object = new JSONObject();
-        object.put("value",week);
-        object.put("type","camera_top_screen");
-        object.put("name","hebdomad");
+        object = JSONArray.parseArray(week);
         redisCache.setCacheObject(ScreenConstants.CAMERA_WEEK, object);
         LOGGER.info("定时任务执行完成:活跃摄像头TOP(本周)");
 
         filter = DateUtils.getMonth();
         String month = screenService.getCameraTop(filter);
 
-        object.put("value",month);
-        object.put("type","camera_top_screen");
-        object.put("name","one_month");
+        object = JSONArray.parseArray(month);
         redisCache.setCacheObject(ScreenConstants.CAMERA_MONTH, object);
         LOGGER.info("定时任务执行完成:活跃摄像头TOP(本月)");
 

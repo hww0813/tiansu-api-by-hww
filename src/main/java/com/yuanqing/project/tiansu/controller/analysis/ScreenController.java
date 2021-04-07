@@ -36,14 +36,14 @@ public class ScreenController {
 
         JSONObject eventList = redisCache.getCacheObject(ScreenConstants.WARN);
 
-        int eventCnt = 0;
+        String eventCnt = "0";
         if( eventList != null && eventList.size()!=0 ) {
             if(screenDto.getDateType()==1){
-                eventCnt = (int) eventList.get("day");
+                eventCnt = (String) eventList.get("day");
             }else if(screenDto.getDateType()==2){
-                eventCnt = (int) eventList.get("week");
+                eventCnt = (String) eventList.get("week");
             }else if(screenDto.getDateType()==3){
-                eventCnt = (int) eventList.get("month");
+                eventCnt = (String) eventList.get("month");
             }
         }
         JSONObject list = new JSONObject();
@@ -104,8 +104,8 @@ public class ScreenController {
 
     @PostMapping(value = "/oper/add")
     public AjaxResult operAdd(){
-
-        return AjaxResult.success("操作成功",redisCache.getCacheObject(ScreenConstants.REAL_OPERATION_WARN));
+        Object cacheObject = redisCache.getCacheObject(ScreenConstants.REAL_OPERATION_WARN);
+        return AjaxResult.success("操作成功",cacheObject);
     }
 
     @PostMapping(value = "/operate/summary")
