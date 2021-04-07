@@ -28,7 +28,7 @@ public class ScreenController {
 
         Object cacheObject = redisCache.getCacheObject(ScreenConstants.SUMMARY);
 
-        return AjaxResult.success(cacheObject);
+        return AjaxResult.success("操作成功",cacheObject);
     }
 
     @PostMapping(value = "/warn/total")
@@ -48,7 +48,7 @@ public class ScreenController {
         }
         JSONObject list = new JSONObject();
         list.put("warnCount",eventCnt);
-        return AjaxResult.success(list);
+        return AjaxResult.success("操作成功",list);
     }
 
 
@@ -57,14 +57,14 @@ public class ScreenController {
 
         List<JSONObject> personList = null;
         if(screenDto.getDateType()==1){
-            personList = redisCache.getCacheList(ScreenConstants.USER_DAY);
+            personList = redisCache.getCacheObject(ScreenConstants.USER_DAY);
         }else if(screenDto.getDateType()==2){
-            personList = redisCache.getCacheList(ScreenConstants.USER_WEEK);
+            personList = redisCache.getCacheObject(ScreenConstants.USER_WEEK);
         }else if(screenDto.getDateType()==3){
-            personList = redisCache.getCacheList(ScreenConstants.USER_MONTH);
+            personList = redisCache.getCacheObject(ScreenConstants.USER_MONTH);
         }
 
-        return AjaxResult.success(personList);
+        return AjaxResult.success("操作成功",personList);
     }
 
     @PostMapping(value = "/camera/top")
@@ -72,14 +72,14 @@ public class ScreenController {
 
         List<JSONObject> cameraList = null;
         if(screenDto.getDateType()==1){
-            cameraList = redisCache.getCacheList(ScreenConstants.CAMERA_DAY);
+            cameraList = redisCache.getCacheObject(ScreenConstants.CAMERA_DAY);
         }else if(screenDto.getDateType()==2){
-            cameraList = redisCache.getCacheList(ScreenConstants.CAMERA_WEEK);
+            cameraList = redisCache.getCacheObject(ScreenConstants.CAMERA_WEEK);
         }else if(screenDto.getDateType()==3){
-            cameraList = redisCache.getCacheList(ScreenConstants.CAMERA_MONTH);
+            cameraList = redisCache.getCacheObject(ScreenConstants.CAMERA_MONTH);
         }
 
-        return AjaxResult.success(cameraList);
+        return AjaxResult.success("操作成功",cameraList);
     }
     @PostMapping(value = "/terminal/top")
     public AjaxResult terminalTOP(@RequestBody ScreenDto screenDto){
@@ -87,25 +87,25 @@ public class ScreenController {
 
         List<JSONObject> terminalList = null;
         if(screenDto.getDateType()==1){
-            terminalList = redisCache.getCacheList(ScreenConstants.TERMINAL_DAY);
+            terminalList = redisCache.getCacheObject(ScreenConstants.TERMINAL_DAY);
         }else if(screenDto.getDateType()==2){
-            terminalList = redisCache.getCacheList(ScreenConstants.TERMINAL_WEEK);
+            terminalList = redisCache.getCacheObject(ScreenConstants.TERMINAL_WEEK);
         }else if(screenDto.getDateType()==3){
-            terminalList = redisCache.getCacheList(ScreenConstants.TERMINAL_MONTH);
+            terminalList = redisCache.getCacheObject(ScreenConstants.TERMINAL_MONTH);
         }
 
-        return AjaxResult.success(terminalList);
+        return AjaxResult.success("操作成功",terminalList);
     }
     @PostMapping(value = "/behavior/trend")
     public AjaxResult behaviorTrend(){
 
-        return AjaxResult.success(redisCache.getCacheList(ScreenConstants.OPERATION_CATEGORY));
+        return AjaxResult.success("操作成功",redisCache.getCacheObject(ScreenConstants.OPERATION_CATEGORY));
     }
 
     @PostMapping(value = "/oper/add")
     public AjaxResult operAdd(){
 
-        return AjaxResult.success(redisCache.getCacheList(ScreenConstants.REAL_OPERATION_WARN));
+        return AjaxResult.success("操作成功",redisCache.getCacheObject(ScreenConstants.REAL_OPERATION_WARN));
     }
 
     @PostMapping(value = "/operate/summary")
@@ -119,7 +119,7 @@ public class ScreenController {
         }else if(screenDto.getDateType()==3){
             operateSummary = redisCache.getCacheObject(ScreenConstants.OPERATION_NUM_MONTH);
         }
-        return AjaxResult.success(operateSummary);
+        return AjaxResult.success("操作成功",operateSummary);
     }
 
     @PostMapping(value = "/video/top")
@@ -128,20 +128,20 @@ public class ScreenController {
 
         List<JSONObject> videoTop = null;
         if(screenDto.getDateType()==1){
-            videoTop = redisCache.getCacheList(ScreenConstants.VIDEO_NUM_DAY);
+            videoTop = redisCache.getCacheObject(ScreenConstants.VIDEO_NUM_DAY);
         }else if(screenDto.getDateType()==2){
-            videoTop = redisCache.getCacheList(ScreenConstants.VIDEO_NUM_WEEK);
+            videoTop = redisCache.getCacheObject(ScreenConstants.VIDEO_NUM_WEEK);
         }else if(screenDto.getDateType()==3){
-            videoTop = redisCache.getCacheList(ScreenConstants.VIDEO_NUM_MONTH);
+            videoTop = redisCache.getCacheObject(ScreenConstants.VIDEO_NUM_MONTH);
         }
 
-        return AjaxResult.success(videoTop);
+        return AjaxResult.success("操作成功",videoTop);
     }
 
     @PostMapping(value = "/map/statis")
     public AjaxResult cameraMap(){
 
-        return AjaxResult.success(redisCache.getCacheList(ScreenConstants.CAMERA_MAP));
+        return AjaxResult.success("操作成功",redisCache.getCacheObject(ScreenConstants.CAMERA_MAP));
     }
 
 
