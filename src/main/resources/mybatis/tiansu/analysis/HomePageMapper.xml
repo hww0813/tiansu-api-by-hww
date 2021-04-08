@@ -80,8 +80,8 @@
     <select id="queryClientStatisticsCount" resultType="java.util.Map" parameterType="java.util.Date">
          SELECT
         COUNT(DISTINCT bs.`src_ip`) AS active ,
-        (SELECT COUNT(bct.`ip_address`)  FROM `busi_client_terminal` bct ) AS count,
-        (SELECT COUNT(1) FROM busi_client_terminal b WHERE b.status = 1) AS discovery
+        (SELECT COUNT(bct.`ip_address`)  FROM `busi_client_terminal` bct WHERE DEVICE_TYPE = 6) AS count,
+        (SELECT COUNT(1) FROM busi_client_terminal b WHERE b.status = 1 and DEVICE_TYPE = 6) AS discovery
          FROM busi_statistics bs
         WHERE bs.stamp = DATE_FORMAT(#{date},'%y%m%d')
     </select>
@@ -98,8 +98,8 @@
     <select id="queryCameraStatisticsCount" resultType="java.util.Map" parameterType="java.util.Date">
          SELECT
         COUNT(DISTINCT bs.dst_code) AS active ,
-        (SELECT COUNT(bc.device_code)  FROM `busi_camera` bc ) AS count,
-        (SELECT COUNT(1) FROM busi_camera b WHERE b.status = 1) AS discovery
+        (SELECT COUNT(bc.device_code)  FROM `busi_camera` bc  WHERE DEVICE_TYPE = 1) AS count,
+        (SELECT COUNT(1) FROM busi_camera b WHERE b.status = 1 and DEVICE_TYPE = 1) AS discovery
          FROM busi_statistics bs
          WHERE bs.stamp = DATE_FORMAT(#{date},'%y%m%d')
     </select>
