@@ -260,7 +260,7 @@ public class IndexStatisticsTask {
         if (action == -1) {
             action = null;
         }
-        return StatisticsSearch.builder().startTime(startTime).endTime(endTime).action(action).size(10L).build();
+        return StatisticsSearch.builder().startTime(startTime).endTime(endTime).action(action).size(5L).build();
 
     }
 
