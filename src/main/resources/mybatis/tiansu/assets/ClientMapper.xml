@@ -177,4 +177,14 @@
         set DEVICE_TYPE = null
         WHERE IP_ADDRESS  = #{ipAddress, jdbcType=BIGINT}
     </update>
+
+
+    <select id="getClientOperationTrend" parameterType="com.yuanqing.project.tiansu.domain.assets.Client" resultType="com.alibaba.fastjson.JSONObject"  >
+        select  HOUR(e.stamp) as Hour,count(*),action
+        from
+        busi_oper e
+        WHERE
+        DATE_FORMAT(e.stamp, '%Y-%m-%d') = DATE_FORMAT('2021-04-12 20:00:0', '%Y-%m-%d')
+        and e.src_ip = #{ipAddress}   group by action ,HOUR(e.stamp)
+    </select>
 </mapper>

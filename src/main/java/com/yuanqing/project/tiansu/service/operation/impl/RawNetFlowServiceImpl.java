@@ -104,6 +104,7 @@ public class RawNetFlowServiceImpl implements IRawNetFlowService {
         for(JSONObject json :trendList){
             hourList.add(json.getString("Hour"));
         }
+        //24小时为空的补零
         for(int i=0;i<24;i++) {
             if (hourList.contains(String.valueOf(i))) {
 

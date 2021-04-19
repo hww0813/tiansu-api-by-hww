@@ -130,5 +130,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
       GROUP BY  dst_ip ,src_ip
       order BY packetCount;
     </select>
-    
+
+    <select id="getClientRawFlowTrend" parameterType="RawNetFlow" resultType="com.alibaba.fastjson.JSONObject"  >
+        SELECT HOUR(e.stamp) as Hour,sum(e.packet_size) as Size ,sum(e.packet_count)as Count
+	     FROM busi_raw_net_flow e
+	       WHERE DATE_FORMAT(e.stamp, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+         and e.src_ip = #{srcIp}
+	       GROUP BY HOUR(e.stamp) ORDER BY Hour(e.stamp);
+    </select>
+
 </mapper>

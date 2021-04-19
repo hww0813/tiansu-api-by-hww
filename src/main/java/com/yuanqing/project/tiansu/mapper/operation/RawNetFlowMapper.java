@@ -69,5 +69,18 @@ public interface RawNetFlowMapper {
     List<JSONObject>getRawFlowTrend (RawNetFlow rawNetFlow);
 
 
+    /**
+     *
+     *获取终端当天的流量趋势
+     *
+     */
+    List<JSONObject>getClientRawFlowTrend (RawNetFlow rawNetFlow);
+
+
+    /**
+     *
+     *获取服务器相关终端
+     *
+     */
     List<JSONObject>getServerFlowRelationClient (RawNetFlow rawNetFlow);
 }

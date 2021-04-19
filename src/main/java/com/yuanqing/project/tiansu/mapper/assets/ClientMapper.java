@@ -151,4 +151,6 @@ public interface ClientMapper extends BaseMapper<Client,Long> {
 
     List<Client> getClientByIpList(@Param("list") List<Long> ipList,
                                    @Param("filter") Client client);
+
+    List<JSONObject> getClientOperationTrend(Client entity);
 }
