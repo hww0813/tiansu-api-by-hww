@@ -104,3 +104,5 @@ tiansu:
     macshost: https://127.0.0.1:8091/prod-api
     # 告警中心url
     alarmhost: http://127.0.0.1:8086/alarm
+    # 性能监控url
+    pmchost: http://127.0.0.1:8188

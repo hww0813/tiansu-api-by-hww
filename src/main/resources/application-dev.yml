@@ -13,7 +13,7 @@ spring:
         host: 192.168.1.20
         port: 5672
         username: admin
-        password: YQHbst4201
+        password: admin
     redis:
         # 地址
         host: 192.168.1.20
@@ -84,7 +84,7 @@ spring:
                     # 慢SQL记录
                     log-slow-sql: true
                     slow-sql-millis: 1000
-                    merge-sql: true
+                    merge-sql: false
                 wall:
                     config:
                         multi-statement-allow: true
@@ -101,4 +101,6 @@ tiansu:
     # 配置中心url
     macshost: http://192.168.1.20:8091/prod-api
     # 告警中心url
-    alarmhost: http://192.168.1.150:8086/alarm
+    alarmhost: http://192.168.1.20:8086/alarm
+    # 性能监控url
+    pmchost: http://localhost:8188
