@@ -26,7 +26,7 @@ public interface ScreenMapper {
      * 获取摄像头Top
      * @return
      */
-    List<JSONObject> getCameraTop();
+    List<JSONObject> getCameraTop(JSONObject filter);
 
     /**
      * 获取用户Top
@@ -45,7 +45,6 @@ public interface ScreenMapper {
 
     /**
      * 获取操作行为15分钟内 每分钟的条数
-     * @param filters
      * @return
      */
     List<JSONObject> getOperWarnByOper();

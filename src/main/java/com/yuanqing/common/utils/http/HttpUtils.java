@@ -3,6 +3,8 @@ package com.yuanqing.common.utils.http;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;
@@ -32,6 +34,45 @@ public class HttpUtils
 
     private static final String tokenString = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjVhMWM2YWUxLTQxZGQtNGMwMC04M2MzLWU3MjU" +
             "5NzMyY2ZhOSJ9.V2wlC4JK8MCtmX0VIOOaXu0A7iiUjC85PBYwQfEB-Exli2I_TW-TIEYSni9KREtl8jxs729hObt2ionaoz-clg";
+    //请求https资源时，绕过认证
+    static {
+        try {
+            trustAllHttpsCertificates();
+            HttpsURLConnection.setDefaultHostnameVerifier
+                    (
+                            (urlHostName, session) -> true
+                    );
+        } catch (Exception e) {
+        }
+    }
+
+    private static void trustAllHttpsCertificates()
+            throws NoSuchAlgorithmException, KeyManagementException {
+        TrustManager[] trustAllCerts = new TrustManager[1];
+        trustAllCerts[0] = new TrustAllManager();
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, null);
+        HttpsURLConnection.setDefaultSSLSocketFactory(
+                sc.getSocketFactory());
+    }
+
+    private static class TrustAllManager
+            implements X509TrustManager {
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] certs,
+                                       String authType) {
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] certs,
+                                       String authType) {
+        }
+    }
 
 
     public static String sendGet(String url, JSONObject param)

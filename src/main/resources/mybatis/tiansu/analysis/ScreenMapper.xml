@@ -71,7 +71,7 @@
         SELECT
             dst_code ip,
             sum( count ) count,
-            null as name
+            '' as name
         FROM
             busi_statistics
         WHERE

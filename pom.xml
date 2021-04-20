@@ -36,7 +36,7 @@
 		<oshi.version>3.9.1</oshi.version>
 		<velocity.version>1.7</velocity.version>
 		<lombok.version>1.16.18</lombok.version>
-		<j2cache.springboot.version>2.7.0-release</j2cache.springboot.version>
+<!--		<j2cache.springboot.version>2.7.0-release</j2cache.springboot.version>-->
 		<j2cache.core.version>2.7.0-release</j2cache.core.version>
 		<jasperreports.version>6.5.0</jasperreports.version>
 	</properties>
@@ -68,6 +68,11 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+
 		<!-- spring-boot-devtools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -82,10 +87,10 @@
 		</dependency>
 
 		<!-- redis 缓存操作 -->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-data-redis</artifactId>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
 
 		<!-- pool 对象池 -->
 		<dependency>
@@ -146,6 +151,12 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>${commons.fileupload.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- 解析客户端操作系统、浏览器等 -->
@@ -192,31 +203,31 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>net.oschina.j2cache</groupId>
-			<artifactId>j2cache-spring-boot2-starter</artifactId>
-			<version>2.7.6-release</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>net.oschina.j2cache</groupId>-->
+<!--			<artifactId>j2cache-spring-boot2-starter</artifactId>-->
+<!--			<version>2.7.6-release</version>-->
+<!--		</dependency>-->
 
-		<dependency>
-			<groupId>net.oschina.j2cache</groupId>
-			<artifactId>j2cache-core</artifactId>
-			<version>2.7.8-release</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-simple</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.alibaba</groupId>
-					<artifactId>fastjson</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>net.oschina.j2cache</groupId>-->
+<!--			<artifactId>j2cache-core</artifactId>-->
+<!--			<version>2.7.8-release</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>org.slf4j</groupId>-->
+<!--					<artifactId>slf4j-simple</artifactId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<groupId>org.slf4j</groupId>-->
+<!--					<artifactId>slf4j-api</artifactId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<groupId>com.alibaba</groupId>-->
+<!--					<artifactId>fastjson</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
 
 		<!--防止进入swagger页面报类型转换错误，排除2.9.2中的引用，手动增加1.5.21版本-->
         <dependency>
@@ -285,7 +296,13 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>${jasperreports.version}</version> <!-- 可选用最新的版本 -->
+			<version>${jasperreports.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-lang</artifactId>
+					<groupId>commons-lang</groupId>
+				</exclusion>
+			</exclusions> <!-- 可选用最新的版本 -->
 		</dependency>
 
 		<!-- 临时为 jasperreports 依赖bug引入-->
@@ -313,6 +330,12 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>httpcore</artifactId>
+					<groupId>org.apache.httpcomponents</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -349,6 +372,18 @@
 
 		</plugins>
 	</build>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Greenwich.SR3</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<repositories>
 		<repository>

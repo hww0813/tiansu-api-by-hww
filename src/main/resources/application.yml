@@ -89,6 +89,10 @@ xss:
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
 
+feign:
+  okhttp:
+    enabled: true
+
 # 代码生成
 gen:
   # 作者
