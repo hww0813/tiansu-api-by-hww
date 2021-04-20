@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -131,9 +132,7 @@ public class ScreenServiceImpl implements IScreenService {
     public String getUserTop(JSONObject filter){
         List<JSONObject> userList = screenMapper.getUserTop(filter);
         String str = userList.toString();
-        String rep1 = str.replaceAll("IDCARD","idCard");
-        String result = rep1.replaceAll("COUNT","count");
-        return result;
+        return str;
     }
 
 
@@ -154,7 +153,7 @@ public class ScreenServiceImpl implements IScreenService {
 
     @Override
     public String getCameraTop(JSONObject filter){
-        List<JSONObject> cameraTopList = screenMapper.getCameraTop();
+        List<JSONObject> cameraTopList = screenMapper.getCameraTop(filter);
         return cameraTopList.toString();
     }
 
@@ -234,6 +233,53 @@ public class ScreenServiceImpl implements IScreenService {
                 return jsonObject;
                 }
 
+//    private String a(List<JSONObject> categoryList){
+//
+//
+//        long lastTime = date+1000*60*60;
+//
+//        List<JSONObject> list = new ArrayList<>();
+//        JSONObject jsonObject = null;
+//        for(int i = 1;i<=7;i++){
+//            lastTime = lastTime-1000*60*60;
+//            jsonObject = new JSONObject();
+//            String last = convertTimestamp2Date(lastTime,"yyyy-MM-dd HH:mm:ss");
+//            jsonObject.put("time",last);
+//            jsonObject.put("play",0);
+//            jsonObject.put("playback",0);
+//            jsonObject.put("download",0);
+//            jsonObject.put("control",0);
+//            list.add(jsonObject);
+//        }
+//
+//        for(JSONObject j : list){
+//            String time = (String) j.get("time");
+//            for(JSONObject js : categoryList){
+//
+//                Timestamp cTime = (Timestamp)js.get("DT");
+//                Long categoryTime = cTime.getTime();
+//                String strCategoryTime = convertTimestamp2Date(categoryTime,"yyyy-MM-dd HH:mm:ss");
+//
+//
+//                if(strCategoryTime.equals(time)){
+//                    BigDecimal action = (BigDecimal)js.get("ACTION");
+//                    if(action.intValue()==0){
+//                        j.put("play",js.get("DTCNT"));
+//                    }
+//                    if(action.intValue()==1){
+//                        j.put("download",js.get("DTCNT"));
+//                    }
+//                    if(action.intValue()==2){
+//                        j.put("playback",js.get("DTCNT"));
+//                    }
+//                    if(action.intValue()==3){
+//                        j.put("control",js.get("DTCNT"));
+//                    }
+//                }
+//            }
+//        }
+//        return list.toString();
+//    }
 
     private String formatCameraMap(List<JSONObject> list){
         List<JSONObject> cameraMapList = list.stream().map(f ->{
