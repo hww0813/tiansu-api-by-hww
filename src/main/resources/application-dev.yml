@@ -10,7 +10,7 @@ quartz:
 # 数据源配置
 spring:
     rabbitmq:
-        host: 192.168.1.20
+        host: 192.168.1.133
         port: 5672
         username: admin
         password: admin
@@ -76,16 +76,15 @@ spring:
                 allow:
                 url-pattern: /druid/*
                 # 控制台管理用户名和密码
-                login-username: admin
-                login-password: abcd=1234
-
+                login-username:
+                login-password:
             filter:
                 stat:
                     enabled: true
                     # 慢SQL记录
                     log-slow-sql: true
                     slow-sql-millis: 1000
-                    merge-sql: false
+                    merge-sql: true
                 wall:
                     config:
                         multi-statement-allow: true
@@ -102,6 +101,6 @@ tiansu:
     # 配置中心url
     macshost: http://192.168.1.20:8091/prod-api
     # 告警中心url
-    alarmhost: http://192.168.1.20:8086/alarm
+    alarmhost: http://192.168.1.137:8086/alarm
     # 性能监控url
     pmchost: http://localhost:8188
