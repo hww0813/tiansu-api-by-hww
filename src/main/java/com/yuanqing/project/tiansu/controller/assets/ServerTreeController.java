@@ -1,6 +1,9 @@
 package com.yuanqing.project.tiansu.controller.assets;
 
 import com.yuanqing.common.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -12,14 +15,13 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +43,9 @@ public class ServerTreeController extends BaseController {
     @Autowired
     private OperationBehaviorMapper operationBehaviorMapper;
 
+    @Value("${tiansu.pmchost}")
+    private String prefix;
+
 
     @GetMapping("/list")
     @ApiOperation(value = "获取服务器列表", httpMethod = "GET")
@@ -57,6 +62,19 @@ public class ServerTreeController extends BaseController {
         serverTree.setIsDelete(isDelete);
         startPage();
         List<ServerTree> list = serverTreeService.getList(serverTree);
+
+//        String result = HttpUtils.getHttpRequest(prefix+"/pmc/consul/getConsulIp");
+//        List<String> ipList = new ArrayList<>();
+//        JSONObject syslogJson = JSON.parseObject(result);
+//        ipList = (List<String>) syslogJson.get("data");
+//        //serverTree的remark字段用于标记是否可以查看服务器资源性能详情，yes：表示可以，no:表示不可以
+//        for(ServerTree server:list){
+//            if(ipList.contains(server.getServerIp())){
+//                server.setRemark("yes");
+//            }else {
+//                server.setRemark("no");
+//            }
+//        }
         return AjaxResult.success(getDataTable(list));
     }
 

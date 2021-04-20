@@ -30,7 +30,8 @@ public class HttpUtils
 {
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
-
+    private static final String tokenString = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjVhMWM2YWUxLTQxZGQtNGMwMC04M2MzLWU3MjU" +
+            "5NzMyY2ZhOSJ9.V2wlC4JK8MCtmX0VIOOaXu0A7iiUjC85PBYwQfEB-Exli2I_TW-TIEYSni9KREtl8jxs729hObt2ionaoz-clg";
 
 
     public static String sendGet(String url, JSONObject param)
@@ -245,6 +246,47 @@ public class HttpUtils
             log.error("调用HttpsUtil.sendSSLPost Exception, url=" + url + ",param=" + param, e);
         }
         return result.toString();
+    }
+
+    public static String getHttpRequest(String url) {
+        String result = "";
+        BufferedReader in = null;
+        try {
+            String urlNameString = url;
+            URL realUrl = new URL(urlNameString);
+            // 打开和URL之间的连接
+            URLConnection connection = realUrl.openConnection();
+            // 设置通用的请求属性
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("Authorization", tokenString);
+            connection.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 建立实际的连接
+            connection.connect();
+
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader
+                    (new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+        } catch (Exception e) {
+            System.out.println("发送GET请求出现异常！" + e);
+            e.printStackTrace();
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return result;
     }
 
     private static class TrustAnyTrustManager implements X509TrustManager
