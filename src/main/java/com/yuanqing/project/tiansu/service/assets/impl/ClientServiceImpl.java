@@ -18,12 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Created by xucan on 2021-01-19 10:51
+ *
  * @author xucan
  */
 
@@ -43,7 +45,7 @@ public class ClientServiceImpl implements IClientService {
     public List<Client> getClientByIpList(List<Long> ipList, Client client) {
         List<Client> list = null;
         if (!CollectionUtils.isEmpty(ipList)) {
-            list = clientMapper.getClientByIpList(ipList,client);
+            list = clientMapper.getClientByIpList(ipList, client);
         }
         return list;
     }
@@ -101,12 +103,12 @@ public class ClientServiceImpl implements IClientService {
             }
         }
         return list;*/
-        return  null;
+        return null;
     }
 
     @Override
-    public List<Client> getByIpAndPort(Long serverIp,Long serverPort) {
-        List<Client> list = clientMapper.getByIpAndPort(serverIp,serverPort);
+    public List<Client> getByIpAndPort(Long serverIp, Long serverPort) {
+        List<Client> list = clientMapper.getByIpAndPort(serverIp, serverPort);
         return list;
     }
 
@@ -187,6 +189,52 @@ public class ClientServiceImpl implements IClientService {
     }
 
     @Override
+    public Map<Long, List<JSONObject>> getClientOperationTrend(Long srcIp, Date startTime, Date endTime) throws ParseException {
+        Map<Long, List<JSONObject>> map = new HashMap<>();
+        for (Long i = 0l; i < 4; i++) {
+            List<JSONObject> list = clientMapper.getClientOperationTrend(srcIp, i, startTime, endTime);
+            list = dealTrendList(list,startTime,endTime);
+            map.put(i,list);
+        }
+        return map;
+    }
+
+    //将时间段内没有的节点数据补齐
+    public List<JSONObject> dealTrendList(List<JSONObject> trendList,Date startTime, Date endTime) throws ParseException {
+        //获得两个时间段之内的所有日期小时
+        String strDateFormat = "yyyy-MM-dd HH";
+        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+        List<String> hours = DateUtils.getHoursBetweenTwoDate(sdf.format(startTime), sdf.format(endTime));
+
+        List<JSONObject> list = new ArrayList<>();
+
+        //将没有的时间段补齐
+        int j = 0, i = 0;
+        while (j < trendList.size()) {
+            String date = hours.get(i);
+            String sqlDate = trendList.get(j).getString("Hour");
+            if (date.equals(sqlDate)) {
+                list.add(trendList.get(j++));
+            } else {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("Hour", date);
+                jsonObject.put("Count", "0");
+                list.add(jsonObject);
+            }
+            i++;
+        }
+
+        while (i < hours.size()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("Hour", hours.get(i));
+            jsonObject.put("Count", "0");
+            list.add(jsonObject);
+            i++;
+        }
+        return list;
+    }
+
+    @Override
     public Long save(Client entity) {
         //根据IP查找服务器
         Long IP = entity.getIpAddress();
@@ -223,7 +271,7 @@ public class ClientServiceImpl implements IClientService {
         }
         clientMapper.delete(id);
         //删除缓存中里的数据
-        String clientKey = String.format(Constants.THREE_FORMAT,Constants.CLIENT,entity.getIpAddress(),entity.getUsername());
+        String clientKey = String.format(Constants.THREE_FORMAT, Constants.CLIENT, entity.getIpAddress(), entity.getUsername());
         ClientMap.remove(clientKey);
     }
 

@@ -2,7 +2,10 @@ package com.yuanqing.project.tiansu.service.operation;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
+import io.lettuce.core.dynamic.annotation.Param;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 public interface IRawNetFlowService {
@@ -56,7 +59,14 @@ public interface IRawNetFlowService {
     public int deleteBusiRawNetFlowById(Long id);
 
 
-    public  List<JSONObject>getServerFlowTrend (RawNetFlow rawNetFlow);
+    public  List<JSONObject>getServerFlowTrend (Long dstIp, Date startTime,Date endTime) throws ParseException;
 
-    public List<JSONObject>getServerFlowRelationClient (RawNetFlow rawNetFlow);
+    /**
+     *
+     *获取终端当天的流量趋势
+     *
+     */
+    List<JSONObject>getClientRawFlowTrend (Long srcIp,Date startTime, Date endTime) throws ParseException;
+
+    public List<JSONObject>getServerFlowRelationClient (RawNetFlow rawNetFlow) ;
 }

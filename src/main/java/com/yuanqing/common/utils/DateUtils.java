@@ -9,11 +9,12 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.exception.CustomException;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -371,7 +372,40 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
             default: timeType = "MONTH"; break;
         }
         return timeType;
-    };
+    }
+
+    /**
+     * 获得两个时间段之内的所有日期小时：例如传参数："2018-12-06 01"和"2018-12-06 23", 返回结果：[2018-12-06
+     * 01, 2018-12-06 02, 2018-12-06 03, 2018-12-06 04, ......, 2018-12-06 23]
+     *
+     * @param beginDate
+     * @param endDate
+     * @return
+     * @throws ParseException
+     * @throws java.text.ParseException
+     */
+    public static List<String> getHoursBetweenTwoDate(String beginDate,
+                                                      String endDate) throws ParseException, java.text.ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+        List<String> lDate = new ArrayList<String>();
+        lDate.add(beginDate);// 把开始时间加入集合
+        Calendar cal = Calendar.getInstance();
+        // 使用给定的 Date 设置此 Calendar 的时间
+        cal.setTime(sdf.parse(beginDate));
+        boolean bContinue = true;
+        while (bContinue) {
+            // 根据日历的规则，为给定的日历字段添加或减去指定的时间量
+            cal.add(Calendar.HOUR, 1);
+            // 测试此日期是否在指定日期之后
+            if (sdf.parse(endDate).after(cal.getTime())) {
+                lDate.add(sdf.format(cal.getTime()));
+            } else {
+                break;
+            }
+        }
+        lDate.add(endDate);// 把结束时间加入集合
+        return lDate;
+    }
 
 
     public static String getStrFromLocalDateTime(LocalDateTime time){

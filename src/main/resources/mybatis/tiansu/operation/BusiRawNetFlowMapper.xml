@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yuanqing.project.tiansu.mapper.operation.RawNetFlowMapper">
-    
+
     <resultMap type="RawNetFlow" id="BusiRawNetFlowResult">
         <result property="id"    column="id"    />
         <result property="srcIp"    column="src_ip"    />
@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectBusiRawNetFlowList" parameterType="RawNetFlow" resultMap="BusiRawNetFlowResult">
         <include refid="selectBusiRawNetFlowVo"/>
-        <where>  
+        <where>
             <if test="srcIp != null "> and src_ip = #{srcIp}</if>
             <if test="srcPort != null  and srcPort != ''"> and src_port = #{srcPort}</if>
             <if test="srcMac != null  and srcMac != ''"> and src_mac = #{srcMac}</if>
@@ -37,12 +37,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="packetCount != null "> and packet_count = #{packetCount}</if>
         </where>
     </select>
-    
+
     <select id="selectBusiRawNetFlowById" parameterType="Long" resultMap="BusiRawNetFlowResult">
         <include refid="selectBusiRawNetFlowVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertBusiRawNetFlow" parameterType="RawNetFlow">
         insert into busi_raw_net_flow
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -95,7 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteBusiRawNetFlowByIds" parameterType="String">
-        delete from busi_raw_net_flow where id in 
+        delete from busi_raw_net_flow where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -112,12 +112,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY dst_port,dst_ip
     </select>
 
-    <select id="getRawFlowTrend" parameterType="RawNetFlow" resultType="com.alibaba.fastjson.JSONObject"  >
-        SELECT HOUR(e.stamp) as Hour,sum(e.packet_size) as Size ,sum(e.packet_count)as Count
+    <select id="getRawFlowTrend"  resultType="com.alibaba.fastjson.JSONObject"  >
+        SELECT DATE_FORMAT(e.stamp,'%Y-%m-%d %H') as Hour,sum(e.packet_size)/1024 as Size ,sum(e.packet_count)as Count
 	     FROM busi_raw_net_flow e
-	       WHERE DATE_FORMAT(e.stamp, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+	       WHERE e.stamp between #{startTime} and #{endTime}
          and e.dst_ip = #{dstIp}
-	       GROUP BY HOUR(e.stamp) ORDER BY Hour(e.stamp);
+	       GROUP BY DATE_FORMAT(e.stamp,'%Y-%m-%d %H')
+    </select>
+
+    <select id="getClientRawFlowTrend"  resultType="com.alibaba.fastjson.JSONObject"  >
+        SELECT DATE_FORMAT(e.stamp,'%Y-%m-%d %H') as Hour,sum(e.packet_size)/1024 as Size ,sum(e.packet_count)as Count
+        FROM busi_raw_net_flow e
+        WHERE e.stamp between #{startTime} and #{endTime}
+          and e.src_ip = #{srcIp}
+        GROUP BY DATE_FORMAT(e.stamp,'%Y-%m-%d %H')
     </select>
 
     <select id="getServerFlowRelationClient" parameterType="RawNetFlow" resultType="com.alibaba.fastjson.JSONObject"  >
@@ -128,15 +136,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
        and e.dst_ip = #{dstIp}
        and e.stamp = #{stamp}
       GROUP BY  dst_ip ,src_ip
-      order BY packetCount;
+      order BY packetCount
     </select>
 
-    <select id="getClientRawFlowTrend" parameterType="RawNetFlow" resultType="com.alibaba.fastjson.JSONObject"  >
-        SELECT HOUR(e.stamp) as Hour,sum(e.packet_size) as Size ,sum(e.packet_count)as Count
-	     FROM busi_raw_net_flow e
-	       WHERE DATE_FORMAT(e.stamp, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
-         and e.src_ip = #{srcIp}
-	       GROUP BY HOUR(e.stamp) ORDER BY Hour(e.stamp);
-    </select>
+
 
 </mapper>

@@ -5,49 +5,69 @@
 <mapper namespace="com.yuanqing.project.tiansu.mapper.assets.ClientMapper">
 
     <resultMap type="com.yuanqing.project.tiansu.domain.assets.Client" id="BusiClientResult">
-        <result property="id"    column="ID"    />
-        <result property="deviceCode"    column="DEVICE_CODE"    />
-        <result property="deviceName"    column="DEVICE_NAME"    />
-        <result property="macAddress"    column="MAC_ADDRESS"    />
-        <result property="status"    column="STATUS"    />
-        <result property="username"    column="USERNAME"    />
-        <result property="createTime"    column="CREATE_TIME"    />
-        <result property="updateTime"    column="UPDATE_TIME"    />
-        <result property="ipAddress"    column="IP_ADDRESS"    />
-        <result property="sipServerId"    column="SIP_SERVER_ID"    />
-        <result property="mediaServerId"    column="MEDIA_SERVER_ID"    />
-        <result property="userProxyServerId"    column="USER_PROXY_SERVER_ID"    />
-        <result property="deviceType"    column="DEVICE_TYPE"    />
-        <result property="domainIp"    column="DOMAIN_IP"    />
-        <result property="domainPort"    column="DOMAIN_PORT"    />
-        <result property="regionId"    column="REGION"    />
-        <result property="source"    column="SOURCE"    />
+        <result property="id" column="ID"/>
+        <result property="deviceCode" column="DEVICE_CODE"/>
+        <result property="deviceName" column="DEVICE_NAME"/>
+        <result property="macAddress" column="MAC_ADDRESS"/>
+        <result property="status" column="STATUS"/>
+        <result property="username" column="USERNAME"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="ipAddress" column="IP_ADDRESS"/>
+        <result property="sipServerId" column="SIP_SERVER_ID"/>
+        <result property="mediaServerId" column="MEDIA_SERVER_ID"/>
+        <result property="userProxyServerId" column="USER_PROXY_SERVER_ID"/>
+        <result property="deviceType" column="DEVICE_TYPE"/>
+        <result property="domainIp" column="DOMAIN_IP"/>
+        <result property="domainPort" column="DOMAIN_PORT"/>
+        <result property="regionId" column="REGION"/>
+        <result property="source" column="SOURCE"/>
     </resultMap>
 
     <sql id="selectBusiClientVo">
-        select ID, DEVICE_CODE, DEVICE_NAME, MAC_ADDRESS, STATUS, USERNAME, CREATE_TIME, UPDATE_TIME, IP_ADDRESS, SIP_SERVER_ID, MEDIA_SERVER_ID, USER_PROXY_SERVER_ID, DEVICE_TYPE, DOMAIN_IP, DOMAIN_PORT, REGION, SOURCE from busi_client
+        select ID,
+               DEVICE_CODE,
+               DEVICE_NAME,
+               MAC_ADDRESS,
+               STATUS,
+               USERNAME,
+               CREATE_TIME,
+               UPDATE_TIME,
+               IP_ADDRESS,
+               SIP_SERVER_ID,
+               MEDIA_SERVER_ID,
+               USER_PROXY_SERVER_ID,
+               DEVICE_TYPE,
+               DOMAIN_IP,
+               DOMAIN_PORT,
+               REGION,
+               SOURCE
+        from busi_client
     </sql>
 
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.Client" resultMap="BusiClientResult">
         <include refid="selectBusiClientVo"/>
         <where>
-            <if test="deviceCode != null  and deviceCode != ''"> and DEVICE_CODE = #{deviceCode}</if>
-            <if test="deviceName != null  and deviceName != ''"> and DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
-            <if test="macAddress != null  and macAddress != ''"> and MAC_ADDRESS = #{macAddress}</if>
-            <if test="status != null  and status != ''"> and STATUS = #{status}</if>
-            <if test="username != null  and username != ''"> and USERNAME = #{username}</if>
-            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
-            <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
-            <if test="ipAddress != null "> and IP_ADDRESS = #{ipAddress}</if>
-            <if test="sipServerId != null "> and SIP_SERVER_ID = #{sipServerId}</if>
-            <if test="mediaServerId != null "> and MEDIA_SERVER_ID = #{mediaServerId}</if>
-            <if test="userProxyServerId != null "> and USER_PROXY_SERVER_ID = #{userProxyServerId}</if>
-            <if test="deviceType != null  and deviceType != ''"> and DEVICE_TYPE = #{deviceType}</if>
-            <if test="domainIp != null "> and DOMAIN_IP = #{domainIp}</if>
-            <if test="domainPort != null "> and DOMAIN_PORT = #{domainPort}</if>
-            <if test="regionId != null "> and REGION = #{regionId}</if>
-            <if test="source != null  and source != ''"> and SOURCE = #{source}</if>
-            <if test="startDate != null and endDate != null">and update_time between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+            <if test="deviceCode != null  and deviceCode != ''">and DEVICE_CODE = #{deviceCode}</if>
+            <if test="deviceName != null  and deviceName != ''">and DEVICE_NAME like concat('%', #{deviceName}, '%')
+            </if>
+            <if test="macAddress != null  and macAddress != ''">and MAC_ADDRESS = #{macAddress}</if>
+            <if test="status != null  and status != ''">and STATUS = #{status}</if>
+            <if test="username != null  and username != ''">and USERNAME = #{username}</if>
+            <if test="createTime != null ">and CREATE_TIME = #{createTime}</if>
+            <if test="updateTime != null ">and UPDATE_TIME = #{updateTime}</if>
+            <if test="ipAddress != null ">and IP_ADDRESS = #{ipAddress}</if>
+            <if test="sipServerId != null ">and SIP_SERVER_ID = #{sipServerId}</if>
+            <if test="mediaServerId != null ">and MEDIA_SERVER_ID = #{mediaServerId}</if>
+            <if test="userProxyServerId != null ">and USER_PROXY_SERVER_ID = #{userProxyServerId}</if>
+            <if test="deviceType != null  and deviceType != ''">and DEVICE_TYPE = #{deviceType}</if>
+            <if test="domainIp != null ">and DOMAIN_IP = #{domainIp}</if>
+            <if test="domainPort != null ">and DOMAIN_PORT = #{domainPort}</if>
+            <if test="regionId != null ">and REGION = #{regionId}</if>
+            <if test="source != null  and source != ''">and SOURCE = #{source}</if>
+            <if test="startDate != null and endDate != null">and update_time between STR_TO_DATE(#{startDate},
+                '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+            </if>
         </where>
     </select>
 
@@ -59,11 +79,11 @@
 
         select ip_address,count(DISTINCT username) userCnt from busi_client
         where
-            ip_address in
-            <foreach collection="list" item="item" open="(" close=")" separator=",">
-                #{item}
-            </foreach>
-         GROUP BY IP_ADDRESS
+        ip_address in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        GROUP BY IP_ADDRESS
 
     </select>
 
@@ -75,8 +95,8 @@
             <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
-            <if test="filter.status != null"> and STATUS = #{filter.status}</if>
-            <if test="filter.ipAddress != null "> and IP_ADDRESS = #{filter.ipAddress}</if>
+            <if test="filter.status != null">and STATUS = #{filter.status}</if>
+            <if test="filter.ipAddress != null ">and IP_ADDRESS = #{filter.ipAddress}</if>
         </where>
     </select>
 
@@ -84,9 +104,9 @@
 
         select username,count(DISTINCT IP_ADDRESS) terminalCnt from busi_client
         where username in
-            <foreach collection="list" item="item" open="(" close=")" separator=",">
-                #{item}
-            </foreach>
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
         GROUP BY USERNAME
 
 
@@ -158,13 +178,19 @@
     </update>
 
     <delete id="delete" parameterType="Long">
-        delete from busi_client where ID = #{id}
+        delete
+        from busi_client
+        where ID = #{id}
     </delete>
     <delete id="deleteByIpAddress" parameterType="Long">
-         delete from busi_client where IP_ADDRESS = #{ipAddress}
+        delete
+        from busi_client
+        where IP_ADDRESS = #{ipAddress}
     </delete>
     <delete id="deleteByUsername">
-        delete from busi_client where username = #{username}
+        delete
+        from busi_client
+        where username = #{username}
     </delete>
 
     <select id="findByIP" parameterType="long" resultMap="BusiClientResult">
@@ -175,16 +201,18 @@
     <update id="updateMark" parameterType="long">
         update BUSI_CLIENT
         set DEVICE_TYPE = null
-        WHERE IP_ADDRESS  = #{ipAddress, jdbcType=BIGINT}
+        WHERE IP_ADDRESS = #{ipAddress, jdbcType=BIGINT}
     </update>
 
 
-    <select id="getClientOperationTrend" parameterType="com.yuanqing.project.tiansu.domain.assets.Client" resultType="com.alibaba.fastjson.JSONObject"  >
-        select  HOUR(e.stamp) as Hour,count(*),action
+    <select id="getClientOperationTrend" resultType="com.alibaba.fastjson.JSONObject">
+        select DATE_FORMAT(e.stamp, '%Y-%m-%d %H') as Hour,count(*) as Count
         from
-        busi_oper e
+            busi_oper e
         WHERE
-        DATE_FORMAT(e.stamp, '%Y-%m-%d') = DATE_FORMAT('2021-04-12 20:00:0', '%Y-%m-%d')
-        and e.src_ip = #{ipAddress}   group by action ,HOUR(e.stamp)
+            e.stamp between #{startTime} and #{endTime}
+          and e.src_ip = #{srcIp}
+          and e.action = #{action}
+        group by DATE_FORMAT(e.stamp, '%Y-%m-%d %H')
     </select>
 </mapper>

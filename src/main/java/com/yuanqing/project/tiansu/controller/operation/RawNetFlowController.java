@@ -29,8 +29,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -62,14 +65,14 @@ public class RawNetFlowController extends BaseController {
 
         return AjaxResult.success(getDataTable(rawNetFlowList));
     }
+
     /**
      * 导出原始流量列表
      */
     @PreAuthorize("@ss.hasPermi('system:flow:export')")
     @Log(title = "原始流量", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(RawNetFlow busiRawNetFlow)
-    {
+    public AjaxResult export(RawNetFlow busiRawNetFlow) {
         List<RawNetFlow> list = busiRawNetFlowService.selectBusiRawNetFlowList(busiRawNetFlow);
         ExcelUtil<RawNetFlow> util = new ExcelUtil<RawNetFlow>(RawNetFlow.class);
         return util.exportExcel(list, "flow");
@@ -80,14 +83,37 @@ public class RawNetFlowController extends BaseController {
      * 获取服务器流量趋势统计
      */
     @GetMapping("/ServerFlowTrend")
-    @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
-    public AjaxResult getServerFlowTrend(@RequestParam(value = "dstIp", required = false) String dstIp,
-                             @RequestParam(required = false) String orderType,
-                             @RequestParam(required = false) String orderValue) {
-        RawNetFlow rawNetFlow = new RawNetFlow();
-        rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
-        startPage();
-        List<JSONObject> rawNetFlowList = busiRawNetFlowService.getServerFlowTrend(rawNetFlow);
+    @ApiOperation(value = "获取服务器流量趋势统计", httpMethod = "GET")
+    public AjaxResult getServerFlowTrend(@RequestParam(value = "dstIp", required = false) String dstIp) throws ParseException {
+        //ip地址转换
+        Long ip = IpUtils.ipToLong(dstIp);
+        //获得开始结束时间时间段
+        Date endTime = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(endTime);
+        c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) - 23);
+        Date startTime = c.getTime();
+
+        List<JSONObject> rawNetFlowList = busiRawNetFlowService.getServerFlowTrend(ip, startTime, endTime);
+        return AjaxResult.success(rawNetFlowList);
+    }
+
+    /**
+     * 获取终端流量趋势统计
+     */
+    @GetMapping("/getClientRawFlowTrend")
+    @ApiOperation(value = "获取终端流量趋势统计", httpMethod = "GET")
+    public AjaxResult getClientRawFlowTrend(@RequestParam(value = "srcIp", required = false) String srcIp) throws ParseException {
+        //ip地址转换
+        Long ip = IpUtils.ipToLong(srcIp);
+        //获得开始结束时间时间段
+        Date endTime = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(endTime);
+        c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) - 23);
+        Date startTime = c.getTime();
+
+        List<JSONObject> rawNetFlowList = busiRawNetFlowService.getClientRawFlowTrend(ip, startTime, endTime);
         return AjaxResult.success(rawNetFlowList);
     }
 
@@ -98,8 +124,8 @@ public class RawNetFlowController extends BaseController {
     @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
     public AjaxResult getServerFlowRelationClient(@RequestParam(value = "dstIp", required = false) String dstIp,
                                                   @RequestParam(value = "stamp", required = false) String stamp,
-                                            @RequestParam(required = false) String orderType,
-                                            @RequestParam(required = false) String orderValue) {
+                                                  @RequestParam(required = false) String orderType,
+                                                  @RequestParam(required = false) String orderValue) {
         RawNetFlow rawNetFlow = new RawNetFlow();
         rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -109,7 +135,6 @@ public class RawNetFlowController extends BaseController {
         List<JSONObject> rawNetFlowList = busiRawNetFlowService.getServerFlowRelationClient(rawNetFlow);
         return AjaxResult.success(rawNetFlowList);
     }
-
 
 
 //    /**

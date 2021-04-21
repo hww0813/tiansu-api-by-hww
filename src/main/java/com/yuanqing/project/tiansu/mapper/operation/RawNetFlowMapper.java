@@ -2,7 +2,9 @@ package com.yuanqing.project.tiansu.mapper.operation;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
+import io.lettuce.core.dynamic.annotation.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface RawNetFlowMapper {
@@ -66,7 +68,7 @@ public interface RawNetFlowMapper {
      *获取服务器当天的流量趋势
      *
      */
-    List<JSONObject>getRawFlowTrend (RawNetFlow rawNetFlow);
+    List<JSONObject>getRawFlowTrend (@Param("dstIp") Long dstIp,@Param("startTime") Date startTime,@Param("endTime") Date endTime);
 
 
     /**
@@ -74,7 +76,7 @@ public interface RawNetFlowMapper {
      *获取终端当天的流量趋势
      *
      */
-    List<JSONObject>getClientRawFlowTrend (RawNetFlow rawNetFlow);
+    List<JSONObject>getClientRawFlowTrend (@Param("srcIp") Long srcIp,@Param("startTime") Date startTime,@Param("endTime") Date endTime);
 
 
     /**

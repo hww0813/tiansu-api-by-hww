@@ -5,9 +5,9 @@ import com.yuanqing.framework.web.mapper.BaseMapper;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -152,5 +152,6 @@ public interface ClientMapper extends BaseMapper<Client,Long> {
     List<Client> getClientByIpList(@Param("list") List<Long> ipList,
                                    @Param("filter") Client client);
 
-    List<JSONObject> getClientOperationTrend(Client entity);
+    //终端的动作趋势图
+    List<JSONObject> getClientOperationTrend(@Param("srcIp") Long srcIp,@Param("action") Long action, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 }

@@ -3,8 +3,9 @@ package com.yuanqing.project.tiansu.service.assets;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Client;
-import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -132,4 +133,6 @@ public interface IClientService extends BaseService<Client,Long> {
      */
      List<JSONObject> getUserNumByTerminal(List<Long> ips);
 
+    //终端的动作趋势图
+    Map<Long,List<JSONObject>> getClientOperationTrend(Long srcIp, Date startTime, Date endTime) throws ParseException;
 }

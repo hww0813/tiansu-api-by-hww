@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 
 import static com.yuanqing.common.constant.Constants.INDEX_CLIENT_COUNTS_CACHE;
 
@@ -188,6 +188,22 @@ public class ClientController extends BaseController {
     @ApiOperation(value = "获取客户端数据", httpMethod = "GET")
     public AjaxResult getClientDatas() {
         return AjaxResult.success("success", redisCache.getCacheObject(INDEX_CLIENT_COUNTS_CACHE));
+    }
+
+    @GetMapping("/getClientOperationTrend")
+    @ApiOperation(value = "获取终端动作趋势图", httpMethod = "GET")
+    public AjaxResult getClientOperationTrend(@RequestParam(value = "srcIp", required = false) String srcIp) throws ParseException {
+        //ip地址转换
+        Long ip = IpUtils.ipToLong(srcIp);
+        //获得开始结束时间时间段
+        Date endTime = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(endTime);
+        c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) - 23);
+        Date startTime = c.getTime();
+
+        Map<Long, List<JSONObject>> map = clientService.getClientOperationTrend(ip, startTime, endTime);
+        return AjaxResult.success(map);
     }
 
 
