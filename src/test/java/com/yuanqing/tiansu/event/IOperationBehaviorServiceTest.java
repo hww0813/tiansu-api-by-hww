@@ -40,29 +40,29 @@ public class IOperationBehaviorServiceTest {
     @Test
     public void getTest(){
 
-        RawNetFlow rawNetFlow = new RawNetFlow();
-
-        rawNetFlow.setDstIp(3232235796L);
-        List<JSONObject> trendList = rawNetFlowMapper.getRawFlowTrend(rawNetFlow);
-        List<String> hourList = new ArrayList<>();
-
-
-        for(JSONObject json :trendList){
-            hourList.add(json.getString("Hour"));
-            }
-        for(int i=0;i<24;i++) {
-            if (hourList.contains(String.valueOf(i))) {
-
-            } else {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("Hour", i);
-                jsonObject.put("Size", "0");
-                jsonObject.put("Count", "0");
-                trendList.add(jsonObject);
-            }
-        }
+//        RawNetFlow rawNetFlow = new RawNetFlow();
+//
+//        rawNetFlow.setDstIp(3232235796L);
+//        List<JSONObject> trendList = rawNetFlowMapper.getRawFlowTrend(rawNetFlow);
+//        List<String> hourList = new ArrayList<>();
+//
+//
+//        for(JSONObject json :trendList){
+//            hourList.add(json.getString("Hour"));
+//            }
+//        for(int i=0;i<24;i++) {
+//            if (hourList.contains(String.valueOf(i))) {
+//
+//            } else {
+//                JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("Hour", i);
+//                jsonObject.put("Size", "0");
+//                jsonObject.put("Count", "0");
+//                trendList.add(jsonObject);
+//            }
+//        }
 //        List<JSONObject> list2 = rawNetFlowMapper.getServerFlowRelationClient(rawNetFlow);
-        System.out.println(trendList.toString());
+//        System.out.println(trendList.toString());
     }
 
 }
