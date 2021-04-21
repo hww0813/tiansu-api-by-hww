@@ -82,7 +82,7 @@ public class IndexStatisticsTask {
         //查倒序
         CompletableFuture.runAsync(() -> {
             try {
-                List<CameraStatistics> cameraStatistics = homePageMapper.getCameraStatisticsByTime(finalStartTime, finalEndTime, 10, finalAction, null);
+                List<CameraStatistics> cameraStatistics = homePageMapper.getCameraStatisticsByTime(finalStartTime, finalEndTime, 5, finalAction, null);
                 intiCameraStatistics(cameraStatistics);
                 if (!CollectionUtils.isEmpty(cameraStatistics)) {
                     redisCache.setCacheObject(cacheKey, cameraStatistics);
@@ -95,7 +95,7 @@ public class IndexStatisticsTask {
         //查正序  访问最少的摄像头
         CompletableFuture.runAsync(() -> {
             try {
-                List<CameraStatistics> cameraStatistics = homePageMapper.getCameraStatisticsByTime(finalStartTime, finalEndTime, 10, finalAction, "asc");
+                List<CameraStatistics> cameraStatistics = homePageMapper.getCameraStatisticsByTime(finalStartTime, finalEndTime, 5, finalAction, "asc");
                 intiCameraStatistics(cameraStatistics);
                 if (!CollectionUtils.isEmpty(cameraStatistics)) {
                     redisCache.setCacheObject(cacheKey + "_REVERSE", cameraStatistics);
