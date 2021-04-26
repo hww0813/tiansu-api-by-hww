@@ -67,13 +67,13 @@ public class ServerTreeController extends BaseController {
         List<ServerTree> list = serverTreeService.getList(serverTree);
 
         String result = HttpUtils.getHttpRequest(prefix + "/pmc/consul/getConsulIp");
-        if (result != null && result != "") {
+        if (StringUtils.isNotEmpty(result)) {
             List<String> ipList = new ArrayList<>();
             JSONObject syslogJson = JSON.parseObject(result);
             ipList = (List<String>) syslogJson.get("data");
             //serverTree的remark字段用于标记是否可以查看服务器资源性能详情，yes：表示可以，no:表示不可以
             for (ServerTree server : list) {
-                if (ipList.contains(IpUtils.longToIPv4(server.getServerIp()))) {
+                if (ipList != null && ipList.contains(IpUtils.longToIPv4(server.getServerIp()))) {
                     server.setRemark("yes");
                 } else {
                     server.setRemark("no");
@@ -91,7 +91,7 @@ public class ServerTreeController extends BaseController {
                                            @RequestParam(value = "sessionId", required = false) Long sessionId,
                                            @RequestParam(value = "serverCode", required = false) String serverCode,
                                            @RequestParam(value = "serverIp", required = false) String serverIp
-                                           ) {
+    ) {
 
         ServerTree serverTree = new ServerTree();
         serverTree.setServerCode(serverCode);

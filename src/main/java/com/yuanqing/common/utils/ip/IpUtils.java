@@ -222,7 +222,9 @@ public class IpUtils
 
     //将十进制整数形式转换成127.0.0.1形式的IP地址
     public static String longToIPv4(Long longIp) {
-        if (null == longIp || longIp == 0l) return "";
+        if (null == longIp || longIp == 0L) {
+            return "";
+        }
         StringBuffer sb = new StringBuffer("");
         //直接右移24位
         sb.append(String.valueOf((longIp >>> 24)));
