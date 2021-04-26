@@ -1,6 +1,6 @@
 ruoyi:
     # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-    profile: /users/xucan/desktop
+    profile: /home/tiansu/uploadPath
 server:
     # 服务器的HTTP端口，默认为8080
     port: 8080
@@ -96,7 +96,7 @@ token:
     # 令牌秘钥
     secret: abcdefghijklmnopqrstuvwxyz
     # 令牌有效期（默认30分钟）
-    expireTime: 1440
+    expireTime: 30
 
 tiansu:
     # 配置中心url
@@ -104,4 +104,4 @@ tiansu:
     # 告警中心url
     alarmhost: http://192.168.1.20:8086/alarm
     # 性能监控url
-    pmchost: http://localhost:8188
+    pmchost: http://192.168.1.20:8188
