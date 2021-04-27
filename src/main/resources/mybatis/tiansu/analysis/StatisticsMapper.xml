@@ -64,22 +64,46 @@
     </select>
 
     <select id="visitedRate" resultMap="visitedRateMap">
+
+        SELECT
+            vc.region,
+            vc.allcount,
+            vs.visitedCamera,
+            vs.terminalCnt,
+            vs.userCnt,
+            vs.visitCnt
+        FROM
+        (
+            SELECT
+            region,
+            count( 1 ) allcount
+            FROM
+            busi_camera bc
+            WHERE
+            bc.DEVICE_TYPE = 1
+            AND region IS NOT NULL
+            GROUP BY
+            region
+        ) vc
+
+        left JOIN (
+
         SELECT
             bc.REGION region,
             count( DISTINCT bs.dst_code ) visitedCamera,
             count( DISTINCT bs.src_ip) terminalCnt,
             count( DISTINCT bs.username ) userCnt,
-            (select count(1) from busi_camera bc1 where bc1.REGION = bc.REGION and bc1.device_type = 1) as allCount,
             sum(count) visitCnt
         FROM
             busi_statistics bs
-        LEFT JOIN busi_camera bc ON bs.dst_code = bc.DEVICE_CODE
-        <where>
+        RIGHT JOIN busi_camera bc ON bs.dst_code = bc.DEVICE_CODE
+            where
             1=1
+            and region is not null
             <if test="startDate != null and endDate != null"> and bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
-        </where>
-        GROUP BY
+            GROUP BY
             bc.REGION
+        ) vs on vs.region = vc.region
     </select>
 
     <select id="getTerminalVisit" resultMap="TerminalVisitMap">
@@ -118,10 +142,13 @@
         FROM
             busi_statistics
         <where>
-            dst_code in
-            <foreach collection="list" open="(" separator="," close=")" item="item">
-                #{item}
-            </foreach>
+            1=1
+            <if test="list != null">
+                and dst_code in
+                <foreach collection="list" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
             <if test="filter.startDate != null and filter.endDate != null"> and stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')</if>
             <if test="filter.action != null">and action = #{filter.action}</if>
         </where>

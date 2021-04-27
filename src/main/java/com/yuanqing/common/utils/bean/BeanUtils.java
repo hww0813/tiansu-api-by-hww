@@ -1,5 +1,8 @@
 package com.yuanqing.common.utils.bean;
 
+import com.yuanqing.common.utils.StringUtils;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,4 +110,35 @@ public class BeanUtils extends org.springframework.beans.BeanUtils
     {
         return m1.substring(BEAN_METHOD_PROP_INDEX).equals(m2.substring(BEAN_METHOD_PROP_INDEX));
     }
+
+    /**
+     * 判断对象中属性值是否全为空
+     *
+     * @param object
+     * @return
+     */
+    public static boolean checkObjAllFieldsIsNull(Object object) {
+        if (null == object) {
+            return true;
+        }
+
+        try {
+            for (Field f : object.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
+
+                System.out.print(f.getName() + ":");
+                System.out.println(f.get(object));
+
+                if (f.get(object) != null && StringUtils.isNotBlank(f.get(object).toString())) {
+                    return false;
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
 }

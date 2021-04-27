@@ -400,6 +400,11 @@ public class CameraServiceImpl implements ICameraService {
     }
 
     @Override
+    public Camera findByCode(String code) {
+        return cameraMapper.findByCode(code);
+    }
+
+    @Override
     public List<Camera> getList(Camera camera) {
         return cameraMapper.getList(camera);
     }

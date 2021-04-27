@@ -66,14 +66,14 @@ public class TokenService
             String userKey = getTokenKey(uuid);
             LoginUser user = redisCache.getCacheObject(userKey);
             return user;
-        }
+}
         return null;
-    }
+                }
 
-    /**
-     * 设置用户身份信息
-     */
-    public void setLoginUser(LoginUser loginUser)
+/**
+ * 设置用户身份信息
+ */
+public void setLoginUser(LoginUser loginUser)
     {
         if (StringUtils.isNotNull(loginUser) && StringUtils.isNotEmpty(loginUser.getToken()))
         {

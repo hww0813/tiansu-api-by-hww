@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.DoubleUtils;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.bean.BeanUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.BaseEntity;
@@ -114,8 +115,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
                 return null;
 
             } else {
-                log.info("获取下级地区配置成功");
+                log.info("1.获取下级地区配置成功,下级地区为:{}",lowerRegion.toString());
                 List<VisitedRate> visitedRateList = statisticsMapper.visitedRate(filter);
+                log.info("2.获取下级地区配置成功,下级地区为:{}",visitedRateList.toString());
 
                 lowerRegion.stream().forEach(f -> {
                     JSONObject visitedRate = new JSONObject();
@@ -130,12 +132,15 @@ public class StatisticsServiceImpl implements IStatisticsService {
 
                     visitedRateList.stream().forEach(h -> {
                         if (h.getRegionId() == Long.parseLong(f.getId())) {
-                            visitedRate.put("cameraCnt", h.getAllCount());
-                            visitedRate.put("clientCnt", h.getTerminalCnt());
-                            visitedRate.put("visitedCnt", h.getVisitedCamera());
-                            visitedRate.put("visitCnt", h.getVisitedCnt());
+                            visitedRate.put("cameraCnt", h.getAllCount()==null?0:h.getAllCount());
+                            visitedRate.put("clientCnt", h.getTerminalCnt()==null?0:h.getTerminalCnt());
+                            visitedRate.put("visitedCnt", h.getVisitedCamera()==null?0:h.getVisitedCamera());
+                            visitedRate.put("visitCnt", h.getVisitedCnt()==null?0:h.getVisitedCnt());
 //                            visitedRate.put("clientCnt", h.getUserCnt());
-                            Double rate = DoubleUtils.roundOff(((double) h.getVisitedCamera() / (double) h.getAllCount()), 2);
+                            Double rate = 0D;
+                            if( h.getVisitedCamera()!=null && h.getAllCount()!= null) {
+                                 DoubleUtils.roundOff(((double) h.getVisitedCamera() / (double) h.getAllCount()), 2);
+                            }
                             visitedRate.put("rate", rate * 100 + "%");
                         }
                     });
@@ -161,25 +166,29 @@ public class StatisticsServiceImpl implements IStatisticsService {
     @Override
     public List<CameraVisit> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr) {
 
-        if (CollectionUtils.isEmpty(cameraList)) {
-            log.error("cameraList为空，根据device_code批量查询摄像头列表为空");
-            return null;
+        List<String> deviceCodeList = null;
+        if(!CollectionUtils.isEmpty(cameraList)) {
+            deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
         }
-
-        List<String> deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
 
         List<CameraVisit> cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
 
         cameraVisitList.stream().forEach(f -> {
-            cameraList.stream().forEach(h -> {
-                if (f.getDeviceCode().equals(h.getDeviceCode())) {
-                    f.setDeviceName(h.getDeviceName());
-                    f.setIpAddress(h.getIpAddress());
-                    f.setRegionName(h.getRegionName());
-                }
-            });
+            if(!CollectionUtils.isEmpty(cameraList)){
+                cameraList.stream().forEach(h -> {
+                    if (f.getDeviceCode().equals(h.getDeviceCode())) {
+                        f.setDeviceName(h.getDeviceName());
+                        f.setIpAddress(h.getIpAddress());
+                        f.setRegionName(h.getRegionName());
+                    }
+                });
+             }else{
+                Camera camera = cameraService.findByCode(f.getDeviceCode());
+                f.setDeviceName(camera.getDeviceName());
+                f.setIpAddress(camera.getIpAddress());
+                f.setRegionName(camera.getRegionName());
+            }
         });
-
         return cameraVisitList;
     }
 

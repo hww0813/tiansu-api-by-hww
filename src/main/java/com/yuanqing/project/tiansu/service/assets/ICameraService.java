@@ -116,6 +116,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
      */
     List<Camera> batchGetCameraByCode(List<String> cameraCodeList,Camera camera);
 
+    Camera findByCode(String code);
 
     /**
      * 根据ip更新摄像头,确定不是服务器
