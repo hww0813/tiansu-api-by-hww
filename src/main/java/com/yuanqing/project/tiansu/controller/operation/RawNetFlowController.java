@@ -141,9 +141,9 @@ public class RawNetFlowController extends BaseController {
         Date endTime = new Date();
         if ("当日".equals(stamp)) {
             startTime = DateUtils.getStartToday();
-        } else if ("当日".equals(stamp)) {
-            startTime = DateUtils.getStartWeek();
         } else if ("当周".equals(stamp)) {
+            startTime = DateUtils.getStartWeek();
+        } else if ("当月".equals(stamp)) {
             startTime = DateUtils.getStartMonth();
         }
         startPage();
