@@ -2,6 +2,7 @@ package com.yuanqing.project.tiansu.controller.analysis;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.bean.BeanUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -70,8 +71,13 @@ public class CameraVisitedController extends BaseController {
 
         startPage();
 
-        List<Camera> cameraList = cameraService.getList(camera);
+        logger.error("------------>"+camera.toString());
 
+        List<Camera> cameraList = null;
+
+        if (!BeanUtils.checkObjAllFieldsIsNull(camera)){
+            cameraList = cameraService.getList(camera);
+        }
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList, cameraVisit, orderStr);
 
         return AjaxResult.success(getDataTable(cameraVisitList));

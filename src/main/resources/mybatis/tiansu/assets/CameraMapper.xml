@@ -146,6 +146,12 @@
         and device_type = 1
     </select>
 
+    <select id="findByCode" parameterType="java.lang.String" resultMap="BusiCameraResult">
+        <include refid="selectBusiCameraVo"/>
+        where device_code = #{deviceCode}
+        and device_type = 1
+    </select>
+
     <select id="gourpByGb" resultType="com.alibaba.fastjson.JSONObject">
 
         select is_gb type,count(*) count  from busi_camera where device_type = 1 GROUP BY IS_GB
