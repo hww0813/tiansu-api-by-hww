@@ -254,6 +254,57 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return filters;
     }
 
+    /**
+     * 获得当天0点时间
+     *
+     * @return
+     */
+    public static Date getStartToday() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    /**
+     * 获得本周一0点时间
+     *
+     * @return
+     */
+    public static Date getStartWeek() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONDAY), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        return cal.getTime();
+    }
+
+    /**
+     * 获得本月第一天0点时间
+     *
+     * @return
+     */
+    public static Date getStartMonth() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONDAY), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+        return cal.getTime();
+    }
+
+    /**
+     * 根据结束时间推出23小时前的开始时间
+     * @param endTime
+     * @return 开始时间
+     */
+    public static Date getStartDate(Date endTime){
+        Calendar c = Calendar.getInstance();
+        c.setTime(endTime);
+        c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) - 23);
+        Date startTime = c.getTime();
+        return startTime;
+    }
+
 
     /**
      * 00：00：00-23：59：59

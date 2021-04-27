@@ -1,40 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yuanqing.project.tiansu.mapper.operation.RawNetFlowMapper">
 
     <resultMap type="RawNetFlow" id="BusiRawNetFlowResult">
-        <result property="id"    column="id"    />
-        <result property="srcIp"    column="src_ip"    />
-        <result property="srcPort"    column="src_port"    />
-        <result property="srcMac"    column="src_mac"    />
-        <result property="dstIp"    column="dst_ip"    />
-        <result property="dstPort"    column="dst_port"    />
-        <result property="dstMac"    column="dst_mac"    />
-        <result property="stamp"    column="stamp"    />
-        <result property="packetSize"    column="packet_size"    />
-        <result property="packetType"    column="packet_type"    />
-        <result property="packetCount"    column="packet_count"    />
+        <result property="id" column="id"/>
+        <result property="srcIp" column="src_ip"/>
+        <result property="srcPort" column="src_port"/>
+        <result property="srcMac" column="src_mac"/>
+        <result property="dstIp" column="dst_ip"/>
+        <result property="dstPort" column="dst_port"/>
+        <result property="dstMac" column="dst_mac"/>
+        <result property="stamp" column="stamp"/>
+        <result property="packetSize" column="packet_size"/>
+        <result property="packetType" column="packet_type"/>
+        <result property="packetCount" column="packet_count"/>
     </resultMap>
 
     <sql id="selectBusiRawNetFlowVo">
-        select id, src_ip, src_port, src_mac, dst_ip, dst_port, dst_mac, stamp, packet_size, packet_type, packet_count from busi_raw_net_flow
+        select id,
+               src_ip,
+               src_port,
+               src_mac,
+               dst_ip,
+               dst_port,
+               dst_mac,
+               stamp,
+               packet_size,
+               packet_type,
+               packet_count
+        from busi_raw_net_flow
     </sql>
 
     <select id="selectBusiRawNetFlowList" parameterType="RawNetFlow" resultMap="BusiRawNetFlowResult">
         <include refid="selectBusiRawNetFlowVo"/>
         <where>
-            <if test="srcIp != null "> and src_ip = #{srcIp}</if>
-            <if test="srcPort != null  and srcPort != ''"> and src_port = #{srcPort}</if>
-            <if test="srcMac != null  and srcMac != ''"> and src_mac = #{srcMac}</if>
-            <if test="dstIp != null "> and dst_ip = #{dstIp}</if>
-            <if test="dstPort != null  and dstPort != ''"> and dst_port = #{dstPort}</if>
-            <if test="dstMac != null  and dstMac != ''"> and dst_mac = #{dstMac}</if>
-            <if test="stamp != null "> and stamp = #{stamp}</if>
-            <if test="packetSize != null "> and packet_size = #{packetSize}</if>
-            <if test="packetType != null  and packetType != ''"> and packet_type = #{packetType}</if>
-            <if test="packetCount != null "> and packet_count = #{packetCount}</if>
+            <if test="srcIp != null ">and src_ip = #{srcIp}</if>
+            <if test="srcPort != null  and srcPort != ''">and src_port = #{srcPort}</if>
+            <if test="srcMac != null  and srcMac != ''">and src_mac = #{srcMac}</if>
+            <if test="dstIp != null ">and dst_ip = #{dstIp}</if>
+            <if test="dstPort != null  and dstPort != ''">and dst_port = #{dstPort}</if>
+            <if test="dstMac != null  and dstMac != ''">and dst_mac = #{dstMac}</if>
+            <if test="stamp != null ">and stamp = #{stamp}</if>
+            <if test="packetSize != null ">and packet_size = #{packetSize}</if>
+            <if test="packetType != null  and packetType != ''">and packet_type = #{packetType}</if>
+            <if test="packetCount != null ">and packet_count = #{packetCount}</if>
         </where>
     </select>
 
@@ -57,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="packetSize != null ">packet_size,</if>
             <if test="packetType != null  and packetType != ''">packet_type,</if>
             <if test="packetCount != null ">packet_count,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null ">#{id},</if>
             <if test="srcIp != null ">#{srcIp},</if>
@@ -70,7 +81,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="packetSize != null ">#{packetSize},</if>
             <if test="packetType != null  and packetType != ''">#{packetType},</if>
             <if test="packetCount != null ">#{packetCount},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateBusiRawNetFlow" parameterType="RawNetFlow">
@@ -91,7 +102,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteBusiRawNetFlowById" parameterType="Long">
-        delete from busi_raw_net_flow where id = #{id}
+        delete
+        from busi_raw_net_flow
+        where id = #{id}
     </delete>
 
     <delete id="deleteBusiRawNetFlowByIds" parameterType="String">
@@ -101,44 +114,58 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-    <select id="getServerRelationPort" resultType="com.alibaba.fastjson.JSONObject" >
-       select *,sum(packet_count)
-       from busi_raw_net_flow
-        where
-        1=1
-        AND
-        and dst_ip = #{dstIp}
-        and stamp between #{startDate} and #{endDate}
-        GROUP BY dst_port,dst_ip
+    <select id="getServerRelationPort" resultType="com.alibaba.fastjson.JSONObject">
+        select *, sum(packet_count)
+        from busi_raw_net_flow
+        where 1 = 1
+          AND
+          and dst_ip = #{dstIp}
+          and stamp between #{startDate} and #{endDate}
+        GROUP BY dst_port, dst_ip
     </select>
 
-    <select id="getRawFlowTrend"  resultType="com.alibaba.fastjson.JSONObject"  >
-        SELECT DATE_FORMAT(e.stamp,'%Y-%m-%d %H') as Hour,sum(e.packet_size)/1024 as Size ,sum(e.packet_count)as Count
-	     FROM busi_raw_net_flow e
-	       WHERE e.stamp between #{startTime} and #{endTime}
-         and e.dst_ip = #{dstIp}
-	       GROUP BY DATE_FORMAT(e.stamp,'%Y-%m-%d %H')
-    </select>
-
-    <select id="getClientRawFlowTrend"  resultType="com.alibaba.fastjson.JSONObject"  >
-        SELECT DATE_FORMAT(e.stamp,'%Y-%m-%d %H') as Hour,sum(e.packet_size)/1024 as Size ,sum(e.packet_count)as Count
+    <select id="getRawFlowTrend" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT DATE_FORMAT(e.stamp, '%Y-%m-%d %H') as Hour,sum(e.packet_size)/1024 as Size ,sum(e.packet_count)as Count
         FROM busi_raw_net_flow e
-        WHERE e.stamp between #{startTime} and #{endTime}
+        WHERE e.stamp between #{startTime}
+          and #{endTime}
+          and e.dst_ip = #{dstIp}
+        GROUP BY DATE_FORMAT(e.stamp, '%Y-%m-%d %H')
+    </select>
+
+    <select id="getClientRawFlowTrend" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT DATE_FORMAT(e.stamp, '%Y-%m-%d %H') as Hour,sum(e.packet_size)/1024 as Size ,sum(e.packet_count)as Count
+        FROM busi_raw_net_flow e
+        WHERE e.stamp between #{startTime}
+          and #{endTime}
           and e.src_ip = #{srcIp}
-        GROUP BY DATE_FORMAT(e.stamp,'%Y-%m-%d %H')
+        GROUP BY DATE_FORMAT(e.stamp, '%Y-%m-%d %H')
     </select>
 
-    <select id="getServerFlowRelationClient" parameterType="RawNetFlow" resultType="com.alibaba.fastjson.JSONObject"  >
-       SELECT  src_ip,sum(packet_count) as packetCount
-       from busi_raw_net_flow e
-       where
-       1=1
-       and e.dst_ip = #{dstIp}
-       and e.stamp = #{stamp}
-      GROUP BY  dst_ip ,src_ip
-      order BY packetCount
+    <select id="getServerFlowRelationClient" parameterType="RawNetFlow" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT src_ip, sum(packet_count) as packetCount
+        from busi_raw_net_flow e
+        where 1 = 1
+          and e.dst_ip = #{dstIp}
+          and e.stamp = #{stamp}
+        GROUP BY dst_ip, src_ip
+        order BY packetCount
     </select>
 
-
+    <select id="getRawClientRank"  resultType="com.alibaba.fastjson.JSONObject">
+        SELECT src_ip AS ip,
+               sum(packet_size) AS Size,
+               sum(packet_count) AS Count
+        FROM
+            busi_raw_net_flow
+        WHERE stamp between #{startTime} and #{endTime}
+        GROUP BY ip
+        <if test="orderType=='Size'">
+            ORDER BY Size DESC
+        </if>
+        <if test="orderType=='Count'">
+            ORDER BY Count DESC
+        </if>
+    </select>
 
 </mapper>

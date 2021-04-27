@@ -2,28 +2,19 @@ package com.yuanqing.project.tiansu.controller.operation;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.yuanqing.common.constant.HttpStatus;
-import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.common.utils.poi.ExcelUtil;
-import com.yuanqing.common.utils.sql.SqlUtil;
 import com.yuanqing.framework.aspectj.lang.annotation.Log;
 import com.yuanqing.framework.aspectj.lang.enums.BusinessType;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
-import com.yuanqing.framework.web.domain.PageResult;
-import com.yuanqing.framework.web.page.PageDomain;
 import com.yuanqing.framework.web.page.TableDataInfo;
-import com.yuanqing.framework.web.page.TableSupport;
-import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
 import com.yuanqing.project.tiansu.service.operation.IRawNetFlowService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,10 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author: lvjingjing
+ * @date: 2021/4/27 17:25
+ * @introduce: 原始流量列表接口
+ */
 @RestController
 @RequestMapping(value = "/api/rawNetFlow")
 public class RawNetFlowController extends BaseController {
@@ -89,10 +84,7 @@ public class RawNetFlowController extends BaseController {
         Long ip = IpUtils.ipToLong(dstIp);
         //获得开始结束时间时间段
         Date endTime = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(endTime);
-        c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) - 23);
-        Date startTime = c.getTime();
+        Date startTime = DateUtils.getStartDate(endTime);
 
         List<JSONObject> rawNetFlowList = busiRawNetFlowService.getServerFlowTrend(ip, startTime, endTime);
         return AjaxResult.success(rawNetFlowList);
@@ -108,14 +100,12 @@ public class RawNetFlowController extends BaseController {
         Long ip = IpUtils.ipToLong(srcIp);
         //获得开始结束时间时间段
         Date endTime = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(endTime);
-        c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) - 23);
-        Date startTime = c.getTime();
+        Date startTime = DateUtils.getStartDate(endTime);
 
         List<JSONObject> rawNetFlowList = busiRawNetFlowService.getClientRawFlowTrend(ip, startTime, endTime);
         return AjaxResult.success(rawNetFlowList);
     }
+
 
     /**
      * 获取服务器流量相关终端
@@ -129,11 +119,36 @@ public class RawNetFlowController extends BaseController {
         RawNetFlow rawNetFlow = new RawNetFlow();
         rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(stamp,df);
+        LocalDateTime localDateTime = LocalDateTime.parse(stamp, df);
         rawNetFlow.setStamp(localDateTime);
         startPage();
         List<JSONObject> rawNetFlowList = busiRawNetFlowService.getServerFlowRelationClient(rawNetFlow);
         return AjaxResult.success(rawNetFlowList);
+    }
+
+    /**
+     * 获取流量列表终端排行
+     *
+     * @param stamp     时间范围：当日/当周/当月
+     * @param orderType 排序： Size:流量大小排序/Count:包数量排序
+     * @return
+     */
+    @GetMapping("/getRawClientRank")
+    @ApiOperation(value = "获取流量列表终端排行", httpMethod = "GET")
+    public TableDataInfo getRawClientRank(@RequestParam(value = "stamp", required = false) String stamp,
+                                          @RequestParam(value = "orderType", required = false) String orderType) {
+        Date startTime = new Date();
+        Date endTime = new Date();
+        if ("当日".equals(stamp)) {
+            startTime = DateUtils.getStartToday();
+        } else if ("当日".equals(stamp)) {
+            startTime = DateUtils.getStartWeek();
+        } else if ("当周".equals(stamp)) {
+            startTime = DateUtils.getStartMonth();
+        }
+        startPage();
+        List<JSONObject> list = busiRawNetFlowService.getRawClientRank(startTime, endTime, orderType);
+        return getDataTable(list);
     }
 
 

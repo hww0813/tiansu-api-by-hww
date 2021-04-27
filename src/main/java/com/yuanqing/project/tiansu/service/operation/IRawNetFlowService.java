@@ -68,5 +68,14 @@ public interface IRawNetFlowService {
      */
     List<JSONObject>getClientRawFlowTrend (Long srcIp,Date startTime, Date endTime) throws ParseException;
 
-    public List<JSONObject>getServerFlowRelationClient (RawNetFlow rawNetFlow) ;
+    public List<JSONObject> getServerFlowRelationClient (RawNetFlow rawNetFlow) ;
+
+    /**
+     * 获取流量列表终端排行
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param orderType 排序字段
+     * @return
+     */
+    public List<JSONObject> getRawClientRank(Date startTime,Date endTime,String orderType);
 }

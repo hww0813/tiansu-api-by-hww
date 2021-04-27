@@ -84,5 +84,14 @@ public interface RawNetFlowMapper {
      *获取服务器相关终端
      *
      */
-    List<JSONObject>getServerFlowRelationClient (RawNetFlow rawNetFlow);
+    List<JSONObject> getServerFlowRelationClient (RawNetFlow rawNetFlow);
+
+    /**
+     * 获取流量列表终端排行
+     * @param startTime
+     * @param endTime
+     * @param orderType
+     * @return
+     */
+    List<JSONObject> getRawClientRank(Date startTime, Date endTime, String orderType);
 }
