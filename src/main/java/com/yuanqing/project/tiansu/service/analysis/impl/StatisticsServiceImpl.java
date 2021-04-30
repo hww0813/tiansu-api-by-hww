@@ -115,35 +115,59 @@ public class StatisticsServiceImpl implements IStatisticsService {
                 return null;
 
             } else {
-                log.info("1.获取下级地区配置成功,下级地区为:{}",lowerRegion.toString());
+
+                log.info("1.获取下级地区配置成功,下级地区为:{}", lowerRegion.toString());
                 List<VisitedRate> visitedRateList = statisticsMapper.visitedRate(filter);
-                log.info("2.获取下级地区配置成功,下级地区为:{}",visitedRateList.toString());
+                log.info("2.获取下级地区配置成功,下级地区为:{}", visitedRateList.toString());
 
                 lowerRegion.stream().forEach(f -> {
+
+                    //获得该地区及所有下级区  eg:f为武汉市，获得武汉市的下级区
+                    List<MacsRegion> areaRegion = macsConfigService.getLowerRegion(f.getId());
+                    areaRegion.add(f);
+
+                    //设置基本属性值，数量值初始化为0
                     JSONObject visitedRate = new JSONObject();
                     visitedRate.put("cityName", f.getName());
                     visitedRate.put("cityCode", f.getId());
-
                     visitedRate.put("cameraCnt", 0);
                     visitedRate.put("clientCnt", 0);
                     visitedRate.put("visitCnt", 0);
                     visitedRate.put("visitedCnt", 0);
                     visitedRate.put("rate", "0%");
 
-                    visitedRateList.stream().forEach(h -> {
-                        if (h.getRegionId() == Long.parseLong(f.getId())) {
-                            visitedRate.put("cameraCnt", h.getAllCount()==null?0:h.getAllCount());
-                            visitedRate.put("clientCnt", h.getTerminalCnt()==null?0:h.getTerminalCnt());
-                            visitedRate.put("visitedCnt", h.getVisitedCamera()==null?0:h.getVisitedCamera());
-                            visitedRate.put("visitCnt", h.getVisitedCnt()==null?0:h.getVisitedCnt());
-//                            visitedRate.put("clientCnt", h.getUserCnt());
-                            Double rate = 0D;
-                            if( h.getVisitedCamera()!=null && h.getAllCount()!= null) {
-                                 DoubleUtils.roundOff(((double) h.getVisitedCamera() / (double) h.getAllCount()), 2);
+                    //遍历所有本级市及下级区的数据，市级下的区数据需要累加
+                    areaRegion.stream().forEach(a -> {
+                        visitedRateList.stream().forEach(h -> {
+                            if (h.getRegionId() == Long.parseLong(a.getId())) {
+
+                                Integer allCount = h.getAllCount() == null ? 0 : h.getAllCount();
+                                Integer terminalCnt = h.getTerminalCnt() == null ? 0 : h.getTerminalCnt();
+                                Integer visitedCamera = h.getVisitedCamera() == null ? 0 : h.getVisitedCamera();
+                                Integer visitedCnt = h.getVisitedCnt() == null ? 0 : h.getVisitedCnt();
+
+                                //取出上一次的值进行累加，第一次的值由于初始化赋值为0，所以没有影响
+                                allCount += visitedRate.getInteger("cameraCnt");
+                                terminalCnt += visitedRate.getInteger("clientCnt");
+                                visitedCamera += visitedRate.getInteger("visitedCnt");
+                                visitedCnt += visitedRate.getInteger("visitCnt");
+
+                                visitedRate.put("cameraCnt", allCount);
+                                visitedRate.put("clientCnt", terminalCnt);
+                                visitedRate.put("visitedCnt", visitedCamera);
+                                visitedRate.put("visitCnt", visitedCnt);
+
                             }
-                            visitedRate.put("rate", rate * 100 + "%");
-                        }
+                        });
                     });
+                    //计算比率，取出visitedRate的值进行计算，并且分母非0；将最后的结果visitedRate存入list
+                    Double rate = 0D;
+                    Integer allCount = visitedRate.getInteger("cameraCnt");
+                    Integer visitedCamera = visitedRate.getInteger("visitedCnt");
+                    if (allCount != 0) {
+                        rate = DoubleUtils.roundOff(((double) visitedCamera / (double) allCount), 2);
+                    }
+                    visitedRate.put("rate", rate * 100 + "%");
                     rateList.add(visitedRate);
                 });
                 return rateList;
@@ -167,14 +191,14 @@ public class StatisticsServiceImpl implements IStatisticsService {
     public List<CameraVisit> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr) {
 
         List<String> deviceCodeList = null;
-        if(!CollectionUtils.isEmpty(cameraList)) {
+        if (!CollectionUtils.isEmpty(cameraList)) {
             deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
         }
 
         List<CameraVisit> cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
 
         cameraVisitList.stream().forEach(f -> {
-            if(!CollectionUtils.isEmpty(cameraList)){
+            if (!CollectionUtils.isEmpty(cameraList)) {
                 cameraList.stream().forEach(h -> {
                     if (f.getDeviceCode().equals(h.getDeviceCode())) {
                         f.setDeviceName(h.getDeviceName());
@@ -182,7 +206,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
                         f.setRegionName(h.getRegionName());
                     }
                 });
-             }else{
+            } else {
                 Camera camera = cameraService.findByCode(f.getDeviceCode());
                 f.setDeviceName(camera.getDeviceName());
                 f.setIpAddress(camera.getIpAddress());
@@ -241,8 +265,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
                     j.put("action", f.getAction());
                     j.put("actionDetail", f.getActionDetail());
                     j.put("stamp", f.getStamp());
-                    j.put("callId",f.getCallId());
-                    j.put("id",f.getId());
+                    j.put("callId", f.getCallId());
+                    j.put("id", f.getId());
                     terminalVisitedCameraList.add(j);
                 }
             });
@@ -262,7 +286,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
             return null;
         }
 
-        List<ClientTerminal> terminalList = terminalService.getTerminalByIpList(terminalIpList,new ClientTerminal());
+        List<ClientTerminal> terminalList = terminalService.getTerminalByIpList(terminalIpList, new ClientTerminal());
 
         if (CollectionUtils.isEmpty(terminalList)) {
             log.error("查询terminalList为空");
@@ -280,9 +304,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
                     j.put("action", f.getAction());
                     j.put("actionDetail", f.getActionDetail());
                     j.put("stamp", f.getStamp());
-                    j.put("username",f.getUsername());
-                    j.put("callId",f.getCallId());
-                    j.put("id",f.getId());
+                    j.put("username", f.getUsername());
+                    j.put("callId", f.getCallId());
+                    j.put("id", f.getId());
                     cameraVisitedTerminalList.add(j);
                 }
             });
@@ -464,13 +488,13 @@ public class StatisticsServiceImpl implements IStatisticsService {
 
         List<String> cameraCodeList = statisticsList.stream().map(f -> f.getDstCode()).collect(Collectors.toList());
 
-        List<Camera> cameraList = cameraService.batchGetCameraByCode(cameraCodeList,condCamera);
+        List<Camera> cameraList = cameraService.batchGetCameraByCode(cameraCodeList, condCamera);
 
 //        List<CameraVisit> cameraVisitList = new ArrayList<>();
 
         List<JSONObject> list = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(cameraList)){
-            cameraList.stream().forEach(f ->{
+        if (!CollectionUtils.isEmpty(cameraList)) {
+            cameraList.stream().forEach(f -> {
 
                 Long sum = statisticsList.stream()
                         .filter(h -> h.getDstCode().equals(f.getDeviceCode()))
@@ -478,27 +502,27 @@ public class StatisticsServiceImpl implements IStatisticsService {
                         .sum();
 
                 JSONObject jsonObject = new JSONObject();
-                if(f.getDeviceCode() != null) {
+                if (f.getDeviceCode() != null) {
                     jsonObject.put("CAMERA_CODE", f.getDeviceCode());
                 } else {
                     jsonObject.put("CAMERA_CODE", "");
                 }
-                if(f.getDeviceName() != null) {
+                if (f.getDeviceName() != null) {
                     jsonObject.put("CAMERA_NAME", f.getDeviceName());
                 } else {
                     jsonObject.put("CAMERA_NAME", "");
                 }
-                if(f.getIpAddress() != null) {
+                if (f.getIpAddress() != null) {
                     jsonObject.put("CAMERA_IP", IpUtils.longToIPv4(f.getIpAddress()));
                 } else {
                     jsonObject.put("CAMERA_IP", "");
                 }
-                if(f.getRegionName() != null) {
+                if (f.getRegionName() != null) {
                     jsonObject.put("CAMERA_REGION", f.getRegionName());
                 } else {
                     jsonObject.put("CAMERA_REGION", "");
                 }
-                if(sum != null) {
+                if (sum != null) {
                     jsonObject.put("VISITED_CNT", sum.toString());
                 } else {
                     jsonObject.put("VISITED_CNT", "0");
