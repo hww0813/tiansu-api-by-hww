@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -196,5 +197,17 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         JSONArray data = jsonObject.getJSONArray("data");
         List<MacsRegion> macsRegion = data.toJavaList(MacsRegion.class);
         return macsRegion;
+    }
+
+    @Override
+    public List<String> getAllLowerRegion(String regionId) {
+        //下级区也需要查询,将所有本级及下级平台的id存入string
+        List<MacsRegion> areaRegion = getLowerRegion(regionId);
+        List<String> region = new ArrayList<>();
+        region.add(regionId);
+        areaRegion.stream().forEach(r->{
+            region.add(r.getId());
+        });
+        return  region;
     }
 }

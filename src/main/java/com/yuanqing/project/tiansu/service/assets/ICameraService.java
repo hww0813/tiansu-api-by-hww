@@ -13,13 +13,15 @@ import java.util.Map;
 /**
  * 摄像头相关接口
  * Created by xucan on 2021-01-15 16:09
+ *
  * @author xucan
  */
 
-public interface ICameraService extends BaseService<Camera,Long> {
+public interface ICameraService extends BaseService<Camera, Long> {
 
     /**
      * 带排序条件
+     *
      * @param camera
      * @param orderStr
      * @return
@@ -30,6 +32,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
 
     /**
      * 判断camera在数据库中是否不存在
+     *
      * @param camera
      * @return true 不存在 / false 存在
      */
@@ -38,6 +41,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
     /**
      * 统计当天更新过的 摄像头的状态
      * 查询依据为 摄像头表的update_time
+     *
      * @return 根据摄像头状态分组汇总
      */
     Map<Integer, Long> getCurrentStatus();
@@ -46,12 +50,14 @@ public interface ICameraService extends BaseService<Camera,Long> {
     /**
      * 获取当天活跃摄像头列表
      * TODO:oper表中 如果存放30天数据的话这个接口需要调整
+     *
      * @return
      */
     List<Camera> getActiveCamera();
 
     /**
      * 获取国标/非国标列表
+     *
      * @param camera 过滤条件
      * @return
      */
@@ -59,6 +65,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
 
     /**
      * 批量确认摄像头状态
+     *
      * @param ids
      * @return
      */
@@ -67,6 +74,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
 
     /**
      * 确认所有摄像头状态
+     *
      * @param
      * @return
      */
@@ -80,9 +88,6 @@ public interface ICameraService extends BaseService<Camera,Long> {
     Map<String, Long> getNonNationalCamera();
 
 
-
-
-
     /**
      * 导入外部设备
      *
@@ -92,7 +97,6 @@ public interface ICameraService extends BaseService<Camera,Long> {
     Long saveExternalDevice(ExternalDevice entity);
 
     /**
-     *
      * @param entity
      * @param addList
      * @param updateList
@@ -103,6 +107,7 @@ public interface ICameraService extends BaseService<Camera,Long> {
 
     /**
      * 关联摄像头信息
+     *
      * @param cameraIdList
      * @return
      */
@@ -110,16 +115,18 @@ public interface ICameraService extends BaseService<Camera,Long> {
 
     /**
      * 关联摄像头信息
+     *
      * @param cameraCodeList
-     * @param camera 过滤条件
+     * @param camera         过滤条件
      * @return
      */
-    List<Camera> batchGetCameraByCode(List<String> cameraCodeList,Camera camera);
+    List<Camera> batchGetCameraByCode(List<String> cameraCodeList, Camera camera);
 
     Camera findByCode(String code);
 
     /**
      * 根据ip更新摄像头,确定不是服务器
+     *
      * @param ipAddress
      */
     void updateIsNotServer(Long ipAddress);
@@ -129,4 +136,13 @@ public interface ICameraService extends BaseService<Camera,Long> {
     List<JSONObject> getAllToReport(JSONObject filters);
 
     List<Camera> findEventCameras(JSONObject filters);
+
+    /**
+     * 根据本级平台region及下级区县region查询摄像头
+     *
+     * @param camera
+     * @return
+     */
+    List<Camera> getAllList(Camera camera);
+
 }

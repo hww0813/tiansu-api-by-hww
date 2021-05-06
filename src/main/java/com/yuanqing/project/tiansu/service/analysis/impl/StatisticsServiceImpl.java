@@ -152,9 +152,13 @@ public class StatisticsServiceImpl implements IStatisticsService {
                                 visitedCamera += visitedRate.getInteger("visitedCnt");
                                 visitedCnt += visitedRate.getInteger("visitCnt");
 
+                                //摄像头总数
                                 visitedRate.put("cameraCnt", allCount);
+                                //终端数
                                 visitedRate.put("clientCnt", terminalCnt);
+                                //摄像头被访问数
                                 visitedRate.put("visitedCnt", visitedCamera);
+                                //访问次数
                                 visitedRate.put("visitCnt", visitedCnt);
 
                             }

@@ -1,8 +1,6 @@
 package com.yuanqing.project.tiansu.service.assets.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.enums.*;
 import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.utils.DateUtils;
@@ -16,6 +14,7 @@ import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ExternalDeviceMapper;
 import com.yuanqing.project.tiansu.service.assets.IBusiCameraHistoryService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -56,6 +55,9 @@ public class CameraServiceImpl implements ICameraService {
 
     @Resource
     private IBusiCameraHistoryService busiCameraHistoryService;
+
+    @Resource
+    private IMacsConfigService macsConfigService;
 
 
     private static SequenceIdGenerator cameraIdGenerator = new SequenceIdGenerator(1, 1);
@@ -730,4 +732,13 @@ public class CameraServiceImpl implements ICameraService {
         List<Camera> list = cameraMapper.findEventCameras(filters);
         return list;
     }
+
+    @Override
+    public List<Camera> getAllList(Camera camera) {
+        List<String> regionIdList = macsConfigService.getAllLowerRegion(camera.getRegion().toString());
+        List<Camera> list = cameraMapper.getAllList(camera,regionIdList);
+        return list;
+    }
+
+
 }

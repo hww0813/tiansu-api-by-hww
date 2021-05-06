@@ -18,9 +18,9 @@ import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.ApiOperation;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -88,19 +88,19 @@ public class RateVisitController extends BaseController {
 
         // TODO: 时间范围没有传参
         startPage();
-        List<Camera> cameraList = cameraService.getList(camera);
+        List<Camera> cameraList = cameraService.getAllList(camera);
 
         // TODO: 状态还是数字，需要转换
-
         return AjaxResult.success(getDataTable(cameraList));
 
     }
 
     @GetMapping(value = "/visitedCnt")
     @ApiOperation(value = "获取访问分析列表", httpMethod = "GET")
-    public AjaxResult getVisitedCntList(@RequestParam(value = "cameraIp",required = false) String cameraIp,
+    public AjaxResult getVisitedCntList(@RequestParam(value = "cameraIp", required = false) String cameraIp,
                                         Camera camera) {
 
+        //设置时间查询范围
         CameraVisit cameraVisit = new CameraVisit();
 
         cameraVisit.setstartDate(camera.getstartDate());
@@ -110,12 +110,12 @@ public class RateVisitController extends BaseController {
         camera.setendDate(null);
         camera.setIpAddress(IpUtils.ipToLong(cameraIp));
 
-        List<Camera> cameraList = cameraService.getList(camera);
-
+        //先根据region和筛选条件，查询符合条件的camera
+        List<Camera> cameraList = cameraService.getAllList(camera);
+        //根据camera筛选出的device_code和statistics根据时间筛选出的dst_code，筛选device_code
         List<String> cameraCodeList = statisticsService.getCameraVisited(cameraList, cameraVisit);
 
         startPage();
-
         List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList, new Camera());
 
         return AjaxResult.success(getDataTable(finalCameraList));
@@ -132,6 +132,7 @@ public class RateVisitController extends BaseController {
                                       @RequestParam(value = "action", required = false) String action,
                                       @RequestParam(value = "deviceCode", required = false) String deviceCode,
                                       @RequestParam(value = "username", required = false) String username,
+                                      @RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
                                       @RequestParam(value = "startDate") String startDate,
                                       @RequestParam(value = "endDate") String endDate) throws Exception {
 
@@ -140,9 +141,18 @@ public class RateVisitController extends BaseController {
         if (region != null) {
             Camera camera = new Camera();
             camera.setRegion(region);
-            List<Camera> cameraList = cameraService.getList(camera);
+            List<Camera> cameraList = cameraService.getAllList(camera);
 
-            cameraCodeList = statisticsService.getCameraVisited(cameraList, new CameraVisit());
+            //设置时间查询范围
+            CameraVisit cameraVisit = new CameraVisit();
+            cameraVisit.setstartDate(startDate);
+            cameraVisit.setendDate(endDate);
+
+            cameraCodeList = statisticsService.getCameraVisited(cameraList, cameraVisit);
+
+            if(CollectionUtils.isEmpty(cameraCodeList)){
+                return PageResult.success();
+            }
         }
 
         OperationBehavior operationBehavior = new OperationBehavior();
@@ -152,6 +162,7 @@ public class RateVisitController extends BaseController {
         // 从摄像头被访问 -> 相关终端数 -> 访问次数 过来时，会传摄像头编码
         operationBehavior.setDstCode(deviceCode);
         operationBehavior.setUsername(username);
+        operationBehavior.setDstDeviceName(dstDeviceName);
         operationBehavior.setAction(action);
         operationBehavior.setDstIp(IpUtils.ipToLong(dstIp));
         operationBehavior.setstartDate(startDate);
@@ -180,7 +191,7 @@ public class RateVisitController extends BaseController {
         clientTerminal.setstartDate(startDate);
         clientTerminal.setendDate(endDate);
 
-        List<Camera> cameraList = cameraService.getList(camera);
+        List<Camera> cameraList = cameraService.getAllList(camera);
 
         List<Long> terminalIpList = statisticsService.getTerminalVisited(cameraList, clientTerminal);
 

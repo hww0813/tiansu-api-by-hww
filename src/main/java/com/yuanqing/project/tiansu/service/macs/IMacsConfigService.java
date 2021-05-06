@@ -47,5 +47,10 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
      */
     List<MacsRegion> getRegionList();
 
-
+    /**
+     * 获取所有本级及下级市区的regionId
+     * @param regionId
+     * @return 返回regionId的list
+     */
+    List<String> getAllLowerRegion(String regionId);
 }

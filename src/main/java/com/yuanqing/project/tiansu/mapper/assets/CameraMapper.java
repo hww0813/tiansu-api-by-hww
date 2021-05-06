@@ -10,27 +10,32 @@ import java.util.List;
 
 /**
  * Created by xucan on 2021-01-15 16:31
+ *
  * @author xucan
  */
 @Repository
-public interface CameraMapper extends BaseMapper<Camera,Long> {
+public interface CameraMapper extends BaseMapper<Camera, Long> {
 
     /**
      * 带排序条件
+     *
      * @param camera
      * @return
      */
     List<Camera> getListWithOrder(@Param("camera") Camera camera, @Param("orderStr") String orderStr);
 
     List<Camera> getSessionCameraList(JSONObject jsonObject);
+
     /**
      * 获取摄像头国标和非国标数
+     *
      * @return
      */
     List<JSONObject> gourpByGb();
 
     /**
      * 更新摄像头不为服务器
+     *
      * @param ipAddress IP地址
      * @return
      */
@@ -38,6 +43,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
      * 批量确认摄像头
+     *
      * @param ids
      * @return
      */
@@ -45,6 +51,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
      * 根据camera列表 批量查询摄像头
+     *
      * @param cameraIdList
      * @return
      */
@@ -52,6 +59,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
      * 根据camera列表 批量查询摄像头
+     *
      * @param cameraCodeList
      * @return
      */
@@ -60,6 +68,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
      * 确认所有摄像头
+     *
      * @return
      */
     boolean changAllStatus();
@@ -160,6 +169,7 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
 
     /**
      * 批量更新
+     *
      * @param list
      */
     void batchUpdate(List<Camera> list);
@@ -191,5 +201,13 @@ public interface CameraMapper extends BaseMapper<Camera,Long> {
 
 //    public void insertCamera(Camera camera);
 
+    /**
+     * 根据本级平台region及下级区县region查询摄像头
+     *
+     * @param camera
+     * @param list
+     * @return
+     */
+    public List<Camera> getAllList(@Param("camera") Camera camera, @Param("list") List<String> list);
 
 }
