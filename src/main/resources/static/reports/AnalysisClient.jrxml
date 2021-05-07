@@ -131,7 +131,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="my"/>
 				</textElement>
-				<text><![CDATA[操作行为]]></text>
+				<text><![CDATA[操作类型]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="460" y="0" width="90" height="30" uuid="145aa0bd-3fdb-4e15-942c-876a64b1f423">

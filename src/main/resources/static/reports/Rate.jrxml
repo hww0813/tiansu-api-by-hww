@@ -161,7 +161,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="my"/>
 				</textElement>
-				<text><![CDATA[客户端数]]></text>
+				<text><![CDATA[终端数]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

@@ -77,7 +77,7 @@
                 AND v.CALL_ID = #{callId}
             </if>
             <if test="dstDeviceName != null and dstDeviceName != '' ">
-                AND v.DEVICE_NAME = #{dstDeviceName}
+                AND v.DST_DEVICE_NAME = #{dstDeviceName}
             </if>
             <if test="content != null and content != '' ">
                 AND v.CONTENT like concat('%', #{content}, '%')
@@ -137,6 +137,9 @@
             <if test="filter.username != null and filter.username != '' ">
                 AND bo.USERNAME = #{filter.username}
             </if>
+            <if test="filter.dstDeviceName != null and filter.dstDeviceName != '' ">
+                AND bo.DST_DEVICE_NAME = #{filter.dstDeviceName}
+            </if>
 
         </where>
             ORDER BY bo.STAMP DESC
@@ -187,7 +190,7 @@
                 AND v.CALL_ID = #{callId}
             </if>
             <if test="dstDeviceName != null and dstDeviceName != '' ">
-                AND v.DEVICE_NAME = #{dstDeviceName}
+                AND v.DST_DEVICE_NAME = #{dstDeviceName}
             </if>
             <if test="content != null and content != '' ">
                 AND v.CONTENT like concat('%', #{content}, '%')

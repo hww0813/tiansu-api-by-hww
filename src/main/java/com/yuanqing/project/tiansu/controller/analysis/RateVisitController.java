@@ -130,7 +130,7 @@ public class RateVisitController extends BaseController {
                                       @RequestParam(value = "srcIp", required = false) String srcIp,
                                       @RequestParam(value = "dstIp", required = false) String dstIp,
                                       @RequestParam(value = "action", required = false) String action,
-                                      @RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                      @RequestParam(value = "dstCode", required = false) String deviceCode,
                                       @RequestParam(value = "username", required = false) String username,
                                       @RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
                                       @RequestParam(value = "startDate") String startDate,
