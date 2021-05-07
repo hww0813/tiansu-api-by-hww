@@ -134,8 +134,9 @@ public class IndexStatisticsTask {
         //查正序  访问最少的摄像头
         CompletableFuture.runAsync(() -> {
             try {
-                statisticsSearch.setAscFlag("asc");
-                List<JSONObject> clientStatistics = homePageMapper.getClinetStatisticsByTime(statisticsSearch);
+                StatisticsSearch statisticsSearchClone = (StatisticsSearch) statisticsSearch.clone();
+                statisticsSearchClone.setAscFlag("asc");
+                List<JSONObject> clientStatistics = homePageMapper.getClinetStatisticsByTime(statisticsSearchClone);
                 clientStatistics.stream().forEach(j -> j.put("CLIENT_IP", IpUtils.longToIPv4(j.getLong("CLIENT_IP"))));
                 if (!CollectionUtils.isEmpty(clientStatistics)) {
                     redisCache.setCacheObject(cacheKey + "_REVERSE", clientStatistics);
@@ -172,8 +173,9 @@ public class IndexStatisticsTask {
         //查正序  访问最少的用户名
         CompletableFuture.runAsync(() -> {
             try {
-                statisticsSearch.setAscFlag("asc");
-                List<JSONObject> clientStatistics = homePageMapper.getUserStatisticsByTime(statisticsSearch);
+                StatisticsSearch statisticsSearchClone = (StatisticsSearch) statisticsSearch.clone();
+                statisticsSearchClone.setAscFlag("asc");
+                List<JSONObject> clientStatistics = homePageMapper.getUserStatisticsByTime(statisticsSearchClone);
                 if (!CollectionUtils.isEmpty(clientStatistics)) {
                     redisCache.setCacheObject(cacheKey + "_REVERSE", clientStatistics);
                 }
