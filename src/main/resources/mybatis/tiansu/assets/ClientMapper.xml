@@ -109,7 +109,6 @@
         </foreach>
         GROUP BY USERNAME
 
-
     </select>
 
     <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.Client">

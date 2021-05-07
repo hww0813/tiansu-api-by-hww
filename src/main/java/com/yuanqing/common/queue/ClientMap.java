@@ -9,6 +9,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author xucan
+ */
 public class ClientMap {
 
     private static final Map<String, Client> map = new HashMap<>();

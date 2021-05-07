@@ -2,6 +2,7 @@ package com.yuanqing.project.tiansu.controller.assets;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
@@ -15,6 +16,7 @@ import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +81,8 @@ public class ServerTreeController extends BaseController {
                     server.setRemark("no");
                 }
             }
+        }else{
+            throw new CustomException("请求pmc服务状态异常");
         }
 
         return AjaxResult.success(getDataTable(list));

@@ -64,7 +64,7 @@ public class RawSignalController extends BaseController {
                                    @RequestParam(value = "dstIp", required = false) String dstIp,RawSignal rawSignal) {
 
 
-        rawSignal.setNum(pageNum);
+        rawSignal.setNum((pageNum-1)*pageSize);
         rawSignal.setSize(pageSize);
         rawSignal.setSrcIp(IpUtils.ipToLong(srcIp));
         rawSignal.setDstIp(IpUtils.ipToLong(dstIp));

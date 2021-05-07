@@ -206,8 +206,6 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
             return null;
         }
 
-
-
         clientTerminalList.stream().forEach(f -> {
             ClientTerminalDto dto = doBackward(f);
             Integer cnt = map.get(f.getIpAddress());
