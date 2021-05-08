@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @Builder
-public class StatisticsSearch {
+public class StatisticsSearch implements Cloneable{
 
     private Date startTime;
 
@@ -27,4 +27,10 @@ public class StatisticsSearch {
 
     /** 默认10条*/
     private Long size;
+
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
