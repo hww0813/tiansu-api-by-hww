@@ -179,9 +179,9 @@ public class ScreenServiceImpl implements IScreenService {
 
         cameraNum = cameraMapper.getRealTotal();
 
-        terminalNum = clientUserMapper.getRealTotal();
+        userNum = clientUserMapper.getRealTotal();
 
-        userNum = terminalMapper.getRealTotal();
+        terminalNum = terminalMapper.getRealTotal();
 
         summary.put("terminal",terminalNum);
         summary.put("person",userNum);

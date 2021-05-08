@@ -249,11 +249,13 @@ public class CameraController extends BaseController {
                                            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
                                            @RequestParam(value = "sessionId", required = false) Long sessionId,
                                            @RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                           @RequestParam(value = "deviceName", required = false) String deviceName,
                                            @RequestParam(value = "ipAddress", required = false) String ipAddress) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sessionId", sessionId);
         jsonObject.put("deviceCode", deviceCode);
-        jsonObject.put("ip", ipAddress);
+        jsonObject.put("deviceName", deviceName);
+        jsonObject.put("ip", IpUtils.ipToLong(ipAddress));
         if (stime != null) {
             jsonObject.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }

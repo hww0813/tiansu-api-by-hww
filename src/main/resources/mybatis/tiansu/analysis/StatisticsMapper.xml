@@ -119,7 +119,7 @@
             1=1
             <if test="terminalVisit.ipAddress != null  and terminalVisit.ipAddress != ''"> and src_ip = #{terminalVisit.ipAddress}</if>
             <if test="terminalVisit.username != null  and terminalVisit.username != ''"> and username = #{terminalVisit.username}</if>
-            <if test="terminalVisit.action != null  and terminalVisit.action != ''"> and action = #{terminalVisit.action}</if>
+            <if test="terminalVisit.action != null"> and action = #{terminalVisit.action}</if>
             <if test="terminalVisit.startDate != null and terminalVisit.endDate != null"> and stamp >= STR_TO_DATE(#{terminalVisit.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{terminalVisit.endDate}, '%Y-%m-%d')</if>
         </where>
         GROUP BY

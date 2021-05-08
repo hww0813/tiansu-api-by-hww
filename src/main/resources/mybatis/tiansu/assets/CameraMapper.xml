@@ -199,6 +199,9 @@
         <if test="deviceCode != null and deviceCode != ''">
             AND DEVICE_CODE = #{deviceCode}
         </if>
+        <if test="deviceName != null and deviceName != ''">
+            AND DEVICE_NAME like concat(#{deviceName}, '%')
+        </if>
         <if test="sessionId != null and sessionId != ''">
             AND id in (select DISTINCT camera_id from busi_oper where session_id = #{sessionId})
         </if>
@@ -255,7 +258,7 @@
     </select>
     <select id="getRealTotal" resultType="java.lang.Integer">
         select count(*)
-        from busi_camera
+        from busi_camera where device_type = 1
     </select>
 
     <update id="updateIsNotServer" parameterType="long">

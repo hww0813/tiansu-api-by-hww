@@ -200,7 +200,7 @@
         limit 1
     </select>
     <select id="getRealTotal" resultType="java.lang.Integer">
-        select count(*) from BUSI_CLIENT_TERMINAL
+        select count(*) from BUSI_CLIENT_TERMINAL where device_type = 6
     </select>
 
     <update id="updateClientTerminal" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">
