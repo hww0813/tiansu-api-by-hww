@@ -23,7 +23,7 @@ public interface HomePageMapper {
      * @param: startTime：开始时间, endTime：结束时间 ， size查询limit
      * @return:
      */
-    List<CameraStatistics> getCameraStatisticsByTime(Date startTime , Date endTime ,int size ,Long action,String ascFlag);
+    List<JSONObject> getCameraStatisticsByTime(Date startTime , Date endTime ,int size ,Long action,String ascFlag);
 
     List<JSONObject> getClinetStatisticsByTime(StatisticsSearch statisticsSearch);
 

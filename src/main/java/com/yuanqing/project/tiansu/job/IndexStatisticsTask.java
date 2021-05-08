@@ -82,8 +82,8 @@ public class IndexStatisticsTask {
         //查倒序
         CompletableFuture.runAsync(() -> {
             try {
-                List<CameraStatistics> cameraStatistics = homePageMapper.getCameraStatisticsByTime(finalStartTime, finalEndTime, 5, finalAction, null);
-                intiCameraStatistics(cameraStatistics);
+                List<JSONObject> cameraStatistics = homePageMapper.getCameraStatisticsByTime(finalStartTime, finalEndTime, 5, finalAction, null);
+                cameraStatistics.stream().forEach(j -> j.put("CLIENT_IP", IpUtils.longToIPv4(j.getLong("CLIENT_IP"))));
                 if (!CollectionUtils.isEmpty(cameraStatistics)) {
                     redisCache.setCacheObject(cacheKey, cameraStatistics);
                 }
@@ -95,8 +95,8 @@ public class IndexStatisticsTask {
         //查正序  访问最少的摄像头
         CompletableFuture.runAsync(() -> {
             try {
-                List<CameraStatistics> cameraStatistics = homePageMapper.getCameraStatisticsByTime(finalStartTime, finalEndTime, 5, finalAction, "asc");
-                intiCameraStatistics(cameraStatistics);
+                List<JSONObject> cameraStatistics = homePageMapper.getCameraStatisticsByTime(finalStartTime, finalEndTime, 5, finalAction, "asc");
+                cameraStatistics.stream().forEach(j -> j.put("CLIENT_IP", IpUtils.longToIPv4(j.getLong("CLIENT_IP"))));
                 if (!CollectionUtils.isEmpty(cameraStatistics)) {
                     redisCache.setCacheObject(cacheKey + "_REVERSE", cameraStatistics);
                 }
