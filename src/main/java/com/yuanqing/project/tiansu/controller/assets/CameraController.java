@@ -64,7 +64,7 @@ public class CameraController extends BaseController {
                              @RequestParam(value = "deviceName", required = false) String deviceName,
                              @RequestParam(value = "deviceDomain", required = false) String deviceDomain,
                              @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                             @RequestParam(value = "region[]", required = false) Integer regionId,
+                             @RequestParam(value = "regionId", required = false) Integer regionId,
                              @RequestParam(value = "ipAddress", required = false) String ipAddress,
                              @RequestParam(value = "id", required = false) Long id,
                              @RequestParam(value = "manufacturer", required = false) String manufacturer,
