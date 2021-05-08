@@ -136,7 +136,7 @@ public class CameraServiceImpl implements ICameraService {
 
 
         // 导入时更新摄像头主表里的区域信息，ip和摄像头名称。
-        String deviceId = StringUtils.replaceBlank(entity.getDeviceId());
+        String deviceId = StringUtils.replaceBlank(dstCode);
         String gbId = StringUtils.replaceBlank(entity.getGbId());
         Camera cameraNGB = null;
         Camera cameraGB = null;
@@ -150,6 +150,7 @@ public class CameraServiceImpl implements ICameraService {
             cameraGB = (Camera) cameraCodeMap.get(gbId);
         }
 
+
         //如果私标对应摄像头为空
         if (cameraNGB == null) {
             //如果根据国标查找摄像头存在
@@ -161,7 +162,7 @@ public class CameraServiceImpl implements ICameraService {
                     cameraGB.setDeviceCode(gbId);
                     cameraGB.setIsGb(Integer.parseInt(GBEnum.GB.getValue()));
                 } else {
-                    cameraGB.setDeviceCode(entity.getDeviceId());
+                    cameraGB.setDeviceCode(dstCode);
                     cameraGB.setIsGb(Integer.parseInt(GBEnum.NGB.getValue()));
                 }
                 if (gbId != null && !gbId.equals("") && gbId.length() == 20) {
@@ -191,6 +192,7 @@ public class CameraServiceImpl implements ICameraService {
 
                 cameraGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
                 cameraGB.setIsProbe(ProbeEnum.IMPORT.getValue());
+                cameraGB.setStatus(0);
                 updateList.add(cameraGB);
             }
             //私标对应摄像头存在，更新对应摄像头信息
@@ -201,7 +203,7 @@ public class CameraServiceImpl implements ICameraService {
                 cameraNGB.setDeviceCode(gbId);
                 cameraNGB.setIsGb(Integer.parseInt(GBEnum.GB.getValue()));
             } else {
-                cameraNGB.setDeviceCode(entity.getDeviceId());
+                cameraNGB.setDeviceCode(dstCode);
                 cameraNGB.setIsGb(Integer.parseInt(GBEnum.NGB.getValue()));
             }
             if (gbId != null && !gbId.equals("") && gbId.length() == 20) {
@@ -231,6 +233,7 @@ public class CameraServiceImpl implements ICameraService {
             }
             cameraNGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
             cameraNGB.setIsProbe(ProbeEnum.IMPORT.getValue());
+            cameraNGB.setStatus(0);
             updateList.add(cameraNGB);
         }
         //如果私标和国标对应摄像头都不存在
@@ -248,7 +251,7 @@ public class CameraServiceImpl implements ICameraService {
                 cameraNGB.setDeviceCode(gbId);
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.GB.getValue()));
             } else {
-                cameraNGB.setDeviceCode(entity.getDeviceId());
+                cameraNGB.setDeviceCode(dstCode);
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.NGB.getValue()));
             }
             if (gbId != null && !gbId.equals("")) {
@@ -312,6 +315,7 @@ public class CameraServiceImpl implements ICameraService {
             }
             cameraNGB.setIsProbe(ProbeEnum.IMPORT.getValue());
             cameraNGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
+            cameraNGB.setStatus(0);
 //            count++;
             addList.add(cameraNGB);
         }

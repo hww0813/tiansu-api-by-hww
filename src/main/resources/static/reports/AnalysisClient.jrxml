@@ -62,7 +62,7 @@
 					<textElement textAlignment="Right">
 						<font fontName="my" size="14" isBold="false"/>
 					</textElement>
-					<text><![CDATA[终端访问报表]]></text>
+					<text><![CDATA[终端访问列表]]></text>
 				</staticText>
 			</frame>
 		</band>

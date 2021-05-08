@@ -1,8 +1,9 @@
 package com.yuanqing.project.tiansu.service.operation.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.enums.ActionDetailType;
+import com.yuanqing.common.enums.ActionType;
 import com.yuanqing.common.utils.DateUtils;
-import com.yuanqing.common.utils.FlowUtil;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -155,27 +156,27 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
                 }
 
                 if (StringUtils.isNotBlank(operationBehavior.getAction())) {
-                    jsonObject.put("action", operationBehavior.getAction());
+                    jsonObject.put("action", ActionType.getLabel(operationBehavior.getAction()));
                 } else {
                     jsonObject.put("action", "");
                 }
 
                 if (StringUtils.isNotBlank(operationBehavior.getActionDetail())) {
-                    jsonObject.put("actionDetail", operationBehavior.getActionDetail());
+                    jsonObject.put("actionDetail", ActionDetailType.getLabel(operationBehavior.getActionDetail()));
                 } else {
                     jsonObject.put("actionDetail", "");
                 }
 
-                if (operationBehavior.getUpFlow() != null) {
-                    jsonObject.put("upFlow", FlowUtil.setFlow(operationBehavior.getUpFlow()));
-                } else {
-                    jsonObject.put("upFlow", "0");
-                }
-                if (operationBehavior.getDownFlow() != null) {
-                    jsonObject.put("downFlow", FlowUtil.setFlow(operationBehavior.getDownFlow()));
-                } else {
-                    jsonObject.put("downFlow", "0");
-                }
+//                if (operationBehavior.getUpFlow() != null) {
+//                    jsonObject.put("upFlow", FlowUtil.setFlow(operationBehavior.getUpFlow()));
+//                } else {
+//                    jsonObject.put("upFlow", "0");
+//                }
+//                if (operationBehavior.getDownFlow() != null) {
+//                    jsonObject.put("downFlow", FlowUtil.setFlow(operationBehavior.getDownFlow()));
+//                } else {
+//                    jsonObject.put("downFlow", "0");
+//                }
                 if (StringUtils.isNotBlank(operationBehavior.getUsername())) {
                     jsonObject.put("username", operationBehavior.getUsername());
                 } else {
@@ -186,22 +187,28 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
                 } else {
                     jsonObject.put("stamp", "");
                 }
-                if (StringUtils.isNotBlank(operationBehavior.getResult())) {
-                    if ("1".equals(operationBehavior.getResult())) {
-                        jsonObject.put("result", "成功");
-                    } else if ("0".equals(operationBehavior.getResult())) {
-                        jsonObject.put("result", "失败");
-                    } else {
-                        jsonObject.put("result", "未知");
-                    }
-                } else {
-                    jsonObject.put("result", "未知");
+//                if (StringUtils.isNotBlank(operationBehavior.getResult())) {
+//                    if ("1".equals(operationBehavior.getResult())) {
+//                        jsonObject.put("result", "成功");
+//                    } else if ("0".equals(operationBehavior.getResult())) {
+//                        jsonObject.put("result", "失败");
+//                    } else {
+//                        jsonObject.put("result", "未知");
+//                    }
+//                } else {
+//                    jsonObject.put("result", "未知");
+//                }
+                if(operationBehavior.getPlatformName()!=null){
+                    jsonObject.put("platformName", operationBehavior.getPlatformName());
+                }else{
+                    jsonObject.put("platformName", "本机");
                 }
                 reportList.add(jsonObject);
             }
         }
         return reportList;
     }
+
 
     @Override
     public PageResult getVisitedRateRelatedOperation(List<String> cameraCodeList, OperationBehavior operationBehavior) throws Exception {

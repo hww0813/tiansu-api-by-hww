@@ -41,11 +41,11 @@ public enum ActionType implements BaseEnum {
          return null;
     }
 
-    public static ActionType getActionTypeByValue(String value){
+    public static String getLabel(String value){
         String valueStr = value + "";
         for (ActionType v : ActionType.values()) {
             if(v.getValue().equals(valueStr)){
-                return v;
+                return v.getLabel();
             }
         }
         return null;

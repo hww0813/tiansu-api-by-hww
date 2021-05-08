@@ -36,4 +36,14 @@ public enum DeviceType implements BaseEnum {
         return "未知类型";
     }
 
+    public static String getLabel(String value){
+        String valueStr = value + "";
+        for (DeviceType v : DeviceType.values()) {
+            if(v.getValue().equals(valueStr)){
+                return v.getLabel();
+            }
+        }
+        return null;
+    }
+
 }

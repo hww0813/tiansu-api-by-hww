@@ -98,13 +98,14 @@ public class ServerTreeServiceImpl implements IServerTreeService {
                     jsonObject.put("serverDomain", serverTree.getServerDomain());
                 }
                 if (!StringUtils.isEmpty(serverTree.getServerType())) {
-                    jsonObject.put("serverType", serverTree.getServerType());
+                    jsonObject.put("serverType", DeviceType.getLabel(serverTree.getServerType()));
                 }
                 reportList.add(jsonObject);
             }
         }
         return reportList;
     }
+
 
     @Override
     public List<ServerTree> getSessionServerList(ServerTree serverTree, List<Long> serverIpList) {

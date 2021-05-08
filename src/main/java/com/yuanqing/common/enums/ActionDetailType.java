@@ -50,4 +50,14 @@ public enum ActionDetailType implements BaseEnum {
         this.label = label;
         this.value = value;
     }
+
+    public static String getLabel(String value){
+        String valueStr = value + "";
+        for (ActionDetailType v : ActionDetailType.values()) {
+            if(v.getValue().equals(valueStr)){
+                return v.getLabel();
+            }
+        }
+        return null;
+    }
 }

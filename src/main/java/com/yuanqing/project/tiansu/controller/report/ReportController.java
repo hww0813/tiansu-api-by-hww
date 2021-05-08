@@ -2851,7 +2851,7 @@ public class ReportController extends BaseController {
 
         List<String> titles = new ArrayList();
         titles.add("源设备IP");
-        titles.add("源设备编码");
+//        titles.add("源设备编码");
         titles.add("目的设备IP");
         titles.add("目的设备编码");
         titles.add("时间");
@@ -2864,7 +2864,7 @@ public class ReportController extends BaseController {
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("srcIp"));
-                row.add(j.get("fromCode"));
+//                row.add(j.get("fromCode"));
                 row.add(j.get("dstIp"));
                 row.add(j.get("toCode"));
                 row.add(j.get("stamp"));
@@ -2993,11 +2993,11 @@ public class ReportController extends BaseController {
         titles.add("摄像头名称");
         titles.add("动作");
         titles.add("动作详细");
-        titles.add("上行流量");
-        titles.add("下行流量");
+//        titles.add("上行流量");
+//        titles.add("下行流量");
         titles.add("登录帐号");
         titles.add("时间");
-        titles.add("结果");
+        titles.add("平台名称");
         data.setTitles(titles);
 
         List<JSONObject> all = operationBehaviorService.getAllToReport(filters);
@@ -3011,11 +3011,11 @@ public class ReportController extends BaseController {
                 row.add(j.get("dstDeviceName"));
                 row.add(j.get("action"));
                 row.add(j.get("actionDetail"));
-                row.add(j.get("upFlow"));
-                row.add(j.get("downFlow"));
+//                row.add(j.get("upFlow"));
+//                row.add(j.get("downFlow"));
                 row.add(j.get("username"));
                 row.add(j.get("stamp"));
-                row.add(j.get("result"));
+                row.add(j.get("platformName"));
                 rows.add(row);
             }
 
@@ -3027,7 +3027,7 @@ public class ReportController extends BaseController {
 
     public void ServerTreeExcel(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();
-        data.setName("服务器资源树");
+        data.setName("服务器资源");
 
         List<String> titles = new ArrayList();
         titles.add("服务器编号");
@@ -3053,7 +3053,7 @@ public class ReportController extends BaseController {
             data.setRows(rows);
         }
 
-        ExportExcelUtils.exportExcel(response, "服务器资源树报表.xlsx", data);
+        ExportExcelUtils.exportExcel(response, "服务器资源报表.xlsx", data);
     }
 
     public void CameraExcel(HttpServletResponse response, JSONObject filters) throws Exception {
@@ -3097,10 +3097,10 @@ public class ReportController extends BaseController {
         data.setName("终端");
 
         List<String> titles = new ArrayList();
-        titles.add("设备编号");
+//        titles.add("设备编号");
         titles.add("IP地址");
         titles.add("MAC地址");
-        titles.add("账户数");
+        titles.add("用户数");
         titles.add("状态");
         titles.add("最后更新时间");
         data.setTitles(titles);
@@ -3110,7 +3110,7 @@ public class ReportController extends BaseController {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
-                row.add(j.get("deviceCode"));
+//                row.add(j.get("deviceCode"));
                 row.add(j.get("ipAddress"));
                 row.add(j.get("macAddress"));
                 row.add(j.get("usercnt"));
