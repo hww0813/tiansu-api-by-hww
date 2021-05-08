@@ -212,7 +212,9 @@ public class CameraController extends BaseController {
     @GetMapping("/active")
     @ApiOperation(value = "活跃摄像头列表")
     public TableDataInfo getActiveCamera() {
-        return getDataTable(cameraService.getActiveCamera());
+        startPage();
+        List<Camera> list = cameraService.getScreenList();
+        return getDataTable(list);
     }
 
     @GetMapping("/getNonNationalCameraList")

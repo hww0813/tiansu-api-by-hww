@@ -27,10 +27,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -738,6 +735,11 @@ public class CameraServiceImpl implements ICameraService {
         List<String> regionIdList = macsConfigService.getAllLowerRegion(camera.getRegion().toString());
         List<Camera> list = cameraMapper.getAllList(camera,regionIdList);
         return list;
+    }
+
+    @Override
+    public List<Camera> getScreenList() {
+        return cameraMapper.getScreenList(new Date());
     }
 
 

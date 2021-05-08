@@ -6,6 +6,7 @@ import com.yuanqing.project.tiansu.domain.assets.Camera;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -209,5 +210,13 @@ public interface CameraMapper extends BaseMapper<Camera, Long> {
      * @return
      */
     public List<Camera> getAllList(@Param("camera") Camera camera, @Param("list") List<String> list);
+
+    /**
+     * 首页摄像头活跃详情列
+     *
+     * @param date
+     * @return
+     */
+    public List<Camera> getScreenList(Date date);
 
 }

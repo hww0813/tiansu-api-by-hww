@@ -85,6 +85,19 @@
         </where>
     </select>
 
+    <select id="getScreenList" parameterType="java.util.Date" resultMap="BusiCameraResult">
+        <include refid="selectBusiCameraVo"/>
+        where
+        device_type = 1
+        and DEVICE_CODE in
+        (SELECT DISTINCT
+        bs.dst_code
+        FROM
+        busi_statistics bs
+        WHERE bs.stamp = DATE_FORMAT(#{date}, '%y%m%d'))
+
+    </select>
+
     <select id="getAllList" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         <where>

@@ -1,7 +1,6 @@
 package com.yuanqing.project.tiansu.service.assets;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.ExternalDevice;
@@ -144,5 +143,12 @@ public interface ICameraService extends BaseService<Camera, Long> {
      * @return
      */
     List<Camera> getAllList(Camera camera);
+
+    /**
+     * 首页摄像头活跃详情列
+     *
+     * @return
+     */
+    public List<Camera> getScreenList();
 
 }
