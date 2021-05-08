@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,11 +71,11 @@ public class IndexStatisticsTask {
             startTime = DateUtils.getNowDateToLocal();
             endTime = DateUtils.getNextDay();
         } else if ("WEEK".equals(timeType)) {
-            startTime = DateUtils.getNowMonday();
-            endTime = DateUtils.getNowSunday();
+            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-7));
+            endTime = DateUtils.getNowDateToLocal();
         } else if ("MONTH".equals(timeType)) {
-            startTime = DateUtils.getNowMonthOneDay();
-            endTime = DateUtils.getNowMonthLastDay();
+            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-30));
+            endTime =DateUtils.getNowDateToLocal();
         }
         Date finalStartTime = startTime;
         Date finalEndTime = endTime;
@@ -248,16 +249,17 @@ public class IndexStatisticsTask {
 
 
     private StatisticsSearch initSearch(String timeType, Long action) {
+        //选择对应时间
         Date startTime = null, endTime = null;
         if ("DAY".equals(timeType)) {
             startTime = DateUtils.getNowDateToLocal();
             endTime = DateUtils.getNextDay();
         } else if ("WEEK".equals(timeType)) {
-            startTime = DateUtils.getNowMonday();
-            endTime = DateUtils.getNowSunday();
+            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-7));
+            endTime = DateUtils.getNowDateToLocal();
         } else if ("MONTH".equals(timeType)) {
-            startTime = DateUtils.getNowMonthOneDay();
-            endTime = DateUtils.getNowMonthLastDay();
+            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-30));
+            endTime = DateUtils.getNowDateToLocal();
         }
         if (action == -1) {
             action = null;
