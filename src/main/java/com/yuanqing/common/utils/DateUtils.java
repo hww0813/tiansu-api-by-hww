@@ -181,7 +181,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
             c.add(Calendar.DAY_OF_MONTH, -1);
             //前一周
         }else if("5".equals(type)){
-            c.add(Calendar.DAY_OF_MONTH, -7);
+            c.add(Calendar.DAY_OF_MONTH, -6);
             //明天
         }else if("6".equals(type)){
             c.add(Calendar.DAY_OF_MONTH, 1);

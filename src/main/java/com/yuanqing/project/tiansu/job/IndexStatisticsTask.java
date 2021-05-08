@@ -71,10 +71,10 @@ public class IndexStatisticsTask {
             startTime = DateUtils.getNowDateToLocal();
             endTime = DateUtils.getNextDay();
         } else if ("WEEK".equals(timeType)) {
-            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-7));
+            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-6));
             endTime = DateUtils.getNowDateToLocal();
         } else if ("MONTH".equals(timeType)) {
-            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-30));
+            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-29));
             endTime =DateUtils.getNowDateToLocal();
         }
         Date finalStartTime = startTime;
@@ -255,10 +255,10 @@ public class IndexStatisticsTask {
             startTime = DateUtils.getNowDateToLocal();
             endTime = DateUtils.getNextDay();
         } else if ("WEEK".equals(timeType)) {
-            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-7));
+            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-6));
             endTime = DateUtils.getNowDateToLocal();
         } else if ("MONTH".equals(timeType)) {
-            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-30));
+            startTime = DateUtils.localDateToDate(LocalDate.now().plusDays(-29));
             endTime = DateUtils.getNowDateToLocal();
         }
         if (action == -1) {
