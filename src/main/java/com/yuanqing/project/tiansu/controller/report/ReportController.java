@@ -1,10 +1,17 @@
 package com.yuanqing.project.tiansu.controller.report;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.enums.ActionType;
+import com.yuanqing.common.enums.EventStatusEnum;
 import com.yuanqing.common.utils.*;
+import com.yuanqing.common.utils.http.HttpUtils;
+import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.common.utils.spring.SpringContextUtil;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
+import com.yuanqing.project.tiansu.domain.analysis.Statistics;
+import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.domain.report.ExcelData;
 import com.yuanqing.project.tiansu.domain.report.VisitRate;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
@@ -24,6 +31,7 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.export.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
@@ -102,6 +110,9 @@ public class ReportController extends BaseController {
     private static final String RATE_VISIT_CNT = "classpath:/static/reports/RateVisitCnt.jrxml";
 
     private static final String RATE_CLIENT_CNT = "classpath:/static/reports/RateClientCnt.jrxml";
+
+    @Value("${tiansu.alarmhost}")
+    private String alarmHost;
 
     @Resource
     private IMacsConfigService macsConfigService;
@@ -273,116 +284,130 @@ public class ReportController extends BaseController {
     }
 
 
-//    @GetMapping(value = "/eventDetail")
-//    public void getEventReport(@RequestParam(value = "stime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//                               @RequestParam(value = "etime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//                               @RequestParam(value = "id", required = false) Long id,
-//                               @RequestParam(value = "eventCategory", required = false) String eventCategory,
-//                               @RequestParam(value = "eventLevel", required = false) String eventLevel,
-//                               @RequestParam(value = "status", required = false) String status,
-//                               @RequestParam(value = "operId", required = false) String operId,
-//                               @RequestParam(value = "eventSource", required = false) String eventSource,
-//                               @RequestParam(value = "cameraCode", required = false) String cameraCode,
-//                               @RequestParam(value = "clientCode", required = false) String clientCode,
-//                               @RequestParam(value = "clientIp", required = false) String clientIp,
-//                               @RequestParam(value = "clientMac", required = false) String clientMac,
-//                               @RequestParam(value = "action", required = false) String action,
-//                               @RequestParam(value = "content", required = false) String content,
-//                               @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-//        JSONObject filters = new JSONObject();
-//        filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        filters.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        filters.put("status", status);
-//        filters.put("id", id);
-//        filters.put("eventCategory", eventCategory);
-//        filters.put("eventLevel", eventLevel);
-//        filters.put("operId", operId);
-//        filters.put("eventSource", eventSource);
-//        filters.put("cameraCode", cameraCode);
-//        filters.put("clientCode", clientCode);
-//        filters.put("clientIp", clientIp);
-//        filters.put("clientMac", clientMac);
-//        filters.put("action", action);
-//        filters.put("content", content);
-//
-//        if ("xlsx".equals(format)) {
-//            try {
-//                this.eventExcel(response, filters);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
-//
-//            org.springframework.core.io.Resource resource = null;
-//
-//            resource = ctx.getResource(EVENT_REPORT_NAME);
-//
-//            InputStream inputStream;
-//            try {
-//                inputStream = resource.getInputStream();
-//
-//
-//                //编译报表
-//                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
-//
-//                //参数
-//                Map<String, Object> params = new HashMap<>();
-//
-//                List<JSONObject> list = eventDetailManager.getAllToReport(filters);
-//
-//                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
-//
-//                //print文件
-//                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
-//
-//                JRAbstractExporter exporter = null;
-//
-//                if ("pdf".equals(format)) {
-//                    exporter = new JRPdfExporter();
-//                    response.setContentType("application/pdf");
-//                } else if ("xlsx".equals(format)) {
-//                    exporter = new JRXlsxExporter();
-//                    response.setContentType("application/vnd.ms-excel");
-//                } else if ("docx".equals(format)) {
-//                    exporter = new JRDocxExporter();
-//                    response.setContentType("application/msword");
-//                } else if ("html".equals(format)) {
-//                    exporter = new HtmlExporter();
-//                    response.setContentType("application/html");
-//                } else {
-//                    throw new RuntimeException("参数错误");
-//                }
-//
-//                //设置输入项
-//                ExporterInput exporterInput = new SimpleExporterInput(print);
-//                exporter.setExporterInput(exporterInput);
-//
-//                //设置输出项
-//                if ("html".equals(format)) {
-//                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
-//
-//                    exporter.setExporterOutput(htmlExportOutput);
-//                } else {
-//                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
-//                            response.getOutputStream());
-//                    exporter.setExporterOutput(exporterOutput);
-//
-//                }
-//
-//                response.setHeader("Content-Disposition",
-//                        "attachment;filename=" + URLEncoder.encode("告警事件报表." + format, "utf-8"));
-//
-//                exporter.exportReport();
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (JRException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//    }
+    @GetMapping(value = "/eventDetail")
+    public void getEventReport(@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                               @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                               @RequestParam(value = "eventSource", required = false) String eventSource,
+                               @RequestParam(value = "strategyName", required = false) String strategyName,
+                               @RequestParam(value = "status", required = false) String status,
+                               @RequestParam(value = "eventCategory", required = false) String eventCategory,
+                               @RequestParam(value = "eventLevel", required = false) String eventLevel,
+                               @RequestParam(value = "clientIp", required = false) String clientIp,
+                               @RequestParam(value = "cameraName", required = false) String cameraName,
+                               @RequestParam(value = "content", required = false) String content,
+                               @RequestParam(value = "eventSubject", required = false) String eventSubject,
+                               @RequestParam(value = "ruleName", required = false) String ruleName,
+                               @RequestParam(value = "action", required = false) String action,
+                               @RequestParam(value = "id", required = false) Long id,
+                               @RequestParam(value = "connectType", required = false) String connectType,
+                               @RequestParam(required = false) String orderType,
+                               @RequestParam(required = false) String orderValue,
+                               @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+        JSONObject filters = new JSONObject();
+        if (stime != null) {
+            filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+        if (etime != null) {
+            filters.put("endTime", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+        filters.put("eventSource", eventSource);
+        filters.put("status", status);
+        filters.put("eventCategory", eventCategory);
+        filters.put("eventLevel", eventLevel);
+        filters.put("clientIp", clientIp);
+        filters.put("action", action);
+        filters.put("id", id);
+
+        if (StringUtils.isNotBlank(orderType) && StringUtils.isNotBlank(orderValue)) {
+            filters.put("orderType", orderValue + " " + orderType);
+        }
+        String url = alarmHost + "/BusiEvent/listT?";
+        String result = HttpUtils.sendGet(url, filters);
+        JSONObject resultObj = JSONObject.parseObject(result);
+        JSONArray datas = resultObj.getJSONArray("rows");
+
+        if ("xlsx".equals(format)) {
+            try {
+                this.eventExcel(response, datas);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
+
+            org.springframework.core.io.Resource resource = null;
+
+            resource = ctx.getResource(EVENT_REPORT_NAME);
+
+            InputStream inputStream;
+            try {
+                inputStream = resource.getInputStream();
+
+
+                //编译报表
+                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+
+                //参数
+                Map<String, Object> params = new HashMap<>();
+
+                List<JSONObject> list = datas.toJavaList(JSONObject.class);
+                list.stream().forEach(h->{
+                    h.put("clientIp",IpUtils.longToIp(h.getLong("clientIp")));
+                    h.put("status",EventStatusEnum.getLabel(h.getLong("status")));
+                    h.put("action",ActionType.getLabel(h.getString("action")));
+                });
+                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+
+                //print文件
+                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
+
+                JRAbstractExporter exporter = null;
+
+                if ("pdf".equals(format)) {
+                    exporter = new JRPdfExporter();
+                    response.setContentType("application/pdf");
+                } else if ("xlsx".equals(format)) {
+                    exporter = new JRXlsxExporter();
+                    response.setContentType("application/vnd.ms-excel");
+                } else if ("docx".equals(format)) {
+                    exporter = new JRDocxExporter();
+                    response.setContentType("application/msword");
+                } else if ("html".equals(format)) {
+                    exporter = new HtmlExporter();
+                    response.setContentType("application/html");
+                } else {
+                    throw new RuntimeException("参数错误");
+                }
+
+                //设置输入项
+                ExporterInput exporterInput = new SimpleExporterInput(print);
+                exporter.setExporterInput(exporterInput);
+
+                //设置输出项
+                if ("html".equals(format)) {
+                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
+
+                    exporter.setExporterOutput(htmlExportOutput);
+                } else {
+                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+                            response.getOutputStream());
+                    exporter.setExporterOutput(exporterOutput);
+
+                }
+
+                response.setHeader("Content-Disposition",
+                        "attachment;filename=" + URLEncoder.encode("告警事件报表." + format, "utf-8"));
+
+                exporter.exportReport();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JRException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     @GetMapping(value = "/sipDevice")
     public void getSipDiveceReport(@RequestParam(value = "status", required = false) String status,
@@ -1472,8 +1497,12 @@ public class ReportController extends BaseController {
 
 
         JSONObject filters = new JSONObject();
-        if (startDate != null) filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        if (startDate != null) filters.put("endDate", endDate.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
+        if (startDate != null) {
+            filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+        if (startDate != null) {
+            filters.put("endDate", endDate.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
         filters.put("clientIp", clientIp);
         filters.put("clientCode", clientCode);
         filters.put("action", action);
@@ -1756,8 +1785,12 @@ public class ReportController extends BaseController {
                                         @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
-        if (startDate != null) filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        if (startDate != null) filters.put("endDate", endDate.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
+        if (startDate != null) {
+            filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+        if (startDate != null) {
+            filters.put("endDate", endDate.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
         filters.put("cameraIp", cameraIp);
         filters.put("cameraCode", cameraCode);
         filters.put("cameraName", cameraName);
@@ -1934,94 +1967,93 @@ public class ReportController extends BaseController {
 //        }
 //    }
 
-//    @GetMapping(value = "analysis/camera/visited/relatedClient")
-//    public void getAnalysisCameraRelatedClientReport(@RequestParam(value = "clientId", required = false) Long clientId,
-//                                                     @RequestParam(value = "cameraId", required = false) Long cameraId,
-//                                                     @RequestParam(value = "action", required = false) String action,
-//                                                     @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-//                                                     @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-//                                                     @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-//        JSONObject filters = new JSONObject();
-//        filters.put("clientId", clientId);
-//        filters.put("cameraId", cameraId);
-//        filters.put("action", action);
-//        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-//        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-//
-//        if ("xlsx".equals(format)) {
-//            try {
-//                this.getAnalysisCameraRelatedClientExcelReport(response, filters);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
-//
-//            org.springframework.core.io.Resource resource = null;
-//
-//            resource = ctx.getResource(ANALYSIS_CAMERA_RELATED_CLIENT);
-//
-//            InputStream inputStream;
-//            try {
-//                inputStream = resource.getInputStream();
-//
-//
-//                //编译报表
-//                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
-//
-//                //参数
-//                Map<String, Object> params = new HashMap<>();
-//
-//                List<JSONObject> list = cameraVisitedManager.getCameraVisitedRelateClientToReport(filters);
-//
-//                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
-//
-//                //print文件
-//                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
-//
-//                JRAbstractExporter exporter = null;
-//
-//                if ("pdf".equals(format)) {
-//                    exporter = new JRPdfExporter();
-//                    response.setContentType("application/pdf");
-//                } else if ("docx".equals(format)) {
-//                    exporter = new JRDocxExporter();
-//                    response.setContentType("application/msword");
-//                } else if ("html".equals(format)) {
-//                    exporter = new HtmlExporter();
-//                    response.setContentType("application/html");
-//                } else {
-//                    throw new RuntimeException("参数错误");
-//                }
-//
-//                //设置输入项
-//                ExporterInput exporterInput = new SimpleExporterInput(print);
-//                exporter.setExporterInput(exporterInput);
-//
-//                //设置输出项
-//                if ("html".equals(format)) {
-//                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
-//
-//                    exporter.setExporterOutput(htmlExportOutput);
-//                } else {
-//                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
-//                            response.getOutputStream());
-//                    exporter.setExporterOutput(exporterOutput);
-//
-//                }
-//
-//                response.setHeader("Content-Disposition",
-//                        "attachment;filename=" + URLEncoder.encode("摄像头被访问相关终端报表." + format, "utf-8"));
-//
-//                exporter.exportReport();
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (JRException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    @GetMapping(value = "analysis/camera/visited/relatedClient")
+    public void getAnalysisCameraRelatedClientReport(@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                                     @RequestParam(value = "action", required = false) Integer action,
+                                                     @RequestParam(value = "startDate", required = false) String startDate,
+                                                     @RequestParam(value = "endDate", required = false) String endDate,
+                                                     @RequestParam(value = "format", required = false) String format,HttpServletResponse response) {
+        Statistics statistics = new Statistics();
+
+        statistics.setstartDate(startDate);
+        statistics.setendDate(endDate);
+        statistics.setAction(action);
+        statistics.setDstCode(deviceCode);
+
+        if ("xlsx".equals(format)) {
+            try {
+                this.getAnalysisCameraRelatedClientExcelReport(response, statistics);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
+
+            org.springframework.core.io.Resource resource = null;
+
+            resource = ctx.getResource(ANALYSIS_CAMERA_RELATED_CLIENT);
+
+            InputStream inputStream;
+            try {
+                inputStream = resource.getInputStream();
+
+
+                //编译报表
+                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+
+                //参数
+                Map<String, Object> params = new HashMap<>();
+
+                List<Statistics> statisticsList = statisticsService.getClientUserList(statistics);
+
+                JRDataSource jrDataSource = new JRBeanCollectionDataSource(statisticsList);
+
+                //print文件
+                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
+
+                JRAbstractExporter exporter = null;
+
+                if ("pdf".equals(format)) {
+                    exporter = new JRPdfExporter();
+                    response.setContentType("application/pdf");
+                } else if ("docx".equals(format)) {
+                    exporter = new JRDocxExporter();
+                    response.setContentType("application/msword");
+                } else if ("html".equals(format)) {
+                    exporter = new HtmlExporter();
+                    response.setContentType("application/html");
+                } else {
+                    throw new RuntimeException("参数错误");
+                }
+
+                //设置输入项
+                ExporterInput exporterInput = new SimpleExporterInput(print);
+                exporter.setExporterInput(exporterInput);
+
+                //设置输出项
+                if ("html".equals(format)) {
+                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
+
+                    exporter.setExporterOutput(htmlExportOutput);
+                } else {
+                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+                            response.getOutputStream());
+                    exporter.setExporterOutput(exporterOutput);
+
+                }
+
+                response.setHeader("Content-Disposition",
+                        "attachment;filename=" + URLEncoder.encode("摄像头被访问相关终端报表." + format, "utf-8"));
+
+                exporter.exportReport();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JRException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
     @GetMapping(value = "analysis/visit/rate/cameraCnt")
@@ -2646,32 +2678,28 @@ public class ReportController extends BaseController {
         ExportExcelUtils.exportExcel(response, "访问率相关摄像头总数报表.xlsx", data);
     }
 
-//    private void getAnalysisCameraRelatedClientExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-//        ExcelData data = new ExcelData();
-//        data.setName("摄像头被访问相关终端");
-//        List<JSONObject> all = cameraVisitedManager.getCameraVisitedRelateClientToReport(filters);
-//        List<String> titles = new ArrayList();
-//        titles.add("终端编号");
-//        titles.add("终端名称");
-//        titles.add("登录用户");
-//        titles.add("终端IP");
-//        titles.add("访问次数");
-//        data.setTitles(titles);
-//
-//        List<List<Object>> rows = new ArrayList();
-//        for (JSONObject j : all) {
-//            List<Object> row = new ArrayList();
-//            row.add(j.get("CLIENT_CODE"));
-//            row.add(j.get("CLIENT_NAME"));
-//            row.add(j.get("USERNAME"));
-//            row.add(j.get("CLIENT_IP"));
-//            row.add(j.get("VISIT_CNT"));
-//            rows.add(row);
-//        }
-//        data.setRows(rows);
-//
-//        ExportExcelUtils.exportExcel(response, "摄像头被访问相关终端报表.xlsx", data);
-//    }
+    private void getAnalysisCameraRelatedClientExcelReport(HttpServletResponse response, Statistics statistics) throws Exception {
+        ExcelData data = new ExcelData();
+        data.setName("摄像头被访问相关终端");
+        List<Statistics> statisticsList = statisticsService.getClientUserList(statistics);
+        List<String> titles = new ArrayList();
+        titles.add("终端IP");
+        titles.add("登录用户");
+        titles.add("访问次数");
+        data.setTitles(titles);
+
+        List<List<Object>> rows = new ArrayList();
+        for (Statistics j : statisticsList) {
+            List<Object> row = new ArrayList();
+            row.add(j.getSrcIp());
+            row.add(j.getUsername());
+            row.add(j.getCount());
+            rows.add(row);
+        }
+        data.setRows(rows);
+
+        ExportExcelUtils.exportExcel(response, "摄像头被访问相关终端报表.xlsx", data);
+    }
 //
 //    private void getAnalysisCameraDetailExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
 //        ExcelData data = new ExcelData();
@@ -3152,38 +3180,39 @@ public class ReportController extends BaseController {
         ExportExcelUtils.exportExcel(response, "终端用户报表.xlsx", data);
     }
 
-//    public void eventExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-//        ExcelData data = new ExcelData();
-//        data.setName("告警事件");
-//        List<JSONObject> all = eventDetailManager.getAllToReport(filters);
-//        List<String> titles = new ArrayList();
-//        titles.add("终端IP");
-//        titles.add("摄像头名称");
-//        titles.add("事件类型");
-//        titles.add("事件来源");
-//        titles.add("报警等级");
-//        titles.add("操作行为");
-//        titles.add("状态");
-//        titles.add("时间");
-//        data.setTitles(titles);
-//        List<List<Object>> rows = new ArrayList();
-//        for (JSONObject j : all) {
-//            List<Object> row = new ArrayList();
-//            row.add(j.get("clientIp"));
-//            row.add(j.get("cameraName"));
-//            row.add(j.get("eventCategory"));
-//            row.add(j.get("eventSource"));
-//            row.add(j.get("eventLevel"));
-//            row.add(j.get("action"));
-//            row.add(j.get("status"));
-//            row.add(j.get("startTime"));
-//            rows.add(row);
-//        }
-//
-//        data.setRows(rows);
-//
-//        ExportExcelUtils.exportExcel(response, "告警事件报表.xlsx", data);
-//    }
+    public void eventExcel(HttpServletResponse response, JSONArray datas) throws Exception {
+        List<Event> list = datas.toJavaList(Event.class);
+        ExcelData data = new ExcelData();
+        data.setName("告警事件");
+
+        List<String> titles = new ArrayList();
+        titles.add("终端IP");
+        titles.add("摄像头名称");
+        titles.add("事件类型");
+        titles.add("事件来源");
+        titles.add("报警等级");
+        titles.add("操作行为");
+        titles.add("状态");
+        titles.add("时间");
+        data.setTitles(titles);
+        List<List<Object>> rows = new ArrayList();
+        for (Event j : list) {
+            List<Object> row = new ArrayList();
+            row.add(IpUtils.longToIPv4(j.getClientIp()));
+            row.add(j.getCameraName());
+            row.add(j.getEventCategory());
+            row.add(j.getEventSource());
+            row.add(j.getEventLevel());
+            row.add(ActionType.getLabel(j.getAction().toString()));
+            row.add(EventStatusEnum.getLabel(j.getStatus()));
+            row.add(j.getStartTime());
+            rows.add(row);
+        }
+
+        data.setRows(rows);
+
+        ExportExcelUtils.exportExcel(response, "告警事件报表.xlsx", data);
+    }
 
     public void CameraVisitRateExcel(HttpServletResponse response, JSONObject filters) throws Exception {
         ExcelData data = new ExcelData();

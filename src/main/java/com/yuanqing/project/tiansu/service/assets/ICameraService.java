@@ -151,4 +151,5 @@ public interface ICameraService extends BaseService<Camera, Long> {
      */
     public List<Camera> getScreenList();
 
+
 }

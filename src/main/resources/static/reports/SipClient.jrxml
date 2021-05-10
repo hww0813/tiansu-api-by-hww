@@ -52,7 +52,7 @@
     <title>
 		<band height="80">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="-20" width="640" height="92" backcolor="#006699"
+				<reportElement mode="Opaque" x="0" y="-20" width="645" height="92" backcolor="#006699"
 							   uuid="6321f5e3-86eb-444f-acc1-8daaaa0d6c60"/>
 				<staticText>
 					<reportElement x="20" y="20" width="300" height="43" forecolor="#FFFFFF"
@@ -162,7 +162,7 @@
                 <text><![CDATA[状态]]></text>
             </staticText>
             <staticText>
-                <reportElement x="512" y="0" width="128" height="30" uuid="5eb25536-640e-4056-8e1c-de1795e3b696">
+                <reportElement x="512" y="0" width="133" height="30" uuid="5eb25536-640e-4056-8e1c-de1795e3b696">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
                               value="af344957-eb2f-41e0-ba98-709dad330195"/>
                 </reportElement>
@@ -263,7 +263,7 @@
                 <textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="512" y="0" width="128" height="30" uuid="f7bd66ab-a2bd-43be-9d07-ca366569b869">
+                <reportElement x="512" y="0" width="133" height="30" uuid="f7bd66ab-a2bd-43be-9d07-ca366569b869">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
                               value="af344957-eb2f-41e0-ba98-709dad330195"/>
                 </reportElement>

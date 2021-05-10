@@ -51,7 +51,7 @@
     <title>
         <band height="80">
             <frame>
-                <reportElement mode="Opaque" x="0" y="-20" width="640" height="92" backcolor="#006699"
+                <reportElement mode="Opaque" x="0" y="-20" width="645" height="92" backcolor="#006699"
                                uuid="6321f5e3-86eb-444f-acc1-8daaaa0d6c60"/>
                 <staticText>
                     <reportElement x="20" y="20" width="300" height="43" forecolor="#FFFFFF"
@@ -144,7 +144,7 @@
                 <text><![CDATA[服务器域名]]></text>
             </staticText>
             <staticText>
-                <reportElement x="512" y="0" width="128" height="30" uuid="27aac246-c410-4b26-beee-fc7ba0bdd9db">
+                <reportElement x="512" y="0" width="133" height="30" uuid="27aac246-c410-4b26-beee-fc7ba0bdd9db">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
                               value="71c470d8-5f7f-4673-9b16-1e0972b74703"/>
                 </reportElement>
@@ -230,7 +230,7 @@
                 <textFieldExpression><![CDATA[$F{serverDomain}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="512" y="0" width="128" height="30" uuid="3a6e1f11-b922-4299-989a-e4780823ad9b">
+                <reportElement x="512" y="0" width="133" height="30" uuid="3a6e1f11-b922-4299-989a-e4780823ad9b">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
                               value="71c470d8-5f7f-4673-9b16-1e0972b74703"/>
                 </reportElement>
