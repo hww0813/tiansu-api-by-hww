@@ -132,7 +132,7 @@ public class TerminalVisitedController extends BaseController {
                                                   @RequestParam(value = "cameraIp", required = false) String cameraIp,
                                                   @RequestParam(value = "username", required = false) String username,
                                                   @RequestParam(value = "clientIp", required = false) String clientIp,
-                                                  @RequestParam(value = "region[]", required = false) Integer region,
+                                                  @RequestParam(value = "region", required = false) Integer region,
                                                   @RequestParam(value = "startDate", required = false) String startDate,
                                                   @RequestParam(value = "endDate", required = false) String endDate) {
 
