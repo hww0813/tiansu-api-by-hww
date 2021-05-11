@@ -66,10 +66,10 @@
 		<band/>
 	</pageHeader>
 	<columnHeader>
-		<band height="30">
+		<band height="35">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<staticText>
-				<reportElement x="0" y="0" width="214" height="30" uuid="0a600b30-9bd3-48ab-b8ff-1871f0a84bf8">
+				<reportElement x="0" y="0" width="214" height="35" uuid="0a600b30-9bd3-48ab-b8ff-1871f0a84bf8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe5c5d20-1786-4fd4-b2ef-fa1ede5574fc"/>
 				</reportElement>
 				<box>
@@ -84,7 +84,7 @@
 				<text><![CDATA[终端IP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="214" y="0" width="214" height="30" uuid="99cae694-a60f-4597-ad84-05be95c826e9">
+				<reportElement x="214" y="0" width="214" height="35" uuid="99cae694-a60f-4597-ad84-05be95c826e9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e245678-2b6d-4259-9e80-efbdb7053be6"/>
 				</reportElement>
 				<box>
@@ -99,7 +99,7 @@
 				<text><![CDATA[登录用户]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="428" y="0" width="217" height="30" uuid="3b6c33c6-5dfc-4e8d-ae42-a821a02d3663">
+				<reportElement x="428" y="0" width="217" height="35" uuid="3b6c33c6-5dfc-4e8d-ae42-a821a02d3663">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aab18ba5-f951-4109-85aa-2701afcaa441"/>
 				</reportElement>
 				<box>
@@ -117,11 +117,11 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="30">
+		<band height="35">
 			<property name="com.jaspersoft.studio.layout"
 					  value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<textField>
-				<reportElement x="0" y="0" width="214" height="30" uuid="e139227c-720e-4eb4-94c5-7f457e021c3a">
+				<reportElement x="0" y="0" width="214" height="35" uuid="e139227c-720e-4eb4-94c5-7f457e021c3a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID"
 							  value="fe5c5d20-1786-4fd4-b2ef-fa1ede5574fc"/>
 				</reportElement>
@@ -137,7 +137,7 @@
 				<textFieldExpression><![CDATA[$F{srcIp}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="214" y="0" width="214" height="30" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
+				<reportElement x="214" y="0" width="214" height="35" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e245678-2b6d-4259-9e80-efbdb7053be6"/>
 				</reportElement>
 				<box>
@@ -153,7 +153,7 @@
 			</textField>
 
 			<textField>
-				<reportElement x="428" y="0" width="217" height="30" uuid="c730d451-0a68-4782-8ecb-917c1f76d82b">
+				<reportElement x="428" y="0" width="217" height="35" uuid="c730d451-0a68-4782-8ecb-917c1f76d82b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID"
 							  value="aab18ba5-f951-4109-85aa-2701afcaa441"/>
 				</reportElement>

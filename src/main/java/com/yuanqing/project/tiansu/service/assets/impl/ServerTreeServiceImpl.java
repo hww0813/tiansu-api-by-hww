@@ -77,6 +77,7 @@ public class ServerTreeServiceImpl implements IServerTreeService {
         condServerTree.setServerDomain(filters.getString("serverDomain"));
         condServerTree.setServerIp(IpUtils.ipToLong(filters.getString("serverIp")));
         condServerTree.setServerType(filters.getString("deviceType"));
+        condServerTree.setIsDelete(filters.getShort("isDelete"));
         List<ServerTree> serverTreeList = serverTreeMapper.getList(condServerTree);
 
         List<JSONObject> reportList = new ArrayList<JSONObject>();
@@ -85,6 +86,8 @@ public class ServerTreeServiceImpl implements IServerTreeService {
                 JSONObject jsonObject = new JSONObject();
                 if (!StringUtils.isEmpty(serverTree.getServerCode())) {
                     jsonObject.put("serverCode", serverTree.getServerCode());
+                }else{
+                    jsonObject.put("serverCode", "");
                 }
                 if (!StringUtils.isEmpty(serverTree.getServerName())) {
                     jsonObject.put("serverName", serverTree.getServerName());
@@ -93,12 +96,18 @@ public class ServerTreeServiceImpl implements IServerTreeService {
                 }
                 if (serverTree.getServerIp() != null) {
                     jsonObject.put("serverIp", IpUtils.longToIPv4(serverTree.getServerIp()));
+                }else{
+                    jsonObject.put("serverIp", "");
                 }
                 if (!StringUtils.isEmpty(serverTree.getServerDomain())) {
                     jsonObject.put("serverDomain", serverTree.getServerDomain());
+                }else{
+                    jsonObject.put("serverDomain", "");
                 }
                 if (!StringUtils.isEmpty(serverTree.getServerType())) {
                     jsonObject.put("serverType", DeviceType.getLabel(serverTree.getServerType()));
+                }else{
+                    jsonObject.put("serverType", "");
                 }
                 reportList.add(jsonObject);
             }

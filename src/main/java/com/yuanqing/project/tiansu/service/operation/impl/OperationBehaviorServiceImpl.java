@@ -113,23 +113,10 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     }
 
     @Override
-    public List<JSONObject> getAllToReport(JSONObject filters) {
+    public List<JSONObject> getAllToReport(OperationBehavior oper) {
         List<JSONObject> reportList = new ArrayList<JSONObject>();
 
-        OperationBehavior condOperationBehavior = new OperationBehavior();
-        condOperationBehavior.setStartTime((LocalDateTime) filters.get("stime"));
-        condOperationBehavior.setEndTime((LocalDateTime) filters.get("etime"));
-        condOperationBehavior.setSrcIp(IpUtils.ipToLong(filters.getString("srcIp")));
-        condOperationBehavior.setDstDeviceIp(IpUtils.ipToLong(filters.getString("dstDeviceIp")));
-        condOperationBehavior.setAction(filters.getString("action"));
-        condOperationBehavior.setNum(0);
-        Integer count = operationBehaviorMapper.quertyOperationBehaviorCount(condOperationBehavior);
-        if (count > 20000) {
-            condOperationBehavior.setSize(20000);
-        } else {
-            condOperationBehavior.setSize(count);
-        }
-        List<OperationBehavior> operationBehaviorList = operationBehaviorMapper.getList(condOperationBehavior);
+        List<OperationBehavior> operationBehaviorList = operationBehaviorMapper.getList(oper);
         if (!CollectionUtils.isEmpty(operationBehaviorList)) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             for (OperationBehavior operationBehavior : operationBehaviorList) {

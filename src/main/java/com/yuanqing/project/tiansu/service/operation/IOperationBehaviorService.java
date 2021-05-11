@@ -23,7 +23,7 @@ public interface IOperationBehaviorService {
 
     AjaxResult getCharts(LocalDate startDate,LocalDate endDate,String action,String sort,String type);
 
-    List<JSONObject> getAllToReport(JSONObject filters);
+    List<JSONObject> getAllToReport(OperationBehavior oper);
 
     /**
      * 根据摄像头编号和过滤条件查询操作行为

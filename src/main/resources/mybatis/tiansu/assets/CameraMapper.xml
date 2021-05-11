@@ -316,7 +316,7 @@
             <if test="createTime != null ">CREATE_TIME,</if>
             <if test="updateTime != null ">UPDATE_TIME,</if>
             <if test="ipAddress != null ">IP_ADDRESS,</if>
-            <if test="status != null  and status != ''">STATUS,</if>
+            <if test="status != null">STATUS,</if>
             <if test="sipServerId != null ">SIP_SERVER_ID,</if>
             <if test="deviceType != null  and deviceType != ''">DEVICE_TYPE,</if>
             <if test="domainIp != null ">DOMAIN_IP,</if>
@@ -339,7 +339,7 @@
             <if test="createTime != null ">#{createTime},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="ipAddress != null ">#{ipAddress},</if>
-            <if test="status != null  and status != ''">#{status},</if>
+            <if test="status != null">#{status},</if>
             <if test="sipServerId != null ">#{sipServerId},</if>
             <if test="deviceType != null  and deviceType != ''">#{deviceType},</if>
             <if test="domainIp != null ">#{domainIp},</if>

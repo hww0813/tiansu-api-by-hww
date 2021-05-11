@@ -4,10 +4,10 @@
 			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			  xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
 			  name="Simple_Blue_Table_Based"
-			  pageWidth="595"
+			  pageWidth="685"
 			  pageHeight="842"
 			  whenNoDataType="AllSectionsNoDetail"
-			  columnWidth="555"
+			  columnWidth="645"
 			  leftMargin="20"
 			  rightMargin="20"
 			  topMargin="20"
@@ -31,7 +31,6 @@
 	<field name="CAMERA_CODE">
 		<fieldDescription><![CDATA[CAMERA_CODE]]></fieldDescription>
 	</field>
-
 	<field name="CAMERA_IP">
 		<fieldDescription><![CDATA[CAMERA_IP]]></fieldDescription>
 	</field>
@@ -41,13 +40,13 @@
 	<field name="CAMERA_REGION">
 		<fieldDescription><![CDATA[CAMERA_REGION]]></fieldDescription>
 	</field>
-	<field name="VISITED_CNT" class="java.math.BigDecimal">
+	<field name="VISITED_CNT">
 		<fieldDescription><![CDATA[VISITED_CNT]]></fieldDescription>
 	</field>
 	<title>
 		<band height="80">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="-20" width="555" height="92" backcolor="#006699" uuid="6321f5e3-86eb-444f-acc1-8daaaa0d6c60"/>
+				<reportElement mode="Opaque" x="0" y="-20" width="645" height="92" backcolor="#006699" uuid="6321f5e3-86eb-444f-acc1-8daaaa0d6c60"/>
 				<staticText>
 					<reportElement x="20" y="20" width="300" height="43" forecolor="#FFFFFF" uuid="9e48917a-7b59-4ffd-baad-725f45563194"/>
 					<textElement>
@@ -56,7 +55,7 @@
 					<text><![CDATA[统计报表]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="355" y="43" width="200" height="20" forecolor="#FFFFFF" uuid="0a399baa-bad3-4b1a-9fe3-bb1c563e6a27"/>
+					<reportElement x="435" y="43" width="200" height="20" forecolor="#FFFFFF" uuid="0a399baa-bad3-4b1a-9fe3-bb1c563e6a27"/>
 					<textElement textAlignment="Right">
 						<font fontName="my" size="14" isBold="false"/>
 					</textElement>
@@ -69,10 +68,10 @@
 		<band/>
 	</pageHeader>
 	<columnHeader>
-		<band height="30">
+		<band height="35">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<staticText>
-				<reportElement x="0" y="0" width="140" height="30" uuid="0a600b30-9bd3-48ab-b8ff-1871f0a84bf8">
+				<reportElement x="0" y="0" width="129" height="35" uuid="0a600b30-9bd3-48ab-b8ff-1871f0a84bf8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe5c5d20-1786-4fd4-b2ef-fa1ede5574fc"/>
 				</reportElement>
 				<box>
@@ -87,7 +86,7 @@
 				<text><![CDATA[摄像头编号]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="140" y="0" width="120" height="30" uuid="99cae694-a60f-4597-ad84-05be95c826e9">
+				<reportElement x="129" y="0" width="129" height="35" uuid="99cae694-a60f-4597-ad84-05be95c826e9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e245678-2b6d-4259-9e80-efbdb7053be6"/>
 				</reportElement>
 				<box>
@@ -102,7 +101,7 @@
 				<text><![CDATA[摄像头IP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="260" y="0" width="110" height="30" uuid="3b6c33c6-5dfc-4e8d-ae42-a821a02d3663">
+				<reportElement x="258" y="0" width="129" height="35" uuid="3b6c33c6-5dfc-4e8d-ae42-a821a02d3663">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aab18ba5-f951-4109-85aa-2701afcaa441"/>
 				</reportElement>
 				<box>
@@ -118,7 +117,7 @@
 			</staticText>
 
 			<staticText>
-				<reportElement x="370" y="0" width="90" height="30" uuid="145aa0bd-3fdb-4e15-942c-876a64b1f423">
+				<reportElement x="387" y="0" width="129" height="35" uuid="145aa0bd-3fdb-4e15-942c-876a64b1f423">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0e17122c-5b0b-43b3-baaf-b8a804d49154"/>
 				</reportElement>
 				<box>
@@ -133,7 +132,7 @@
 				<text><![CDATA[所在地区]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="460" y="0" width="90" height="30" uuid="27aac246-c410-4b26-beee-fc7ba0bdd9db">
+				<reportElement x="516" y="0" width="129" height="35" uuid="27aac246-c410-4b26-beee-fc7ba0bdd9db">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="71c470d8-5f7f-4673-9b16-1e0972b74703"/>
 				</reportElement>
 				<box>
@@ -150,11 +149,11 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="30">
+		<band height="35">
 			<property name="com.jaspersoft.studio.layout"
 					  value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
 			<textField>
-				<reportElement x="0" y="0" width="140" height="30" uuid="e139227c-720e-4eb4-94c5-7f457e021c3a">
+				<reportElement x="0" y="0" width="129" height="35" uuid="e139227c-720e-4eb4-94c5-7f457e021c3a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID"
 							  value="fe5c5d20-1786-4fd4-b2ef-fa1ede5574fc"/>
 				</reportElement>
@@ -170,7 +169,7 @@
 				<textFieldExpression><![CDATA[$F{CAMERA_CODE}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="140" y="0" width="120" height="30" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
+				<reportElement x="129" y="0" width="129" height="35" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e245678-2b6d-4259-9e80-efbdb7053be6"/>
 				</reportElement>
 				<box>
@@ -186,7 +185,7 @@
 			</textField>
 
 			<textField>
-				<reportElement x="260" y="0" width="110" height="30" uuid="c730d451-0a68-4782-8ecb-917c1f76d82b">
+				<reportElement x="258" y="0" width="129" height="35" uuid="c730d451-0a68-4782-8ecb-917c1f76d82b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID"
 							  value="aab18ba5-f951-4109-85aa-2701afcaa441"/>
 				</reportElement>
@@ -202,7 +201,7 @@
 				<textFieldExpression><![CDATA[$F{CAMERA_NAME}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="370" y="0" width="90" height="30" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
+				<reportElement x="387" y="0" width="129" height="35" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e245678-2b6d-4259-9e80-efbdb7053be6"/>
 				</reportElement>
 				<box>
@@ -217,7 +216,7 @@
 				<textFieldExpression><![CDATA[$F{CAMERA_REGION}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="460" y="0" width="90" height="30" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
+				<reportElement x="516" y="0" width="129" height="35" uuid="18188e9a-fd08-4092-9c50-5b4f6b19a3c5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3e245678-2b6d-4259-9e80-efbdb7053be6"/>
 				</reportElement>
 				<box>

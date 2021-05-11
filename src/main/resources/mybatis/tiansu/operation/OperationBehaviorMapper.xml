@@ -107,7 +107,10 @@
             ORDER BY ${orderType}
         </if>
 
-        limit #{num},#{size}
+        <if test="num != null and size != null">
+            limit #{num},#{size}
+        </if>
+
     </select>
 
     <select id="getVisitedRateRelatedOperation" resultMap="resultMap">

@@ -480,7 +480,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
         condStatistics.setAction(filters.getInteger("action"));
         condStatistics.setDstCode(filters.getString("cameraCode"));
         condStatistics.setUsername(filters.getString("username"));
-        condStatistics.setSrcIp(IpUtils.ipToLong(filters.getString("cameraIp")));
+        condStatistics.setSrcIp(IpUtils.ipToLong(filters.getString("clientIp")));
         condStatistics.setstartDate(filters.getString("startDate"));
         condStatistics.setendDate(filters.getString("endDate"));
 

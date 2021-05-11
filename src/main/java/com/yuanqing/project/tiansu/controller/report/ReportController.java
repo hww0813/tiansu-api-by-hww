@@ -12,6 +12,7 @@ import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.analysis.Statistics;
 import com.yuanqing.project.tiansu.domain.event.Event;
+import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.report.ExcelData;
 import com.yuanqing.project.tiansu.domain.report.VisitRate;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
@@ -198,10 +199,10 @@ public class ReportController extends BaseController {
 
         JSONObject filters = new JSONObject();
         filters.put("cityCode", cityCode);  // 无用参数
-        if(startDate != null) {
+        if (startDate != null) {
             filters.put("startDate", startDate.toLocalDate());
         }
-        if(endDate != null) {
+        if (endDate != null) {
             filters.put("endDate", endDate.toLocalDate());
         }
 
@@ -351,10 +352,10 @@ public class ReportController extends BaseController {
                 Map<String, Object> params = new HashMap<>();
 
                 List<JSONObject> list = datas.toJavaList(JSONObject.class);
-                list.stream().forEach(h->{
-                    h.put("clientIp",IpUtils.longToIp(h.getLong("clientIp")));
-                    h.put("status",EventStatusEnum.getLabel(h.getLong("status")));
-                    h.put("action",ActionType.getLabel(h.getString("action")));
+                list.stream().forEach(h -> {
+                    h.put("clientIp", IpUtils.longToIp(h.getLong("clientIp")));
+                    h.put("status", EventStatusEnum.getLabel(h.getLong("status")));
+                    h.put("action", ActionType.getLabel(h.getString("action")));
                 });
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -714,12 +715,14 @@ public class ReportController extends BaseController {
                                    @RequestParam(value = "serverDomain", required = false) String serverDomain,
                                    @RequestParam(value = "serverIp", required = false) Long serverIp,
                                    @RequestParam(value = "deviceType", required = false) String deviceType,
+                                   @RequestParam(value = "isDelete", defaultValue = "1") Short isDelete,
                                    @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("serverCode", serverCode);
         filters.put("serverDomain", serverDomain);
         filters.put("serverIp", serverIp);
         filters.put("serverTypeValue", deviceType);
+        filters.put("isDelete", isDelete);
         if ("xlsx".equals(format)) {
             try {
                 ServerTreeExcel(response, filters);
@@ -900,37 +903,36 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/operationBehavior")
-    public void getOperationBehaviorReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-                                           @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+    public void getOperationBehaviorReport(@RequestParam(value = "startDate", required = false)  String stime ,
+                                           @RequestParam(value = "endDate", required = false)  String etime,
                                            @RequestParam(value = "srcIp", required = false) String srcIp,
                                            @RequestParam(value = "dstIp", required = false) String dstIp,
-                                           @RequestParam(value = "srcCode", required = false) String srcCode,
                                            @RequestParam(value = "dstCode", required = false) String dstCode,
-                                           @RequestParam(value = "sessionId", required = false) Long sessionId,
-                                           @RequestParam(value = "clientId", required = false) Long clientId,
-                                           @RequestParam(value = "cameraId", required = false) Long cameraId,
                                            @RequestParam(value = "action", required = false) String action,
-                                           @RequestParam(value = "dstDeviceIp", required = false) String dstDeviceIp,
-                                           @RequestParam(value = "content", required = false) String content,
+                                           @RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
+                                           @RequestParam(value = "username", required = false) String username,
+                                           @RequestParam(required = false) String orderType,
+                                           @RequestParam(required = false) String orderValue,
                                            @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-        JSONObject filters = new JSONObject();
-        filters.put("stime", stime);
-        filters.put("etime", etime);
-        filters.put("srcIp", srcIp);
-        filters.put("dstIp", dstIp);
-        filters.put("srcCode", srcCode);
-        filters.put("dstCode", dstCode);
-        filters.put("sessionId", sessionId);
-        filters.put("clientId", clientId);
-        filters.put("cameraId", cameraId);
-        filters.put("action", action);
-        filters.put("dstDeviceIp", dstDeviceIp);
-        if (StringUtils.isNotBlank(content)) {
-            filters.put("content", "%" + content + "%");
+
+        OperationBehavior operationBehavior = new OperationBehavior();
+        operationBehavior.setstartDate(stime);
+        operationBehavior.setendDate(etime);
+        operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
+        operationBehavior.setDstIp(IpUtils.ipToLong(dstIp));
+        operationBehavior.setDstCode(dstCode);
+        operationBehavior.setAction(action);
+        operationBehavior.setDstDeviceName(dstDeviceName);
+        operationBehavior.setUsername(username);
+        if (StringUtils.isNotBlank(orderType) && StringUtils.isNotBlank(orderValue)) {
+            operationBehavior.setOrderType(orderType+" "+orderValue);
         }
+
+        List<JSONObject> list = operationBehaviorService.getAllToReport(operationBehavior);
+
         if ("xlsx".equals(format)) {
             try {
-                operationBehaviorExcel(response, filters);
+                operationBehaviorExcel(response, list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -949,7 +951,7 @@ public class ReportController extends BaseController {
                 //参数
                 Map<String, Object> params = new HashMap<>();
 
-                List<JSONObject> list = operationBehaviorService.getAllToReport(filters);
+
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -1681,31 +1683,35 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/client/visit/relatedCamera")
-    public void getAnalysisClientRelatedCameraReport(@RequestParam(value = "clientId", required = false) Long clientId,
+    public void getAnalysisClientRelatedCameraReport(@RequestParam(value = "clientId",required = false) Long clientId,
                                                      @RequestParam(value = "action", required = false) Integer action,
                                                      @RequestParam(value = "cameraCode", required = false) String cameraCode,
                                                      @RequestParam(value = "cameraName", required = false) String cameraName,
-                                                     @RequestParam(value = "username", required = false) String username,
                                                      @RequestParam(value = "cameraIp", required = false) String cameraIp,
-                                                     @RequestParam(value = "region[]", required = false) String[] region,
-                                                     @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                                     @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                                     @RequestParam(value = "username", required = false) String username,
+                                                     @RequestParam(value = "clientIp", required = false) String clientIp,
+                                                     @RequestParam(value = "region", required = false) Integer region,
+                                                     @RequestParam(value = "startDate", required = false) String startDate,
+                                                     @RequestParam(value = "endDate", required = false) String endDate,
                                                      @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
         filters.put("clientId", clientId);
         filters.put("action", action);
-        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
         filters.put("cameraCode", cameraCode);
         filters.put("cameraName", cameraName);
-        filters.put("username", username);
         filters.put("cameraIp", cameraIp);
+        filters.put("username", username);
+        filters.put("clientIp", clientIp);
         filters.put("region", region);
-        filters = RegionUtil.setRegion(filters,region);
+        filters.put("startDate", startDate);
+        filters.put("endDate", endDate);
+
+        List<JSONObject> list = statisticsService.getClientVisitRelateCameraToReport(filters);
+
         if ("xlsx".equals(format)) {
             try {
-                this.getAnalysisClientRelatedCameraExcelReport(response, filters);
+                this.getAnalysisClientRelatedCameraExcelReport(response, list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1725,8 +1731,6 @@ public class ReportController extends BaseController {
 
                 //参数
                 Map<String, Object> params = new HashMap<>();
-
-                List<JSONObject> list = statisticsService.getClientVisitRelateCameraToReport(filters);
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -1972,7 +1976,7 @@ public class ReportController extends BaseController {
                                                      @RequestParam(value = "action", required = false) Integer action,
                                                      @RequestParam(value = "startDate", required = false) String startDate,
                                                      @RequestParam(value = "endDate", required = false) String endDate,
-                                                     @RequestParam(value = "format", required = false) String format,HttpServletResponse response) {
+                                                     @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         Statistics statistics = new Statistics();
 
         statistics.setstartDate(startDate);
@@ -2550,7 +2554,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = visitRateService.getRateClientCntToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -2623,7 +2627,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = visitRateService.getRateVisitedCntToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -2658,7 +2662,7 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<JSONObject> all = visitRateService.getRateCameraCntToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -2771,7 +2775,7 @@ public class ReportController extends BaseController {
         ExportExcelUtils.exportExcel(response, "摄像头被访问报表.xlsx", data);
     }
 
-    private void getAnalysisClientRelatedCameraExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
+    private void getAnalysisClientRelatedCameraExcelReport(HttpServletResponse response, List<JSONObject> all) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("终端访问相关摄像头");
 
@@ -2783,8 +2787,7 @@ public class ReportController extends BaseController {
         titles.add("被访问次数");
         data.setTitles(titles);
 
-        List<JSONObject> all = statisticsService.getClientVisitRelateCameraToReport(filters);
-        if(!CollectionUtils.isEmpty(all)) {
+        if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
                 List<Object> row = new ArrayList();
@@ -3010,7 +3013,7 @@ public class ReportController extends BaseController {
         ExportExcelUtils.exportExcel(response, "行为会话报表.xlsx", data);
     }
 
-    public void operationBehaviorExcel(HttpServletResponse response, JSONObject filters) throws Exception {
+    public void operationBehaviorExcel(HttpServletResponse response, List<JSONObject> all) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("操作行为");
 
@@ -3028,7 +3031,7 @@ public class ReportController extends BaseController {
         titles.add("平台名称");
         data.setTitles(titles);
 
-        List<JSONObject> all = operationBehaviorService.getAllToReport(filters);
+
         if (!CollectionUtils.isEmpty(all)) {
             List<List<Object>> rows = new ArrayList();
             for (JSONObject j : all) {
@@ -3130,7 +3133,7 @@ public class ReportController extends BaseController {
         titles.add("MAC地址");
         titles.add("用户数");
         titles.add("状态");
-        titles.add("最后更新时间");
+        titles.add("首次更新时间");
         data.setTitles(titles);
 
         List<JSONObject> all = clientTerminalService.getAllToReport(filters);
