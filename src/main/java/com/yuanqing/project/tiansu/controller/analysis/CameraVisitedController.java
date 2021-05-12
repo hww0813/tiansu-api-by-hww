@@ -114,6 +114,7 @@ public class CameraVisitedController extends BaseController {
                                            @RequestParam(value = "clientId", required = false) Long clientId,
                                            @RequestParam(value = "cameraId", required = false) Long cameraId,
                                            @RequestParam(value = "srcIp", required = false) String srcIp,
+                                           @RequestParam(value = "deviceCode", required = false) String dstCode,
                                            @RequestParam(value = "username", required = false) String username,
                                            @RequestParam(value = "srcCode", required = false) String srcCode,
                                            @RequestParam(value = "action", required = false) String action) throws Exception {
@@ -126,6 +127,7 @@ public class CameraVisitedController extends BaseController {
         operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
         operationBehavior.setUsername(username);
         operationBehavior.setstartDate(startDate);
+        operationBehavior.setDstCode(dstCode);
         operationBehavior.setendDate(endDate);
         operationBehavior.setSize(pageSize);
         operationBehavior.setNum(pageNum);

@@ -255,6 +255,52 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     }
 
     /**
+     * 00：00：00-23：59：59
+     * @param clazz
+     * @return
+     */
+    public static Object getDayTime(Class clazz){
+        Object o;
+        Field startDate;
+        Field endDate;
+        try {
+            Constructor ctor = clazz.getDeclaredConstructor();
+            o = ctor.newInstance();
+            ctor.setAccessible(true);
+
+            while (!clazz.getName().contains("BaseEntity")){
+                if(clazz.getName().contains("Object")){
+                    break;
+                }else {
+                    clazz = clazz.getSuperclass();
+                }
+            }
+            startDate = clazz.getDeclaredField("startDate");
+            endDate = clazz.getDeclaredField("endDate");
+            startDate.setAccessible(true);
+            endDate.setAccessible(true);
+            if(startDate!=null && endDate !=null){
+                startDate.set(o, LocalDateTime.of(LocalDate.now(), LocalTime.MIN).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                endDate.set(o, LocalDateTime.of(LocalDate.now(), LocalTime.MAX).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                return o;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Date getSevenDaysAgo(){
+        return DateUtils.localDateToDate(LocalDate.now().plusDays(-6));
+    }
+
+    public static Date getThirtyDaysAgo(){
+        return DateUtils.localDateToDate(LocalDate.now().plusDays(-29));
+    }
+
+
+    /**lvjingjing
      * 获得当天0点时间
      *
      * @return
@@ -306,46 +352,13 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     }
 
 
-    /**
-     * 00：00：00-23：59：59
-     * @param clazz
-     * @return
-     */
-    public static Object getDayTime(Class clazz){
-        Object o;
-        Field startDate;
-        Field endDate;
-        try {
-            Constructor ctor = clazz.getDeclaredConstructor();
-            o = ctor.newInstance();
-            ctor.setAccessible(true);
-
-            while (!clazz.getName().contains("BaseEntity")){
-                if(clazz.getName().contains("Object")){
-                    break;
-                }else {
-                    clazz = clazz.getSuperclass();
-                }
-            }
-            startDate = clazz.getDeclaredField("startDate");
-            endDate = clazz.getDeclaredField("endDate");
-            startDate.setAccessible(true);
-            endDate.setAccessible(true);
-            if(startDate!=null && endDate !=null){
-                startDate.set(o, LocalDateTime.of(LocalDate.now(), LocalTime.MIN).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-                endDate.set(o, LocalDateTime.of(LocalDate.now(), LocalTime.MAX).withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-                return o;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 
     public static Date localDateToDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
+
+
+
 
     public static Date localDateTimeToDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone( ZoneId.systemDefault()).toInstant());

@@ -139,12 +139,12 @@ public class RawNetFlowController extends BaseController {
                                           @RequestParam(value = "orderType", required = false) String orderType) {
         Date startTime = new Date();
         Date endTime = new Date();
-        if ("当日".equals(stamp)) {
+        if ("day".equals(stamp)) {
             startTime = DateUtils.getStartToday();
-        } else if ("当周".equals(stamp)) {
-            startTime = DateUtils.getStartWeek();
-        } else if ("当月".equals(stamp)) {
-            startTime = DateUtils.getStartMonth();
+        } else if ("week".equals(stamp)) {
+            startTime = DateUtils.getSevenDaysAgo();
+        } else if ("month".equals(stamp)) {
+            startTime = DateUtils.getThirtyDaysAgo();
         }
         startPage();
         List<JSONObject> list = busiRawNetFlowService.getRawClientRank(startTime, endTime, orderType);
