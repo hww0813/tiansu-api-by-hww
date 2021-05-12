@@ -177,7 +177,7 @@
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font fontName="my"/>
                 </textElement>
-                <text><![CDATA[最后更新时间]]></text>
+                <text><![CDATA[首次更新时间]]></text>
             </staticText>
             <staticText>
                 <reportElement x="550" y="0" width="95" height="35" uuid="5eb25536-640e-4056-8e1c-de1795e3b696">

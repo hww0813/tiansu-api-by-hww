@@ -115,7 +115,7 @@
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font fontName="my"/>
                 </textElement>
-                <text><![CDATA[最后更新时间]]></text>
+                <text><![CDATA[首次更新时间]]></text>
             </staticText>
         </band>
     </columnHeader>

@@ -1984,9 +1984,11 @@ public class ReportController extends BaseController {
         statistics.setAction(action);
         statistics.setDstCode(deviceCode);
 
+        List<JSONObject> statisticsList = statisticsService.getClientList(statistics);
+
         if ("xlsx".equals(format)) {
             try {
-                this.getAnalysisCameraRelatedClientExcelReport(response, statistics);
+                this.getAnalysisCameraRelatedClientExcelReport(response, statisticsList);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -2007,8 +2009,6 @@ public class ReportController extends BaseController {
 
                 //参数
                 Map<String, Object> params = new HashMap<>();
-
-                List<Statistics> statisticsList = statisticsService.getClientUserList(statistics);
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(statisticsList);
 
@@ -2682,10 +2682,10 @@ public class ReportController extends BaseController {
         ExportExcelUtils.exportExcel(response, "访问率相关摄像头总数报表.xlsx", data);
     }
 
-    private void getAnalysisCameraRelatedClientExcelReport(HttpServletResponse response, Statistics statistics) throws Exception {
+    private void getAnalysisCameraRelatedClientExcelReport(HttpServletResponse response, List<JSONObject> statisticsList) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("摄像头被访问相关终端");
-        List<Statistics> statisticsList = statisticsService.getClientUserList(statistics);
+
         List<String> titles = new ArrayList();
         titles.add("终端IP");
         titles.add("登录用户");
@@ -2693,11 +2693,11 @@ public class ReportController extends BaseController {
         data.setTitles(titles);
 
         List<List<Object>> rows = new ArrayList();
-        for (Statistics j : statisticsList) {
+        for (JSONObject j : statisticsList) {
             List<Object> row = new ArrayList();
-            row.add(j.getSrcIp());
-            row.add(j.getUsername());
-            row.add(j.getCount());
+            row.add(j.get("srcIp"));
+            row.add(j.get("username"));
+            row.add(j.get("count"));
             rows.add(row);
         }
         data.setRows(rows);
@@ -3097,7 +3097,7 @@ public class ReportController extends BaseController {
         titles.add("IP地址");
         titles.add("所在地区");
         titles.add("状态");
-        titles.add("最后更新时间");
+        titles.add("首次更新时间");
         titles.add("设备厂商");
         data.setTitles(titles);
 
@@ -3163,7 +3163,7 @@ public class ReportController extends BaseController {
         titles.add("用户名");
         titles.add("终端数");
         titles.add("状态");
-        titles.add("最后更新时间");
+        titles.add("首次更新时间");
         data.setTitles(titles);
 
         List<JSONObject> all = clientUserService.getAllToReport(filters);

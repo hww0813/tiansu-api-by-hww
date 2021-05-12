@@ -68,6 +68,24 @@ public class StatisticsServiceImpl implements IStatisticsService {
         return statisticsMapper.getClientUserList(statistics);
     }
 
+    @Override
+    public List<JSONObject> getClientList(Statistics statistics) {
+        List<Statistics> statisticsList = statisticsMapper.getClientUserList(statistics);
+        List<JSONObject> list = new ArrayList<>();
+        statisticsList.stream().forEach(h->{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("srcIp",IpUtils.longToIPv4(h.getSrcIp()));
+            if(!StringUtils.isEmpty(h.getUsername())){
+                jsonObject.put("username",h.getUsername());
+            }else{
+                jsonObject.put("username","");
+            }
+            jsonObject.put("count",h.getCount());
+            list.add(jsonObject);
+        });
+        return list;
+    }
+
 
     /**
      * 1.根据regionID 查询区域信息

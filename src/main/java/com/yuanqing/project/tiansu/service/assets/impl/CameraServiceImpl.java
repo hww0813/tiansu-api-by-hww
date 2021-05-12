@@ -193,6 +193,7 @@ public class CameraServiceImpl implements ICameraService {
                 cameraGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
                 cameraGB.setIsProbe(ProbeEnum.IMPORT.getValue());
                 cameraGB.setStatus(0);
+                cameraGB.setUpdateTime(new Date());
                 updateList.add(cameraGB);
             }
             //私标对应摄像头存在，更新对应摄像头信息
@@ -234,6 +235,7 @@ public class CameraServiceImpl implements ICameraService {
             cameraNGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
             cameraNGB.setIsProbe(ProbeEnum.IMPORT.getValue());
             cameraNGB.setStatus(0);
+            cameraNGB.setUpdateTime(new Date());
             updateList.add(cameraNGB);
         }
         //如果私标和国标对应摄像头都不存在
@@ -316,6 +318,8 @@ public class CameraServiceImpl implements ICameraService {
             cameraNGB.setIsProbe(ProbeEnum.IMPORT.getValue());
             cameraNGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
             cameraNGB.setStatus(0);
+            cameraNGB.setUpdateTime(new Date());
+            cameraNGB.setCreateTime(new Date());
 //            count++;
             addList.add(cameraNGB);
         }

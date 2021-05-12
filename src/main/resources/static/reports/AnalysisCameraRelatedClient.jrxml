@@ -28,7 +28,7 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="srcIp" class="java.lang.Long">
+	<field name="srcIp">
 		<fieldDescription><![CDATA[srcIp]]></fieldDescription>
 	</field>
 

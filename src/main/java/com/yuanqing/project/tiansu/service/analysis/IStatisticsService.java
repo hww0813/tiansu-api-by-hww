@@ -26,6 +26,8 @@ public interface IStatisticsService {
      */
     List<Statistics> getClientUserList(Statistics statistics);
 
+    List<JSONObject> getClientList(Statistics statistics);
+
     /**
      * 获取下级地区访问率
      * @param regionId 地区代码
