@@ -24,6 +24,9 @@ public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior,Lo
 
      Integer quertyOperationBehaviorCount(OperationBehavior operationBehavior);
 
+     Integer getVisitedRateRelatedOperationCount(@Param("list") List<String> cameraCodeList,
+                                                 @Param("filter") OperationBehavior operationBehavior);
+
      List<OperationBehavior> getRealTimeBehaviorList(OperationBehaviorSearch operationBehaviorSearch);
 
      int updateOperationBehavior(OperationBehavior operationBehavior);
