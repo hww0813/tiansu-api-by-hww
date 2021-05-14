@@ -477,6 +477,18 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return df.format(time);
     }
 
+    public static Date getOfTimeType(String timeType){
+        Date date = new Date();
+        if ("DAY".equals(timeType)) {
+            date = getStartToday();
+        } else if ("WEEK".equals(timeType)) {
+            date = getSevenDaysAgo();
+        } else if ("MONTH".equals(timeType)) {
+            date = getThirtyDaysAgo();
+        }
+        return date;
+    }
+
 
     public static void main(String[] args) {
         System.out.println(getNowMonday());

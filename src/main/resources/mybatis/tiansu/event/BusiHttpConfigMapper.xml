@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.event.BusiHttpConfigMapper">
+
+    <resultMap type="com.yuanqing.project.tiansu.domain.event.BusiHttpConfig" id="BusiHttpConfigResult">
+        <result property="id"    column="id"    />
+        <result property="configname"    column="configName"    />
+        <result property="configvalue"    column="configValue"    />
+        <result property="eventLevel"    column="event_level"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="onWork"    column="on_work"    />
+    </resultMap>
+
+    <sql id="selectBusiHttpConfigVo">
+        select id, configName, configValue, event_level, update_time, on_work from busi_http_config
+    </sql>
+
+    <select id="selectBusiHttpConfigList" parameterType="BusiHttpConfig" resultMap="BusiHttpConfigResult">
+        <include refid="selectBusiHttpConfigVo"/>
+        <where>
+            <if test="configname != null  and configname != ''"> and configName like concat('%', #{configname}, '%')</if>
+            <if test="configvalue != null  and configvalue != ''"> and configValue = #{configvalue}</if>
+            <if test="eventLevel != null  and eventLevel != ''"> and event_level = #{eventLevel}</if>
+            <if test="onWork != null "> and on_work = #{onWork}</if>
+        </where>
+    </select>
+
+    <update id="updateBusiHttpConfig" parameterType="BusiHttpConfig">
+        update busi_http_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="configvalue != null  and configvalue != ''">configValue = #{configvalue},</if>
+            <if test="eventLevel != null  and eventLevel != ''">event_level = #{eventLevel},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="onWork != null ">on_work = #{onWork},</if>
+        </trim>
+        where configName = #{configname}
+    </update>
+
+
+</mapper>

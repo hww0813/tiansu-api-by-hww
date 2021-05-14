@@ -8,7 +8,7 @@ import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.event.Event;
-import com.yuanqing.project.tiansu.service.event.impl.EventManagerImpl;
+import com.yuanqing.project.tiansu.service.event.EventManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class EventController {
     private RedisCache redisCache;
 
     @Resource
-    private EventManagerImpl eventManager;
+    private EventManager eventManager;
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "获取告警事件列表", httpMethod = "GET")

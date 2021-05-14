@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.event.BusiHttpEventMapper">
+
+    <resultMap type="com.yuanqing.project.tiansu.domain.event.BusiHttpEvent" id="BusiHttpEventResult">
+        <result property="id" column="id"/>
+        <result property="httpUrl" column="http_url"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="eventSource" column="event_source"/>
+        <result property="httpStatus" column="http_status"/>
+        <result property="eventLevel" column="event_level"/>
+        <result property="eventStatus" column="event_status"/>
+        <result property="httpResponseTime" column="http_response_time"/>
+        <result property="httpStamp" column="http_stamp"/>
+        <result property="startTime" column="start_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectBusiHttpEventVo">
+        select id,
+               http_url,
+               ip_address,
+               event_source,
+               http_status,
+               event_level,
+               event_status,
+               http_response_time,
+               http_stamp,
+               start_time,
+               update_time
+        from busi_http_event
+    </sql>
+
+    <select id="selectBusiHttpEventList" resultMap="BusiHttpEventResult">
+        <include refid="selectBusiHttpEventVo"/>
+        <where>
+            <if test="busiHttpEvent.httpUrl != null  and busiHttpEvent.httpUrl != ''">and http_url like
+                concat('%', #{busiHttpEvent.httpUrl}, '%')
+            </if>
+            <if test="busiHttpEvent.ipAddress != null ">and ip_address = #{busiHttpEvent.ipAddress}</if>
+            <if test="busiHttpEvent.eventSource != null  and busiHttpEvent.eventSource != ''">and event_source =
+                #{busiHttpEvent.eventSource}
+            </if>
+            <if test="busiHttpEvent.httpStatus != null  and busiHttpEvent.httpStatus != ''">and http_status =
+                #{busiHttpEvent.httpStatus}
+            </if>
+            <if test="busiHttpEvent.eventLevel != null  and busiHttpEvent.eventLevel != ''">and event_level =
+                #{busiHttpEvent.eventLevel}
+            </if>
+            <if test="busiHttpEvent.eventStatus != null ">and event_status = #{busiHttpEvent.eventStatus}</if>
+            <if test="startDate != null and endDate!=null ">and start_time between #{startDate} and #{endDate}</if>
+        </where>
+    </select>
+
+    <update id="updateBusiHttpEvent">
+        update busi_http_event set event_status = 0
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateAllBusiHttpEvent">
+        update busi_http_event
+        set event_status = 0
+    </update>
+
+    <select id="statisticsOfDataSources" resultType="java.util.Map">
+        select event_source                                            as eventSource,
+               ROUND((count(*) * 100 / (SELECT COUNT(*)
+                                        FROM busi_http_event
+                                        WHERE start_time BETWEEN #{startDate}
+                                                  and #{endDate})), 0) as proportion
+        from busi_http_event
+        where start_time between #{startDate}
+                  and #{endDate}
+        group by event_source
+    </select>
+
+    <select id="alarmLevelStatistics" resultType="java.util.Map">
+        select event_level                                                         as eventLevel,
+               CONCAT(ROUND((count(*) * 100 / (SELECT COUNT(*)
+                                               FROM busi_http_event
+                                               WHERE start_time BETWEEN #{startDate}
+                                                         and #{endDate})), 0), '') as proportion
+        from busi_http_event
+        where start_time between #{startDate}
+                  and #{endDate}
+        group by eventLevel
+    </select>
+
+
+</mapper>

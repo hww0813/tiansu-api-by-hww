@@ -16,7 +16,7 @@ spring:
         password: admin
     redis:
         # 地址
-        host: 192.168.1.20
+        host: localhost
         # 端口，默认为6379
         port: 6379
         # 密码
@@ -33,6 +33,7 @@ spring:
                 max-active: 8
                 # #连接池最大阻塞等待时间（使用负值表示没有限制）
                 max-wait: -1ms
+
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.p6spy.engine.spy.P6SpyDriver
