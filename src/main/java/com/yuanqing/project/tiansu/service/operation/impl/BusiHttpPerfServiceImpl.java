@@ -3,7 +3,6 @@ package com.yuanqing.project.tiansu.service.operation.impl;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-
 import com.yuanqing.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import com.yuanqing.project.tiansu.service.operation.IBusiHttpPerfService;
  */
 @Service
 public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService {
+
     @Autowired
     private BusiHttpPerfMapper busiHttpPerfMapper;
 
@@ -30,6 +30,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService {
      */
     @Override
     public BusiHttpPerf selectBusiHttpPerfById(Long id) {
+
         return busiHttpPerfMapper.selectBusiHttpPerfById(id);
     }
 
@@ -49,6 +50,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService {
         return busiHttpPerfMapper.selctHttpPerfListGroupByDstHost(busiHttpPerf);
     }
 
+
     /**
      * 新增http接口审计
      *
@@ -57,6 +59,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService {
      */
     @Override
     public int insertBusiHttpPerf(BusiHttpPerf busiHttpPerf) {
+
         return busiHttpPerfMapper.insertBusiHttpPerf(busiHttpPerf);
     }
 
@@ -68,6 +71,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService {
      */
     @Override
     public int updateBusiHttpPerf(BusiHttpPerf busiHttpPerf) {
+
         busiHttpPerf.setUpdateTime(DateUtils.getNowDate());
         return busiHttpPerfMapper.updateBusiHttpPerf(busiHttpPerf);
     }

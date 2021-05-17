@@ -25,15 +25,6 @@ public interface BusiHttpPerfMapper {
     public BusiHttpPerf selectBusiHttpPerfById(Long id);
 
     /**
-     * 查询http接口审计列表
-     *
-     * @param busiHttpPerf
-     * @return
-     */
-    public List<BusiHttpPerf> selectBusiHttpPerfList(BusiHttpPerf busiHttpPerf);
-
-
-    /**
      * 聚合查询 接口请求服务接口数量
      *
      * @param busiHttpPerf http接口审计
@@ -41,6 +32,11 @@ public interface BusiHttpPerfMapper {
      */
     public List<JSONObject> selctHttpPerfListGroupByDstHost(BusiHttpPerf busiHttpPerf);
 
+    /**
+     * @param busiHttpPerf http接口审计
+     * @return http接口审计集合
+     */
+    public List<BusiHttpPerf> selectBusiHttpPerfList(BusiHttpPerf busiHttpPerf);
 
     /**
      * 新增http接口审计

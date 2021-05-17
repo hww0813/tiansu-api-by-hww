@@ -13,6 +13,7 @@ import com.yuanqing.project.tiansu.domain.operation.BusiHttpPerf;
  * @date 2021-05-17
  */
 public interface IBusiHttpPerfService {
+
     /**
      * 查询http接口审计
      *
@@ -28,7 +29,6 @@ public interface IBusiHttpPerfService {
      * @return http接口审计集合
      */
     public List<BusiHttpPerf> selectBusiHttpPerfList(BusiHttpPerf busiHttpPerf);
-
 
     /**
      * 聚合查询 接口请求服务接口数量
