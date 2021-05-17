@@ -220,9 +220,9 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     }
 
     /**
-     * 获取当周日期
-     * 开始时间：本周日
-     * 结束时间：本周六
+     * 获取7天前
+     * 开始时间：6天前
+     * 结束时间：今天
      * @return
      */
     public static JSONObject getWeek(){
@@ -235,9 +235,9 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     }
 
     /**
-     * 获取当月日期
-     * 开始时间：本月1号
-     * 结束时间：下月最后一天
+     * 获取30天前到今天
+     * 开始时间：29天前
+     * 结束时间：今天
      * @return
      */
     public static JSONObject getMonth(){

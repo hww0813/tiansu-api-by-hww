@@ -67,14 +67,14 @@ public class BusiHttpEvent {
     /**
      * 接口数据时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "接口数据时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date httpStamp;
 
     /**
      * 告警事件生成时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "告警事件生成时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date startTime;
 
