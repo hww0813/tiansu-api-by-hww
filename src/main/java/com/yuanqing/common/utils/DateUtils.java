@@ -194,10 +194,12 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
             c.add(Calendar.DAY_OF_WEEK, 7);
         }else if("9".equals(type)){
             c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
-        }
-        else {//其他值都认为是当天日期
+        }else if("10".equals(type)){
+            c.add(Calendar.DAY_OF_MONTH, -29);
+        }else {//其他值都认为是当天日期
             c.setTime(new Date());
         }
+
         Date firstDateOfMonth = c.getTime();
         return sdf.format(firstDateOfMonth);
     }
@@ -224,7 +226,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
      * @return
      */
     public static JSONObject getWeek(){
-        String startDate = getDayOfMonth("7");
+        String startDate = getDayOfMonth("5");
         String endDate = getDayOfMonth("8");
         JSONObject filters = new JSONObject();
         filters.put("startDate", startDate);
@@ -239,8 +241,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
      * @return
      */
     public static JSONObject getMonth(){
-        String startDate = getDayOfMonth("1");
-        String endDate = getDayOfMonth("9");
+        String startDate = getDayOfMonth("10");
+        String endDate = getDayOfMonth("2");
         JSONObject filters = new JSONObject();
         filters.put("startDate", startDate);
         filters.put("endDate", endDate);

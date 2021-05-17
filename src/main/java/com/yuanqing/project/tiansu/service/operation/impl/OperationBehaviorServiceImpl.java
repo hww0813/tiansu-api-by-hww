@@ -203,7 +203,7 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
         operationBehavior.setNum(operationBehavior.getSize() * (operationBehavior.getNum() - 1));
 
 
-        CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior));
+        CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.getVisitedRateRelatedOperationCount(cameraCodeList,operationBehavior));
         //操作行为列表
         CompletableFuture<List<OperationBehavior>> operationBehaviorsFuture = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.getVisitedRateRelatedOperation(cameraCodeList, operationBehavior));
 

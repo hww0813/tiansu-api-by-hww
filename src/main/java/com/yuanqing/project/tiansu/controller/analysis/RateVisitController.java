@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.List;
 
 import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE;
@@ -95,6 +97,13 @@ public class RateVisitController extends BaseController {
 
     }
 
+    public static void main(String[] args) {
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.DAY_OF_MONTH, -6);
+        String endDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(now.getTime());
+        System.out.println(endDate);
+    }
+
     @GetMapping(value = "/visitedCnt")
     @ApiOperation(value = "获取访问分析列表", httpMethod = "GET")
     public AjaxResult getVisitedCntList(@RequestParam(value = "cameraIp", required = false) String cameraIp,
@@ -151,7 +160,7 @@ public class RateVisitController extends BaseController {
             cameraCodeList = statisticsService.getCameraVisited(cameraList, cameraVisit);
 
             if(CollectionUtils.isEmpty(cameraCodeList)){
-                return PageResult.success();
+                return PageResult.success(cameraCodeList);
             }
         }
 
