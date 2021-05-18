@@ -96,7 +96,4 @@ public interface BusiHttpPerfMapper {
      * @return 在该时间范围内的接口超时数
      */
     public Integer getApiOverTime(Date startDate, Date endDate, Double time);
-
-
-
 }

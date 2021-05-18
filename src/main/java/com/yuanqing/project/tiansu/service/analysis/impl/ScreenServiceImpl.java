@@ -4,12 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
-import com.yuanqing.framework.redis.RedisCache;
+import com.yuanqing.project.tiansu.domain.event.BusiHttpConfig;
 import com.yuanqing.project.tiansu.mapper.analysis.ScreenMapper;
 import com.yuanqing.project.tiansu.mapper.assets.CameraMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientUserMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ServerTreeMapper;
+import com.yuanqing.project.tiansu.mapper.event.BusiHttpConfigMapper;
 import com.yuanqing.project.tiansu.mapper.operation.BusiHttpPerfMapper;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.analysis.IScreenService;
@@ -58,13 +59,12 @@ public class ScreenServiceImpl implements IScreenService {
     private BusiHttpPerfMapper busiHttpPerfMapper;
 
     @Resource
-    private RedisCache redisCache;
+    private BusiHttpConfigMapper busiHttpConfigMapper;
+
 
     @Value("${tiansu.alarmhost}")
     private String prefix;
 
-    public static final String PREFIX = "MACS:HTTP_CONFIG:";
-    public static final String OVERTIME = "请求超时";
 
     @Override
     public String getCameraMap(String dateType) {
@@ -228,8 +228,10 @@ public class ScreenServiceImpl implements IScreenService {
     @Override
     public Integer getApiOverTime(Date startDate, Date endDate) {
         //获取配置，再去查询
-        JSONObject overConfig = redisCache.getCacheObject(PREFIX+OVERTIME);
-        Double time = overConfig.getDouble("configvalue");
+        BusiHttpConfig busiHttpConfig = new BusiHttpConfig();
+        busiHttpConfig.setConfigname("请求超时");
+        List<BusiHttpConfig> list = busiHttpConfigMapper.selectBusiHttpConfigList(busiHttpConfig);
+        Double time = Double.parseDouble(list.get(0).getConfigvalue());
         return busiHttpPerfMapper.getApiOverTime(startDate, endDate, time);
     }
 
