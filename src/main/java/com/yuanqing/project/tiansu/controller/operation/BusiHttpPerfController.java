@@ -71,12 +71,12 @@ public class BusiHttpPerfController extends BaseController
     /**
      * 新增http接口审计
      */
-    @PreAuthorize("@ss.hasPermi('api:httpPerf:add')")
-    @Log(title = "http接口审计", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody BusiHttpPerf busiHttpPerf)
-    {
-        return toAjax(busiHttpPerfService.insertBusiHttpPerf(busiHttpPerf));
+        @PreAuthorize("@ss.hasPermi('api:httpPerf:add')")
+        @Log(title = "http接口审计", businessType = BusinessType.INSERT)
+        @PostMapping
+        public AjaxResult add(@RequestBody BusiHttpPerf busiHttpPerf)
+        {
+            return toAjax(busiHttpPerfService.insertBusiHttpPerf(busiHttpPerf));
     }
 
     /**

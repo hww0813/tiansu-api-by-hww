@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
@@ -13,6 +14,7 @@ import com.yuanqing.framework.web.page.TableDataInfo;
 import com.yuanqing.project.tiansu.domain.event.BusiHttpEvent;
 import com.yuanqing.project.tiansu.service.event.IBusiHttpEventService;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +63,12 @@ public class BusiHttpEventController extends BaseController {
      */
     @PutMapping("/editSome")
     @ApiOperation(value = "接口告警确认部分状态" , httpMethod = "PUT")
-    public AjaxResult editSome(@RequestParam("ids") Long[] ids) {
+    public AjaxResult editSome(@RequestBody JSONObject jsonObject) {
+        String str1 = String.valueOf(jsonObject.get("ids"));
+        String str = str1.substring(1, str1.length() - 1);
+        String[] strArr = str.split(",");
+
+        Long[] ids = (Long[]) ConvertUtils.convert(strArr,Long.class);
         return toAjax(busiHttpEventService.updateBusiHttpEvent(ids));
     }
 
