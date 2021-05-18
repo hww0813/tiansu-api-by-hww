@@ -99,6 +99,7 @@ public class BusiHttpPerfController extends BaseController
     public AjaxResult add(@RequestBody BusiHttpPerf busiHttpPerf)
     {
         return toAjax(busiHttpPerfService.insertBusiHttpPerf(busiHttpPerf));
+
     }
 
     /**
