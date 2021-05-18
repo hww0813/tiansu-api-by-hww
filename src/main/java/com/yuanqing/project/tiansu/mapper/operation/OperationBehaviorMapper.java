@@ -7,6 +7,7 @@ import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,4 +53,12 @@ public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior,Lo
      */
       List<OperationBehavior> getVisitedRateRelatedOperation(@Param("list") List<String> cameraCodeList,
                                                              @Param("filter") OperationBehavior operationBehavior);
+
+    /**
+     * 获取操作行为总数
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+      Integer getOperNum(Date startDate,Date endDate);
 }

@@ -74,4 +74,32 @@ public class ScreenConstants {
      */
     public static final String REAL_OPERATION_WARN = PREFIX + "realOperationWarn";
 
+    /**
+     * 11.操作行为总数 今日/前7天/前30天
+     */
+    public static final String OPER_NUM_DAY = PREFIX + "operNum:day";
+    public static final String OPER_NUM_WEEK = PREFIX + "operNum:week";
+    public static final String OPER_NUM_MONTH = PREFIX + "operNum:month";
+
+    /**
+     * 12.接口调用数 今日/前7天/前30天
+     */
+    public static final String HTTP_API_DAY = PREFIX + "httpApi:day";
+    public static final String HTTP_API_WEEK = PREFIX + "httpApi:week";
+    public static final String HTTP_API_MONTH = PREFIX + "httpApi:month";
+
+    /**
+     * 13.接口错误数 今日/前7天/前30天
+     */
+    public static final String API_ERROR_DAY = PREFIX + "apiError:day";
+    public static final String API_ERROR_WEEK = PREFIX + "apiError:week";
+    public static final String API_ERROR_MONTH = PREFIX + "apiError:month";
+
+    /**
+     * 14.请求超时数 今日/前7天/前30天
+     */
+    public static final String REQUEST_OVERTIME_DAY = PREFIX + "requestOvertime:day";
+    public static final String REQUEST_OVERTIME_WEEK = PREFIX + "requestOvertime:week";
+    public static final String REQUEST_OVERTIME_MONTH = PREFIX + "requestOvertime:month";
+
 }

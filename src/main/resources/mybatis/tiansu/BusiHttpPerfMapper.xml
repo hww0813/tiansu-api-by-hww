@@ -1,41 +1,55 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yuanqing.project.tiansu.mapper.operation.BusiHttpPerfMapper">
 
     <resultMap type="BusiHttpPerf" id="BusiHttpPerfResult">
-        <result property="id"    column="id"    />
-        <result property="srcIp"    column="src_ip"    />
-        <result property="srcPort"    column="src_port"    />
-        <result property="httpResponseTime"    column="http_response_time"    />
-        <result property="dataSize"    column="data_size"    />
-        <result property="content"    column="content"    />
-        <result property="dstIp"    column="dst_ip"    />
-        <result property="dstPort"    column="dst_port"    />
-        <result property="httpUrl"    column="http_url"    />
-        <result property="httpStatus"    column="http_status"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="stamp"    column="stamp"    />
+        <result property="id" column="id"/>
+        <result property="srcIp" column="src_ip"/>
+        <result property="srcPort" column="src_port"/>
+        <result property="httpResponseTime" column="http_response_time"/>
+        <result property="dataSize" column="data_size"/>
+        <result property="content" column="content"/>
+        <result property="dstIp" column="dst_ip"/>
+        <result property="dstPort" column="dst_port"/>
+        <result property="httpUrl" column="http_url"/>
+        <result property="httpStatus" column="http_status"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="stamp" column="stamp"/>
     </resultMap>
 
     <sql id="selectBusiHttpPerfVo">
-        select id, src_ip, src_port, http_response_time, data_size, content, dst_ip, dst_port, http_url, http_status, update_time, stamp from busi_http_perf
+        select id,
+               src_ip,
+               src_port,
+               http_response_time,
+               data_size,
+               content,
+               dst_ip,
+               dst_port,
+               http_url,
+               http_status,
+               update_time,
+               stamp
+        from busi_http_perf
     </sql>
 
     <select id="selectBusiHttpPerfList" parameterType="BusiHttpPerf" resultMap="BusiHttpPerfResult">
         <include refid="selectBusiHttpPerfVo"/>
         <where>
-            <if test="srcIp != null "> and src_ip = #{srcIp}</if>
-            <if test="srcPort != null  and srcPort != ''"> and src_port = #{srcPort}</if>
-            <if test="httpResponseTime != null  and httpResponseTime != ''"> and http_response_time = #{httpResponseTime}</if>
-            <if test="dataSize != null  and dataSize != ''"> and data_size = #{dataSize}</if>
-            <if test="content != null  and content != ''"> and content = #{content}</if>
-            <if test="dstIp != null "> and dst_ip = #{dstIp}</if>
-            <if test="dstPort != null  and dstPort != ''"> and dst_port = #{dstPort}</if>
-            <if test="httpUrl != null  and httpUrl != ''"> and http_url = #{httpUrl}</if>
-            <if test="httpStatus != null  and httpStatus != ''"> and http_status = #{httpStatus}</if>
-            <if test="stamp != null "> and stamp = #{stamp}</if>
+            <if test="srcIp != null ">and src_ip = #{srcIp}</if>
+            <if test="srcPort != null  and srcPort != ''">and src_port = #{srcPort}</if>
+            <if test="httpResponseTime != null  and httpResponseTime != ''">and http_response_time =
+                #{httpResponseTime}
+            </if>
+            <if test="dataSize != null  and dataSize != ''">and data_size = #{dataSize}</if>
+            <if test="content != null  and content != ''">and content = #{content}</if>
+            <if test="dstIp != null ">and dst_ip = #{dstIp}</if>
+            <if test="dstPort != null  and dstPort != ''">and dst_port = #{dstPort}</if>
+            <if test="httpUrl != null  and httpUrl != ''">and http_url = #{httpUrl}</if>
+            <if test="httpStatus != null  and httpStatus != ''">and http_status = #{httpStatus}</if>
+            <if test="stamp != null ">and stamp = #{stamp}</if>
         </where>
     </select>
 
@@ -58,7 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="httpStatus != null  and httpStatus != ''">http_status,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="stamp != null ">stamp,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="srcIp != null ">#{srcIp},</if>
             <if test="srcPort != null  and srcPort != ''">#{srcPort},</if>
@@ -71,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="httpStatus != null  and httpStatus != ''">#{httpStatus},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="stamp != null ">#{stamp},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateBusiHttpPerf" parameterType="BusiHttpPerf">
@@ -79,7 +93,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="srcIp != null ">src_ip = #{srcIp},</if>
             <if test="srcPort != null  and srcPort != ''">src_port = #{srcPort},</if>
-            <if test="httpResponseTime != null  and httpResponseTime != ''">http_response_time = #{httpResponseTime},</if>
+            <if test="httpResponseTime != null  and httpResponseTime != ''">http_response_time = #{httpResponseTime},
+            </if>
             <if test="dataSize != null  and dataSize != ''">data_size = #{dataSize},</if>
             <if test="content != null  and content != ''">content = #{content},</if>
             <if test="dstIp != null ">dst_ip = #{dstIp},</if>
@@ -93,7 +108,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteBusiHttpPerfById" parameterType="Long">
-        delete from busi_http_perf where id = #{id}
+        delete
+        from busi_http_perf
+        where id = #{id}
     </delete>
 
     <delete id="deleteBusiHttpPerfByIds" parameterType="String">
@@ -102,5 +119,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="getHttpApiNum" resultType="java.lang.Integer">
+        select count(*)
+        from busi_http_perf
+        where stamp between #{startDate} and #{endDate}
+    </select>
+
+    <select id="getApiErrorNum" resultType="java.lang.Integer">
+        select count(*)
+        from busi_http_perf
+        where http_status !=200 and stamp between #{startDate}
+          and #{endDate}
+    </select>
+
+    <select id="getApiOverTime" resultType="java.lang.Integer">
+        select count(*)
+        from busi_http_perf
+        where http_response_time > #{time}
+          and stamp between
+            #{startDate}
+            and #{endDate}
+    </select>
 
 </mapper>

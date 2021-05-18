@@ -40,4 +40,9 @@ public interface ServerTreeMapper extends BaseMapper<ServerTree,Long> {
      */
     List<ServerTree> getServerByServerIpList(@Param("list") List<Long> serverIpList,
                                              @Param("server") ServerTree serverTree);
+
+    /**
+     * 获取总数
+     */
+    Integer getRealTotal();
 }

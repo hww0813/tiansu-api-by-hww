@@ -1,7 +1,10 @@
 package com.yuanqing.project.tiansu.mapper.operation;
 
+import java.util.Date;
 import java.util.List;
+
 import com.yuanqing.project.tiansu.domain.operation.BusiHttpPerf;
+import org.springframework.stereotype.Repository;
 
 /**
  * http接口审计Mapper接口
@@ -9,8 +12,8 @@ import com.yuanqing.project.tiansu.domain.operation.BusiHttpPerf;
  * @author xucan
  * @date 2021-05-17
  */
-public interface BusiHttpPerfMapper
-{
+@Repository
+public interface BusiHttpPerfMapper {
     /**
      * 查询http接口审计
      *
@@ -58,4 +61,31 @@ public interface BusiHttpPerfMapper
      * @return 结果
      */
     public int deleteBusiHttpPerfByIds(Long[] ids);
+
+    /**
+     * 获取接口调用数
+     *
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return 在该时间范围内的接口调用数
+     */
+    public Integer getHttpApiNum(Date startDate, Date endDate);
+
+    /**
+     * 获取接口错误数
+     *
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return 在该时间范围内的接口错误数
+     */
+    public Integer getApiErrorNum(Date startDate, Date endDate);
+
+    /**
+     * 获取接口超时数
+     *
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return 在该时间范围内的接口超时数
+     */
+    public Integer getApiOverTime(Date startDate, Date endDate, Double time);
 }
