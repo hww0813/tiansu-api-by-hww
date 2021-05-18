@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 /**
- *
  * 大屏统计任务
+ *
  * @author xucan
  * @version 1.0
  * @Date 2021-04-02 09:59
@@ -34,9 +34,8 @@ public class ScreenStatisticsTask {
     private IScreenService screenService;
 
 
-
     @Scheduled(cron = "0/3 * * * * ?")
-    public void getOperCategory(){
+    public void getOperCategory() {
 
         String value = screenService.getOperCategory(new Date());
 
@@ -47,22 +46,22 @@ public class ScreenStatisticsTask {
     }
 
     @Scheduled(cron = "30 0/1 * * * ?")
-    public void getCameraMap(){
+    public void getCameraMap() {
 
         String value = screenService.getCameraMap("all");
-        if(value==null){
-            value="[]";
+        if (value == null) {
+            value = "[]";
         }
         JSONObject object = new JSONObject();
-        object.put("value",value);
-      redisCache.setCacheObject(ScreenConstants.CAMERA_MAP, object);
+        object.put("value" , value);
+        redisCache.setCacheObject(ScreenConstants.CAMERA_MAP, object);
         LOGGER.info("定时任务执行完成:统计摄像头地图");
 
     }
 
 
     @Scheduled(cron = "0/30 * * * * ?")
-    public void getOperWarn(){
+    public void getOperWarn() {
 
         String value = screenService.getOperWarn(new Date());
         JSONArray jsonArray = JSONArray.parseArray(value);
@@ -72,12 +71,12 @@ public class ScreenStatisticsTask {
     }
 
     @Scheduled(cron = "0 0/1 * * * ?")
-    public void getOperCount(){
+    public void getOperCount() {
 
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getOperCount(filter);
 
-        JSONObject object =  JSONObject.parseObject(value);
+        JSONObject object = JSONObject.parseObject(value);
         redisCache.setCacheObject(ScreenConstants.OPERATION_NUM_DAY, object);
         LOGGER.info("定时任务执行完成:分类统计操作行为(今日)");
 
@@ -100,7 +99,7 @@ public class ScreenStatisticsTask {
 
 
     @Scheduled(cron = "1 0/1 * * * ?")
-    public void getUserTopByDay(){
+    public void getUserTopByDay() {
 
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getUserTop(filter);
@@ -126,7 +125,7 @@ public class ScreenStatisticsTask {
     }
 
     @Scheduled(cron = "2 0/1 * * * ?")
-    public void getTerminalTopByDay(){
+    public void getTerminalTopByDay() {
 
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getTerminalTop(filter);
@@ -152,7 +151,7 @@ public class ScreenStatisticsTask {
     }
 
     @Scheduled(cron = "3 0/1 * * * ?")
-    public void getCameraTop(){
+    public void getCameraTop() {
 
         JSONObject filter = DateUtils.getDay();
         String value = screenService.getCameraTop(filter);
@@ -179,8 +178,8 @@ public class ScreenStatisticsTask {
     }
 
 
-    @Scheduled(cron = "0/5 * * * * ?")
-    public void getWarn(){
+    @Scheduled(cron = "4 0/1 * * * ?")
+    public void getWarn() {
         JSONObject day = screenService.getWarn();
 
         JSONObject week = screenService.getWarn();
@@ -188,20 +187,70 @@ public class ScreenStatisticsTask {
         JSONObject month = screenService.getWarn();
         JSONObject warn = new JSONObject();
 
-        warn.put("day",day.get("WARNCOUNT"));
-        warn.put("week",week.get("WARNCOUNT"));
-        warn.put("month",month.get("WARNCOUNT"));
+        warn.put("day" , day.get("WARNCOUNT"));
+        warn.put("week" , week.get("WARNCOUNT"));
+        warn.put("month" , month.get("WARNCOUNT"));
 
         redisCache.setCacheObject(ScreenConstants.WARN, warn);
         LOGGER.info("定时任务执行完成:统计告警事件(当日/本周/本月)");
 
     }
 
-    @Scheduled(cron = "0/5 * * * * ?")
-    public void getSummary(){
-        JSONObject object =  screenService.getSummary();
+    @Scheduled(cron = "5 0/1 * * * ?")
+    public void getSummary() {
+        JSONObject object = screenService.getSummary();
 
         redisCache.setCacheObject(ScreenConstants.SUMMARY, object);
+        LOGGER.info("定时任务执行完成:大屏资产");
+    }
+
+    @Scheduled(cron = "6 0/1 * * * ?")
+    public void getOperNum() {
+        Date endDate = new Date();
+        Date startDate = DateUtils.getOfTimeType("DAY");
+        Integer dayNum = screenService.getOperNum(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.OPER_NUM_DAY, dayNum);
+
+        startDate = DateUtils.getOfTimeType("WEEK");
+        Integer weekNum = screenService.getOperNum(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.OPER_NUM_WEEK, weekNum);
+
+        startDate = DateUtils.getOfTimeType("MONTH");
+        Integer monthNum = screenService.getOperNum(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.OPER_NUM_MONTH, monthNum);
+
+        LOGGER.info("定时任务执行完成:操作行为总数(当日/前7天/前30天)");
+    }
+
+    @Scheduled(cron = "7 0/1 * * * ?")
+    public void getHttpApiMsg() {
+        Date endDate = new Date();
+
+        Date startDate = DateUtils.getOfTimeType("DAY");
+        Integer dayNum = screenService.getHttpApi(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.HTTP_API_DAY, dayNum);
+        dayNum = screenService.getApiErrorNum(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.API_ERROR_DAY, dayNum);
+        dayNum = screenService.getApiOverTime(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.REQUEST_OVERTIME_DAY, dayNum);
+
+        startDate = DateUtils.getOfTimeType("WEEK");
+        Integer weekNum = screenService.getHttpApi(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.HTTP_API_WEEK, weekNum);
+        weekNum = screenService.getApiErrorNum(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.API_ERROR_WEEK, weekNum);
+        weekNum = screenService.getApiOverTime(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.REQUEST_OVERTIME_WEEK, weekNum);
+
+        startDate = DateUtils.getOfTimeType("MONTH");
+        Integer monthNum = screenService.getHttpApi(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.HTTP_API_MONTH, monthNum);
+        monthNum = screenService.getApiErrorNum(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.API_ERROR_MONTH, monthNum);
+        monthNum = screenService.getApiOverTime(startDate,endDate);
+        redisCache.setCacheObject(ScreenConstants.REQUEST_OVERTIME_MONTH, monthNum);
+
+        LOGGER.info("定时任务执行完成:接口调用统计信息(当日/前7天/前30天)");
     }
 
 }

@@ -163,4 +163,9 @@
         where SERVER_IP = #{serverIp} and IS_DELETE = 1
     </select>
 
+    <select id="getRealTotal" resultType="java.lang.Integer">
+        select count(*)
+        from busi_server where IS_DELETE = 1
+    </select>
+
 </mapper>

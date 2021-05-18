@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.service.operation;
 
 import java.util.List;
+
 import com.yuanqing.project.tiansu.domain.operation.BusiHttpPerf;
 
 /**
@@ -9,8 +10,7 @@ import com.yuanqing.project.tiansu.domain.operation.BusiHttpPerf;
  * @author xucan
  * @date 2021-05-17
  */
-public interface IBusiHttpPerfService
-{
+public interface IBusiHttpPerfService {
     /**
      * 查询http接口审计
      *
@@ -58,4 +58,5 @@ public interface IBusiHttpPerfService
      * @return 结果
      */
     public int deleteBusiHttpPerfById(Long id);
+
 }

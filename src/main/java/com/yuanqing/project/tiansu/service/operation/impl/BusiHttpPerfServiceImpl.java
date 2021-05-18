@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.service.operation.impl;
 
 import java.util.List;
+
 import com.yuanqing.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,7 @@ import com.yuanqing.project.tiansu.service.operation.IBusiHttpPerfService;
  * @date 2021-05-17
  */
 @Service
-public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService
-{
+public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService {
     @Autowired
     private BusiHttpPerfMapper busiHttpPerfMapper;
 
@@ -27,8 +27,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService
      * @return http接口审计
      */
     @Override
-    public BusiHttpPerf selectBusiHttpPerfById(Long id)
-    {
+    public BusiHttpPerf selectBusiHttpPerfById(Long id) {
         return busiHttpPerfMapper.selectBusiHttpPerfById(id);
     }
 
@@ -39,8 +38,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService
      * @return http接口审计
      */
     @Override
-    public List<BusiHttpPerf> selectBusiHttpPerfList(BusiHttpPerf busiHttpPerf)
-    {
+    public List<BusiHttpPerf> selectBusiHttpPerfList(BusiHttpPerf busiHttpPerf) {
         return busiHttpPerfMapper.selectBusiHttpPerfList(busiHttpPerf);
     }
 
@@ -51,8 +49,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService
      * @return 结果
      */
     @Override
-    public int insertBusiHttpPerf(BusiHttpPerf busiHttpPerf)
-    {
+    public int insertBusiHttpPerf(BusiHttpPerf busiHttpPerf) {
         return busiHttpPerfMapper.insertBusiHttpPerf(busiHttpPerf);
     }
 
@@ -63,8 +60,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService
      * @return 结果
      */
     @Override
-    public int updateBusiHttpPerf(BusiHttpPerf busiHttpPerf)
-    {
+    public int updateBusiHttpPerf(BusiHttpPerf busiHttpPerf) {
         busiHttpPerf.setUpdateTime(DateUtils.getNowDate());
         return busiHttpPerfMapper.updateBusiHttpPerf(busiHttpPerf);
     }
@@ -76,8 +72,7 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService
      * @return 结果
      */
     @Override
-    public int deleteBusiHttpPerfByIds(Long[] ids)
-    {
+    public int deleteBusiHttpPerfByIds(Long[] ids) {
         return busiHttpPerfMapper.deleteBusiHttpPerfByIds(ids);
     }
 
@@ -88,8 +83,8 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService
      * @return 结果
      */
     @Override
-    public int deleteBusiHttpPerfById(Long id)
-    {
+    public int deleteBusiHttpPerfById(Long id) {
         return busiHttpPerfMapper.deleteBusiHttpPerfById(id);
     }
+
 }

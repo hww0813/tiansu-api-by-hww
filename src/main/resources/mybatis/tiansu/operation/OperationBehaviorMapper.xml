@@ -37,7 +37,8 @@
         <result column="BIT_RATE" property="bitRate" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <select id="getList" resultMap="resultMap"   parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
+    <select id="getList" resultMap="resultMap"
+            parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
         SELECT v.* FROM busi_oper v
         <where>
             <if test="id != null and id != '' ">
@@ -68,7 +69,9 @@
                 AND v.ACTION = #{action}
             </if>
 
-            <if test="startDate != null and endDate != null">and v.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and v.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+            <if test="startDate != null and endDate != null">and v.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d
+                %H:%i:%s') and v.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+            </if>
 
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
                 AND v.dst_device_ip = #{dstDeviceIp}
@@ -117,13 +120,14 @@
         select * from busi_oper bo
         <where>
             <if test="list!=null and list.size()>0">
-            DST_CODE in
-            <foreach collection="list" open="(" separator="," close=")" item="item">
-                #{item}
-            </foreach>
+                DST_CODE in
+                <foreach collection="list" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
             </if>
             <if test="filter.startDate != null and filter.endDate != null">
-                AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
+                AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;=
+                STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
             </if>
             <if test="filter.srcIp != null and filter.srcIp != '' ">
                 AND bo.SRC_IP = #{filter.srcIp}
@@ -145,21 +149,22 @@
             </if>
 
         </where>
-            ORDER BY bo.STAMP DESC
-            limit #{filter.num},#{filter.size}
+        ORDER BY bo.STAMP DESC
+        limit #{filter.num},#{filter.size}
     </select>
 
-    <select id="getVisitedRateRelatedOperationCount" resultType="java.lang.Integer" >
+    <select id="getVisitedRateRelatedOperationCount" resultType="java.lang.Integer">
         select count(*) from busi_oper bo
         <where>
             <if test="list!=null and list.size()>0">
-            DST_CODE in
-            <foreach collection="list" open="(" separator="," close=")" item="item">
-                #{item}
-            </foreach>
+                DST_CODE in
+                <foreach collection="list" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
             </if>
             <if test="filter.startDate != null and filter.endDate != null">
-                AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
+                AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;=
+                STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
             </if>
             <if test="filter.srcIp != null and filter.srcIp != '' ">
                 AND bo.SRC_IP = #{filter.srcIp}
@@ -185,11 +190,14 @@
 
 
     <select id="getCameraidListBySession" resultType="java.lang.Long" parameterType="java.lang.Long">
-        select camera_id from busi_oper where session_id = #{sessionId}
+        select camera_id
+        from busi_oper
+        where session_id = #{sessionId}
     </select>
 
 
-    <select id="quertyOperationBehaviorCount" resultType="java.lang.Integer" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior" >
+    <select id="quertyOperationBehaviorCount" resultType="java.lang.Integer"
+            parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
         select count(1) from busi_oper v
         <where>
             <if test="id != null and id != '' ">
@@ -219,7 +227,9 @@
             <if test="action != null and action != '' ">
                 AND v.ACTION = #{action}
             </if>
-            <if test="startDate != null and endDate != null">and v.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+            <if test="startDate != null and endDate != null">and v.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d
+                %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+            </if>
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
                 AND v.dst_device_ip = #{dstDeviceIp}
             </if>
@@ -250,21 +260,23 @@
         </where>
     </select>
 
-    <select id="getRealTimeBehaviorList" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch"  resultMap="resultMap" >
+    <select id="getRealTimeBehaviorList"
+            parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch" resultMap="resultMap">
         SELECT * FROM BUSI_OPER bo WHERE 1=1
         AND bo.ACTION in (0,1,2,3)
-        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate},
+            '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+        </if>
         ORDER BY bo.STAMP DESC
         -- 最大只查3000条
         limit 0, 3000
     </select>
 
 
-    <update id="updateOperationBehavior" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior" >
+    <update id="updateOperationBehavior" parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
         UPDATE
             BUSI_OPER_T
-            SET
-            CLIENT_ID     = #{clientId, jdbcType=BIGINT},
+        SET CLIENT_ID     = #{clientId, jdbcType=BIGINT},
             SRC_CODE      = #{srcCode, jdbcType=VARCHAR},
             SRC_IP        = #{srcIp, jdbcType=INTEGER},
             SRC_PORT      = #{srcPort, jdbcType=INTEGER},
@@ -280,13 +292,12 @@
             STAMP         = #{stamp, jdbcType=TIMESTAMP},
             CONTENT       = #{content, jdbcType=VARCHAR},
             SESSION_ID    = #{sessionId, jdbcType=BIGINT},
-            RESULT         = #{result, jdbcType=VARCHAR},
-            UP_FLOW         = #{upFlow, jdbcType=BIGINT},
-            DOWN_FLOW       = #{downFlow, jdbcType=BIGINT},
+            RESULT        = #{result, jdbcType=VARCHAR},
+            UP_FLOW       = #{upFlow, jdbcType=BIGINT},
+            DOWN_FLOW     = #{downFlow, jdbcType=BIGINT},
             CALL_ID       = #{callId, jdbcType=VARCHAR}
         WHERE id = #{id}
     </update>
-
 
 
     <select id="cameraAnalysisDetail" resultType="java.util.HashMap">
@@ -306,7 +317,9 @@
             AND bo.CAMERA_ID = #{cameraId}
         </if>
 
-        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate},
+            '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+        </if>
 
         <if test="action != null and action != ''">
             and bo.ACTION = #{action}
@@ -319,7 +332,7 @@
     </select>
 
     <select id="cameraAnalysisCount" resultType="java.lang.Integer">
-        SELECT count(distinct CLIENT_ID)  AS count
+        SELECT count(distinct CLIENT_ID) AS count
         FROM
         busi_oper bo
         WHERE 1=1 AND bo.ACTION != 6
@@ -327,7 +340,9 @@
             AND bo.CAMERA_ID = #{cameraId}
         </if>
 
-        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+        <if test="startDate != null and endDate != null">and bo.stamp between STR_TO_DATE(#{startDate},
+            '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+        </if>
 
         <if test="action != null and action != ''">
             and bo.ACTION = #{action}
@@ -338,20 +353,31 @@
     <select id="queryRawCount" resultType="java.lang.Integer" parameterType="java.lang.Object">
         select count(1) from busi_raw_signal b
         <where>
-            <if test="startDate != null and endDate != null">and b.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')</if>
+            <if test="startDate != null and endDate != null">and b.stamp between STR_TO_DATE(#{startDate},
+                '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
+            </if>
 
         </where>
     </select>
 
 
     <select id="findById" resultMap="resultMap">
-        select * from busi_oper where id = #{id}
+        select *
+        from busi_oper
+        where id = #{id}
     </select>
 
 
     <select id="getDstIpBySessionId" resultType="java.lang.Long">
-        select DISTINCT dst_ip from busi_oper where session_id = #{sessionId}
+        select DISTINCT dst_ip
+        from busi_oper
+        where session_id = #{sessionId}
     </select>
 
 
+    <select id="getOperNum" resultType="java.lang.Integer">
+        select count(*)
+        from busi_oper
+        where stamp between #{startDate} and #{endDate}
+    </select>
 </mapper>
