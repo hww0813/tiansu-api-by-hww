@@ -3,6 +3,8 @@ package com.yuanqing.project.tiansu.mapper.operation;
 import java.util.Date;
 import java.util.List;
 
+
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.domain.operation.BusiHttpPerf;
 import org.springframework.stereotype.Repository;
 
@@ -25,10 +27,20 @@ public interface BusiHttpPerfMapper {
     /**
      * 查询http接口审计列表
      *
+     * @param busiHttpPerf
+     * @return
+     */
+    public List<BusiHttpPerf> selectBusiHttpPerfList(BusiHttpPerf busiHttpPerf);
+
+
+    /**
+     * 聚合查询 接口请求服务接口数量
+     *
      * @param busiHttpPerf http接口审计
      * @return http接口审计集合
      */
-    public List<BusiHttpPerf> selectBusiHttpPerfList(BusiHttpPerf busiHttpPerf);
+    public List<JSONObject> selctHttpPerfListGroupByDstHost(BusiHttpPerf busiHttpPerf);
+
 
     /**
      * 新增http接口审计
@@ -88,4 +100,7 @@ public interface BusiHttpPerfMapper {
      * @return 在该时间范围内的接口超时数
      */
     public Integer getApiOverTime(Date startDate, Date endDate, Double time);
+
+
+
 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.tiansu.mapper.assets.BusiServerRemarkMapper">
+
+    <resultMap type="BusiServerRemark" id="BusiServerRemarkResult">
+        <result property="id"    column="id"    />
+        <result property="serverName"    column="server_name"    />
+        <result property="serverIp"    column="server_ip"    />
+        <result property="serverPort"    column="server_port"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBusiServerRemarkVo">
+        select id, server_name, server_ip, server_port, create_time, update_time, remark from busi_server_remark
+    </sql>
+
+    <select id="selectBusiServerRemarkList" parameterType="BusiServerRemark" resultMap="BusiServerRemarkResult">
+        <include refid="selectBusiServerRemarkVo"/>
+        <where>
+            <if test="serverName != null  and serverName != ''"> and server_name like concat('%', #{serverName}, '%')</if>
+            <if test="serverIp != null "> and server_ip = #{serverIp}</if>
+            <if test="serverPort != null "> and server_port = #{serverPort}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiServerRemarkById" parameterType="Long" resultMap="BusiServerRemarkResult">
+        <include refid="selectBusiServerRemarkVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBusiServerRemark" parameterType="BusiServerRemark" useGeneratedKeys="true" keyProperty="id">
+        insert into busi_server_remark
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="serverName != null  and serverName != ''">server_name,</if>
+            <if test="serverIp != null ">server_ip,</if>
+            <if test="serverPort != null ">server_port,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="serverName != null  and serverName != ''">#{serverName},</if>
+            <if test="serverIp != null ">#{serverIp},</if>
+            <if test="serverPort != null ">#{serverPort},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiServerRemark" parameterType="BusiServerRemark">
+        update busi_server_remark
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="serverName != null  and serverName != ''">server_name = #{serverName},</if>
+            <if test="serverIp != null ">server_ip = #{serverIp},</if>
+            <if test="serverPort != null ">server_port = #{serverPort},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusiServerRemarkById" parameterType="Long">
+        delete from busi_server_remark where id = #{id}
+    </delete>
+
+    <delete id="deleteBusiServerRemarkByIds" parameterType="String">
+        delete from busi_server_remark where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

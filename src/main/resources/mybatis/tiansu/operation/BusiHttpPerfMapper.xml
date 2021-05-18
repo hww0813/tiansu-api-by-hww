@@ -38,6 +38,16 @@
     <select id="selectBusiHttpPerfList" parameterType="BusiHttpPerf" resultMap="BusiHttpPerfResult">
         <include refid="selectBusiHttpPerfVo"/>
         <where>
+            <if test="srcIp != null "> and src_ip = #{srcIp}</if>
+            <if test="srcPort != null  and srcPort != ''"> and src_port = #{srcPort}</if>
+            <if test="httpResponseTime != null  and httpResponseTime != ''"> and http_response_time = #{httpResponseTime}</if>
+            <if test="dataSize != null  and dataSize != ''"> and data_size = #{dataSize}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="dstIp != null "> and dst_ip = #{dstIp}</if>
+            <if test="dstPort != null  and dstPort != ''"> and dst_port = #{dstPort}</if>
+            <if test="httpUrl != null  and httpUrl != ''"> and http_url = #{httpUrl}</if>
+            <if test="httpStatus != null  and httpStatus != ''"> and http_status = #{httpStatus}</if>
+            <if test="startDate != null and endDate != null">and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
             <if test="srcIp != null ">and src_ip = #{srcIp}</if>
             <if test="srcPort != null  and srcPort != ''">and src_port = #{srcPort}</if>
             <if test="httpResponseTime != null  and httpResponseTime != ''">and http_response_time =
@@ -51,6 +61,33 @@
             <if test="httpStatus != null  and httpStatus != ''">and http_status = #{httpStatus}</if>
             <if test="stamp != null ">and stamp = #{stamp}</if>
         </where>
+    </select>
+
+    <select id="selctHttpPerfListGroupByDstHost" parameterType="BusiHttpPerf" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+             bsr.server_name,
+             vbhp.*
+        FROM
+            busi_server_remark bsr
+            RIGHT JOIN (
+            SELECT
+                bhp.dst_ip,
+                bhp.dst_port,
+                count( 1 ) count
+            FROM
+                busi_http_perf bhp
+            <where>
+                <if test="dstIp != null "> and bhp.dst_ip = #{dstIp}</if>
+                <if test="dstPort != null  and dstPort != ''"> and bhp.dst_port = #{dstPort}</if>
+                <if test="startDate != null and endDate != null">and  bhp.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and bhp.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
+            </where>
+            GROUP BY
+                bhp.dst_ip,
+                bhp.dst_port
+            ) vbhp
+        on vbhp.DST_IP = bsr.SERVER_IP and vbhp.dst_port = bsr.server_port
+        ORDER BY
+            count DESC
     </select>
 
     <select id="selectBusiHttpPerfById" parameterType="Long" resultMap="BusiHttpPerfResult">

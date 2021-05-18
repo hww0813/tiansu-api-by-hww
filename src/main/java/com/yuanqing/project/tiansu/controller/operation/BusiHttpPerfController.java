@@ -1,6 +1,8 @@
 package com.yuanqing.project.tiansu.controller.operation;
 
 import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,12 +38,22 @@ public class BusiHttpPerfController extends BaseController
     /**
      * 查询http接口审计列表
      */
-    @PreAuthorize("@ss.hasPermi('api:httpPerf:list')")
     @GetMapping("/list")
     public TableDataInfo list(BusiHttpPerf busiHttpPerf)
     {
         startPage();
         List<BusiHttpPerf> list = busiHttpPerfService.selectBusiHttpPerfList(busiHttpPerf);
+        return getDataTable(list);
+    }
+
+
+    /**
+     * 查询http接口审计列表
+     */
+    @GetMapping("/listGroupHost")
+    public TableDataInfo listGroupHost(BusiHttpPerf busiHttpPerf){
+        startPage();
+        List<JSONObject> list = busiHttpPerfService.selctHttpPerfListGroupByDstHost(busiHttpPerf);
         return getDataTable(list);
     }
 

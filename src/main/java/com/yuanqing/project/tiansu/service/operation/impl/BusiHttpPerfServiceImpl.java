@@ -2,6 +2,8 @@ package com.yuanqing.project.tiansu.service.operation.impl;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+
 import com.yuanqing.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,11 @@ public class BusiHttpPerfServiceImpl implements IBusiHttpPerfService {
     @Override
     public List<BusiHttpPerf> selectBusiHttpPerfList(BusiHttpPerf busiHttpPerf) {
         return busiHttpPerfMapper.selectBusiHttpPerfList(busiHttpPerf);
+    }
+
+    @Override
+    public List<JSONObject> selctHttpPerfListGroupByDstHost(BusiHttpPerf busiHttpPerf) {
+        return busiHttpPerfMapper.selctHttpPerfListGroupByDstHost(busiHttpPerf);
     }
 
     /**
