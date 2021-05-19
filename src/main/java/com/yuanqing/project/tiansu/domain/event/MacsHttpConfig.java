@@ -6,12 +6,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * 接口告警阈值配置对象 busi_http_config
+ * 接口告警阈值配置对象 macs_http_config
  *
  * @author lvjingjing
  * @date 2021-05-12
  */
-public class BusiHttpConfig extends BaseEntity
+public class MacsHttpConfig extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

@@ -13,6 +13,7 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
 import com.yuanqing.project.tiansu.domain.event.BusiHttpEvent;
 import com.yuanqing.project.tiansu.service.event.IBusiHttpEventService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
  * @author lvjingjing
  * @date 2021-05-13
  */
+@Api(value = "接口告警", description = "接口告警Api")
 @RestController
 @RequestMapping("/api/httpEvent")
 public class BusiHttpEventController extends BaseController {
@@ -49,7 +51,6 @@ public class BusiHttpEventController extends BaseController {
         BusiHttpEvent busiHttpEvent = new BusiHttpEvent();
         busiHttpEvent.setHttpUrl(httpUrl);
         busiHttpEvent.setIpAddress(IpUtils.ipToLong(ipAddress));
-        busiHttpEvent.setEventSource(eventSource);
         busiHttpEvent.setHttpStatus(httpStatus);
         busiHttpEvent.setEventLevel(eventLevel);
         busiHttpEvent.setEventStatus(eventStatus);
