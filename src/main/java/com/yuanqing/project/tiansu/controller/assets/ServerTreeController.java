@@ -82,7 +82,10 @@ public class ServerTreeController extends BaseController {
                 }
             }
         }else{
-            throw new CustomException("请求pmc服务状态异常");
+            //若请求不到这个接口的数据，则每个服务器的详情都不能访问
+            list.stream().forEach(h->{
+                h.setRemark("no");
+            });
         }
 
         return AjaxResult.success(getDataTable(list));
