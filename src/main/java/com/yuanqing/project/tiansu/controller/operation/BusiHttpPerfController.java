@@ -3,6 +3,9 @@ package com.yuanqing.project.tiansu.controller.operation;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +31,7 @@ import com.yuanqing.framework.web.page.TableDataInfo;
  * @author xucan
  * @date 2021-05-17
  */
+@Api("http接口审计")
 @RestController
 @RequestMapping("/api/httpPerf")
 public class BusiHttpPerfController extends BaseController
@@ -38,6 +42,8 @@ public class BusiHttpPerfController extends BaseController
     /**
      * 查询http接口审计列表
      */
+    @ApiOperation("获取接口列表")
+    @ApiImplicitParam(name = "busiHttpPerf", value = "过滤列表条件", dataType = "BusiHttpPerf")
     @GetMapping("/list")
     public TableDataInfo list(BusiHttpPerf busiHttpPerf)
     {
@@ -48,8 +54,10 @@ public class BusiHttpPerfController extends BaseController
 
 
     /**
-     * 查询http接口审计列表
+     * 获取服务请求接口数量列表
      */
+    @ApiOperation("获取服务请求接口数量列表")
+    @ApiImplicitParam(name = "busiHttpPerf", value = "过滤列表条件", dataType = "BusiHttpPerf")
     @GetMapping("/listGroupHost")
     public TableDataInfo listGroupHost(BusiHttpPerf busiHttpPerf){
         startPage();
@@ -60,7 +68,6 @@ public class BusiHttpPerfController extends BaseController
     /**
      * 导出http接口审计列表
      */
-    @PreAuthorize("@ss.hasPermi('api:httpPerf:export')")
     @Log(title = "http接口审计", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(BusiHttpPerf busiHttpPerf)
@@ -73,8 +80,9 @@ public class BusiHttpPerfController extends BaseController
     /**
      * 获取http接口审计详细信息
      */
-    @PreAuthorize("@ss.hasPermi('api:httpPerf:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取http接口审计详细信息")
+    @ApiImplicitParam(name = "userId", value = "http接口ID", required = true, dataType = "long", paramType = "path")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(busiHttpPerfService.selectBusiHttpPerfById(id));
@@ -83,7 +91,6 @@ public class BusiHttpPerfController extends BaseController
     /**
      * 新增http接口审计
      */
-        @PreAuthorize("@ss.hasPermi('api:httpPerf:add')")
         @Log(title = "http接口审计", businessType = BusinessType.INSERT)
         @PostMapping
         public AjaxResult add(@RequestBody BusiHttpPerf busiHttpPerf)
@@ -94,7 +101,6 @@ public class BusiHttpPerfController extends BaseController
     /**
      * 修改http接口审计
      */
-    @PreAuthorize("@ss.hasPermi('api:httpPerf:edit')")
     @Log(title = "http接口审计", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody BusiHttpPerf busiHttpPerf)
@@ -105,7 +111,6 @@ public class BusiHttpPerfController extends BaseController
     /**
      * 删除http接口审计
      */
-    @PreAuthorize("@ss.hasPermi('api:httpPerf:remove')")
     @Log(title = "http接口审计", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
