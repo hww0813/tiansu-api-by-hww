@@ -2,6 +2,8 @@ package com.yuanqing.project.tiansu.domain.operation;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.yuanqing.framework.aspectj.lang.annotation.Excel;
@@ -13,6 +15,7 @@ import com.yuanqing.framework.web.domain.BaseEntity;
  * @author xucan
  * @date 2021-05-17
  */
+@ApiModel("http接口实体")
 public class BusiHttpPerf extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -22,38 +25,47 @@ public class BusiHttpPerf extends BaseEntity
 
     /** 源ip */
     @Excel(name = "源ip")
+    @ApiModelProperty("源ip")
     private Long srcIp;
 
     /** 源端口 */
     @Excel(name = "源端口")
+    @ApiModelProperty("源端口")
     private String srcPort;
 
     /** 响应时间 */
     @Excel(name = "响应时间")
+    @ApiModelProperty("响应时间")
     private String httpResponseTime;
 
     /** 包大小 */
     @Excel(name = "包大小")
+    @ApiModelProperty("用户ID")
     private String dataSize;
 
     /** 包内容 */
     @Excel(name = "包内容")
+    @ApiModelProperty("包内容")
     private String content;
 
     /** 目的ip */
     @Excel(name = "目的ip")
+    @ApiModelProperty("目的ip")
     private Long dstIp;
 
     /** 目的端口 */
     @Excel(name = "目的端口")
+    @ApiModelProperty("目的端口")
     private String dstPort;
 
     /** 访问地址 */
     @Excel(name = "访问地址")
+    @ApiModelProperty("访问地址")
     private String httpUrl;
 
     /** 响应状态 */
     @Excel(name = "响应状态")
+    @ApiModelProperty("响应状态")
     private String httpStatus;
 
     /** 创建时间 */
