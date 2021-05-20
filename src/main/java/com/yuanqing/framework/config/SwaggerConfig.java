@@ -46,7 +46,7 @@ public class SwaggerConfig
         return new Docket(DocumentationType.SWAGGER_2)
                 // 是否启用Swagger
                 .enable(swaggerEnable)
-                .pathMapping("/dev-api")
+                .pathMapping("")
                 // 用来创建该API的基本信息，展示在文档的页面中（自定义展示的信息）
                 .apiInfo(apiInfo())
                 // 设置哪些接口暴露给Swagger展示
