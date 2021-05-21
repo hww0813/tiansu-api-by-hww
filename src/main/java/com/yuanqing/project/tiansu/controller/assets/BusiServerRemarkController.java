@@ -89,7 +89,7 @@ public class BusiServerRemarkController extends BaseController
      * 修改服务标注
      */
     @Log(title = "服务标注", businessType = BusinessType.UPDATE)
-    @ApiOperation(value = "修改服务标注", httpMethod = "GET")
+    @ApiOperation(value = "修改服务标注", httpMethod = "PUT")
     @PutMapping
     public AjaxResult edit(@RequestBody BusiServerRemark busiServerRemark)
     {
