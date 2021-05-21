@@ -66,12 +66,12 @@ public class BusiServerRemarkController extends BaseController
     /**
      * 获取服务标注详细信息
      */
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{serverName}")
     @ApiOperation(value = "获取服务标注详细信息", httpMethod = "GET")
-    @ApiImplicitParam(name = "serverRemarkId", value = "服务标注ID", required = true, dataType = "long", paramType = "path")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
+    @ApiImplicitParam(name = "serverName", value = "服务标注名", required = true, dataType = "string", paramType = "path")
+    public AjaxResult getInfo(@PathVariable("serverName") String serverName)
     {
-        return AjaxResult.success(busiServerRemarkService.selectBusiServerRemarkById(id));
+        return AjaxResult.success(busiServerRemarkService.selectBusiServerRemarkByName(serverName));
     }
 
     /**

@@ -32,6 +32,11 @@ public class BusiServerRemarkServiceImpl implements IBusiServerRemarkService
         return busiServerRemarkMapper.selectBusiServerRemarkById(id);
     }
 
+    @Override
+    public BusiServerRemark selectBusiServerRemarkByName(String name) {
+        return busiServerRemarkMapper.selectBusiServerRemarkByName(name);
+    }
+
     /**
      * 查询服务标注列表
      *

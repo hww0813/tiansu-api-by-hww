@@ -19,6 +19,9 @@ public interface IBusiServerRemarkService
      */
     public BusiServerRemark selectBusiServerRemarkById(Long id);
 
+
+    public BusiServerRemark selectBusiServerRemarkByName(String name);
+
     /**
      * 查询服务标注列表
      *
