@@ -1,5 +1,7 @@
 package com.yuanqing.project.tiansu.domain.assets;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.yuanqing.framework.aspectj.lang.annotation.Excel;
@@ -11,24 +13,32 @@ import com.yuanqing.framework.web.domain.BaseEntity;
  * @author xucan
  * @date 2021-05-18
  */
+
+@ApiModel("服务标注对象")
 public class BusiServerRemark extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** ID */
+    @ApiModelProperty("id")
     private Long id;
 
     /** 服务名称 */
     @Excel(name = "服务名称")
+    @ApiModelProperty("服务名称")
     private String serverName;
 
     /** 服务IP */
     @Excel(name = "服务IP")
+    @ApiModelProperty("服务IP")
     private Long serverIp;
 
     /** 服务端口 */
     @Excel(name = "服务端口")
+    @ApiModelProperty("服务端口")
     private Long serverPort;
+
+
 
     public void setId(Long id)
     {

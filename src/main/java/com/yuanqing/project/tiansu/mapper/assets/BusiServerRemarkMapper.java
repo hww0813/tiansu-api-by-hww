@@ -19,6 +19,9 @@ public interface BusiServerRemarkMapper
      */
     public BusiServerRemark selectBusiServerRemarkById(Long id);
 
+    BusiServerRemark selectBusiServerRemarkByName(String name);
+
+
     /**
      * 查询服务标注列表
      *
@@ -58,4 +61,5 @@ public interface BusiServerRemarkMapper
      * @return 结果
      */
     public int deleteBusiServerRemarkByIds(Long[] ids);
+
 }

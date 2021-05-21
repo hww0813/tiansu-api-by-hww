@@ -31,6 +31,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectBusiServerRemarkVo"/>
         where id = #{id}
     </select>
+    <select id="selectBusiServerRemarkByName" resultType="com.yuanqing.project.tiansu.domain.assets.BusiServerRemark">
+        <include refid="selectBusiServerRemarkVo"/>
+        where server_name = #{name}
+    </select>
 
     <insert id="insertBusiServerRemark" parameterType="BusiServerRemark" useGeneratedKeys="true" keyProperty="id">
         insert into busi_server_remark

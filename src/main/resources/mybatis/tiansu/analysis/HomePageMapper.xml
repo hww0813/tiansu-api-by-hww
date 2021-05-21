@@ -16,7 +16,7 @@
       FROM busi_statistics bs
       LEFT JOIN busi_camera bc ON bc.`DEVICE_CODE` = bs.`dst_code`
       LEFT JOIN busi_region br ON bc.region = br.id
-      WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+      WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt;= DATE_FORMAT(#{endTime},'%y%m%d')
       <if test="action !=null and action != 1" >
           and bs.action = #{action}
       </if>
@@ -40,7 +40,7 @@
             ,SUM(CASE WHEN bs.`action`= 1 THEN bs.`count` ELSE 0 END) AS DOWNLOAD , SUM(CASE WHEN bs.`action`= 2 THEN bs.`count` ELSE 0 END ) AS PLAYBACK
         </if>
         FROM busi_statistics bs
-         WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+         WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt;= DATE_FORMAT(#{endTime},'%y%m%d')
         <if test="action !=null and action != 1" >
             and bs.action = #{action}
         </if>
@@ -66,7 +66,7 @@
             ,SUM(CASE WHEN bs.`action`= 1 THEN bs.`count` ELSE 0 END) AS DOWNLOAD , SUM(CASE WHEN bs.`action`= 2 THEN bs.`count` ELSE 0 END ) AS PLAYBACK
         </if>
         FROM busi_statistics bs
-        WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt; DATE_FORMAT(#{endTime},'%y%m%d')
+        WHERE bs.STAMP &gt;=  DATE_FORMAT(#{startTime},'%y%m%d')    AND bs.STAMP &lt;= DATE_FORMAT(#{endTime},'%y%m%d')
         <if test="action !=null and action != 1" >
             and bs.action = #{action}
         </if>
