@@ -1,6 +1,8 @@
 package com.yuanqing.project.tiansu.service.assets.impl;
 
 import java.util.List;
+
+import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,9 @@ public class BusiServerRemarkServiceImpl implements IBusiServerRemarkService
     public int insertBusiServerRemark(BusiServerRemark busiServerRemark)
     {
         busiServerRemark.setCreateTime(DateUtils.getNowDate());
+        if(busiServerRemarkMapper.selectBusiServerRemarkByName(busiServerRemark.getServerName())!=null){
+            throw new CustomException("服务标注名称已经存在");
+        }
         return busiServerRemarkMapper.insertBusiServerRemark(busiServerRemark);
     }
 
@@ -72,6 +77,9 @@ public class BusiServerRemarkServiceImpl implements IBusiServerRemarkService
     public int updateBusiServerRemark(BusiServerRemark busiServerRemark)
     {
         busiServerRemark.setUpdateTime(DateUtils.getNowDate());
+        if(busiServerRemarkMapper.selectBusiServerRemarkByName(busiServerRemark.getServerName())!=null){
+            throw new CustomException("服务标注名称已经存在");
+        }
         return busiServerRemarkMapper.updateBusiServerRemark(busiServerRemark);
     }
 
