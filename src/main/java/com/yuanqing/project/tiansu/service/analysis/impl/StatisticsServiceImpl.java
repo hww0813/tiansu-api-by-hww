@@ -158,9 +158,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
                     //终端数
                     visited.put("clientCnt", visitedRate.getTerminalCnt() == null ? 0 : visitedRate.getTerminalCnt());
                     //摄像头被访问数
-                    visited.put("visitCnt", visitedRate.getVisitedCamera() == null ? 0 : visitedRate.getVisitedCamera());
+                    visited.put("visitedCnt", visitedRate.getVisitedCamera() == null ? 0 : visitedRate.getVisitedCamera());
                     //访问次数
-                    visited.put("visitedCnt", visitedRate.getVisitedCnt() == null ? 0 : visitedRate.getVisitedCnt());
+                    visited.put("visitCnt", visitedRate.getVisitedCnt() == null ? 0 : visitedRate.getVisitedCnt());
                     Double rate = 0D;
                     if (visitedRate.getAllCount() != 0) {
                         rate = DoubleUtils.roundOff(((double) visitedRate.getVisitedCamera() / (double) visitedRate.getAllCount()), 2);
