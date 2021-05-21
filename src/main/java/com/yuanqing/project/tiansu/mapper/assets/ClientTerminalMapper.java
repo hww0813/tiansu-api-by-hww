@@ -45,4 +45,5 @@ public interface ClientTerminalMapper extends BaseMapper<ClientTerminal, Long> {
     void updateMark(Long serverIp);
 
     Integer getRealTotal();
+
 }

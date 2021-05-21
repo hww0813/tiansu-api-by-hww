@@ -234,6 +234,7 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         return list;
     }
 
+
     @Override
     public Long save(ClientTerminal clientTerminal, SaveType type) {
 

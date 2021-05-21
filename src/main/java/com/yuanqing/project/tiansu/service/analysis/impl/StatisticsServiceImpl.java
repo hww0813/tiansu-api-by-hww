@@ -72,15 +72,15 @@ public class StatisticsServiceImpl implements IStatisticsService {
     public List<JSONObject> getClientList(Statistics statistics) {
         List<Statistics> statisticsList = statisticsMapper.getClientUserList(statistics);
         List<JSONObject> list = new ArrayList<>();
-        statisticsList.stream().forEach(h->{
+        statisticsList.stream().forEach(h -> {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("srcIp",IpUtils.longToIPv4(h.getSrcIp()));
-            if(!StringUtils.isEmpty(h.getUsername())){
-                jsonObject.put("username",h.getUsername());
-            }else{
-                jsonObject.put("username","");
+            jsonObject.put("srcIp", IpUtils.longToIPv4(h.getSrcIp()));
+            if (!StringUtils.isEmpty(h.getUsername())) {
+                jsonObject.put("username", h.getUsername());
+            } else {
+                jsonObject.put("username", "");
             }
-            jsonObject.put("count",h.getCount());
+            jsonObject.put("count", h.getCount());
             list.add(jsonObject);
         });
         return list;
@@ -126,72 +126,48 @@ public class StatisticsServiceImpl implements IStatisticsService {
         if (region != null) {
             log.info("获取配置中心-->地图配置成功,地区代码为:{} 地区名称为:{}", region.getId(), region.getName());
 
-            List<MacsRegion> lowerRegion = macsConfigService.getLowerRegion(region.getId());
+            //获取所有下级 把整个树都获取到   lowerRegion Map<String,List<String>>
+            List<MacsRegion> cityRegion = macsConfigService.getLowerRegion(region.getId());
 
-            if (CollectionUtils.isEmpty(lowerRegion)) {
+            if (CollectionUtils.isEmpty(cityRegion)) {
 
                 log.error("获取下级地区配置失败,地区代码为:{} 地区名称为:{}", region.getId(), region.getName());
                 return null;
 
             } else {
 
-                log.info("1.获取下级地区配置成功,下级地区为:{}", lowerRegion.toString());
-                List<VisitedRate> visitedRateList = statisticsMapper.visitedRate(filter);
-                log.info("2.获取下级地区配置成功,下级地区为:{}", visitedRateList.toString());
-
-                lowerRegion.stream().forEach(f -> {
+                log.info("1.获取省级下级地区配置成功,下级地区为:{}", cityRegion.toString());
+                //遍历lowerRegion Map<String,List<String>> 将集合传入sql 一次性查出所有 去重之后的统计结果作为 Map.String的结果
+                JSONObject finalFilter = filter;
+                cityRegion.stream().forEach(f -> {
 
                     //获得该地区及所有下级区  eg:f为武汉市，获得武汉市的下级区
                     List<MacsRegion> areaRegion = macsConfigService.getLowerRegion(f.getId());
                     areaRegion.add(f);
+                    List<String> list = areaRegion.stream().map(a -> a.getId()).collect(Collectors.toList());
+                    log.info("2.获取市级下级地区配置成功,下级地区为:{}", list);
+
+                    VisitedRate visitedRate = statisticsMapper.visitedRate(finalFilter.getString("startDate"), finalFilter.getString("endDate"), list);
 
                     //设置基本属性值，数量值初始化为0
-                    JSONObject visitedRate = new JSONObject();
-                    visitedRate.put("cityName", f.getName());
-                    visitedRate.put("cityCode", f.getId());
-                    visitedRate.put("cameraCnt", 0);
-                    visitedRate.put("clientCnt", 0);
-                    visitedRate.put("visitCnt", 0);
-                    visitedRate.put("visitedCnt", 0);
-                    visitedRate.put("rate", "0%");
-
-                    //遍历所有本级市及下级区的数据，市级下的区数据需要累加
-                    areaRegion.stream().forEach(a -> {
-                        visitedRateList.stream().forEach(h -> {
-                            if (h.getRegionId() == Long.parseLong(a.getId())) {
-
-                                Integer allCount = h.getAllCount() == null ? 0 : h.getAllCount();
-                                Integer terminalCnt = h.getTerminalCnt() == null ? 0 : h.getTerminalCnt();
-                                Integer visitedCamera = h.getVisitedCamera() == null ? 0 : h.getVisitedCamera();
-                                Integer visitedCnt = h.getVisitedCnt() == null ? 0 : h.getVisitedCnt();
-
-                                //取出上一次的值进行累加，第一次的值由于初始化赋值为0，所以没有影响
-                                allCount += visitedRate.getInteger("cameraCnt");
-                                terminalCnt += visitedRate.getInteger("clientCnt");
-                                visitedCamera += visitedRate.getInteger("visitedCnt");
-                                visitedCnt += visitedRate.getInteger("visitCnt");
-
-                                //摄像头总数
-                                visitedRate.put("cameraCnt", allCount);
-                                //终端数
-                                visitedRate.put("clientCnt", terminalCnt);
-                                //摄像头被访问数
-                                visitedRate.put("visitedCnt", visitedCamera);
-                                //访问次数
-                                visitedRate.put("visitCnt", visitedCnt);
-
-                            }
-                        });
-                    });
-                    //计算比率，取出visitedRate的值进行计算，并且分母非0；将最后的结果visitedRate存入list
+                    JSONObject visited = new JSONObject();
+                    visited.put("cityName", f.getName());
+                    visited.put("cityCode", f.getId());
+                    //摄像头总数
+                    visited.put("cameraCnt", visitedRate.getAllCount() == null ? 0 : visitedRate.getAllCount());
+                    //终端数
+                    visited.put("clientCnt", visitedRate.getTerminalCnt() == null ? 0 : visitedRate.getTerminalCnt());
+                    //摄像头被访问数
+                    visited.put("visitCnt", visitedRate.getVisitedCamera() == null ? 0 : visitedRate.getVisitedCamera());
+                    //访问次数
+                    visited.put("visitedCnt", visitedRate.getVisitedCnt() == null ? 0 : visitedRate.getVisitedCnt());
                     Double rate = 0D;
-                    Integer allCount = visitedRate.getInteger("cameraCnt");
-                    Integer visitedCamera = visitedRate.getInteger("visitedCnt");
-                    if (allCount != 0) {
-                        rate = DoubleUtils.roundOff(((double) visitedCamera / (double) allCount), 2);
+                    if (visitedRate.getAllCount() != 0) {
+                        rate = DoubleUtils.roundOff(((double) visitedRate.getVisitedCamera() / (double) visitedRate.getAllCount()), 2);
                     }
-                    visitedRate.put("rate", rate * 100 + "%");
-                    rateList.add(visitedRate);
+                    visited.put("rate", rate * 100 + "%");
+                    rateList.add(visited);
+
                 });
                 return rateList;
             }

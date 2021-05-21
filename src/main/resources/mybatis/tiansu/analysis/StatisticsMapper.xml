@@ -36,92 +36,102 @@
     </resultMap>
 
     <sql id="selectBusiStatisticsVo">
-        select src_ip, username, dst_code, stamp, action, count from busi_statistics
+        select src_ip, username, dst_code, stamp, action, count
+        from busi_statistics
     </sql>
 
     <select id="getList" resultMap="BusiStatisticsResultMap">
         <include refid="selectBusiStatisticsVo"/>
         <where>
-            <if test="srcIp != null  and srcIp != ''"> and src_ip = #{srcIp}</if>
-            <if test="username != null  and username != ''"> and username = #{username}</if>
-            <if test="dstCode != null  and dstCode != ''"> and dst_code = #{dstCode}</if>
-            <if test="action != null  and action != ''"> and action = #{action}</if>
-            <if test="startDate != null and endDate != null"> and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
+            <if test="srcIp != null  and srcIp != ''">and src_ip = #{srcIp}</if>
+            <if test="username != null  and username != ''">and username = #{username}</if>
+            <if test="dstCode != null  and dstCode != ''">and dst_code = #{dstCode}</if>
+            <if test="action != null  and action != ''">and action = #{action}</if>
+            <if test="startDate != null and endDate != null">and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and
+                stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            </if>
         </where>
     </select>
 
     <select id="getClientUserList" resultMap="BusiStatisticsResultMap">
         select src_ip, group_concat(distinct username) username, sum(count) count from busi_statistics
         <where>
-            <if test="srcIp != null  and srcIp != ''"> and src_ip = #{srcIp}</if>
-            <if test="username != null  and username != ''"> and username = #{username}</if>
-            <if test="dstCode != null  and dstCode != ''"> and dst_code like concat('%', #{dstCode}, '%')</if>
-            <if test="action != null  and action != ''"> and action = #{action}</if>
-            <if test="startDate != null and endDate != null"> and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
+            <if test="srcIp != null  and srcIp != ''">and src_ip = #{srcIp}</if>
+            <if test="username != null  and username != ''">and username = #{username}</if>
+            <if test="dstCode != null  and dstCode != ''">and dst_code like concat('%', #{dstCode}, '%')</if>
+            <if test="action != null  and action != ''">and action = #{action}</if>
+            <if test="startDate != null and endDate != null">and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and
+                stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            </if>
         </where>
         group by src_ip
         order by count desc
     </select>
 
     <select id="visitedRate" resultMap="visitedRateMap">
-
         SELECT
-            vc.region,
-            vc.allcount,
-            vs.visitedCamera,
-            vs.terminalCnt,
-            vs.userCnt,
-            vs.visitCnt
+        vc.allcount,
+        vs.visitedCamera,
+        vs.terminalCnt,
+        vs.userCnt,
+        vs.visitCnt
         FROM
         (
-            SELECT
-            region,
-            count( 1 ) allcount
-            FROM
-            busi_camera bc
-            WHERE
-            bc.DEVICE_TYPE = 1
-            AND region IS NOT NULL
-            GROUP BY
-            region
-        ) vc
-
-        left JOIN (
-
         SELECT
-            bc.REGION region,
-            count( DISTINCT bs.dst_code ) visitedCamera,
-            count( DISTINCT bs.src_ip) terminalCnt,
-            count( DISTINCT bs.username ) userCnt,
-            sum(count) visitCnt
+        count( 1 ) allcount
         FROM
-            busi_statistics bs
+        busi_camera bc
+        WHERE
+        bc.DEVICE_TYPE = 1
+        AND region in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ) vc,
+        (
+        SELECT
+        count( DISTINCT bs.dst_code ) visitedCamera,
+        count( DISTINCT bs.src_ip) terminalCnt,
+        count( DISTINCT bs.username ) userCnt,
+        sum(count) visitCnt
+        FROM
+        busi_statistics bs
         RIGHT JOIN busi_camera bc ON bs.dst_code = bc.DEVICE_CODE
-            where
-            1=1
-            and region is not null
-            AND bc.DEVICE_TYPE = 1
-            <if test="startDate != null and endDate != null"> and bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
-            GROUP BY
-            bc.REGION
-        ) vs on vs.region = vc.region
+        where
+        1=1
+        and region in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND bc.DEVICE_TYPE = 1
+        <if test="startDate != null and endDate != null">and bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and
+            bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        </if>
+        ) vs
     </select>
 
     <select id="getTerminalVisit" resultMap="TerminalVisitMap">
         SELECT
-            src_ip,
-            username,
-            action,
-            sum( count ) count,
-            count( DISTINCT dst_code ) camera_cnt
+        src_ip,
+        username,
+        action,
+        sum( count ) count,
+        count( DISTINCT dst_code ) camera_cnt
         FROM
-            busi_statistics
+        busi_statistics
         <where>
             1=1
-            <if test="terminalVisit.ipAddress != null  and terminalVisit.ipAddress != ''"> and src_ip = #{terminalVisit.ipAddress}</if>
-            <if test="terminalVisit.username != null  and terminalVisit.username != ''"> and username = #{terminalVisit.username}</if>
-            <if test="terminalVisit.action != null"> and action = #{terminalVisit.action}</if>
-            <if test="terminalVisit.startDate != null and terminalVisit.endDate != null"> and stamp >= STR_TO_DATE(#{terminalVisit.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{terminalVisit.endDate}, '%Y-%m-%d')</if>
+            <if test="terminalVisit.ipAddress != null  and terminalVisit.ipAddress != ''">and src_ip =
+                #{terminalVisit.ipAddress}
+            </if>
+            <if test="terminalVisit.username != null  and terminalVisit.username != ''">and username =
+                #{terminalVisit.username}
+            </if>
+            <if test="terminalVisit.action != null">and action = #{terminalVisit.action}</if>
+            <if test="terminalVisit.startDate != null and terminalVisit.endDate != null">and stamp >=
+                STR_TO_DATE(#{terminalVisit.startDate}, '%Y-%m-%d') and stamp &lt;=
+                STR_TO_DATE(#{terminalVisit.endDate}, '%Y-%m-%d')
+            </if>
         </where>
         GROUP BY
         src_ip,
@@ -136,12 +146,12 @@
     <select id="getCameraVisit" resultMap="CameraVisitMap">
 
         SELECT
-            dst_code,
-            action,
-            sum( count ) count,
-            count( DISTINCT src_ip ) terminal_cnt
+        dst_code,
+        action,
+        sum( count ) count,
+        count( DISTINCT src_ip ) terminal_cnt
         FROM
-            busi_statistics
+        busi_statistics
         <where>
             1=1
             <if test="list != null">
@@ -150,12 +160,14 @@
                     #{item}
                 </foreach>
             </if>
-            <if test="filter.startDate != null and filter.endDate != null"> and stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')</if>
+            <if test="filter.startDate != null and filter.endDate != null">and stamp >= STR_TO_DATE(#{filter.startDate},
+                '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
+            </if>
             <if test="filter.action != null">and action = #{filter.action}</if>
         </where>
         GROUP BY
-            dst_code,
-            action
+        dst_code,
+        action
         <if test="orderStr != null and orderStr != ''">
             ORDER BY ${orderStr}
         </if>
@@ -164,15 +176,17 @@
     <select id="getCameraVisited" resultType="java.lang.String">
 
         SELECT
-            DISTINCT dst_code
+        DISTINCT dst_code
         FROM
-            busi_statistics
+        busi_statistics
         <where>
             dst_code in
             <foreach collection="list" open="(" separator="," close=")" item="item">
                 #{item}
             </foreach>
-            <if test="filter.startDate != null and filter.endDate != null"> and stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')</if>
+            <if test="filter.startDate != null and filter.endDate != null">and stamp >= STR_TO_DATE(#{filter.startDate},
+                '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
+            </if>
         </where>
     </select>
 
@@ -187,11 +201,12 @@
             <foreach collection="list" open="(" separator="," close=")" item="item">
                 #{item}
             </foreach>
-            <if test="filter.startDate != null and filter.endDate != null"> and stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')</if>
+            <if test="filter.startDate != null and filter.endDate != null">and stamp >= STR_TO_DATE(#{filter.startDate},
+                '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
+            </if>
         </where>
 
     </select>
-
 
 
 </mapper>

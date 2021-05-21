@@ -37,11 +37,9 @@ public interface StatisticsMapper {
 
     /**
      * 根据地区统计访问率
-     * 根据摄像头表中的region字段分组统计
-     * @param filter 过滤条件
      * @return
      */
-    List<VisitedRate> visitedRate(JSONObject filter);
+    public VisitedRate visitedRate(String startDate,String endDate,List<String> list);
 
 
 //    /**

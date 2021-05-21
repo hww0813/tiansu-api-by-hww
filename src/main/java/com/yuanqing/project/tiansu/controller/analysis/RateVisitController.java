@@ -191,6 +191,7 @@ public class RateVisitController extends BaseController {
                                        @RequestParam(value = "ipAddress", required = false) String ipAddress,
                                        @RequestParam(value = "startDate") String startDate,
                                        @RequestParam(value = "endDate") String endDate) {
+
         Camera camera = new Camera();
         camera.setRegion(region);
 
