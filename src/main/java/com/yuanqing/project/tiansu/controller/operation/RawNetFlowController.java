@@ -12,7 +12,9 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
 import com.yuanqing.project.tiansu.service.operation.IRawNetFlowService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +35,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/api/rawNetFlow")
+@Api(value = "原始流量列表接口", description = "原始流量列表相关API")
 public class RawNetFlowController extends BaseController {
 
     @Autowired
@@ -43,11 +46,11 @@ public class RawNetFlowController extends BaseController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
-    public AjaxResult getAll(@RequestParam(value = "srcIp", required = false) String srcIp,
-                             @RequestParam(value = "dstIp", required = false) String dstIp,
-                             @RequestParam(value = "stamp", required = false) LocalDateTime stamp,
-                             @RequestParam(required = false) String orderType,
-                             @RequestParam(required = false) String orderValue) {
+    public AjaxResult getAll(@ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                             @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                             @ApiParam("时间")@RequestParam(value = "stamp", required = false) LocalDateTime stamp,
+                             @ApiParam("排序")@RequestParam(required = false) String orderType,
+                             @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         RawNetFlow rawNetFlow = new RawNetFlow();
         rawNetFlow.setSrcIp(IpUtils.ipToLong(srcIp));
         rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
@@ -67,7 +70,7 @@ public class RawNetFlowController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:flow:export')")
     @Log(title = "原始流量", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(RawNetFlow busiRawNetFlow) {
+    public AjaxResult export(@ApiParam("原始流量") RawNetFlow busiRawNetFlow) {
         List<RawNetFlow> list = busiRawNetFlowService.selectBusiRawNetFlowList(busiRawNetFlow);
         ExcelUtil<RawNetFlow> util = new ExcelUtil<RawNetFlow>(RawNetFlow.class);
         return util.exportExcel(list, "flow");
@@ -79,7 +82,7 @@ public class RawNetFlowController extends BaseController {
      */
     @GetMapping("/ServerFlowTrend")
     @ApiOperation(value = "获取服务器流量趋势统计", httpMethod = "GET")
-    public AjaxResult getServerFlowTrend(@RequestParam(value = "dstIp", required = false) String dstIp) throws ParseException {
+    public AjaxResult getServerFlowTrend(@ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp) throws ParseException {
         //ip地址转换
         Long ip = IpUtils.ipToLong(dstIp);
         //获得开始结束时间时间段
@@ -95,7 +98,7 @@ public class RawNetFlowController extends BaseController {
      */
     @GetMapping("/getClientRawFlowTrend")
     @ApiOperation(value = "获取终端流量趋势统计", httpMethod = "GET")
-    public AjaxResult getClientRawFlowTrend(@RequestParam(value = "srcIp", required = false) String srcIp) throws ParseException {
+    public AjaxResult getClientRawFlowTrend(@ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp) throws ParseException {
         //ip地址转换
         Long ip = IpUtils.ipToLong(srcIp);
         //获得开始结束时间时间段
@@ -112,10 +115,10 @@ public class RawNetFlowController extends BaseController {
      */
     @GetMapping("/ServerFlowRelationClient")
     @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
-    public AjaxResult getServerFlowRelationClient(@RequestParam(value = "dstIp", required = false) String dstIp,
-                                                  @RequestParam(value = "stamp", required = false) String stamp,
-                                                  @RequestParam(required = false) String orderType,
-                                                  @RequestParam(required = false) String orderValue) {
+    public AjaxResult getServerFlowRelationClient(@ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                                  @ApiParam("时间")@RequestParam(value = "stamp", required = false) String stamp,
+                                                  @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                                  @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         RawNetFlow rawNetFlow = new RawNetFlow();
         rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -135,8 +138,8 @@ public class RawNetFlowController extends BaseController {
      */
     @GetMapping("/getRawClientRank")
     @ApiOperation(value = "获取流量列表终端排行", httpMethod = "GET")
-    public TableDataInfo getRawClientRank(@RequestParam(value = "stamp", required = false) String stamp,
-                                          @RequestParam(value = "orderType", required = false) String orderType) {
+    public TableDataInfo getRawClientRank(@ApiParam("时间")@RequestParam(value = "stamp", required = false) String stamp,
+                                          @ApiParam("排序")@RequestParam(value = "orderType", required = false) String orderType) {
         Date startTime = new Date();
         Date endTime = new Date();
         if ("day".equals(stamp)) {

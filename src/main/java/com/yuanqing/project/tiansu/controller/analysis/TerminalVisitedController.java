@@ -16,6 +16,7 @@ import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +55,13 @@ public class TerminalVisitedController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取客户端访问列表", httpMethod = "GET")
-    public AjaxResult getClientVisitPage(@RequestParam(value = "startDate", required = false) String startDate,
-                                         @RequestParam(value = "endDate", required = false) String endDate,
-                                         @RequestParam(value = "clientIp", required = false) String clientIp,
-                                         @RequestParam(value = "action", required = false) Integer action,
-                                         @RequestParam(value = "user", required = false) String username,
-                                         @RequestParam(required = false) String orderType,
-                                         @RequestParam(required = false) String orderValue) {
+    public AjaxResult getClientVisitPage(@ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String startDate,
+                                         @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
+                                         @ApiParam("客户端IP")@RequestParam(value = "clientIp", required = false) String clientIp,
+                                         @ApiParam("动作类型")@RequestParam(value = "action", required = false) Integer action,
+                                         @ApiParam("用户名")@RequestParam(value = "user", required = false) String username,
+                                         @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                         @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         TerminalVisit terminalVisit = new TerminalVisit();
 
         terminalVisit.setstartDate(startDate);
@@ -83,17 +84,17 @@ public class TerminalVisitedController extends BaseController {
 
     @GetMapping("/visitCnt")
     @ApiOperation(value = "获取客户端访问次数列表", httpMethod = "GET")
-    public AjaxResult getClientVisitCntList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                                            @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-                                            @RequestParam(value = "startDate", required = false) String startDate,
-                                            @RequestParam(value = "endDate", required = false) String endDate,
-                                            @RequestParam(value = "clientId", required = false) Long clientId,
-                                            @RequestParam(value = "cameraId", required = false) Long cameraId,
-                                            @RequestParam(value = "dstIp", required = false) String dstIp,
-                                            @RequestParam(value = "srcIp", required = false) String srcIp,
-                                            @RequestParam(value = "username", required = false) String username,
-                                            @RequestParam(value = "dstCode", required = false) String dstCode,
-                                            @RequestParam(value = "action", required = false) String action) throws Exception {
+    public AjaxResult getClientVisitCntList(@ApiParam("页码数")@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                            @ApiParam("行数")@RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                            @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String startDate,
+                                            @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
+                                            @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) Long clientId,
+                                            @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) Long cameraId,
+                                            @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                            @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                            @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                            @ApiParam("目的设备编码")@RequestParam(value = "dstCode", required = false) String dstCode,
+                                            @ApiParam("动作类型")@RequestParam(value = "action", required = false) String action) throws Exception {
 
         OperationBehavior operationBehavior = new OperationBehavior();
         operationBehavior.setClientId(clientId);
@@ -125,16 +126,16 @@ public class TerminalVisitedController extends BaseController {
 
     @GetMapping("/relatedCamera")
     @ApiOperation(value = "获取客户端访问相关摄像头", httpMethod = "GET")
-    public AjaxResult getClientVisitRelatedCameraList(@RequestParam(value = "clientId",required = false) Long clientId,
-                                                  @RequestParam(value = "action", required = false) Integer action,
-                                                  @RequestParam(value = "cameraCode", required = false) String cameraCode,
-                                                  @RequestParam(value = "cameraName", required = false) String cameraName,
-                                                  @RequestParam(value = "cameraIp", required = false) String cameraIp,
-                                                  @RequestParam(value = "username", required = false) String username,
-                                                  @RequestParam(value = "clientIp", required = false) String clientIp,
-                                                  @RequestParam(value = "region", required = false) Integer region,
-                                                  @RequestParam(value = "startDate", required = false) String startDate,
-                                                  @RequestParam(value = "endDate", required = false) String endDate) {
+    public AjaxResult getClientVisitRelatedCameraList(@ApiParam("客户端ID")@RequestParam(value = "clientId",required = false) Long clientId,
+                                                  @ApiParam("动作类型")@RequestParam(value = "action", required = false) Integer action,
+                                                  @ApiParam("摄像头编码")@RequestParam(value = "cameraCode", required = false) String cameraCode,
+                                                  @ApiParam("摄像头名称")@RequestParam(value = "cameraName", required = false) String cameraName,
+                                                  @ApiParam("摄像头IP")@RequestParam(value = "cameraIp", required = false) String cameraIp,
+                                                  @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                                  @ApiParam("客户端IP")@RequestParam(value = "clientIp", required = false) String clientIp,
+                                                  @ApiParam("行政代码")@RequestParam(value = "region", required = false) Integer region,
+                                                  @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String startDate,
+                                                  @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate) {
 
         Statistics statistics = new Statistics();
         statistics.setAction(action);

@@ -1,14 +1,18 @@
 package com.yuanqing.project.tiansu.controller.analysis;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.ScreenConstants;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.analysis.dto.ScreenDto;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -17,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api")
 @CrossOrigin
+@Api(value = "大屏接口", description = "大屏Api")
 public class ScreenController {
 
     @Autowired
@@ -24,6 +29,7 @@ public class ScreenController {
 
 
     @PostMapping(value = "/assets/summary")
+    @ApiOperation(value = "总资产", httpMethod = "POST")
     public AjaxResult getSummary(){
 
         Object cacheObject = redisCache.getCacheObject(ScreenConstants.SUMMARY);
@@ -32,7 +38,8 @@ public class ScreenController {
     }
 
     @PostMapping(value = "/warn/total")
-    public AjaxResult getWarnTotal(@RequestBody ScreenDto screenDto){
+    @ApiOperation(value = "告警数", httpMethod = "POST")
+    public AjaxResult getWarnTotal(@ApiParam("大屏实体")@RequestBody ScreenDto screenDto){
 
         JSONObject eventList = redisCache.getCacheObject(ScreenConstants.WARN);
 
@@ -53,7 +60,8 @@ public class ScreenController {
 
 
     @PostMapping(value = "/person/top")
-    public AjaxResult userTOP(@RequestBody ScreenDto screenDto){
+    @ApiOperation(value = "用户TOP", httpMethod = "POST")
+    public AjaxResult userTOP(@ApiParam("大屏实体")@RequestBody ScreenDto screenDto){
 
         List<JSONObject> personList = null;
         if(screenDto.getDateType()==1){
@@ -68,7 +76,8 @@ public class ScreenController {
     }
 
     @PostMapping(value = "/camera/top")
-    public AjaxResult cameraTOP(@RequestBody ScreenDto screenDto){
+    @ApiOperation(value = "摄像头TOP", httpMethod = "POST")
+    public AjaxResult cameraTOP(@ApiParam("大屏实体")@RequestBody ScreenDto screenDto){
 
         List<JSONObject> cameraList = null;
         if(screenDto.getDateType()==1){
@@ -82,7 +91,8 @@ public class ScreenController {
         return AjaxResult.success("操作成功",cameraList);
     }
     @PostMapping(value = "/terminal/top")
-    public AjaxResult terminalTOP(@RequestBody ScreenDto screenDto){
+    @ApiOperation(value = "终端TOP", httpMethod = "POST")
+    public AjaxResult terminalTOP(@ApiParam("大屏实体")@RequestBody ScreenDto screenDto){
 
 
         List<JSONObject> terminalList = null;
@@ -96,20 +106,24 @@ public class ScreenController {
 
         return AjaxResult.success("操作成功",terminalList);
     }
+
     @PostMapping(value = "/behavior/trend")
+    @ApiOperation(value = "操作行为类别占比（过去7小时的操作行为动作统计）", httpMethod = "POST")
     public AjaxResult behaviorTrend(){
 
         return AjaxResult.success("操作成功",redisCache.getCacheObject(ScreenConstants.OPERATION_CATEGORY));
     }
 
     @PostMapping(value = "/oper/add")
+    @ApiOperation(value = "实时操作行为和告警", httpMethod = "POST")
     public AjaxResult operAdd(){
         Object cacheObject = redisCache.getCacheObject(ScreenConstants.REAL_OPERATION_WARN);
         return AjaxResult.success("操作成功",cacheObject);
     }
 
     @PostMapping(value = "/operate/summary")
-    public AjaxResult operateSummary(@RequestBody ScreenDto screenDto){
+    @ApiOperation(value = "操作行为类别数量", httpMethod = "POST")
+    public AjaxResult operateSummary(@ApiParam("大屏实体")@RequestBody ScreenDto screenDto){
 
         JSONObject operateSummary = null;
         if(screenDto.getDateType()==1){
@@ -123,7 +137,8 @@ public class ScreenController {
     }
 
     @PostMapping(value = "/video/top")
-    public AjaxResult videoTop(@RequestBody ScreenDto screenDto){
+    @ApiOperation(value = "视频TOP", httpMethod = "POST")
+    public AjaxResult videoTop(@ApiParam("大屏实体")@RequestBody ScreenDto screenDto){
 
 
         List<JSONObject> videoTop = null;
@@ -139,6 +154,7 @@ public class ScreenController {
     }
 
     @PostMapping(value = "/map/statis")
+    @ApiOperation(value = "摄像头区域统计（数据大屏地图）", httpMethod = "POST")
     public AjaxResult cameraMap(){
 
         return AjaxResult.success("操作成功",redisCache.getCacheObject(ScreenConstants.CAMERA_MAP));

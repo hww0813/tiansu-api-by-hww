@@ -16,6 +16,7 @@ import com.yuanqing.project.tiansu.domain.assets.dto.CameraDto;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -59,19 +60,19 @@ public class CameraController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
-    public AjaxResult getAll(@RequestParam(value = "status", required = false) Integer status,
-                             @RequestParam(value = "isGb", required = false) Integer isGb,
-                             @RequestParam(value = "deviceName", required = false) String deviceName,
-                             @RequestParam(value = "deviceDomain", required = false) String deviceDomain,
-                             @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                             @RequestParam(value = "regionId", required = false) Integer regionId,
-                             @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                             @RequestParam(value = "id", required = false) Long id,
-                             @RequestParam(value = "manufacturer", required = false) String manufacturer,
-                             @RequestParam(value = "sipServerId", required = false) Long sipServerId,
-                             @RequestParam(value = "source", required = false) Long source,
-                             @RequestParam(required = false) String orderType,
-                             @RequestParam(required = false) String orderValue) {
+    public AjaxResult getAll(@ApiParam("状态")@RequestParam(value = "status", required = false) Integer status,
+                             @ApiParam("是否国标")@RequestParam(value = "isGb", required = false) Integer isGb,
+                             @ApiParam("设备名称")@RequestParam(value = "deviceName", required = false) String deviceName,
+                             @ApiParam("设备域")@RequestParam(value = "deviceDomain", required = false) String deviceDomain,
+                             @ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                             @ApiParam("区域ID")@RequestParam(value = "regionId", required = false) Integer regionId,
+                             @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                             @ApiParam("ID")@RequestParam(value = "id", required = false) Long id,
+                             @ApiParam("设备厂商")@RequestParam(value = "manufacturer", required = false) String manufacturer,
+                             @ApiParam("信令服务器ID")@RequestParam(value = "sipServerId", required = false) Long sipServerId,
+                             @ApiParam("来源")@RequestParam(value = "source", required = false) Long source,
+                             @ApiParam("排序")@RequestParam(required = false) String orderType,
+                             @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
 
         Camera camera = new Camera();
         camera.setStatus(status);
@@ -134,13 +135,13 @@ public class CameraController extends BaseController {
 
     @GetMapping("/findEventCameras")
     @ApiOperation(value = "获取告警摄像头列表", httpMethod = "GET")
-    public AjaxResult findEventCameras(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                                       @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-                                       @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                       @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                       @RequestParam(value = "id", required = false) Long id,
-                                       @RequestParam(required = false) String orderType,
-                                       @RequestParam(required = false) String orderValue) {
+    public AjaxResult findEventCameras(@ApiParam("页码数")@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                       @ApiParam("行数")@RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                       @ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                       @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                       @ApiParam("ID")@RequestParam(value = "id", required = false) Long id,
+                                       @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                       @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         List<Camera> list = new ArrayList<>();
         String url = alarmHost + "/BusiEvent/getCameraId";
         String result = HttpUtils.sendGet(url, "event_id=" + id);
@@ -166,14 +167,14 @@ public class CameraController extends BaseController {
 
     @PostMapping
     @ApiOperation(value = "新增一个摄像头", httpMethod = "POST")
-    public AjaxResult postSipDevice(@Valid @RequestBody CameraDto dto) {
+    public AjaxResult postSipDevice(@ApiParam("摄像头DTO对象")@Valid @RequestBody CameraDto dto) {
         cameraService.save(doForward(dto), SaveType.INSERT);
         return AjaxResult.success();
     }
 
     @PutMapping
     @ApiOperation(value = "更新一个摄像头", httpMethod = "PUT")
-    public AjaxResult putSipDevice(@Valid @RequestBody CameraDto dto) {
+    public AjaxResult putSipDevice(@ApiParam("摄像头DTO对象")@Valid @RequestBody CameraDto dto) {
         cameraService.save(doForward(dto));
         return AjaxResult.success();
     }
@@ -188,7 +189,7 @@ public class CameraController extends BaseController {
 
     @PutMapping("/updateStatus")
     @ApiOperation(value = "批量更新摄像头状态为已确认", httpMethod = "PUT")
-    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject) {
+    public AjaxResult updateStatus(@ApiParam("勾选的摄像头id")@Valid @RequestBody JSONObject jsonObject) {
         String str1 = String.valueOf(jsonObject.get("id"));
         String str = str1.substring(1, str1.length() - 1);
         String[] array = str.split(",");
@@ -198,7 +199,7 @@ public class CameraController extends BaseController {
 
     @DeleteMapping
     @ApiOperation(value = "删除一个摄像头", httpMethod = "DELETE")
-    public AjaxResult deleteSipDevice(@RequestParam(name = "id") Long id) {
+    public AjaxResult deleteSipDevice(@ApiParam("勾选的摄像头id")@RequestParam(name = "id") Long id) {
         cameraService.deleteById(id);
         return AjaxResult.success();
     }
@@ -219,7 +220,7 @@ public class CameraController extends BaseController {
 
     @GetMapping("/getNonNationalCameraList")
     @ApiOperation(value = "获取首页国标、非国标编号摄像头列表")
-    public TableDataInfo getNonNationalCameraList(@RequestParam(value = "type", required = false) String type) {
+    public TableDataInfo getNonNationalCameraList(@ApiParam("摄像头编码类型")@RequestParam(value = "type", required = false) String type) {
         Camera camera = new Camera();
         int isGb = "gb".equals(type) ? 1 : 0;
         camera.setIsGb(isGb);
@@ -243,14 +244,14 @@ public class CameraController extends BaseController {
 
     @GetMapping("/sessionCameraList")
     @ApiOperation(value = "获取会话相关的摄像头列表", httpMethod = "GET")
-    public AjaxResult getSessionCameraList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                                           @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-                                           @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-                                           @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-                                           @RequestParam(value = "sessionId", required = false) Long sessionId,
-                                           @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                           @RequestParam(value = "deviceName", required = false) String deviceName,
-                                           @RequestParam(value = "ipAddress", required = false) String ipAddress) {
+    public AjaxResult getSessionCameraList(@ApiParam("页码数")@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                           @ApiParam("行数")@RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                           @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                                           @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                                           @ApiParam("会话ID")@RequestParam(value = "sessionId", required = false) Long sessionId,
+                                           @ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                           @ApiParam("设备名称")@RequestParam(value = "deviceName", required = false) String deviceName,
+                                           @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sessionId", sessionId);
         jsonObject.put("deviceCode", deviceCode);
@@ -270,7 +271,7 @@ public class CameraController extends BaseController {
     //导入外部设备表excel
     @PostMapping(value = "/importExt")
     @ApiOperation(value = "导入外部摄像头列表")
-    public Map<String, Object> importExtExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
+    public Map<String, Object> importExtExcel(@ApiParam("外部设备表excel")@RequestParam(value = "file", required = false) MultipartFile file) {
         Map<String, Object> map = new HashMap<String, Object>();
         String AjaxResult = cameraService.readExtExcelFile(file);
         map.put("message", AjaxResult);

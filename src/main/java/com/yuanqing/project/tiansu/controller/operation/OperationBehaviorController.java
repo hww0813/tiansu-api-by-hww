@@ -11,7 +11,9 @@ import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
@@ -38,6 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping(value = "/api/operation/behavior")
+@Api(value = "操作行为相关接口", description = "操作行为相关Api")
 public class OperationBehaviorController extends BaseController   {
 
 
@@ -50,25 +53,25 @@ public class OperationBehaviorController extends BaseController   {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取操作行为列表", httpMethod = "GET")
-    public PageResult getAll(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                             @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-                             @RequestParam(value = "startDate", required = false) String startDate,
-                             @RequestParam(value = "endDate", required = false) String endDate,
-                             @RequestParam(value = "srcIp", required = false) String srcIp,
-                             @RequestParam(value = "dstIp", required = false) String dstIp,
-                             @RequestParam(value = "srcCode", required = false) String srcCode,
-                             @RequestParam(value = "dstCode", required = false) String dstCode,
-                             @RequestParam(value = "sessionId", required = false) Long sessionId,
-                             @RequestParam(value = "clientId", required = false) Long clientId,
-                             @RequestParam(value = "cameraId", required = false) Long cameraId,
-                             @RequestParam(value = "action", required = false) String action,
-                             @RequestParam(value = "dstDeviceIp", required = false) String dstDeviceIp,
-                             @RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
-                             @RequestParam(value = "content", required = false) String content,
-                             @RequestParam(value = "username", required = false) String username,
-                             @RequestParam(value = "connectType", required = false) String connectType,
-                             @RequestParam(required = false) String orderType,
-                             @RequestParam(required = false) String orderValue){
+    public PageResult getAll(@ApiParam("页码数")@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                             @ApiParam("行数")@RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                             @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String startDate,
+                             @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
+                             @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                             @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                             @ApiParam("源设备编码")@RequestParam(value = "srcCode", required = false) String srcCode,
+                             @ApiParam("目的设备编码")@RequestParam(value = "dstCode", required = false) String dstCode,
+                             @ApiParam("会话ID")@RequestParam(value = "sessionId", required = false) Long sessionId,
+                             @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) Long clientId,
+                             @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) Long cameraId,
+                             @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                             @ApiParam("目的设备ip")@RequestParam(value = "dstDeviceIp", required = false) String dstDeviceIp,
+                             @ApiParam("目的设备名")@RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
+                             @ApiParam("内容")@RequestParam(value = "content", required = false) String content,
+                             @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                             @ApiParam("联接类型")@RequestParam(value = "connectType", required = false) String connectType,
+                             @ApiParam("排序")@RequestParam(required = false) String orderType,
+                             @ApiParam("排序对象")@RequestParam(required = false) String orderValue){
 
             OperationBehavior operationBehavior = new OperationBehavior();
             operationBehavior.setNum(pageNum);
@@ -102,7 +105,7 @@ public class OperationBehaviorController extends BaseController   {
 
     @GetMapping("/getOperationBehaviorById")
     @ApiOperation(value = "获取操作行为列表", httpMethod = "GET")
-    public AjaxResult getOperationBehaviorById(@RequestParam(value = "id", required = false) Long id) {
+    public AjaxResult getOperationBehaviorById(@ApiParam("勾选的操作行为id")@RequestParam(value = "id", required = false) Long id) {
 
         OperationBehavior operationBehavior = IOperationBehaviorService.getOperationBehaviorById(id);
         return AjaxResult.success(operationBehavior);
@@ -117,13 +120,13 @@ public class OperationBehaviorController extends BaseController   {
      */
     @GetMapping("/findByEventId")
     @ApiOperation(value = "根据事件id获取操作行为列表", httpMethod = "GET")
-    public PageResult findByEventId(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                                @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-                                @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-                                @RequestParam(value = "dstCode", required = false) String dstCode,
-                                @RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "dstDeviceIp", required = false) Long dstDeviceIp) {
+    public PageResult findByEventId(@ApiParam("页码数")@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                @ApiParam("行数")@RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                @ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+                                @ApiParam("目的设备编码")@RequestParam(value = "dstCode", required = false) String dstCode,
+                                @ApiParam("ID")@RequestParam(value = "id", required = false) Long id,
+                                @ApiParam("目的设备IP")@RequestParam(value = "dstDeviceIp", required = false) Long dstDeviceIp) {
 
         JSONObject filters = new JSONObject();
 
@@ -146,7 +149,7 @@ public class OperationBehaviorController extends BaseController   {
      */
     @GetMapping("/realTimeList")
     @ApiOperation(value = "获取实时操作行为列表", httpMethod = "GET")
-    public PageResult getRealTimeList(OperationBehaviorSearch operationBehaviorSearch) throws Exception{
+    public PageResult getRealTimeList(@ApiParam("操作行为检索实体类")OperationBehaviorSearch operationBehaviorSearch) throws Exception{
         CompletableFuture<List<OperationBehavior>> operationBehaviorsFuter = CompletableFuture.supplyAsync(()-> operationBehaviorMapper.getRealTimeBehaviorList(operationBehaviorSearch));
         return PageResult.success(operationBehaviorsFuter.get(5, TimeUnit.SECONDS));
     }
@@ -155,7 +158,7 @@ public class OperationBehaviorController extends BaseController   {
 
     @PutMapping
     @ApiOperation(value = "操作行为更新", httpMethod = "PUT")
-    public PageResult putOperationBehavior(@Valid @RequestBody OperationBehavior dto, BindingResult bindingResult) {
+    public PageResult putOperationBehavior(@ApiParam("操作行为")@Valid @RequestBody OperationBehavior dto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return PageResult.error(500,"更新失败");
         }
@@ -166,10 +169,10 @@ public class OperationBehaviorController extends BaseController   {
 
     @GetMapping("/cameraChart")
     @ApiOperation(value = "获取摄像头统计图", httpMethod = "GET")
-    public AjaxResult getCameraChart(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                     @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                                     @RequestParam(value = "cameraActionType", required = false) String action,
-                                     @RequestParam(value = "sort",required = false) String sort){
+    public AjaxResult getCameraChart(@ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                     @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                     @ApiParam("摄像头的操作类型")@RequestParam(value = "cameraActionType", required = false) String action,
+                                     @ApiParam("排序")@RequestParam(value = "sort",required = false) String sort){
         //校验判断
         if (sort == null) {
             return AjaxResult.error(500, "未知排列顺序");
@@ -193,10 +196,10 @@ public class OperationBehaviorController extends BaseController   {
      */
     @GetMapping("/clientChart")
     @ApiOperation(value = "获取客户端统计图", httpMethod = "GET")
-    public AjaxResult getCilentChart(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                 @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                                 @RequestParam(value = "clientActionType", required = false) String action,
-                                 @RequestParam(value = "sort",required = false) String sort) {
+    public AjaxResult getCilentChart(@ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                 @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                 @ApiParam("操作类型")@RequestParam(value = "clientActionType", required = false) String action,
+                                 @ApiParam("排序")@RequestParam(value = "sort",required = false) String sort) {
         //校验判断
         if (sort == null) {
             return AjaxResult.error(500, "未知排列顺序");
@@ -214,10 +217,10 @@ public class OperationBehaviorController extends BaseController   {
 
     @GetMapping("/userChart")
     @ApiOperation(value = "获取用户统计图", httpMethod = "GET")
-    public AjaxResult getUserChart(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd" ) LocalDate startDate,
-                               @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                               @RequestParam(value = "userActionType", required = false) String action,
-                               @RequestParam(value = "sort") String sort) {
+    public AjaxResult getUserChart(@ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd" ) LocalDate startDate,
+                               @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                               @ApiParam("操作类型")@RequestParam(value = "userActionType", required = false) String action,
+                               @ApiParam("排序")@RequestParam(value = "sort") String sort) {
         //校验判断
         if (sort == null) {
             return AjaxResult.error(500, "未知排列顺序");
@@ -235,12 +238,12 @@ public class OperationBehaviorController extends BaseController   {
 
     @GetMapping("/camera/relatedClient")
     @ApiOperation(value = "相关客户端", httpMethod = "GET")
-    public AjaxResult getCameraAnalysisDetail(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                                          @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-                                          @RequestParam(value = "cameraId") Long cameraId,
-                                          @RequestParam(value = "action", required = false) String action,
-                                          @RequestParam(value = "startDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startDate,
-                                          @RequestParam(value = "endDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endDate) throws ExecutionException, InterruptedException {
+    public AjaxResult getCameraAnalysisDetail(@ApiParam("页码数")@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                          @ApiParam("行数")@RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                          @ApiParam("摄像头ID")@RequestParam(value = "cameraId") Long cameraId,
+                                          @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                                          @ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startDate,
+                                          @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endDate) throws ExecutionException, InterruptedException {
         JSONObject filters = new JSONObject();
         filters.put("num", pageNum - 1);
         filters.put("size", pageSize);

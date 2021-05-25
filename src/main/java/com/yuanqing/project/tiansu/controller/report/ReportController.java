@@ -23,6 +23,7 @@ import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorSessionService;
 import com.yuanqing.project.tiansu.service.operation.IRawSignalService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.HtmlExporter;
@@ -180,7 +181,7 @@ public class ReportController extends BaseController {
 
 
     @GetMapping(value = "/sendReport")
-    public AjaxResult sendReport(@RequestParam(value = "type", required = false) String type) {
+    public AjaxResult sendReport(@ApiParam("时间要素")@RequestParam(value = "type", required = false) String type) {
         try {
             reportUtil.generateReport(type);
         } catch (Exception e) {
@@ -192,10 +193,10 @@ public class ReportController extends BaseController {
 
 
     @GetMapping(value = "/analysis/visit/rate")
-    public void getCameraVisitRateReport(@RequestParam(value = "cityCode", required = false) String cityCode,
-                                         @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                         @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-                                         @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getCameraVisitRateReport(@ApiParam("城市代码")@RequestParam(value = "cityCode", required = false) String cityCode,
+                                         @ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                         @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+                                         @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
         filters.put("cityCode", cityCode);  // 无用参数
@@ -286,24 +287,24 @@ public class ReportController extends BaseController {
 
 
     @GetMapping(value = "/eventDetail")
-    public void getEventReport(@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-                               @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-                               @RequestParam(value = "eventSource", required = false) String eventSource,
-                               @RequestParam(value = "strategyName", required = false) String strategyName,
-                               @RequestParam(value = "status", required = false) String status,
-                               @RequestParam(value = "eventCategory", required = false) String eventCategory,
-                               @RequestParam(value = "eventLevel", required = false) String eventLevel,
-                               @RequestParam(value = "clientIp", required = false) String clientIp,
-                               @RequestParam(value = "cameraName", required = false) String cameraName,
-                               @RequestParam(value = "content", required = false) String content,
+    public void getEventReport(@ApiParam("开始时间")@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                               @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                               @ApiParam("事件来源")@RequestParam(value = "eventSource", required = false) String eventSource,
+                               @ApiParam("策略名称")@RequestParam(value = "strategyName", required = false) String strategyName,
+                               @ApiParam("状态")@RequestParam(value = "status", required = false) String status,
+                               @ApiParam("告警类别")@RequestParam(value = "eventCategory", required = false) String eventCategory,
+                               @ApiParam("事件等级")@RequestParam(value = "eventLevel", required = false) String eventLevel,
+                               @ApiParam("IP")@RequestParam(value = "clientIp", required = false) String clientIp,
+                               @ApiParam("摄像头名称")@RequestParam(value = "cameraName", required = false) String cameraName,
+                               @ApiParam("内容")@RequestParam(value = "content", required = false) String content,
                                @RequestParam(value = "eventSubject", required = false) String eventSubject,
-                               @RequestParam(value = "ruleName", required = false) String ruleName,
-                               @RequestParam(value = "action", required = false) String action,
-                               @RequestParam(value = "id", required = false) Long id,
-                               @RequestParam(value = "connectType", required = false) String connectType,
-                               @RequestParam(required = false) String orderType,
-                               @RequestParam(required = false) String orderValue,
-                               @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+                               @ApiParam("规则名称")@RequestParam(value = "ruleName", required = false) String ruleName,
+                               @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                               @ApiParam("id")@RequestParam(value = "id", required = false) Long id,
+                               @ApiParam("联接类型")@RequestParam(value = "connectType", required = false) String connectType,
+                               @ApiParam("排序")@RequestParam(required = false) String orderType,
+                               @ApiParam("排序对象")@RequestParam(required = false) String orderValue,
+                               @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         if (stime != null) {
             filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
@@ -411,13 +412,13 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/sipDevice")
-    public void getSipDiveceReport(@RequestParam(value = "status", required = false) String status,
-                                   @RequestParam(value = "deviceName", required = false) String deviceName,
-                                   @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                   @RequestParam(value = "region", required = false) String region,
-                                   @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                   @RequestParam(value = "sipServerId", required = false) Long sipServerId,
-                                   @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getSipDiveceReport(@ApiParam("状态")@RequestParam(value = "status", required = false) String status,
+                                   @ApiParam("设备名称")@RequestParam(value = "deviceName", required = false) String deviceName,
+                                   @ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                   @ApiParam("区域代码")@RequestParam(value = "region", required = false) String region,
+                                   @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                   @ApiParam("信令服务器ID")@RequestParam(value = "sipServerId", required = false) Long sipServerId,
+                                   @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("status", status);
         filters.put("deviceName", deviceName);
@@ -518,12 +519,12 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/SipClient")
-    public void getSipClientReport(@RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                   @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                   @RequestParam(value = "region", required = false) String region,
-                                   @RequestParam(value = "status", required = false) String status,
-                                   @RequestParam(value = "sipServerId", required = false) Long sipServerId,
-                                   @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getSipClientReport(@ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                   @ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                   @ApiParam("区域代码")@RequestParam(value = "region", required = false) String region,
+                                   @ApiParam("状态")@RequestParam(value = "status", required = false) String status,
+                                   @ApiParam("信令服务器ID")@RequestParam(value = "sipServerId", required = false) Long sipServerId,
+                                   @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("status", status);
         filters.put("ipAddress", ipAddress);
@@ -622,11 +623,11 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/SipUser")
-    public void getSipUserReport(@RequestParam(value = "username", required = false) String username,
-                                 @RequestParam(value = "status", required = false) String status,
-                                 @RequestParam(value = "format", required = false) String format,
-                                 @RequestParam(required = false) String orderType,
-                                 @RequestParam(required = false) String orderValue, HttpServletResponse response) {
+    public void getSipUserReport(@ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                 @ApiParam("状态")@RequestParam(value = "status", required = false) String status,
+                                 @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format,
+                                 @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                 @ApiParam("排序对象")@RequestParam(required = false) String orderValue, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("status", status);
         filters.put("username", username);
@@ -711,12 +712,12 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/SipServer")
-    public void getSipServerReport(@RequestParam(value = "serverCode", required = false) String serverCode,
-                                   @RequestParam(value = "serverDomain", required = false) String serverDomain,
-                                   @RequestParam(value = "serverIp", required = false) Long serverIp,
-                                   @RequestParam(value = "deviceType", required = false) String deviceType,
-                                   @RequestParam(value = "isDelete", defaultValue = "1") Short isDelete,
-                                   @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getSipServerReport(@ApiParam("服务器编码")@RequestParam(value = "serverCode", required = false) String serverCode,
+                                   @ApiParam("服务器域")@RequestParam(value = "serverDomain", required = false) String serverDomain,
+                                   @ApiParam("服务器IP")@RequestParam(value = "serverIp", required = false) Long serverIp,
+                                   @ApiParam("设备类型")@RequestParam(value = "deviceType", required = false) String deviceType,
+                                   @ApiParam("是否删除")@RequestParam(value = "isDelete", defaultValue = "1") Short isDelete,
+                                   @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("serverCode", serverCode);
         filters.put("serverDomain", serverDomain);
@@ -804,12 +805,12 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/operationBehaviorSession")
-    public void getoperationBehaviorSessionReport(@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
-                                                  @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
-                                                  @RequestParam(value = "sessionId", required = false) Long sessionId,
-                                                  @RequestParam(value = "srcCode", required = false) String srcCode,
-                                                  @RequestParam(value = "username", required = false) String username,
-                                                  @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getoperationBehaviorSessionReport(@ApiParam("开始时间")@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+                                                  @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
+                                                  @ApiParam("会话ID")@RequestParam(value = "sessionId", required = false) Long sessionId,
+                                                  @ApiParam("源编码")@RequestParam(value = "srcCode", required = false) String srcCode,
+                                                  @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                                  @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         if (startDate != null) {
             filters.put("stime", startDate);
@@ -903,17 +904,17 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/operationBehavior")
-    public void getOperationBehaviorReport(@RequestParam(value = "startDate", required = false)  String stime ,
-                                           @RequestParam(value = "endDate", required = false)  String etime,
-                                           @RequestParam(value = "srcIp", required = false) String srcIp,
-                                           @RequestParam(value = "dstIp", required = false) String dstIp,
-                                           @RequestParam(value = "dstCode", required = false) String dstCode,
-                                           @RequestParam(value = "action", required = false) String action,
-                                           @RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
-                                           @RequestParam(value = "username", required = false) String username,
-                                           @RequestParam(required = false) String orderType,
-                                           @RequestParam(required = false) String orderValue,
-                                           @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getOperationBehaviorReport(@ApiParam("开始时间")@RequestParam(value = "startDate", required = false)  String stime ,
+                                           @ApiParam("结束时间")@RequestParam(value = "endDate", required = false)  String etime,
+                                           @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                           @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                           @ApiParam("目的编码")@RequestParam(value = "dstCode", required = false) String dstCode,
+                                           @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                                           @ApiParam("目的设备名称")@RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
+                                           @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                           @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                           @ApiParam("排除对象")@RequestParam(required = false) String orderValue,
+                                           @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         OperationBehavior operationBehavior = new OperationBehavior();
         operationBehavior.setstartDate(stime);
@@ -1005,12 +1006,12 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/OperationSignal")
-    public void getOperationSignalReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-                                         @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-                                         @RequestParam(value = "srcIp", required = false) String srcIp,
-                                         @RequestParam(value = "dstIp", required = false) String dstIp,
-                                         @RequestParam(value = "connectType", required = false) String connectType,
-                                         @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getOperationSignalReport(@ApiParam("开始时间")@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                                         @ApiParam("结束时间")@RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                                         @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                         @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                         @ApiParam("联接类型")@RequestParam(value = "connectType", required = false) String connectType,
+                                         @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         if (stime != null) {
             filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -1102,11 +1103,11 @@ public class ReportController extends BaseController {
 
 
 //    @GetMapping(value = "/RawNetFlow")
-//    public void getRawNetFlowReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//                                    @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//                                    @RequestParam(value = "srcIp", required = false) String srcIp,
-//                                    @RequestParam(value = "dstIp", required = false) String dstIp,
-//                                    @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+//    public void getRawNetFlowReport(@ApiParam("页码数")@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+//                                    @ApiParam("页码数")@RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+//                                    @ApiParam("页码数")@RequestParam(value = "srcIp", required = false) String srcIp,
+//                                    @ApiParam("页码数")@RequestParam(value = "dstIp", required = false) String dstIp,
+//                                    @ApiParam("页码数")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 //        JSONObject filters = new JSONObject();
 //        if (stime != null) {
 //            filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -1196,12 +1197,12 @@ public class ReportController extends BaseController {
 
 
 //    @GetMapping(value = "/RemoteRecord")
-//    public void getRemoteRecordReport(@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//                                      @RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//                                      @RequestParam(value = "srcIp", required = false) String srcIp,
-//                                      @RequestParam(value = "dstIp", required = false) String dstIp,
-//                                      @RequestParam(value = "remoteType", required = false) String remoteType,
-//                                      @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+//    public void getRemoteRecordReport(@ApiParam("页码数")@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+//                                      @ApiParam("页码数")@RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+//                                      @ApiParam("页码数")@RequestParam(value = "srcIp", required = false) String srcIp,
+//                                      @ApiParam("页码数")@RequestParam(value = "dstIp", required = false) String dstIp,
+//                                      @ApiParam("页码数")@RequestParam(value = "remoteType", required = false) String remoteType,
+//                                      @ApiParam("页码数")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 //
 //        JSONObject filters = new JSONObject();
 //        if (stime != null) {
@@ -1294,14 +1295,14 @@ public class ReportController extends BaseController {
 
 //    @GetMapping(value = "/selfaudit")
 //    public void getSelfAuditReport(
-//            @RequestParam(value = "stime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//            @RequestParam(value = "etime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//            @RequestParam(value = "result", required = false) String result,
-//            @RequestParam(value = "type", required = false) String type,
-//            @RequestParam(value = "severity", required = false) Integer severity,
-//            @RequestParam(value = "ip", required = false) String ip,
-//            @RequestParam(value = "username", required = false) String username,
-//            @RequestParam(value = "format", required = false) String format,
+//            @ApiParam("页码数")@RequestParam(value = "stime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+//            @ApiParam("页码数")@RequestParam(value = "etime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+//            @ApiParam("页码数")@RequestParam(value = "result", required = false) String result,
+//            @ApiParam("页码数")@RequestParam(value = "type", required = false) String type,
+//            @ApiParam("页码数")@RequestParam(value = "severity", required = false) Integer severity,
+//            @ApiParam("页码数")@RequestParam(value = "ip", required = false) String ip,
+//            @ApiParam("页码数")@RequestParam(value = "username", required = false) String username,
+//            @ApiParam("页码数")@RequestParam(value = "format", required = false) String format,
 //            HttpServletResponse response, HttpServletRequest request) {
 //        JSONObject filters = new JSONObject();
 //        filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -1394,11 +1395,11 @@ public class ReportController extends BaseController {
 //    }
 
 //    @GetMapping(value = "/FailAccess")
-//    public void getFailAccessReport(@RequestParam(value = "stime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//                                    @RequestParam(value = "etime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//                                    @RequestParam(value = "srcIp", required = false) String srcIp,
-//                                    @RequestParam(value = "dstIp", required = false) String dstIp,
-//                                    @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+//    public void getFailAccessReport(@ApiParam("页码数")@RequestParam(value = "stime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+//                                    @ApiParam("页码数")@RequestParam(value = "etime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+//                                    @ApiParam("页码数")@RequestParam(value = "srcIp", required = false) String srcIp,
+//                                    @ApiParam("页码数")@RequestParam(value = "dstIp", required = false) String dstIp,
+//                                    @ApiParam("页码数")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 //
 //        JSONObject filters = new JSONObject();
 //        filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -1486,16 +1487,16 @@ public class ReportController extends BaseController {
 //    }
 
     @GetMapping(value = "analysis/client/visit")
-    public void getAnalysisClientReport(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                                        @RequestParam(value = "clientIp", required = false) String clientIp,
-                                        @RequestParam(value = "region[]", required = false) String[] region,
-                                        @RequestParam(value = "clientCode", required = false) String clientCode,
-                                        @RequestParam(value = "action", required = false) String action,
-                                        @RequestParam(value = "cameraId", required = false) Long cameraId,
-                                        @RequestParam(value = "clientId", required = false) String clientId,
-                                        @RequestParam(value = "user", required = false) String user,
-                                        @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getAnalysisClientReport(@ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                        @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                        @ApiParam("客户端IP")@RequestParam(value = "clientIp", required = false) String clientIp,
+                                        @ApiParam("区域代码")@RequestParam(value = "region[]", required = false) String[] region,
+                                        @ApiParam("客户端编码")@RequestParam(value = "clientCode", required = false) String clientCode,
+                                        @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                                        @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) Long cameraId,
+                                        @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) String clientId,
+                                        @ApiParam("用户")@RequestParam(value = "user", required = false) String user,
+                                        @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
 
         JSONObject filters = new JSONObject();
@@ -1589,14 +1590,14 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/client/visit/cnt")
-    public void getAnalysisClientDetailReport(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                              @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                                              @RequestParam(value = "clientId", required = false) Long clientId,
-                                              @RequestParam(value = "cameraId", required = false) Long cameraId,
-                                              @RequestParam(value = "dstIp", required = false) String dstIp,
-                                              @RequestParam(value = "dstCode", required = false) String dstCode,
-                                              @RequestParam(value = "action", required = false) String action,
-                                              @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getAnalysisClientDetailReport(@ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                              @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                              @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) Long clientId,
+                                              @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) Long cameraId,
+                                              @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                              @ApiParam("目的编码")@RequestParam(value = "dstCode", required = false) String dstCode,
+                                              @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                                              @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
         filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -1683,17 +1684,17 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/client/visit/relatedCamera")
-    public void getAnalysisClientRelatedCameraReport(@RequestParam(value = "clientId",required = false) Long clientId,
-                                                     @RequestParam(value = "action", required = false) Integer action,
-                                                     @RequestParam(value = "cameraCode", required = false) String cameraCode,
-                                                     @RequestParam(value = "cameraName", required = false) String cameraName,
-                                                     @RequestParam(value = "cameraIp", required = false) String cameraIp,
-                                                     @RequestParam(value = "username", required = false) String username,
-                                                     @RequestParam(value = "clientIp", required = false) String clientIp,
-                                                     @RequestParam(value = "region", required = false) Integer region,
-                                                     @RequestParam(value = "startDate", required = false) String startDate,
-                                                     @RequestParam(value = "endDate", required = false) String endDate,
-                                                     @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getAnalysisClientRelatedCameraReport(@ApiParam("客户端ID")@RequestParam(value = "clientId",required = false) Long clientId,
+                                                     @ApiParam("操作类型")@RequestParam(value = "action", required = false) Integer action,
+                                                     @ApiParam("摄像头编码")@RequestParam(value = "cameraCode", required = false) String cameraCode,
+                                                     @ApiParam("摄像头名称")@RequestParam(value = "cameraName", required = false) String cameraName,
+                                                     @ApiParam("摄像头IP")@RequestParam(value = "cameraIp", required = false) String cameraIp,
+                                                     @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                                     @ApiParam("客户端IP")@RequestParam(value = "clientIp", required = false) String clientIp,
+                                                     @ApiParam("区域代码")@RequestParam(value = "region", required = false) Integer region,
+                                                     @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String startDate,
+                                                     @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
+                                                     @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
         filters.put("clientId", clientId);
@@ -1778,15 +1779,15 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/camera/visited")
-    public void getAnalysisCameraReport(@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                        @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                                        @RequestParam(value = "cameraIp", required = false) String cameraIp,
-                                        @RequestParam(value = "region[]", required = false) String[] region,
-                                        @RequestParam(value = "cameraCode", required = false) String cameraCode,
-                                        @RequestParam(value = "cameraName", required = false) String cameraName,
-                                        @RequestParam(value = "action", required = false) String action,
-                                        @RequestParam(value = "cameraId", required = false) String cameraId,
-                                        @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getAnalysisCameraReport(@ApiParam("开始时间")@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                        @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                        @ApiParam("客户端IP")@RequestParam(value = "cameraIp", required = false) String cameraIp,
+                                        @ApiParam("区域代码")@RequestParam(value = "region[]", required = false) String[] region,
+                                        @ApiParam("摄像头编码")@RequestParam(value = "cameraCode", required = false) String cameraCode,
+                                        @ApiParam("摄像头名称")@RequestParam(value = "cameraName", required = false) String cameraName,
+                                        @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                                        @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) String cameraId,
+                                        @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
         if (startDate != null) {
@@ -1878,14 +1879,14 @@ public class ReportController extends BaseController {
     }
 
 //    @GetMapping(value = "analysis/camera/visit/cnt")
-//    public void getAnalysisCameraReport(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-//                                        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-//                                        @RequestParam(value = "clientId", required = false) Long clientId,
-//                                        @RequestParam(value = "cameraId", required = false) Long cameraId,
-//                                        @RequestParam(value = "srcIp", required = false) String srcIp,
-//                                        @RequestParam(value = "srcCode", required = false) String srcCode,
-//                                        @RequestParam(value = "action", required = false) String action,
-//                                        @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+//    public void getAnalysisCameraReport(@ApiParam("页码数")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+//                                        @ApiParam("页码数")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+//                                        @ApiParam("页码数")@RequestParam(value = "clientId", required = false) Long clientId,
+//                                        @ApiParam("页码数")@RequestParam(value = "cameraId", required = false) Long cameraId,
+//                                        @ApiParam("页码数")@RequestParam(value = "srcIp", required = false) String srcIp,
+//                                        @ApiParam("页码数")@RequestParam(value = "srcCode", required = false) String srcCode,
+//                                        @ApiParam("页码数")@RequestParam(value = "action", required = false) String action,
+//                                        @ApiParam("页码数")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 //
 //        JSONObject filters = new JSONObject();
 //        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
@@ -1972,11 +1973,11 @@ public class ReportController extends BaseController {
 //    }
 
     @GetMapping(value = "analysis/camera/visited/relatedClient")
-    public void getAnalysisCameraRelatedClientReport(@RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                                     @RequestParam(value = "action", required = false) Integer action,
-                                                     @RequestParam(value = "startDate", required = false) String startDate,
-                                                     @RequestParam(value = "endDate", required = false) String endDate,
-                                                     @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getAnalysisCameraRelatedClientReport(@ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                                     @ApiParam("操作类型")@RequestParam(value = "action", required = false) Integer action,
+                                                     @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String startDate,
+                                                     @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
+                                                     @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         Statistics statistics = new Statistics();
 
         statistics.setstartDate(startDate);
@@ -2061,15 +2062,15 @@ public class ReportController extends BaseController {
 
 
     @GetMapping(value = "analysis/visit/rate/cameraCnt")
-    public void getRateCameraCntReport(@RequestParam(value = "region", required = false) Integer region,
-                                       @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                       @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-                                       @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                       @RequestParam(value = "deviceName", required = false) String deviceName,
-                                       @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                       @RequestParam(value = "status", required = false) String status,
-                                       @RequestParam(value = "manufacturer", required = false) String manufacturer,
-                                       @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getRateCameraCntReport(@ApiParam("区域代码")@RequestParam(value = "region", required = false) Integer region,
+                                       @ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                       @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+                                       @ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                       @ApiParam("设备名称")@RequestParam(value = "deviceName", required = false) String deviceName,
+                                       @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                       @ApiParam("状态")@RequestParam(value = "status", required = false) String status,
+                                       @ApiParam("制造厂商")@RequestParam(value = "manufacturer", required = false) String manufacturer,
+                                       @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
         JSONObject filters = new JSONObject();
         filters.put("deviceCode", deviceCode);
@@ -2158,15 +2159,15 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/visit/rate/visitedCnt")
-    public void getRateVisitCntReport(@RequestParam(value = "region", required = false) Integer region,
-                                      @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                      @RequestParam(value = "deviceName", required = false) String deviceName,
-                                      @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                      @RequestParam(value = "status", required = false) String status,
-                                      @RequestParam(value = "manufacturer", required = false) String manufacturer,
-                                      @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                      @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-                                      @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getRateVisitCntReport(@ApiParam("区域代码")@RequestParam(value = "region", required = false) Integer region,
+                                      @ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                      @ApiParam("设备名称")@RequestParam(value = "deviceName", required = false) String deviceName,
+                                      @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                      @ApiParam("状态")@RequestParam(value = "status", required = false) String status,
+                                      @ApiParam("制造厂商")@RequestParam(value = "manufacturer", required = false) String manufacturer,
+                                      @ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                      @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+                                      @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("manufacturer", manufacturer);
         filters.put("deviceCode", deviceCode);
@@ -2253,17 +2254,17 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/visit/rate/visitCnt")
-    public void getAnalysisCameraReport(@RequestParam(value = "region", required = false) Integer region,
-                                        @RequestParam(value = "srcIp", required = false) String srcIp,
-                                        @RequestParam(value = "dstIp", required = false) String dstIp,
-                                        @RequestParam(value = "clientId", required = false) String clientId,
-                                        @RequestParam(value = "cameraId", required = false) String cameraId,
-                                        @RequestParam(value = "action", required = false) String action,
-                                        @RequestParam(value = "dstCode", required = false) String dstCode,
-                                        @RequestParam(value = "username", required = false) String username,
-                                        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-                                        @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getAnalysisCameraReport(@ApiParam("区域代码")@RequestParam(value = "region", required = false) Integer region,
+                                        @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                        @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                        @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) String clientId,
+                                        @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) String cameraId,
+                                        @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                                        @ApiParam("目的编码")@RequestParam(value = "dstCode", required = false) String dstCode,
+                                        @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                        @ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                        @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+                                        @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("region", region);
         filters.put("srcIp", srcIp);
@@ -2352,14 +2353,14 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/visit/rate/clientCnt")
-    public void getRateClientCntReport(@RequestParam(value = "region", required = false) Integer region,
-                                       @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                       @RequestParam(value = "status", required = false) Integer status,
-                                       @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                       @RequestParam(value = "sipServerId", required = false) String sipServerId,
-                                       @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                       @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-                                       @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+    public void getRateClientCntReport(@ApiParam("区域代码")@RequestParam(value = "region", required = false) Integer region,
+                                       @ApiParam("设备编码")@RequestParam(value = "deviceCode", required = false) String deviceCode,
+                                       @ApiParam("状态")@RequestParam(value = "status", required = false) Integer status,
+                                       @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                       @ApiParam("信令服务器ID")@RequestParam(value = "sipServerId", required = false) String sipServerId,
+                                       @ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                       @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+                                       @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
         JSONObject filters = new JSONObject();
         filters.put("region", region);
         filters.put("deviceCode", deviceCode);
@@ -2445,12 +2446,12 @@ public class ReportController extends BaseController {
 
 //    @GetMapping(value = "/logingLog")
 //    public void getLoginLogReport(
-//            @RequestParam(value = "stime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-//            @RequestParam(value = "etime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-//            @RequestParam(value = "ipaddr", required = false) String ipaddr,
-//            @RequestParam(value = "userName", required = false) String userName,
-//            @RequestParam(value = "status", required = false) Integer status,
-//            @RequestParam(value = "format", required = false) String format,
+//            @ApiParam("页码数")@RequestParam(value = "stime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+//            @ApiParam("页码数")@RequestParam(value = "etime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+//            @ApiParam("页码数")@RequestParam(value = "ipaddr", required = false) String ipaddr,
+//            @ApiParam("页码数")@RequestParam(value = "userName", required = false) String userName,
+//            @ApiParam("页码数")@RequestParam(value = "status", required = false) Integer status,
+//            @ApiParam("页码数")@RequestParam(value = "format", required = false) String format,
 //            HttpServletResponse response, HttpServletRequest request) {
 //        JSONObject filters = new JSONObject();
 //        filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));

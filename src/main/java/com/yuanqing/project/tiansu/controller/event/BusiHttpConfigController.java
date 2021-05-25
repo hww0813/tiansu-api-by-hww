@@ -6,12 +6,11 @@ import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.event.BusiHttpConfig;
 import com.yuanqing.project.tiansu.service.event.IBusiHttpConfigService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/httpConfig")
+@Api(value = "接口告警阈值配置接口", description = "接口告警阈值配置相关API")
 public class BusiHttpConfigController extends BaseController {
     @Autowired
     private IBusiHttpConfigService busiHttpConfigService;
@@ -31,7 +31,7 @@ public class BusiHttpConfigController extends BaseController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "查询接口告警阈值配置列表" , httpMethod = "GET")
-    public AjaxResult list(BusiHttpConfig busiHttpConfig) {
+    public AjaxResult list(@ApiParam("接口告警") @RequestBody BusiHttpConfig busiHttpConfig) {
         List<BusiHttpConfig> list = busiHttpConfigService.selectBusiHttpConfigList(busiHttpConfig);
         return AjaxResult.success(list);
     }
@@ -41,7 +41,7 @@ public class BusiHttpConfigController extends BaseController {
      */
     @PutMapping("/edit")
     @ApiOperation(value = "修改接口告警阈值配置" , httpMethod = "PUT")
-    public AjaxResult edit(BusiHttpConfig busiHttpConfig) {
+    public AjaxResult edit(@ApiParam("接口告警") @RequestBody BusiHttpConfig busiHttpConfig) {
         return toAjax(busiHttpConfigService.updateBusiHttpConfig(busiHttpConfig));
     }
 

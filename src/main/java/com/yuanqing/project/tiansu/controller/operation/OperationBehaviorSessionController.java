@@ -10,6 +10,7 @@ import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorSessionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/api/operation/behavior/session")
-@Api(value = "操作行为会话接口")
+@Api(value = "操作行为会话接口", description = "操作行为会话相关Api")
 @CrossOrigin
 public class OperationBehaviorSessionController extends BaseController {
 
@@ -33,14 +34,14 @@ public class OperationBehaviorSessionController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取操作行为会话列表", httpMethod = "GET")
-    public PageResult getAll(@RequestParam(value = "pageNum", defaultValue = "1") int num,
-                             @RequestParam(value = "pageSize", defaultValue = "20") int size,
-                             @RequestParam(value = "sessionId", required = false) Long sessionId,
-                             @RequestParam(value = "srcCode", required = false) String srcCode,
-                             @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                             @RequestParam(value = "username", required = false) String username,
-                             @RequestParam(required = false) String orderType,
-                             @RequestParam(required = false) String orderValue, OperationBehaviorSession operationBehaviorSession) {
+    public PageResult getAll(@ApiParam("页码数")@RequestParam(value = "pageNum", defaultValue = "1") int num,
+                             @ApiParam("行数")@RequestParam(value = "pageSize", defaultValue = "20") int size,
+                             @ApiParam("会话ID")@RequestParam(value = "sessionId", required = false) Long sessionId,
+                             @ApiParam("源设备编码")@RequestParam(value = "srcCode", required = false) String srcCode,
+                             @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                             @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                             @ApiParam("排序")@RequestParam(required = false) String orderType,
+                             @ApiParam("排序对象")@RequestParam(required = false) String orderValue, @ApiParam("操作行为会话对象")OperationBehaviorSession operationBehaviorSession) {
 
         operationBehaviorSession.setNum(num - 1);
         operationBehaviorSession.setSize(size);
@@ -61,8 +62,8 @@ public class OperationBehaviorSessionController extends BaseController {
 
     @GetMapping("/behaviorCategory")
     @ApiOperation(value = "获取行为类别占比", httpMethod = "GET")
-    public AjaxResult getBehaviorCategory(@RequestParam(value = "startDate") String startDate,
-                                          @RequestParam(value = "endDate") String endDate) {
+    public AjaxResult getBehaviorCategory(@ApiParam("开始时间")@RequestParam(value = "startDate") String startDate,
+                                          @ApiParam("结束时间")@RequestParam(value = "endDate") String endDate) {
         JSONObject filters = new JSONObject();
         filters.put("startDate", startDate);
         filters.put("endDate", endDate);

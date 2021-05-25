@@ -17,7 +17,9 @@ import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
@@ -42,6 +44,7 @@ import static com.yuanqing.common.constant.Constants.INDEX_VISITED_RATE_CACHE;
  */
 @RestController
 @RequestMapping(value = "/api/analysis/visit/rate")
+@Api(value = "首页摄像头访问率分析接口", description = "首页摄像头访问率分析Api")
 public class RateVisitController extends BaseController {
 
     @Autowired
@@ -68,10 +71,10 @@ public class RateVisitController extends BaseController {
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "首页访问率查询", httpMethod = "GET")
-    public AjaxResult rateList(@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDate startDate,
-                               @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDate endDate,
-                               @RequestParam(value = "pageNum", required = false) String pageNum,
-                               @RequestParam(value = "pageSize", required = false) String pageSize) {
+    public AjaxResult rateList(@ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDate startDate,
+                               @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDate endDate,
+                               @ApiParam("页码数")@RequestParam(value = "pageNum", required = false) String pageNum,
+                               @ApiParam("行数")@RequestParam(value = "pageSize", required = false) String pageSize) {
         String time = DateUtils.getTimeType(startDate, endDate);
         return AjaxResult.success("success", redisCache.getCacheObject(INDEX_VISITED_RATE_CACHE + "_" + time));
     }
@@ -86,7 +89,7 @@ public class RateVisitController extends BaseController {
 
     @GetMapping(value = "/cameraCnt")
     @ApiOperation(value = "获取访问率相关摄像头列表", httpMethod = "GET")
-    public AjaxResult getCameraCntList(Camera camera) {
+    public AjaxResult getCameraCntList(@ApiParam("摄像头实体")Camera camera) {
 
         // TODO: 时间范围没有传参
         startPage();
@@ -106,8 +109,8 @@ public class RateVisitController extends BaseController {
 
     @GetMapping(value = "/visitedCnt")
     @ApiOperation(value = "获取访问分析列表", httpMethod = "GET")
-    public AjaxResult getVisitedCntList(@RequestParam(value = "cameraIp", required = false) String cameraIp,
-                                        Camera camera) {
+    public AjaxResult getVisitedCntList(@ApiParam("摄像头IP")@RequestParam(value = "cameraIp", required = false) String cameraIp,
+                                        @ApiParam("摄像头实体")Camera camera) {
 
         //设置时间查询范围
         CameraVisit cameraVisit = new CameraVisit();
@@ -133,17 +136,17 @@ public class RateVisitController extends BaseController {
 
     @GetMapping(value = "/visitCnt")
     @ApiOperation(value = "获取访问分析列表", httpMethod = "GET")
-    public PageResult getVisitCntList(@RequestParam(name = "pageNum", required = false, defaultValue = "1") int pageNum,
-                                      @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize,
-                                      @RequestParam(value = "cityCode", required = false) Integer region,
-                                      @RequestParam(value = "srcIp", required = false) String srcIp,
-                                      @RequestParam(value = "dstIp", required = false) String dstIp,
-                                      @RequestParam(value = "action", required = false) String action,
-                                      @RequestParam(value = "dstCode", required = false) String deviceCode,
-                                      @RequestParam(value = "username", required = false) String username,
-                                      @RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
-                                      @RequestParam(value = "startDate") String startDate,
-                                      @RequestParam(value = "endDate") String endDate) throws Exception {
+    public PageResult getVisitCntList(@ApiParam("页码数")@RequestParam(name = "pageNum", required = false, defaultValue = "1") int pageNum,
+                                      @ApiParam("行数")@RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize,
+                                      @ApiParam("区域代码")@RequestParam(value = "cityCode", required = false) Integer region,
+                                      @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                      @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                      @ApiParam("动作类型")@RequestParam(value = "action", required = false) String action,
+                                      @ApiParam("目的设备编码")@RequestParam(value = "dstCode", required = false) String deviceCode,
+                                      @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                      @ApiParam("目的设备名称")@RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
+                                      @ApiParam("开始时间")@RequestParam(value = "startDate") String startDate,
+                                      @ApiParam("结束时间")@RequestParam(value = "endDate") String endDate) throws Exception {
 
         // 从 访问率报表 -> 下级地区访问率 -> 访问次数过来时，会只传地区字段
         List<String> cameraCodeList = null;
@@ -186,11 +189,11 @@ public class RateVisitController extends BaseController {
 
     @GetMapping(value = "/clientCnt")
     @ApiOperation(value = "获取访问分析列表", httpMethod = "GET")
-    public AjaxResult getClientCntPage(@RequestParam(value = "cityCode", required = false) Integer region,
-                                       @RequestParam(value = "status", required = false) Integer status,
-                                       @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                       @RequestParam(value = "startDate") String startDate,
-                                       @RequestParam(value = "endDate") String endDate) {
+    public AjaxResult getClientCntPage(@ApiParam("区域代码")@RequestParam(value = "cityCode", required = false) Integer region,
+                                       @ApiParam("状态")@RequestParam(value = "status", required = false) Integer status,
+                                       @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                       @ApiParam("开始时间")@RequestParam(value = "startDate") String startDate,
+                                       @ApiParam("结束时间")@RequestParam(value = "endDate") String endDate) {
         Camera camera = new Camera();
         camera.setRegion(region);
 

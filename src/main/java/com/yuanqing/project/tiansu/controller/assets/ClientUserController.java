@@ -14,6 +14,7 @@ import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IClientUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,12 +52,12 @@ public class ClientUserController extends BaseController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取终端用户列表", httpMethod = "GET")
-    public AjaxResult getAll(@RequestParam(value = "status", required = false) Integer status,
-                             @RequestParam(value = "id", required = false) Long id,
-                             @RequestParam(value = "username", required = false) String username,
-                             @RequestParam(value = "ipAddress", required = false) Long ipAddress,
-                             @RequestParam(required = false) String orderType,
-                             @RequestParam(required = false) String orderValue) {
+    public AjaxResult getAll(@ApiParam("状态")@RequestParam(value = "status", required = false) Integer status,
+                             @ApiParam("ID")@RequestParam(value = "id", required = false) Long id,
+                             @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                             @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) Long ipAddress,
+                             @ApiParam("排序")@RequestParam(required = false) String orderType,
+                             @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         ClientUser clientUser = new ClientUser();
 
         clientUser.setStatus(status);
@@ -97,8 +98,8 @@ public class ClientUserController extends BaseController {
 
     @DeleteMapping
     @ApiOperation(value = "删除终端用户", httpMethod = "PUT")
-    public AjaxResult deleteSipClient(@Valid @RequestParam(value = "id") Long id,
-                                      @Valid @RequestParam(value = "username") String username) {
+    public AjaxResult deleteSipClient(@Valid @ApiParam("ID")@RequestParam(value = "id") Long id,
+                                      @Valid @ApiParam("用户名")@RequestParam(value = "username") String username) {
 
         clientUserService.delete(id, username);
         return AjaxResult.success();
@@ -106,7 +107,7 @@ public class ClientUserController extends BaseController {
 
     @PutMapping
     @ApiOperation(value = "更新终端用户", httpMethod = "PUT")
-    public AjaxResult putSipClient(@Valid @RequestBody ClientUser dto) {
+    public AjaxResult putSipClient(@Valid @ApiParam("终端用户")@RequestBody ClientUser dto) {
 
         clientUserService.save(dto, SaveType.UPDATE);
         return AjaxResult.success();
@@ -114,7 +115,7 @@ public class ClientUserController extends BaseController {
 
     @PutMapping("/updateStatus")
     @ApiOperation(value = "更新终端用户状态为已确认", httpMethod = "PUT")
-    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject) {
+    public AjaxResult updateStatus(@Valid @ApiParam("勾选的终端用户ID")@RequestBody JSONObject jsonObject) {
         String str1 = String.valueOf(jsonObject.get("id"));
         String str = str1.substring(1, str1.length() - 1);
         String[] array = str.split(",");
@@ -126,7 +127,7 @@ public class ClientUserController extends BaseController {
     // 导入excel
     @PostMapping(value = "/import")
     @ApiOperation(value = "导入用户列表")
-    public Map<String, Object> importExcel(@RequestParam(value = "file", required = false) MultipartFile file) {
+    public Map<String, Object> importExcel(@ApiParam("用户列表EXCEL")@RequestParam(value = "file", required = false) MultipartFile file) {
 
         Map<String, Object> map = new HashMap<String, Object>();
         String AjaxResult = clientUserService.readExcelFile(file);
