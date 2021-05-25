@@ -84,7 +84,7 @@ public class EventController {
         filters.put("eventCategory", eventCategory);
         filters.put("eventLevel", eventLevel);
         filters.put("clientIp", clientIp);
-//        filters.put("cameraName", cameraName);
+        filters.put("cameraName", cameraName);
 //        filters.put("content", content);
 //        filters.put("eventSubject", eventSubject);
 //        filters.put("ruleName", ruleName);
