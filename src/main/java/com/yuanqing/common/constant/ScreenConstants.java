@@ -63,7 +63,7 @@ public class ScreenConstants {
     public static final String CAMERA_MAP = PREFIX + "cameraMap";
 
     /**
-     * 9,视频TOP
+     * 9.视频TOP
      */
     public static final String VIDEO_NUM_DAY = PREFIX + "videoNum:day";
     public static final String VIDEO_NUM_WEEK = PREFIX + "videoNum:week";

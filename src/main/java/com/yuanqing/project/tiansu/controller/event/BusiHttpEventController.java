@@ -15,6 +15,7 @@ import com.yuanqing.project.tiansu.domain.event.BusiHttpEvent;
 import com.yuanqing.project.tiansu.service.event.IBusiHttpEventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,15 +40,15 @@ public class BusiHttpEventController extends BaseController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取接口告警列表" , httpMethod = "GET")
-    public TableDataInfo list(@RequestParam(value = "startDate",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
-                              @RequestParam(value = "endDate",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
-                              @RequestParam(value = "httpUrl",required = false)String httpUrl,
-                              @RequestParam(value = "ipAddress",required = false)String ipAddress,
-                              @RequestParam(value = "eventSource",required = false)String eventSource,
-                              @RequestParam(value = "httpStatus",required = false)String httpStatus,
-                              @RequestParam(value = "eventLevel",required = false)String eventLevel,
-                              @RequestParam(value = "eventStatus",required = false)Integer eventStatus
-                              ) {
+    public TableDataInfo list(@ApiParam("开始时间")@RequestParam(value = "startDate",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+                              @ApiParam("结束时间")@RequestParam(value = "endDate",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
+                              @ApiParam("访问地址")@RequestParam(value = "httpUrl",required = false)String httpUrl,
+                              @ApiParam("终端IP")@RequestParam(value = "ipAddress",required = false)String ipAddress,
+                              @ApiParam("事件来源")@RequestParam(value = "eventSource",required = false)String eventSource,
+                              @ApiParam("接口执行状态")@RequestParam(value = "httpStatus",required = false)String httpStatus,
+                              @ApiParam("告警等级")@RequestParam(value = "eventLevel",required = false)String eventLevel,
+                              @ApiParam("告警状态")@RequestParam(value = "eventStatus",required = false)Integer eventStatus
+    ) {
         BusiHttpEvent busiHttpEvent = new BusiHttpEvent();
         busiHttpEvent.setHttpUrl(httpUrl);
         busiHttpEvent.setIpAddress(IpUtils.ipToLong(ipAddress));
@@ -64,7 +65,7 @@ public class BusiHttpEventController extends BaseController {
      */
     @PutMapping("/editSome")
     @ApiOperation(value = "接口告警确认部分状态" , httpMethod = "PUT")
-    public AjaxResult editSome(@RequestBody JSONObject jsonObject) {
+    public AjaxResult editSome(@ApiParam("勾选的需要确认状态的接口告警数据的id") @RequestBody JSONObject jsonObject) {
         String str1 = String.valueOf(jsonObject.get("ids"));
         String str = str1.substring(1, str1.length() - 1);
         String[] strArr = str.split(",");
@@ -87,7 +88,7 @@ public class BusiHttpEventController extends BaseController {
      */
     @GetMapping("/getOfSources")
     @ApiOperation(value = "获取接口告警列表" , httpMethod = "GET")
-    public AjaxResult getOfSources(@RequestParam("timeType") String timeType) {
+    public AjaxResult getOfSources(@ApiParam("日期类型")@RequestParam("timeType") String timeType) {
         Date endDate = new Date();
         Date startDate = DateUtils.getOfTimeType(timeType);
         List<Map<String, String>> map = busiHttpEventService.statisticsOfDataSources(startDate, endDate);
@@ -99,7 +100,7 @@ public class BusiHttpEventController extends BaseController {
      */
     @GetMapping("/getOfEventLevel")
     @ApiOperation(value = "获取接口告警列表" , httpMethod = "GET")
-    public AjaxResult getOfEventLevel(@RequestParam("timeType") String timeType) {
+    public AjaxResult getOfEventLevel(@ApiParam("日期类型")@RequestParam("timeType") String timeType) {
         Date endDate = new Date();
         Date startDate = DateUtils.getOfTimeType(timeType);
         List<Map<String, String>> list = busiHttpEventService.alarmLevelStatistics(startDate, endDate);

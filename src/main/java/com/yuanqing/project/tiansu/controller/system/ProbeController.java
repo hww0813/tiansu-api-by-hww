@@ -4,6 +4,8 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/probe")
+@Api(value = "探针相关接口", description = "探针相关Api")
 public class ProbeController {
 
     @Autowired
@@ -59,7 +62,7 @@ public class ProbeController {
     }
 
     @GetMapping("/getLowerRegion")
-    public AjaxResult getLowerRegion(@RequestParam("regionId") String regionId){
+    public AjaxResult getLowerRegion(@ApiParam("区域代码")@RequestParam("regionId") String regionId){
         List<MacsRegion> lowerRegion = macsConfigService.getLowerRegion(regionId);
 
         if(!CollectionUtils.isEmpty(lowerRegion)) {

@@ -4,6 +4,7 @@ import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.job.IndexStatisticsTask;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/api/statistics")
+@Api(value = "手动执行页面统计相关接口", description = "手动执行页面统计相关API")
 public class OperationStatisticsController {
 
     @Autowired

@@ -4,156 +4,168 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yuanqing.framework.aspectj.lang.annotation.Excel;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Entity基类
  *
  * @author ruoyi
  */
-public class BaseEntity implements Serializable
-{
+@ApiModel("Entity基类")
+public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /** 搜索值 */
+    /**
+     * 搜索值
+     */
+    @ApiModelProperty("搜索值")
     private String searchValue;
 
-    /** 创建者 */
+    /**
+     * 创建者
+     */
+    @ApiModelProperty("创建者")
     private String createBy;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
+    @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
-    /** 更新者 */
+    /**
+     * 更新者
+     */
+    @ApiModelProperty("更新者")
     private String updateBy;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
+    @ApiModelProperty("更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "更新时间",type = Excel.Type.EXPORT)
+    @Excel(name = "更新时间", type = Excel.Type.EXPORT)
     private Date updateTime;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
+    @ApiModelProperty("备注")
     private String remark;
 
-    /** 数据权限 */
+    /**
+     * 数据权限
+     */
+    @ApiModelProperty("数据权限")
     private String dataScope;
 
-    /** 开始时间 */
+    /**
+     * 开始时间
+     */
+    @ApiModelProperty("开始时间")
     @JsonIgnore
     private String startDate;
 
-    /** 结束时间 */
+    /**
+     * 结束时间
+     */
+    @ApiModelProperty("结束时间")
     @JsonIgnore
     private String endDate;
 
 
-    /** 请求参数 */
+    /**
+     * 请求参数
+     */
+    @ApiModelProperty("请求参数")
     private Map<String, Object> params;
 
-    public String getSearchValue()
-    {
+    public String getSearchValue() {
         return searchValue;
     }
 
-    public void setSearchValue(String searchValue)
-    {
+    public void setSearchValue(String searchValue) {
         this.searchValue = searchValue;
     }
 
-    public String getCreateBy()
-    {
+    public String getCreateBy() {
         return createBy;
     }
 
-    public void setCreateBy(String createBy)
-    {
+    public void setCreateBy(String createBy) {
         this.createBy = createBy;
     }
 
-    public Date getCreateTime()
-    {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime)
-    {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
-    public String getUpdateBy()
-    {
+    public String getUpdateBy() {
         return updateBy;
     }
 
-    public void setUpdateBy(String updateBy)
-    {
+    public void setUpdateBy(String updateBy) {
         this.updateBy = updateBy;
     }
 
-    public Date getUpdateTime()
-    {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime)
-    {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
-    public String getRemark()
-    {
+    public String getRemark() {
         return remark;
     }
 
-    public void setRemark(String remark)
-    {
+    public void setRemark(String remark) {
         this.remark = remark;
     }
 
-    public String getDataScope()
-    {
+    public String getDataScope() {
         return dataScope;
     }
 
-    public void setDataScope(String dataScope)
-    {
+    public void setDataScope(String dataScope) {
         this.dataScope = dataScope;
     }
 
-    public String getstartDate()
-    {
+    public String getstartDate() {
         return startDate;
     }
 
-    public void setstartDate(String startDate)
-    {
+    public void setstartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public String getendDate()
-    {
+    public String getendDate() {
         return endDate;
     }
 
-    public void setendDate(String endDate)
-    {
+    public void setendDate(String endDate) {
         this.endDate = endDate;
     }
 
-    public Map<String, Object> getParams()
-    {
-        if (params == null)
-        {
+    public Map<String, Object> getParams() {
+        if (params == null) {
             params = new HashMap<>();
         }
         return params;
     }
 
-    public void setParams(Map<String, Object> params)
-    {
+    public void setParams(Map<String, Object> params) {
         this.params = params;
     }
 }

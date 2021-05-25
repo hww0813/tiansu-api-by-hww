@@ -11,6 +11,7 @@ import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.service.event.EventManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,7 +37,7 @@ import static com.yuanqing.common.constant.Constants.ALARM_CAMERA_COUNTS_CACHE;
 @RestController
 @RequestMapping(value = "/api/event")
 @CrossOrigin
-@Api(value = "告警事件")
+@Api(value = "告警事件接口", description = "告警事件相关API")
 public class EventController {
 
 
@@ -51,25 +52,25 @@ public class EventController {
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "获取告警事件列表", httpMethod = "GET")
-    public PageResult getAll(@RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                             @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
-                             @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-                             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
-                             @RequestParam(value = "eventSource", required = false) String eventSource,
+    public PageResult getAll(@ApiParam("页码数")@RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+                             @ApiParam("行数")@RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
+                             @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
+                             @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+                             @ApiParam("事件来源")@RequestParam(value = "eventSource", required = false) String eventSource,
                              @RequestParam(value = "strategyName", required = false) String strategyName,
-                             @RequestParam(value = "status", required = false) String status,
-                             @RequestParam(value = "eventCategory", required = false) String eventCategory,
-                             @RequestParam(value = "eventLevel", required = false) String eventLevel,
-                             @RequestParam(value = "clientIp", required = false) String clientIp,
-                             @RequestParam(value = "cameraName", required = false) String cameraName,
-                             @RequestParam(value = "content", required = false) String content,
+                             @ApiParam("状态")@RequestParam(value = "status", required = false) String status,
+                             @ApiParam("事件类型")@RequestParam(value = "eventCategory", required = false) String eventCategory,
+                             @ApiParam("告警等级")@RequestParam(value = "eventLevel", required = false) String eventLevel,
+                             @ApiParam("终端IP")@RequestParam(value = "clientIp", required = false) String clientIp,
+                             @ApiParam("摄像头名称")@RequestParam(value = "cameraName", required = false) String cameraName,
+                             @ApiParam("内容")@RequestParam(value = "content", required = false) String content,
                              @RequestParam(value = "eventSubject", required = false) String eventSubject,
-                             @RequestParam(value = "ruleName", required = false) String ruleName,
-                             @RequestParam(value = "action", required = false) String action,
-                             @RequestParam(value = "id", required = false) Long id,
-                             @RequestParam(value = "connectType", required = false) String connectType,
-                             @RequestParam(required = false) String orderType,
-                             @RequestParam(required = false) String orderValue) {
+                             @ApiParam("规则名")@RequestParam(value = "ruleName", required = false) String ruleName,
+                             @ApiParam("动作类型")@RequestParam(value = "action", required = false) String action,
+                             @ApiParam("ID")@RequestParam(value = "id", required = false) Long id,
+                             @ApiParam("联接类型")@RequestParam(value = "connectType", required = false) String connectType,
+                             @ApiParam("排序")@RequestParam(required = false) String orderType,
+                             @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         JSONObject filters = new JSONObject();
         if (stime != null) {
             filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
@@ -110,7 +111,7 @@ public class EventController {
 
     @PutMapping
     @ApiOperation(value = "更新一个事件", httpMethod = "PUT")
-    public AjaxResult putEvent(@Valid @RequestBody JSONObject jsonObject) {
+    public AjaxResult putEvent(@ApiParam("告警事件")@Valid @RequestBody JSONObject jsonObject) {
         String str = String.valueOf(jsonObject.get("id"));
         List<Event> list = new ArrayList<Event>();
         Event event = new Event();
@@ -122,7 +123,7 @@ public class EventController {
 
     @PutMapping("/updateStatus")
     @ApiOperation(value = "批量确认告警事件", httpMethod = "PUT")
-    public AjaxResult updateStatus(@Valid @RequestBody JSONObject jsonObject) {
+    public AjaxResult updateStatus(@ApiParam("勾选的告警事件ID")@Valid @RequestBody JSONObject jsonObject) {
         String str1 = String.valueOf(jsonObject.get("id"));
         String str = str1.substring(1, str1.length() - 1);
         List<Event> list = new ArrayList<Event>();

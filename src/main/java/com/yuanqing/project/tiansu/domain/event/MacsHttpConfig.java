@@ -2,35 +2,43 @@ package com.yuanqing.project.tiansu.domain.event;
 
 import com.yuanqing.framework.aspectj.lang.annotation.Excel;
 import com.yuanqing.framework.web.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * 接口告警阈值配置对象 macs_http_config
+ * 接口告警阈值配置对象 busi_http_config
  *
  * @author lvjingjing
  * @date 2021-05-12
  */
-public class MacsHttpConfig extends BaseEntity
+@ApiModel("接口告警阈值配置对象")
+public class BusiHttpConfig extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** id */
+    @ApiModelProperty("id")
     private Long id;
 
     /** 阈值名称 */
+    @ApiModelProperty("阈值名称")
     @Excel(name = "阈值名称")
     private String configname;
 
     /** 阈值值 */
+    @ApiModelProperty("阈值值")
     @Excel(name = "阈值值")
     private String configvalue;
 
     /** 告警等级 */
+    @ApiModelProperty("告警等级")
     @Excel(name = "告警等级")
     private String eventLevel;
 
     /** 是否开启该告警(0:关闭;1:开启) */
+    @ApiModelProperty("是否开启该告警(0:关闭;1:开启)")
     @Excel(name = "是否开启该告警(0:关闭;1:开启)")
     private Integer onWork;
 

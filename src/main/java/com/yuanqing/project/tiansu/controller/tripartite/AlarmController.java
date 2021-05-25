@@ -6,6 +6,7 @@ import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,7 +34,7 @@ public class AlarmController {
     private IMacsConfigService macsConfigService;
 
     @GetMapping("/clientById")
-    public AjaxResult clientById(@Valid @RequestParam(value = "id") Long id) {
+    public AjaxResult clientById(@ApiParam("客户端ID")@Valid @RequestParam(value = "id") Long id) {
         if (id == null) {
             return AjaxResult.error();
         }
@@ -41,7 +42,7 @@ public class AlarmController {
     }
 
     @GetMapping("/serverByIP")
-    public AjaxResult deleteSipClient(@Valid @RequestParam(value = "ipAddress") Long ipAddress) {
+    public AjaxResult deleteSipClient(@ApiParam("IP地址")@Valid @RequestParam(value = "ipAddress") Long ipAddress) {
         if (ipAddress == null) {
             return AjaxResult.error();
         }
