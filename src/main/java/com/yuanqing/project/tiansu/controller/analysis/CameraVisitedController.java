@@ -76,9 +76,7 @@ public class CameraVisitedController extends BaseController {
 
         List<Camera> cameraList = null;
 
-        if (!BeanUtils.checkObjAllFieldsIsNull(camera)){
-            cameraList = cameraService.getList(camera);
-        }
+        cameraList = cameraService.getList(camera);
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList, cameraVisit, orderStr);
 
         return AjaxResult.success(getDataTable(cameraVisitList));

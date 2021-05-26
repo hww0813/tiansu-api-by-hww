@@ -190,11 +190,11 @@ public class StatisticsServiceImpl implements IStatisticsService {
     public List<CameraVisit> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr) {
 
         List<String> deviceCodeList = null;
+        List<CameraVisit> cameraVisitList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(cameraList)) {
             deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
+            cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
         }
-
-        List<CameraVisit> cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
 
         cameraVisitList.stream().forEach(f -> {
             if (!CollectionUtils.isEmpty(cameraList)) {
