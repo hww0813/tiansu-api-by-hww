@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yuanqing.project.tiansu.mapper.operation.BusiHttpPerfMapper">
 
-    <resultMap type="BusiHttpPerf" id="BusiHttpPerfResult">
+    <resultMap type="com.yuanqing.project.tiansu.domain.operation.BusiHttpPerf" id="BusiHttpPerfResult">
         <result property="id" column="id"/>
         <result property="srcIp" column="src_ip"/>
         <result property="srcPort" column="src_port"/>
@@ -15,6 +15,8 @@
         <result property="dstPort" column="dst_port"/>
         <result property="httpUrl" column="http_url"/>
         <result property="httpStatus" column="http_status"/>
+        <result property="requestParameter"    column="request_parameter"    />
+        <result property="responseParameter"    column="response_parameter"    />
         <result property="updateTime" column="update_time"/>
         <result property="stamp" column="stamp"/>
     </resultMap>
@@ -29,6 +31,8 @@
                dst_ip,
                dst_port,
                http_url,
+               request_parameter,
+               response_parameter,
                http_status,
                update_time,
                stamp
@@ -46,20 +50,10 @@
             <if test="dstIp != null "> and dst_ip = #{dstIp}</if>
             <if test="dstPort != null  and dstPort != ''"> and dst_port = #{dstPort}</if>
             <if test="httpUrl != null  and httpUrl != ''"> and http_url = #{httpUrl}</if>
+            <if test="requestParameter != null  and requestParameter != ''"> and request_parameter = #{requestParameter}</if>
+            <if test="responseParameter != null  and responseParameter != ''"> and response_parameter = #{responseParameter}</if>
             <if test="httpStatus != null  and httpStatus != ''"> and http_status = #{httpStatus}</if>
             <if test="startDate != null and endDate != null">and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')</if>
-            <if test="srcIp != null ">and src_ip = #{srcIp}</if>
-            <if test="srcPort != null  and srcPort != ''">and src_port = #{srcPort}</if>
-            <if test="httpResponseTime != null  and httpResponseTime != ''">and http_response_time =
-                #{httpResponseTime}
-            </if>
-            <if test="dataSize != null  and dataSize != ''">and data_size = #{dataSize}</if>
-            <if test="content != null  and content != ''">and content = #{content}</if>
-            <if test="dstIp != null ">and dst_ip = #{dstIp}</if>
-            <if test="dstPort != null  and dstPort != ''">and dst_port = #{dstPort}</if>
-            <if test="httpUrl != null  and httpUrl != ''">and http_url = #{httpUrl}</if>
-            <if test="httpStatus != null  and httpStatus != ''">and http_status = #{httpStatus}</if>
-            <if test="stamp != null ">and stamp = #{stamp}</if>
         </where>
     </select>
 
@@ -107,6 +101,8 @@
             <if test="dstPort != null  and dstPort != ''">dst_port,</if>
             <if test="httpUrl != null  and httpUrl != ''">http_url,</if>
             <if test="httpStatus != null  and httpStatus != ''">http_status,</if>
+            <if test="requestParameter != null  and requestParameter != ''">request_parameter,</if>
+            <if test="responseParameter != null  and responseParameter != ''">response_parameter,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="stamp != null ">stamp,</if>
         </trim>
@@ -120,6 +116,8 @@
             <if test="dstPort != null  and dstPort != ''">#{dstPort},</if>
             <if test="httpUrl != null  and httpUrl != ''">#{httpUrl},</if>
             <if test="httpStatus != null  and httpStatus != ''">#{httpStatus},</if>
+            <if test="requestParameter != null  and requestParameter != ''">#{requestParameter},</if>
+            <if test="responseParameter != null  and responseParameter != ''">#{responseParameter},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="stamp != null ">#{stamp},</if>
         </trim>
@@ -138,6 +136,8 @@
             <if test="dstPort != null  and dstPort != ''">dst_port = #{dstPort},</if>
             <if test="httpUrl != null  and httpUrl != ''">http_url = #{httpUrl},</if>
             <if test="httpStatus != null  and httpStatus != ''">http_status = #{httpStatus},</if>
+            <if test="requestParameter != null  and requestParameter != ''">request_parameter = #{requestParameter},</if>
+            <if test="responseParameter != null  and responseParameter != ''">response_parameter = #{responseParameter},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="stamp != null ">stamp = #{stamp},</if>
         </trim>

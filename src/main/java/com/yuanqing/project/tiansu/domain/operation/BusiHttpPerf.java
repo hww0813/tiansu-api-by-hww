@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.domain.operation;
 
 import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,178 +17,219 @@ import com.yuanqing.framework.web.domain.BaseEntity;
  * @date 2021-05-17
  */
 @ApiModel("http接口实体")
-public class BusiHttpPerf extends BaseEntity
-{
+public class BusiHttpPerf extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /** ID */
+    /**
+     * ID
+     */
     private Long id;
 
-    /** 源ip */
+    /**
+     * 源ip
+     */
     @Excel(name = "源ip")
     @ApiModelProperty("源ip")
     private Long srcIp;
 
-    /** 源端口 */
+    /**
+     * 源端口
+     */
     @Excel(name = "源端口")
     @ApiModelProperty("源端口")
     private String srcPort;
 
-    /** 响应时间 */
+    /**
+     * 响应时间
+     */
     @Excel(name = "响应时间")
     @ApiModelProperty("响应时间")
     private String httpResponseTime;
 
-    /** 包大小 */
+    /**
+     * 包大小
+     */
     @Excel(name = "包大小")
     @ApiModelProperty("用户ID")
     private String dataSize;
 
-    /** 包内容 */
+    /**
+     * 包内容
+     */
     @Excel(name = "包内容")
     @ApiModelProperty("包内容")
     private String content;
 
-    /** 目的ip */
+    /**
+     * 目的ip
+     */
     @Excel(name = "目的ip")
     @ApiModelProperty("目的ip")
     private Long dstIp;
 
-    /** 目的端口 */
+    /**
+     * 目的端口
+     */
     @Excel(name = "目的端口")
     @ApiModelProperty("目的端口")
     private String dstPort;
 
-    /** 访问地址 */
+    /**
+     * 访问地址
+     */
     @Excel(name = "访问地址")
     @ApiModelProperty("访问地址")
     private String httpUrl;
 
-    /** 响应状态 */
+    /**
+     * 请求参数
+     */
+    @Excel(name = "请求参数")
+    @ApiModelProperty("请求参数")
+    private String requestParameter;
+
+    /**
+     * 响应参数
+     */
+    @Excel(name = "响应参数")
+    @ApiModelProperty("响应参数")
+    private String responseParameter;
+
+    /**
+     * 响应状态
+     */
     @Excel(name = "响应状态")
     @ApiModelProperty("响应状态")
     private String httpStatus;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date stamp;
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
-    public void setSrcIp(Long srcIp)
-    {
+
+    public void setSrcIp(Long srcIp) {
         this.srcIp = srcIp;
     }
 
-    public Long getSrcIp()
-    {
+    public Long getSrcIp() {
         return srcIp;
     }
-    public void setSrcPort(String srcPort)
-    {
+
+    public void setSrcPort(String srcPort) {
         this.srcPort = srcPort;
     }
 
-    public String getSrcPort()
-    {
+    public String getSrcPort() {
         return srcPort;
     }
-    public void setHttpResponseTime(String httpResponseTime)
-    {
+
+    public void setHttpResponseTime(String httpResponseTime) {
         this.httpResponseTime = httpResponseTime;
     }
 
-    public String getHttpResponseTime()
-    {
+    public String getHttpResponseTime() {
         return httpResponseTime;
     }
-    public void setDataSize(String dataSize)
-    {
+
+    public void setDataSize(String dataSize) {
         this.dataSize = dataSize;
     }
 
-    public String getDataSize()
-    {
+    public String getDataSize() {
         return dataSize;
     }
-    public void setContent(String content)
-    {
+
+    public void setContent(String content) {
         this.content = content;
     }
 
-    public String getContent()
-    {
+    public String getContent() {
         return content;
     }
-    public void setDstIp(Long dstIp)
-    {
+
+    public void setDstIp(Long dstIp) {
         this.dstIp = dstIp;
     }
 
-    public Long getDstIp()
-    {
+    public Long getDstIp() {
         return dstIp;
     }
-    public void setDstPort(String dstPort)
-    {
+
+    public void setDstPort(String dstPort) {
         this.dstPort = dstPort;
     }
 
-    public String getDstPort()
-    {
+    public String getDstPort() {
         return dstPort;
     }
-    public void setHttpUrl(String httpUrl)
-    {
+
+    public void setHttpUrl(String httpUrl) {
         this.httpUrl = httpUrl;
     }
 
-    public String getHttpUrl()
-    {
+    public String getHttpUrl() {
         return httpUrl;
     }
-    public void setHttpStatus(String httpStatus)
-    {
+
+    public void setHttpStatus(String httpStatus) {
         this.httpStatus = httpStatus;
     }
 
-    public String getHttpStatus()
-    {
+    public String getHttpStatus() {
         return httpStatus;
     }
-    public void setStamp(Date stamp)
-    {
+
+    public String getRequestParameter() {
+        return requestParameter;
+    }
+
+    public void setRequestParameter(String requestParameter) {
+        this.requestParameter = requestParameter;
+    }
+
+    public String getResponseParameter() {
+        return responseParameter;
+    }
+
+    public void setResponseParameter(String responseParameter) {
+        this.responseParameter = responseParameter;
+    }
+
+    public void setStamp(Date stamp) {
         this.stamp = stamp;
     }
 
-    public Date getStamp()
-    {
+    public Date getStamp() {
         return stamp;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("srcIp", getSrcIp())
-            .append("srcPort", getSrcPort())
-            .append("httpResponseTime", getHttpResponseTime())
-            .append("dataSize", getDataSize())
-            .append("content", getContent())
-            .append("dstIp", getDstIp())
-            .append("dstPort", getDstPort())
-            .append("httpUrl", getHttpUrl())
-            .append("httpStatus", getHttpStatus())
-            .append("updateTime", getUpdateTime())
-            .append("stamp", getStamp())
-            .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("srcIp", getSrcIp())
+                .append("srcPort", getSrcPort())
+                .append("httpResponseTime", getHttpResponseTime())
+                .append("dataSize", getDataSize())
+                .append("content", getContent())
+                .append("dstIp", getDstIp())
+                .append("dstPort", getDstPort())
+                .append("httpUrl", getHttpUrl())
+                .append("httpStatus", getHttpStatus())
+                .append("requestParameter", getRequestParameter())
+                .append("responseParameter", getResponseParameter())
+                .append("updateTime", getUpdateTime())
+                .append("stamp", getStamp())
+                .toString();
     }
 }
