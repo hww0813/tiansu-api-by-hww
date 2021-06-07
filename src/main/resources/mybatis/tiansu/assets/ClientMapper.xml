@@ -107,6 +107,7 @@
         <foreach collection="list" item="item" open="(" close=")" separator=",">
             #{item}
         </foreach>
+        and device_type=6
         GROUP BY USERNAME
 
     </select>

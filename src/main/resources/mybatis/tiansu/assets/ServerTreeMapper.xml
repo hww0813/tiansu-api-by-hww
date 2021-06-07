@@ -111,7 +111,7 @@
             CREATE_TIME,
             UPDATE_TIME,
             <if test="parentId != null ">PARENT_ID,</if>
-            <if test="isDelete != null ">IS_DELETE,</if>
+            IS_DELETE,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null ">#{id},</if>
@@ -129,7 +129,7 @@
             now(),
             now(),
             <if test="parentId != null ">#{parentId},</if>
-            <if test="isDelete != null ">#{isDelete},</if>
+            1,
         </trim>
     </insert>
 
