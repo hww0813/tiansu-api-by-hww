@@ -43,13 +43,11 @@
     <select id="getList" resultMap="BusiStatisticsResultMap">
         <include refid="selectBusiStatisticsVo"/>
         <where>
-            <if test="srcIp != null  and srcIp != ''">and src_ip = #{srcIp}</if>
-            <if test="username != null  and username != ''">and username = #{username}</if>
-            <if test="dstCode != null  and dstCode != ''">and dst_code = #{dstCode}</if>
-            <if test="action != null  and action != ''">and action = #{action}</if>
-            <if test="startDate != null and endDate != null">and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and
-                stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
-            </if>
+            <if test="srcIp != null  and srcIp != ''"> and src_ip = #{srcIp}</if>
+            <if test="username != null  and username != ''"> and username = #{username}</if>
+            <if test="dstCode != null  and dstCode != ''"> and dst_code = #{dstCode}</if>
+            <if test="action != null"> and action = #{action}</if>
+            <if test="startDate != null and endDate != null"> and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')</if>
         </where>
     </select>
 
