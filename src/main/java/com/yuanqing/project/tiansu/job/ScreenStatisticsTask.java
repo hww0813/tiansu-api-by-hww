@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 大屏统计任务
@@ -48,10 +49,8 @@ public class ScreenStatisticsTask {
     @Scheduled(cron = "30 0/1 * * * ?")
     public void getCameraMap() {
 
-        String value = screenService.getCameraMap("all");
-        if (value == null) {
-            value = "[]";
-        }
+        List<JSONObject> value = screenService.getCameraMap("all");
+
         JSONObject object = new JSONObject();
         object.put("value" , value);
         redisCache.setCacheObject(ScreenConstants.CAMERA_MAP, object);

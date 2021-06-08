@@ -67,11 +67,10 @@ public class ScreenServiceImpl implements IScreenService {
     public static final String OVERTIME = "请求超时";
 
     @Override
-    public String getCameraMap(String dateType) {
+    public List<JSONObject> getCameraMap(String dateType) {
         //TODO:两种情况，区域统计和街道统计 目前只有区域统计
         List<JSONObject> cameraMap = statisticsService.getVisitedRate(null, dateType);
-        String value = formatCameraMap(cameraMap);
-        return value;
+        return formatCameraMap(cameraMap);
 
     }
 
@@ -324,7 +323,7 @@ public class ScreenServiceImpl implements IScreenService {
 //        return list.toString();
 //    }
 
-    private String formatCameraMap(List<JSONObject> list) {
+    private List<JSONObject> formatCameraMap(List<JSONObject> list) {
         List<JSONObject> cameraMapList = list.stream().map(f -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("areaCode", f.get("cityCode"));
@@ -333,7 +332,7 @@ public class ScreenServiceImpl implements IScreenService {
             return jsonObject;
         }).collect(Collectors.toList());
 
-        return cameraMapList.toString();
+        return cameraMapList;
 
     }
 

@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.service.analysis;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author xucan
@@ -17,7 +18,7 @@ public interface IScreenService {
      * @param dateType
      * @return
      */
-    public String getCameraMap(String dateType);
+    public List<JSONObject> getCameraMap(String dateType);
 
     /**
      * 统计时间步长:一小时
