@@ -104,8 +104,8 @@
             #{item}
         </foreach>
         AND bc.DEVICE_TYPE = 1
-        <if test="startDate != null and endDate != null">and bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and
-            bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        <if test="filter.startDate != null and filter.endDate != null">and bs.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d') and
+            bs.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
         </if>
         ) vs
     </select>

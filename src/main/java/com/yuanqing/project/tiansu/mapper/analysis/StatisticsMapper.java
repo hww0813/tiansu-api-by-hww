@@ -39,7 +39,7 @@ public interface StatisticsMapper {
      * 根据地区统计访问率
      * @return
      */
-    public VisitedRate visitedRate(String startDate,String endDate,List<String> list);
+    public VisitedRate visitedRate(@Param("filter") JSONObject filter,@Param("list") List<String> list);
 
 
 //    /**

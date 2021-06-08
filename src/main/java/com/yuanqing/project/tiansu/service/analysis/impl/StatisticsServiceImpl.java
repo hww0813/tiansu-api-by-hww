@@ -147,7 +147,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
                     List<String> list = areaRegion.stream().map(a -> a.getId()).collect(Collectors.toList());
                     log.info("2.获取市级下级地区配置成功,下级地区为:{}", list);
 
-                    VisitedRate visitedRate = statisticsMapper.visitedRate(finalFilter.getString("startDate"), finalFilter.getString("endDate"), list);
+                    VisitedRate visitedRate = statisticsMapper.visitedRate(finalFilter, list);
 
                     //设置基本属性值，数量值初始化为0
                     JSONObject visited = new JSONObject();
