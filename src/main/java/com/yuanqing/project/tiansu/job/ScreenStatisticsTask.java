@@ -53,7 +53,7 @@ public class ScreenStatisticsTask {
 
         JSONObject object = new JSONObject();
         object.put("value" , value);
-        redisCache.setCacheObject(ScreenConstants.CAMERA_MAP, object);
+        redisCache.setCacheObject(ScreenConstants.CAMERA_MAP, value);
         LOGGER.info("定时任务执行完成:统计摄像头地图");
 
     }
