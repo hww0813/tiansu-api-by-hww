@@ -115,7 +115,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
                 filter = DateUtils.getMonth();
                 break;
             case "all":
-                filter = null;
+                filter.put("startDate",null);
+                filter.put("endDate",null);
                 break;
         }
 
@@ -135,7 +136,6 @@ public class StatisticsServiceImpl implements IStatisticsService {
                 return null;
 
             } else {
-
                 log.info("1.获取省级下级地区配置成功,下级地区为:{}", cityRegion.toString());
                 //遍历lowerRegion Map<String,List<String>> 将集合传入sql 一次性查出所有 去重之后的统计结果作为 Map.String的结果
                 JSONObject finalFilter = filter;
