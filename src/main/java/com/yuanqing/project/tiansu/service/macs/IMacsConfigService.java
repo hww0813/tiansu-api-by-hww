@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.service.macs;
 
 import com.yuanqing.framework.web.service.BaseService;
+import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 
@@ -53,4 +54,12 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
      * @return 返回regionId的list
      */
     List<String> getAllLowerRegion(String regionId);
+
+
+    /**
+     * 匹配下级所在地区
+     * @param list
+     * @return
+     */
+    void setLowerRegionByCamera(List<Camera> list);
 }

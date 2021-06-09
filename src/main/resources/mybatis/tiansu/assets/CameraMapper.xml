@@ -83,6 +83,7 @@
                 '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%dT%H:%i:%s')
             </if>
         </where>
+        order by update_time desc
     </select>
 
     <select id="getScreenList" parameterType="java.util.Date" resultMap="BusiCameraResult">

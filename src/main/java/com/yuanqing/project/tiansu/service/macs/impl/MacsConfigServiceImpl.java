@@ -8,6 +8,7 @@ import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.framework.redis.RedisCache;
+import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
@@ -227,5 +228,22 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
             region.add(r.getId());
         });
         return  region;
+    }
+
+    @Override
+    public void setLowerRegionByCamera(List<Camera> list) {
+        MacsRegion region = getRegion(null);
+
+        //匹配所在区域
+        List<MacsRegion> lowerRegion = getLowerRegion(region.getId());
+
+        lowerRegion.stream().forEach( f -> {
+            list.stream().forEach( h -> {
+                if(f.getId().equals(h.getRegion().toString())){
+                    h.setRegionName(f.getName());
+                }
+            });
+        });
+
     }
 }

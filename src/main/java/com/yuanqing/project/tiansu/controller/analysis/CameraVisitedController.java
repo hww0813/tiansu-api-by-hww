@@ -13,6 +13,7 @@ import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,6 +47,8 @@ public class CameraVisitedController extends BaseController {
     @Autowired
     private IOperationBehaviorService operationBehaviorService;
 
+    @Autowired
+    private IMacsConfigService macsConfigService;
 
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头被访问列表", httpMethod = "GET")
@@ -72,11 +75,12 @@ public class CameraVisitedController extends BaseController {
 
         startPage();
 
-        logger.error("------------>"+camera.toString());
-
         List<Camera> cameraList = null;
 
         cameraList = cameraService.getList(camera);
+
+        macsConfigService.setLowerRegionByCamera(cameraList);
+
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList, cameraVisit, orderStr);
 
         return AjaxResult.success(getDataTable(cameraVisitList));

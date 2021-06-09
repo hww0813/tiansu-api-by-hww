@@ -102,17 +102,7 @@ public class CameraController extends BaseController {
         startPage();
         List<Camera> getList = cameraService.getListWithOrder(camera, orderStr);
 
-
-        MacsRegion region = macsConfigService.getRegion(null);
-        List<MacsRegion> lowerRegion = macsConfigService.getLowerRegion(region.getId());
-
-        lowerRegion.stream().forEach( f -> {
-            getList.stream().forEach( h -> {
-                if(f.getId().equals(h.getRegion().toString())){
-                    h.setRegionName(f.getName());
-                }
-            });
-        });
+        macsConfigService.setLowerRegionByCamera(getList);
 
         AjaxResult success = AjaxResult.success(getDataTable(getList));
         return success;

@@ -91,11 +91,11 @@ public class RateVisitController extends BaseController {
     @ApiOperation(value = "获取访问率相关摄像头列表", httpMethod = "GET")
     public AjaxResult getCameraCntList(@ApiParam("摄像头实体")Camera camera) {
 
-        // TODO: 时间范围没有传参
         startPage();
         List<Camera> cameraList = cameraService.getAllList(camera);
 
-        // TODO: 状态还是数字，需要转换
+        macsConfigService.setLowerRegionByCamera(cameraList);
+
         return AjaxResult.success(getDataTable(cameraList));
 
     }
@@ -129,6 +129,8 @@ public class RateVisitController extends BaseController {
 
         startPage();
         List<Camera> finalCameraList = cameraService.batchGetCameraByCode(cameraCodeList, new Camera());
+
+        macsConfigService.setLowerRegionByCamera(finalCameraList);
 
         return AjaxResult.success(getDataTable(finalCameraList));
 

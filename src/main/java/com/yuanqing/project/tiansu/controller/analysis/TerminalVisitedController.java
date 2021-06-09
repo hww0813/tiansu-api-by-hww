@@ -13,6 +13,7 @@ import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,6 +52,9 @@ public class TerminalVisitedController extends BaseController {
 
     @Autowired
     private ICameraService cameraService;
+
+    @Autowired
+    private IMacsConfigService macsConfigService;
 
 
     @GetMapping("/list")
@@ -157,6 +161,8 @@ public class TerminalVisitedController extends BaseController {
 
         startPage();
         List<Camera> cameraList = cameraService.batchGetCameraByCode(cameraCodeList,camera);
+
+        macsConfigService.setLowerRegionByCamera(cameraList);
 
         List<CameraVisit> cameraVisitList = new ArrayList<>();
 
