@@ -13,7 +13,9 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.dto.CameraDto;
+import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -58,6 +60,9 @@ public class CameraController extends BaseController {
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private IMacsConfigService macsConfigService;
+
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
     public AjaxResult getAll(@ApiParam("状态")@RequestParam(value = "status", required = false) Integer status,
@@ -96,6 +101,18 @@ public class CameraController extends BaseController {
 
         startPage();
         List<Camera> getList = cameraService.getListWithOrder(camera, orderStr);
+
+
+        MacsRegion region = macsConfigService.getRegion(null);
+        List<MacsRegion> lowerRegion = macsConfigService.getLowerRegion(region.getId());
+
+        lowerRegion.stream().forEach( f -> {
+            getList.stream().forEach( h -> {
+                if(f.getId().equals(h.getRegion().toString())){
+                    h.setRegionName(f.getName());
+                }
+            });
+        });
 
         AjaxResult success = AjaxResult.success(getDataTable(getList));
         return success;

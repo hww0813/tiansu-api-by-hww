@@ -2,14 +2,19 @@ package com.yuanqing.project.tiansu.service.macs.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
+import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.http.HttpUtils;
+import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -28,6 +33,9 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
     @Value("${tiansu.macshost}")
     private String prefix;
+
+    @Autowired
+    private RedisCache redisCache;
 
     private final String getConfigList_URL = "/tripartite/config/getConfigList";
 
@@ -76,25 +84,35 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         if(StringUtils.isEmpty(id)) {
             return null;
         }
-        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL, "regionId="+id);
-        if (StringUtils.isEmpty(rspStr))
-        {
-            LOGGER.error("获取区域异常 id={}", id);
-            return null;
+
+        String key = Constants.CONFIG_LOWER_REGION + id;
+
+        List<Object> redisConfig = redisCache.getCacheList(key);
+
+        if(CollectionUtils.isEmpty(redisConfig)){
+            String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL, "regionId="+id);
+            if (StringUtils.isEmpty(rspStr))
+            {
+                LOGGER.error("获取区域异常 id={}", id);
+                return null;
+            }
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
+
+            // || 200 != jsonObject.getIntValue("code")
+            if(jsonObject == null || !jsonObject.containsKey("data")) {
+                LOGGER.error("获取区域为空 id={}", id);
+                return null;
+            }
+            JSONArray data = jsonObject.getJSONArray("data");
+            List<MacsRegion> macsRegion = data.toJavaList(MacsRegion.class);
+
+            redisCache.setCacheList(key,macsRegion);
+            LOGGER.info("下级地区缓存更新成功");
+            return macsRegion;
+        }else{
+            List<MacsRegion> lowerRegion =(List<MacsRegion>)(Object)redisConfig;
+            return lowerRegion;
         }
-
-        JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
-
-        // || 200 != jsonObject.getIntValue("code")
-        if(jsonObject == null || !jsonObject.containsKey("data")) {
-            LOGGER.error("获取区域为空 id={}", id);
-            return null;
-        }
-
-        JSONArray data = jsonObject.getJSONArray("data");
-        List<MacsRegion> macsRegion = data.toJavaList(MacsRegion.class);
-
-        return macsRegion;
     }
 
     /**

@@ -237,4 +237,9 @@ public class Constants
     public static final String INDEX_VISITED_RATE_CACHE_WEEK = "INDEX_VISITED_RATE_CACHE_WEEK";
     /** 首页区县缓存 日 */
     public static final String INDEX_VISITED_RATE_CACHE_DAY = "INDEX_VISITED_RATE_CACHE_DAY";
+
+
+    public static final String CONFIG_LOWER_REGION = "config:LOWER_REGION_";
+
+
 }
