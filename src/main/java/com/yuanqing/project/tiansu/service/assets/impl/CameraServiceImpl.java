@@ -253,7 +253,7 @@ public class CameraServiceImpl implements ICameraService {
                 cameraNGB.setDeviceCode(gbId);
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.GB.getValue()));
             } else {
-                cameraNGB.setDeviceCode(dstCode);
+                cameraNGB.setDeviceCode(entity.getGbId());
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.NGB.getValue()));
             }
             if (gbId != null && !gbId.equals("")&&gbId.startsWith("5001")) {
