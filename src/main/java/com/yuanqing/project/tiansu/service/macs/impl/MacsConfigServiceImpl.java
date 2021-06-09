@@ -2,7 +2,6 @@ package com.yuanqing.project.tiansu.service.macs.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
@@ -15,7 +14,6 @@ import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -23,7 +21,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 获取配置中心配置
@@ -240,7 +237,8 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
         lowerRegion.stream().forEach( f -> {
             list.stream().forEach( h -> {
-                if(f.getId().equals(h.getRegion().toString())){
+
+                if( h.getRegion()!=null && h.getRegion().equals(f.getId())){
                     h.setRegionName(f.getName());
                 }
             });

@@ -73,13 +73,15 @@ public class CameraVisitedController extends BaseController {
             orderStr = orderValue + " " + orderType;
         }
 
-        startPage();
+
 
         List<Camera> cameraList = null;
 
         cameraList = cameraService.getList(camera);
 
         macsConfigService.setLowerRegionByCamera(cameraList);
+
+        startPage();
 
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList, cameraVisit, orderStr);
 
