@@ -249,23 +249,23 @@ public class CameraServiceImpl implements ICameraService {
             }
             //设置地域：国标编码前六位
 //                String gbId = this.replaceBlank(entity.getGbId());
-            if (gbId != null && !gbId.equals("")) {
+            if (gbId != null && !gbId.equals("")&&gbId.startsWith("5001")) {
                 cameraNGB.setDeviceCode(gbId);
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.GB.getValue()));
             } else {
                 cameraNGB.setDeviceCode(dstCode);
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.NGB.getValue()));
             }
-            if (gbId != null && !gbId.equals("")) {
+            if (gbId != null && !gbId.equals("")&&gbId.startsWith("5001")) {
                 try {
 //                    Region region1 = new Region();
 //                    region1.setId(Long.valueOf(gbId.substring(0, 6)));// 行政区域
-                    cameraNGB.setRegion(Integer.parseInt(gbId.substring(0, 6)));
+                    cameraNGB.setRegion(Integer.parseInt(gbId.substring(0, 8)));
                 } catch (Exception e) {
-                    cameraNGB.setRegion(null);
+                    cameraNGB.setRegion(0000);
                 }
             } else {
-                cameraNGB.setRegion(null);
+                cameraNGB.setRegion(0000);
             }
             try {
                 cameraNGB.setIpAddress(entity.getIpAddress());
