@@ -104,6 +104,33 @@ public class RedisCache
                 listOperation.leftPush(key, dataList.get(i));
             }
         }
+
+
+
+        return listOperation;
+    }
+
+    /**
+     * 缓存List数据
+     *
+     * @param key 缓存的键值
+     * @param dataList 待缓存的List数据
+     * @return 缓存的对象
+     */
+    public <T> ListOperations<String, T> setCacheList(String key, List<T> dataList,long time)
+    {
+        ListOperations listOperation = redisTemplate.opsForList();
+        if (null != dataList)
+        {
+            int size = dataList.size();
+            for (int i = 0; i < size; i++)
+            {
+                listOperation.leftPush(key, dataList.get(i));
+            }
+        }
+
+        redisTemplate.expire(key,time,TimeUnit.MINUTES);
+
         return listOperation;
     }
 

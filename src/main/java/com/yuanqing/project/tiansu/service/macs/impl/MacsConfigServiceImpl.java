@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 获取配置中心配置
@@ -107,7 +108,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
             JSONArray data = jsonObject.getJSONArray("data");
             List<MacsRegion> macsRegion = data.toJavaList(MacsRegion.class);
 
-            redisCache.setCacheList(key,macsRegion);
+            redisCache.setCacheList(key,macsRegion,1);
             LOGGER.info("下级地区缓存更新成功");
             return macsRegion;
         }else{
