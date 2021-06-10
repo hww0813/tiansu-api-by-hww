@@ -238,7 +238,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         lowerRegion.stream().forEach( f -> {
             list.stream().forEach( h -> {
 
-                if( h.getRegion()!=null && h.getRegion().equals(f.getId())){
+                if( h.getRegion()!=null && h.getRegion().toString().equals(f.getId())){
                     h.setRegionName(f.getName());
                 }
             });
