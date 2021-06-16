@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.controller.operation;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.common.utils.poi.ExcelUtil;
 import com.yuanqing.framework.aspectj.lang.annotation.Log;
@@ -48,17 +49,19 @@ public class RawNetFlowController extends BaseController {
     @ApiOperation(value = "获取原始信令列表", httpMethod = "GET")
     public AjaxResult getAll(@ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
                              @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
-                             @ApiParam("时间")@RequestParam(value = "stamp", required = false) LocalDateTime stamp,
+                             @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String startDate,
+                             @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
                              @ApiParam("排序")@RequestParam(required = false) String orderType,
                              @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         RawNetFlow rawNetFlow = new RawNetFlow();
         rawNetFlow.setSrcIp(IpUtils.ipToLong(srcIp));
         rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
-        rawNetFlow.setStamp(stamp);
+        rawNetFlow.setstartDate(startDate);
+        rawNetFlow.setendDate(endDate);
         startPage();
-//        if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
-//            rawNetFlow.setOrderType(orderValue + " " + orderType);
-//        }
+        if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
+            rawNetFlow.setOrderType(orderValue + " " + orderType);
+        }
         List<RawNetFlow> rawNetFlowList = busiRawNetFlowService.selectBusiRawNetFlowList(rawNetFlow);
 
         return AjaxResult.success(getDataTable(rawNetFlowList));

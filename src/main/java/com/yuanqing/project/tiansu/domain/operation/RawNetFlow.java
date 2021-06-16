@@ -92,4 +92,6 @@ public class RawNetFlow extends BaseEntity {
     private Long packetCount;
 
 
+    private String OrderType;
+
 }

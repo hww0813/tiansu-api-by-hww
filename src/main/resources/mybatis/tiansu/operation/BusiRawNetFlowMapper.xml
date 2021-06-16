@@ -46,7 +46,13 @@
             <if test="packetSize != null ">and packet_size = #{packetSize}</if>
             <if test="packetType != null  and packetType != ''">and packet_type = #{packetType}</if>
             <if test="packetCount != null ">and packet_count = #{packetCount}</if>
+            <if test="startDate != null and endDate != null">
+                and stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+            </if>
         </where>
+        <if test="orderType != null and orderType != '' ">
+            order by ${orderType}
+        </if>
     </select>
 
     <select id="selectBusiRawNetFlowById" parameterType="Long" resultMap="BusiRawNetFlowResult">
@@ -82,6 +88,7 @@
             <if test="packetType != null  and packetType != ''">#{packetType},</if>
             <if test="packetCount != null ">#{packetCount},</if>
         </trim>
+
     </insert>
 
     <update id="updateBusiRawNetFlow" parameterType="RawNetFlow">
