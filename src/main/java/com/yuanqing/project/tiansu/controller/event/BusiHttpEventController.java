@@ -55,6 +55,7 @@ public class BusiHttpEventController extends BaseController {
         busiHttpEvent.setHttpStatus(httpStatus);
         busiHttpEvent.setEventLevel(eventLevel);
         busiHttpEvent.setEventStatus(eventStatus);
+        busiHttpEvent.setEventSource(eventSource);
         startPage();
         List<BusiHttpEvent> list = busiHttpEventService.selectBusiHttpEventList(busiHttpEvent, startDate, endDate);
         return getDataTable(list);
