@@ -316,6 +316,13 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return cal.getTime();
     }
 
+    public static Date getBeforeMinute(Integer minute){
+        Calendar beforeTime = Calendar.getInstance();
+        beforeTime.add(Calendar.MINUTE, minute);
+        Date beforeD = beforeTime.getTime();
+        return beforeD;
+    }
+
     /**
      * 获得本周一0点时间
      *
@@ -493,10 +500,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
 
 
     public static void main(String[] args) {
-        System.out.println(getNowMonday());
-        System.out.println(getNowSunday());
-        System.out.println(getNowMonthOneDay());
-        System.out.println(getNowMonthLastDay());
-
+        Calendar beforeTime = Calendar.getInstance();
+        beforeTime.add(Calendar.MINUTE, -5);// 5分钟之前的时间
+        Date beforeD = beforeTime.getTime();
+        String before5 = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(beforeD);
+        System.out.println(before5);
     }
 }

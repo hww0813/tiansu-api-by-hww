@@ -146,11 +146,11 @@ public class RawNetFlowController extends BaseController {
         Date startTime = new Date();
         Date endTime = new Date();
         if ("day".equals(stamp)) {
-            startTime = DateUtils.getStartToday();
+            startTime = DateUtils.getBeforeMinute(-5);
         } else if ("week".equals(stamp)) {
-            startTime = DateUtils.getSevenDaysAgo();
+            startTime = DateUtils.getBeforeMinute(-15);
         } else if ("month".equals(stamp)) {
-            startTime = DateUtils.getThirtyDaysAgo();
+            startTime = DateUtils.getBeforeMinute(-60);
         }
         startPage();
         List<JSONObject> list = busiRawNetFlowService.getRawClientRank(startTime, endTime, orderType);
