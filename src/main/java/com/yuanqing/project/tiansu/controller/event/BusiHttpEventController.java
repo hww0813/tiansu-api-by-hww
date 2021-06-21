@@ -1,9 +1,6 @@
 package com.yuanqing.project.tiansu.controller.event;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.DateUtils;
@@ -105,17 +102,19 @@ public class BusiHttpEventController extends BaseController {
         Date endDate = new Date();
         Date startDate = DateUtils.getOfTimeType(timeType);
         List<Map<String, String>> list = busiHttpEventService.alarmLevelStatistics(startDate, endDate);
-
+        if (list == null) {
+            list = new ArrayList<>();
+        }
         //表示一般、重要、严重的等级都有数据，直接返回就可以；否则需要补0
         if (list.size() != 3) {
-            list = makeUpPro(list,"一般");
-            list = makeUpPro(list,"重要");
-            list = makeUpPro(list,"严重");
+            list = makeUpPro(list, "一般");
+            list = makeUpPro(list, "重要");
+            list = makeUpPro(list, "严重");
         }
         return AjaxResult.success(list);
     }
 
-    public List<Map<String, String>> makeUpPro(List<Map<String, String>> list,String level){
+    public List<Map<String, String>> makeUpPro(List<Map<String, String>> list, String level) {
         if (!list.toString().contains(level)) {
             Map<String, String> map = new HashMap<>();
             map.put("eventLevel", level);
