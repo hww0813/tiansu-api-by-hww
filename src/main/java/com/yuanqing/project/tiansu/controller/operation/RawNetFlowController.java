@@ -83,7 +83,7 @@ public class RawNetFlowController extends BaseController {
     /**
      * 获取服务器流量趋势统计
      */
-    @GetMapping("/ServerFlowTrend")
+    @GetMapping("/getServerFlowTrend")
     @ApiOperation(value = "获取服务器流量趋势统计", httpMethod = "GET")
     public AjaxResult getServerFlowTrend(@ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp) throws ParseException {
         //ip地址转换
