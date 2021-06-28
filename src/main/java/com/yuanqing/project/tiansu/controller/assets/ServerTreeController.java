@@ -2,26 +2,21 @@ package com.yuanqing.project.tiansu.controller.assets;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.exception.CustomException;
-import com.yuanqing.common.utils.http.HttpUtils;
+import com.yuanqing.common.constant.TokenConstants;
 import com.yuanqing.common.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
+import com.yuanqing.project.tiansu.service.feign.PmcFeignClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,8 +44,11 @@ public class ServerTreeController extends BaseController {
     @Autowired
     private OperationBehaviorMapper operationBehaviorMapper;
 
-    @Value("${tiansu.pmchost}")
-    private String prefix;
+    @Resource
+    private PmcFeignClient pmcFeignClient;
+
+//    @Value("${tiansu.pmchost}")
+//    private String prefix;
 
 
     @GetMapping("/list")
@@ -69,7 +67,8 @@ public class ServerTreeController extends BaseController {
         startPage();
         List<ServerTree> list = serverTreeService.getList(serverTree);
 
-        String result = HttpUtils.getHttpRequest(prefix + "/pmc/consul/getConsulIp");
+//        String result = HttpUtils.getHttpRequest(prefix + "/pmc/consul/getConsulIp");
+        String result = pmcFeignClient.getConsulIp(TokenConstants.PMC_TOKEN);
         if (StringUtils.isNotEmpty(result)) {
             List<String> ipList = new ArrayList<>();
             JSONObject syslogJson = JSON.parseObject(result);

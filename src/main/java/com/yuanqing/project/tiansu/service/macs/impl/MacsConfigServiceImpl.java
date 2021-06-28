@@ -5,18 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
+import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -30,19 +30,22 @@ import java.util.List;
 public class MacsConfigServiceImpl implements IMacsConfigService {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MacsConfigServiceImpl.class);
 
-    @Value("${tiansu.macshost}")
-    private String prefix;
+//    @Value("${tiansu.macshost}")
+//    private String prefix;
 
     @Autowired
     private RedisCache redisCache;
 
-    private final String getConfigList_URL = "/tripartite/config/getConfigList";
+    @Resource
+    private MacsFeignClient macsFeignClient;
 
-    private final String selectMacsRegionById_URL = "/tripartite/region/getConfigById";
-
-    private final String selectMacsRegionInfo_URL = "/tripartite/region/regionInfo";
-
-    private final String selectMacsRegionList_URL = "/tripartite/region/regionList";
+//    private final String getConfigList_URL = "/tripartite/config/getConfigList";
+//
+//    private final String selectMacsRegionById_URL = "/tripartite/region/getConfigById";
+//
+//    private final String selectMacsRegionInfo_URL = "/tripartite/region/regionInfo";
+//
+//    private final String selectMacsRegionList_URL = "/tripartite/region/regionList";
 
     // TODO: 增加缓存。。。
 
@@ -52,7 +55,8 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
             return null;
         }
 
-        String rspStr = HttpUtils.sendGet(prefix+getConfigList_URL, macsConfig.toParamsString());
+//        String rspStr = HttpUtils.sendGet(prefix+getConfigList_URL, macsConfig.toParamsString());
+        String rspStr = macsFeignClient.getConfigById(macsConfig);
         if (StringUtils.isEmpty(rspStr))
         {
             LOGGER.error("获取配置异常"+macsConfig.toParamsString());
@@ -89,7 +93,8 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         List<Object> redisConfig = redisCache.getCacheList(key);
 
         if(CollectionUtils.isEmpty(redisConfig)){
-            String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL, "regionId="+id);
+//            String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL, "regionId="+id);
+            String rspStr = macsFeignClient.getConfigById(Long.parseLong(id));
             if (StringUtils.isEmpty(rspStr))
             {
                 LOGGER.error("获取区域异常 id={}", id);
@@ -124,7 +129,8 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         if(StringUtils.isEmpty(id)) {
             return null;
         }
-        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionInfo_URL, "regionId="+id);
+//        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionInfo_URL, "regionId="+id);
+        String rspStr = macsFeignClient.getInfo(id);
         if (StringUtils.isEmpty(rspStr))
         {
             LOGGER.error("获取区域异常 id={}", id);
@@ -195,7 +201,8 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     @Override
     public List<MacsRegion> getRegionList() {
 
-        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionList_URL,"");
+//        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionList_URL,"");
+        String rspStr = macsFeignClient.getList();
 
         if (StringUtils.isEmpty(rspStr))
         {

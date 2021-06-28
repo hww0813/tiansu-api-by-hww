@@ -1,38 +1,44 @@
 package com.yuanqing.project.tiansu.service.event.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.service.event.EventManager;
-import org.springframework.beans.factory.annotation.Value;
+import com.yuanqing.project.tiansu.service.feign.AlarmFeignClient;
 import org.springframework.stereotype.Service;
 
 
-import org.springframework.web.client.RestTemplate;
-
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
 public class EventManagerImpl implements EventManager {
 
-    @Value("${tiansu.alarmhost}")
-    private String prefix;
+//    @Value("${tiansu.alarmhost}")
+//    private String prefix;
 
     private final String EVENT_UPDATE = "/BusiEvent/";
-    private final String EVENT_INFO = "/BusiEvent/getTInfo";
+//    private final String EVENT_INFO = "/BusiEvent/getTInfo";
+
+    @Resource
+    private AlarmFeignClient alarmFeignClient;
 
     @Override
     public boolean batchChangStatus(List<Event> list) {
-        RestTemplate restTemplate = new RestTemplate();
-        StringBuilder sb = new StringBuilder();
-        sb.append(prefix+EVENT_UPDATE);
-        list.stream().forEach(f -> {
-            sb.append(f.getId()+",");
-        });
-        restTemplate.put(sb.toString(),null);
+        List<Long> idList = list.stream().map(f->f.getId()).collect(Collectors.toList());
+        Long []ids = new Long[list.size()];
+        idList.toArray(ids);
+        alarmFeignClient.confirm(ids);
+//        RestTemplate restTemplate = new RestTemplate();
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(prefix+EVENT_UPDATE);
+//        list.stream().forEach(f -> {
+//            sb.append(f.getId()+",");
+//        });
+//        restTemplate.put(sb.toString(),null);
         return true;
     }
 
@@ -41,8 +47,9 @@ public class EventManagerImpl implements EventManager {
         if (id == null) {
             throw new RuntimeException("id can't be null");
         }
-        String url = prefix + EVENT_INFO+"?event_id="+id;
-        String value = HttpUtils.sendGet(url, (String) null);
+//        String url = prefix + EVENT_INFO+"?event_id="+id;
+//        String value = HttpUtils.sendGet(url, (String) null);
+        String value = alarmFeignClient.detailAndTOperUuid(id);
         JSONObject jsonObject = (JSONObject) JSONObject.parse(value);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         JSONObject data = (JSONObject) jsonObject.get("data");

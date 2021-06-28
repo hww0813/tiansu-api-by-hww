@@ -9,6 +9,7 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.service.event.EventManager;
+import com.yuanqing.project.tiansu.service.feign.AlarmFeignClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,14 +42,17 @@ import static com.yuanqing.common.constant.Constants.ALARM_CAMERA_COUNTS_CACHE;
 public class EventController {
 
 
-    @Value("${tiansu.alarmhost}")
-    private String alarmHost;
+//    @Value("${tiansu.alarmhost}")
+//    private String alarmHost;
 
     @Autowired
     private RedisCache redisCache;
 
     @Resource
     private EventManager eventManager;
+
+    @Resource
+    private AlarmFeignClient alarmFeignClient;
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "获取告警事件列表", httpMethod = "GET")
@@ -71,31 +75,45 @@ public class EventController {
                              @ApiParam("联接类型")@RequestParam(value = "connectType", required = false) String connectType,
                              @ApiParam("排序")@RequestParam(required = false) String orderType,
                              @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
-        JSONObject filters = new JSONObject();
-        if (stime != null) {
-            filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        }
-        if (etime != null) {
-            filters.put("endTime", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        }
-        filters.put("eventSource", eventSource);
-//        filters.put("strategyName", strategyName);
-        filters.put("status", status);
-        filters.put("eventCategory", eventCategory);
-        filters.put("eventLevel", eventLevel);
-        filters.put("clientIp", clientIp);
-        filters.put("cameraName", cameraName);
-//        filters.put("content", content);
-//        filters.put("eventSubject", eventSubject);
-//        filters.put("ruleName", ruleName);
-        filters.put("action", action);
-        filters.put("id", id);
-//        filters.put("connectType", connectType);
+        Event event = new Event();
+        event.setStartTime(stime);
+        event.setEndTime(etime);
+        event.setEventSource(eventSource);
+        event.setStatus(Long.parseLong(status));
+        event.setEventCategory(eventCategory);
+        event.setEventLevel(eventLevel);
+        event.setClientIp(Long.parseLong(clientIp));
+        event.setCameraName(cameraName);
+        event.setAction(Long.parseLong(action));
+        event.setId(id);
+
+//        JSONObject filters = new JSONObject();
+//        if (stime != null) {
+//            filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//        }
+//        if (etime != null) {
+//            filters.put("endTime", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//        }
+//        filters.put("eventSource", eventSource);
+////        filters.put("strategyName", strategyName);
+//        filters.put("status", status);
+//        filters.put("eventCategory", eventCategory);
+//        filters.put("eventLevel", eventLevel);
+//        filters.put("clientIp", clientIp);
+//        filters.put("cameraName", cameraName);
+////        filters.put("content", content);
+////        filters.put("eventSubject", eventSubject);
+////        filters.put("ruleName", ruleName);
+//        filters.put("action", action);
+//        filters.put("id", id);
+////        filters.put("connectType", connectType);
         if (StringUtils.isNotBlank(orderType) && StringUtils.isNotBlank(orderValue)) {
-            filters.put("orderType", orderValue + " " + orderType);
+//            filters.put("orderType", orderValue + " " + orderType);
+            event.setOrderType(orderValue + " " + orderType);
         }
-        String url = alarmHost + "/BusiEvent/listT?pageSize=" + pageSize + "&pageNum=" + pageNum;
-        String result = HttpUtils.sendGet(url, filters);
+//        String url = alarmHost + "/BusiEvent/listT?pageSize=" + pageSize + "&pageNum=" + pageNum;
+//        String result = HttpUtils.sendGet(url, filters);
+        String result = alarmFeignClient.listT(event,pageSize,pageNum);
         JSONObject resultObj = JSONObject.parseObject(result);
         JSONArray datas = resultObj.getJSONArray("rows");
         Integer total = resultObj.getInteger("total");

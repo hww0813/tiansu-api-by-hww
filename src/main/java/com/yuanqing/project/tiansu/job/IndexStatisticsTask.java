@@ -4,20 +4,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.StringUtils;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.domain.statistics.CameraStatistics;
 import com.yuanqing.project.tiansu.domain.statistics.StatisticsSearch;
 import com.yuanqing.project.tiansu.mapper.analysis.HomePageMapper;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
+import com.yuanqing.project.tiansu.service.feign.AlarmFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDate;
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,8 +47,11 @@ public class IndexStatisticsTask {
     private IStatisticsService iStatisticsService;
 
 
-    @Value("${tiansu.alarmhost}")
-    private String alarmHost;
+//    @Value("${tiansu.alarmhost}")
+//    private String alarmHost;
+
+    @Resource
+    private AlarmFeignClient alarmFeignClient;
 
 
     /**
@@ -75,7 +77,7 @@ public class IndexStatisticsTask {
             endTime = DateUtils.getNowDateToLocal();
         } else if ("MONTH".equals(timeType)) {
             startTime = DateUtils.getThirtyDaysAgo();
-            endTime =DateUtils.getNowDateToLocal();
+            endTime = DateUtils.getNowDateToLocal();
         }
         Date finalStartTime = startTime;
         Date finalEndTime = endTime;
@@ -209,15 +211,17 @@ public class IndexStatisticsTask {
 //        String url = alarmHost + "/BusiEvent/getTAllNum";
 //        String alarmDiscoveryCount = HttpUtils.sendGet(url, "status=1");
 //        String alarmAllCount = HttpUtils.sendGet(url, "status=0");
-        String url = alarmHost + "/BusiEvent/getEventActive";
-        String alarmActiveCount = HttpUtils.sendGet(url, "");
+
+//        String url = alarmHost + "/BusiEvent/getEventActive";
+//        String alarmActiveCount = HttpUtils.sendGet(url, "");
+        String alarmActiveCount = alarmFeignClient.getEventActive();
 //        if(alarmDiscoveryCount.isEmpty()){
 //            alarmDiscoveryCount = "0";
 //        }
 //        if(alarmAllCount.isEmpty()){
 //            alarmAllCount = "0";
 //        }
-        if(alarmActiveCount.isEmpty()){
+        if (alarmActiveCount.isEmpty()) {
             alarmActiveCount = "0";
         }
         HashMap map = new HashMap();

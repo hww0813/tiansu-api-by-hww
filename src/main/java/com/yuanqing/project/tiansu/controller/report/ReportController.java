@@ -18,6 +18,7 @@ import com.yuanqing.project.tiansu.domain.report.VisitRate;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.analysis.IVisitRateService;
 import com.yuanqing.project.tiansu.service.assets.*;
+import com.yuanqing.project.tiansu.service.feign.AlarmFeignClient;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorSessionService;
@@ -113,8 +114,8 @@ public class ReportController extends BaseController {
 
     private static final String RATE_CLIENT_CNT = "classpath:/static/reports/RateClientCnt.jrxml";
 
-    @Value("${tiansu.alarmhost}")
-    private String alarmHost;
+//    @Value("${tiansu.alarmhost}")
+//    private String alarmHost;
 
     @Resource
     private IMacsConfigService macsConfigService;
@@ -160,6 +161,9 @@ public class ReportController extends BaseController {
 
     @Resource
     private IOperationBehaviorService operationBehaviorService;
+
+    @Resource
+    private AlarmFeignClient alarmFeignClient;
 
 //    @Resource
 //    private RawSignalManager rawSignalManager;
@@ -305,26 +309,40 @@ public class ReportController extends BaseController {
                                @ApiParam("排序")@RequestParam(required = false) String orderType,
                                @ApiParam("排序对象")@RequestParam(required = false) String orderValue,
                                @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-        JSONObject filters = new JSONObject();
-        if (stime != null) {
-            filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        }
-        if (etime != null) {
-            filters.put("endTime", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        }
-        filters.put("eventSource", eventSource);
-        filters.put("status", status);
-        filters.put("eventCategory", eventCategory);
-        filters.put("eventLevel", eventLevel);
-        filters.put("clientIp", clientIp);
-        filters.put("action", action);
-        filters.put("id", id);
+//        JSONObject filters = new JSONObject();
+//        if (stime != null) {
+//            filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//        }
+//        if (etime != null) {
+//            filters.put("endTime", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//        }
+//        filters.put("eventSource", eventSource);
+//        filters.put("status", status);
+//        filters.put("eventCategory", eventCategory);
+//        filters.put("eventLevel", eventLevel);
+//        filters.put("clientIp", clientIp);
+//        filters.put("action", action);
+//        filters.put("id", id);
+
+        Event event = new Event();
+        event.setStartTime(stime);
+        event.setEndTime(etime);
+        event.setEventSource(eventSource);
+        event.setStatus(Long.parseLong(status));
+        event.setEventCategory(eventCategory);
+        event.setEventLevel(eventLevel);
+        event.setClientIp(Long.parseLong(clientIp));
+        event.setCameraName(cameraName);
+        event.setAction(Long.parseLong(action));
+        event.setId(id);
 
         if (StringUtils.isNotBlank(orderType) && StringUtils.isNotBlank(orderValue)) {
-            filters.put("orderType", orderValue + " " + orderType);
+//            filters.put("orderType", orderValue + " " + orderType);
+            event.setOrderType(orderValue + " " + orderType);
         }
-        String url = alarmHost + "/BusiEvent/listT?";
-        String result = HttpUtils.sendGet(url, filters);
+//        String url = alarmHost + "/BusiEvent/listT?";
+//        String result = HttpUtils.sendGet(url, filters);
+        String result = alarmFeignClient.listT(event,null,null);
         JSONObject resultObj = JSONObject.parseObject(result);
         JSONArray datas = resultObj.getJSONArray("rows");
 

@@ -2,7 +2,6 @@ package com.yuanqing.project.tiansu.service.analysis.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.mapper.analysis.ScreenMapper;
@@ -14,6 +13,7 @@ import com.yuanqing.project.tiansu.mapper.operation.BusiHttpPerfMapper;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.analysis.IScreenService;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
+import com.yuanqing.project.tiansu.service.feign.AlarmFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -60,8 +60,11 @@ public class ScreenServiceImpl implements IScreenService {
     @Resource
     private RedisCache redisCache;
 
-    @Value("${tiansu.alarmhost}")
-    private String prefix;
+//    @Value("${tiansu.alarmhost}")
+//    private String prefix;
+
+    @Resource
+    private AlarmFeignClient alarmFeignClient;
 
     public static final String PREFIX = "MACS:HTTP_CONFIG:";
     public static final String OVERTIME = "请求超时";
@@ -104,9 +107,11 @@ public class ScreenServiceImpl implements IScreenService {
         }
         List<JSONObject> operList = screenMapper.getOperWarnByOper();
 
-        String url = prefix + "/analysisEvent/queryEventCntPerMinute?intervalMinutes=30";
+//        String url = prefix + "/analysisEvent/queryEventCntPerMinute?intervalMinutes=30";
+//
+//        String result = HttpUtils.sendGet(url, "");
 
-        String result = HttpUtils.sendGet(url, "");
+        String result = alarmFeignClient.queryEventCntPerMinute(30);
 
         List<JSONObject> warnList = JSONArray.parseArray(result, JSONObject.class);
 
@@ -177,8 +182,9 @@ public class ScreenServiceImpl implements IScreenService {
     public JSONObject getWarn() {
         JSONObject jsonObject = new JSONObject();
 //        return jsonObject;
-        String url = prefix + "/BusiEvent/getEventActive";
-        String count = HttpUtils.sendGet(url, "");
+//        String url = prefix + "/BusiEvent/getEventActive";
+//        String count = HttpUtils.sendGet(url, "");
+        String count = alarmFeignClient.getEventActive();
         jsonObject.put("WARNCOUNT", count);
         return jsonObject;
     }

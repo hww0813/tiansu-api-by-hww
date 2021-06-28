@@ -2,10 +2,8 @@ package com.yuanqing.project.tiansu.controller.assets;
 
 import com.alibaba.fastjson.JSONObject;
 
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.controller.BaseController;
@@ -13,8 +11,8 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.dto.CameraDto;
-import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import com.yuanqing.project.tiansu.service.feign.AlarmFeignClient;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,11 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -51,8 +49,8 @@ public class CameraController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CameraController.class);
 
-    @Value("${tiansu.alarmhost}")
-    private String alarmHost;
+//    @Value("${tiansu.alarmhost}")
+//    private String alarmHost;
 
     @Autowired
     private ICameraService cameraService;
@@ -62,6 +60,9 @@ public class CameraController extends BaseController {
 
     @Autowired
     private IMacsConfigService macsConfigService;
+
+    @Resource
+    private AlarmFeignClient alarmFeignClient;
 
     @GetMapping("/list")
     @ApiOperation(value = "获取摄像头列表", httpMethod = "GET")
@@ -150,8 +151,9 @@ public class CameraController extends BaseController {
                                        @ApiParam("排序")@RequestParam(required = false) String orderType,
                                        @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         List<Camera> list = new ArrayList<>();
-        String url = alarmHost + "/BusiEvent/getCameraId";
-        String result = HttpUtils.sendGet(url, "event_id=" + id);
+//        String url = alarmHost + "/BusiEvent/getCameraId";
+//        String result = HttpUtils.sendGet(url, "event_id=" + id);
+        String result = alarmFeignClient.getCameraId(id);
         JSONObject resultObj = JSONObject.parseObject(result);
 
         Long code = resultObj.getLong("code");

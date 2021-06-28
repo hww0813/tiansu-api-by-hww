@@ -52,14 +52,14 @@ public class ServerTreeServiceTest {
         System.out.println(sessionServerList);
 
     }
-
-    @Test
-    public void test2() {
-        String result = HttpUtils.getHttpRequest("http://localhost:8188"+"/pmc/consul/getConsulIp");
-//        String result = "[\"192.168.1.30\",\"192.168.1.20\"]";
-        List<String> list = new ArrayList<>();
-        JSONObject syslogJson = JSON.parseObject(result);
-        list = (List<String>) syslogJson.get("data");
-        System.out.println(list);
-    }
+//
+//    @Test
+//    public void test2() {
+//        String result = HttpUtils.getHttpRequest("http://localhost:8188"+"/pmc/consul/getConsulIp");
+////        String result = "[\"192.168.1.30\",\"192.168.1.20\"]";
+//        List<String> list = new ArrayList<>();
+//        JSONObject syslogJson = JSON.parseObject(result);
+//        list = (List<String>) syslogJson.get("data");
+//        System.out.println(list);
+//    }
 }

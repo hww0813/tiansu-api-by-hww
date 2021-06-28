@@ -94,6 +94,9 @@ public class Event implements Serializable {
      */
     private Long connectType;
 
+    //排序
+    private String orderType;
+
 
     public Long getId() {
         return id;
@@ -229,6 +232,14 @@ public class Event implements Serializable {
 
     public void setStamp(LocalDateTime stamp) {
         this.stamp = stamp;
+    }
+
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 
     @Override
