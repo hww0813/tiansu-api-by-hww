@@ -61,6 +61,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         {
             LOGGER.error("获取配置异常"+macsConfig.toParamsString());
             return null;
+
         }
 
         JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
