@@ -20,10 +20,10 @@ public interface MacsFeignClient {
     String getConfigById(MacsConfig config);
 
     /**
-     * 根据ID获取单条配置信息
+     * 获取下级地区
      * */
-    @GetMapping("/tripartite/config/getConfigById/{id}")
-    String getConfigById(@PathVariable("id") Long id);
+    @GetMapping("/tripartite/region/getConfigById")
+    String getConfigById(@RequestParam("regionId") String regionId);
 
     /**
      * 获取地区配置详细信息

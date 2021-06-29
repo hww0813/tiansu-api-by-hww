@@ -94,7 +94,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
         if(CollectionUtils.isEmpty(redisConfig)){
 //            String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL, "regionId="+id);
-            String rspStr = macsFeignClient.getConfigById(Long.parseLong(id));
+            String rspStr = macsFeignClient.getConfigById(id);
             if (StringUtils.isEmpty(rspStr))
             {
                 LOGGER.error("获取区域异常 id={}", id);
