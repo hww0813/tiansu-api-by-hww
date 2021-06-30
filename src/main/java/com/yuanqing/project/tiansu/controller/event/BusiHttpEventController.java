@@ -8,15 +8,21 @@ import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
+import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.event.BusiHttpEvent;
+import com.yuanqing.project.tiansu.domain.event.BusiHttpEventDto;
+import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
 import com.yuanqing.project.tiansu.service.event.IBusiHttpEventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -31,6 +37,8 @@ import org.springframework.web.bind.annotation.*;
 public class BusiHttpEventController extends BaseController {
     @Autowired
     private IBusiHttpEventService busiHttpEventService;
+    @Resource
+    private IClientTerminalService clientTerminalService;
 
     /**
      * 查询接口告警列表
@@ -43,19 +51,29 @@ public class BusiHttpEventController extends BaseController {
                               @ApiParam("终端IP") @RequestParam(value = "ipAddress", required = false) String ipAddress,
                               @ApiParam("事件来源") @RequestParam(value = "eventSource", required = false) String eventSource,
                               @ApiParam("接口执行状态") @RequestParam(value = "httpStatus", required = false) String httpStatus,
-                              @ApiParam("告警等级") @RequestParam(value = "eventLevel", required = false) String eventLevel,
-                              @ApiParam("告警状态") @RequestParam(value = "eventStatus", required = false) Integer eventStatus
+                              @ApiParam("告警等级") @RequestParam(value = "eventLevel", required = false) String eventLevel
     ) {
+        //先条件查询接口告警列表
         BusiHttpEvent busiHttpEvent = new BusiHttpEvent();
         busiHttpEvent.setHttpUrl(httpUrl);
         busiHttpEvent.setIpAddress(IpUtils.ipToLong(ipAddress));
         busiHttpEvent.setHttpStatus(httpStatus);
         busiHttpEvent.setEventLevel(eventLevel);
-        busiHttpEvent.setEventStatus(eventStatus);
         busiHttpEvent.setEventSource(eventSource);
         startPage();
         List<BusiHttpEvent> list = busiHttpEventService.selectBusiHttpEventList(busiHttpEvent, startDate, endDate);
-        return getDataTable(list);
+        //再根据ip查找服务名
+        List<BusiHttpEventDto> eventDtoList = new ArrayList<>();
+        list.stream().forEach(f -> {
+            BusiHttpEventDto busiHttpEventDto = new BusiHttpEventDto();
+            BeanUtils.copyProperties(f, busiHttpEventDto);
+            ClientTerminal clientTerminal = clientTerminalService.findByIpAddress(f.getIpAddress());
+            if (clientTerminal != null) {
+                busiHttpEventDto.setServerName(clientTerminal.getDeviceName());
+            }
+            eventDtoList.add(busiHttpEventDto);
+        });
+        return getDataTable(eventDtoList,list);
     }
 
     /**

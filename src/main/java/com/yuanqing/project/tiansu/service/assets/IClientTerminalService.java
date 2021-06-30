@@ -72,5 +72,10 @@ public interface IClientTerminalService extends BaseService<ClientTerminal, Long
      */
     List<ClientTerminal> getTerminalByIpList(List<Long> ipList,ClientTerminal clientTerminal);
 
-
+    /**
+     * 根据ip找终端
+     * @param ip
+     * @return
+     */
+    ClientTerminal findByIpAddress(Long ip);
 }

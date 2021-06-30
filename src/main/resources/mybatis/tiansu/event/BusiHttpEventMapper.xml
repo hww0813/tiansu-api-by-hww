@@ -72,7 +72,8 @@
                ROUND((count(*) * 100 / (SELECT COUNT(*)
                                         FROM busi_http_event
                                         WHERE start_time BETWEEN #{startDate}
-                                                  and #{endDate})), 0) as proportion
+                                                  and #{endDate})), 0) as proportion,
+               count(*) as num
         from busi_http_event
         where start_time between #{startDate}
                   and #{endDate}

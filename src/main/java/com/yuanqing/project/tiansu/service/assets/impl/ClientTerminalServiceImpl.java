@@ -234,6 +234,11 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
         return list;
     }
 
+    @Override
+    public ClientTerminal findByIpAddress(Long ip) {
+        return clientTerminalMapper.findByIpAddress(ip);
+    }
+
 
     @Override
     public Long save(ClientTerminal clientTerminal, SaveType type) {

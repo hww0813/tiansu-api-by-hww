@@ -46,4 +46,5 @@ public interface ClientTerminalMapper extends BaseMapper<ClientTerminal, Long> {
 
     Integer getRealTotal();
 
+
 }
