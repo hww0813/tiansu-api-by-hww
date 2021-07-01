@@ -79,13 +79,22 @@ public class EventController {
         event.setStartTime(stime);
         event.setEndTime(etime);
         event.setEventSource(eventSource);
-        event.setStatus(Long.parseLong(status));
         event.setEventCategory(eventCategory);
         event.setEventLevel(eventLevel);
-        event.setClientIp(Long.parseLong(clientIp));
         event.setCameraName(cameraName);
-        event.setAction(Long.parseLong(action));
         event.setId(id);
+
+        if(StringUtils.isNotEmpty(status)){
+            event.setStatus(Long.parseLong(status));
+        }
+        if(StringUtils.isNotEmpty(clientIp)){
+            event.setClientIp(Long.parseLong(clientIp));
+        }
+        if(StringUtils.isNotEmpty(action)){
+            event.setAction(Long.parseLong(action));
+        }
+
+
 
 //        JSONObject filters = new JSONObject();
 //        if (stime != null) {
