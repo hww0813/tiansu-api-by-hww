@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.service.macs;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
@@ -62,4 +63,9 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
      * @return
      */
     void setLowerRegionByCamera(List<Camera> list);
+
+
+
+
+
 }

@@ -13,4 +13,6 @@ public interface IConstants {
 
     public static final String TWO_FORMAT = "%s_%s";
     public static final String THREE_FORMAT = "%s_%s_%s";
+
+    public static final String PMC_TOKEN = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjVhMWM2YWUxLTQxZGQtNGMwMC04M2MzLWU3MjU5NzMyY2ZhOSJ9.V2wlC4JK8MCtmX0VIOOaXu0A7iiUjC85PBYwQfEB-Exli2I_TW-TIEYSni9KREtl8jxs729hObt2ionaoz-clg";
 }

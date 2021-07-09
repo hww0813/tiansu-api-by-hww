@@ -38,11 +38,11 @@ public class ScreenStatisticsTask {
     @Scheduled(cron = "0/3 * * * * ?")
     public void getOperCategory() {
 
-        String value = screenService.getOperCategory(new Date());
-
-        JSONArray object = JSONArray.parseArray(value);
-        redisCache.setCacheObject(ScreenConstants.OPERATION_CATEGORY, object);
-        LOGGER.info("定时任务执行完成:统计操作行为分类(分时段)");
+//        String value = screenService.getOperCategory(new Date());
+//
+//        JSONArray object = JSONArray.parseArray(value);
+//        redisCache.setCacheObject(ScreenConstants.OPERATION_CATEGORY, object);
+//        LOGGER.info("定时任务执行完成:统计操作行为分类(分时段)");
 
     }
 

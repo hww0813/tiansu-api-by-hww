@@ -1,8 +1,8 @@
 package com.yuanqing.project.tiansu.controller.operation;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -10,6 +10,8 @@ import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
+import com.yuanqing.project.tiansu.service.assets.ICameraService;
+import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,6 +52,12 @@ public class OperationBehaviorController extends BaseController   {
     @Resource
     private OperationBehaviorMapper operationBehaviorMapper;
 
+    @Autowired
+    private IServerTreeService serverTreeService;
+
+    @Autowired
+    private ICameraService cameraService;
+
 
     @GetMapping("/list")
     @ApiOperation(value = "获取操作行为列表", httpMethod = "GET")
@@ -69,7 +77,9 @@ public class OperationBehaviorController extends BaseController   {
                              @ApiParam("目的设备名")@RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
                              @ApiParam("内容")@RequestParam(value = "content", required = false) String content,
                              @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                             @ApiParam("平台名称")@RequestParam(value = "probeHdInfo", required = false) String probeHdInfo,
                              @ApiParam("联接类型")@RequestParam(value = "connectType", required = false) String connectType,
+                             @ApiParam("uuid")@RequestParam(value = "uuid", required = false) String uuid,
                              @ApiParam("排序")@RequestParam(required = false) String orderType,
                              @ApiParam("排序对象")@RequestParam(required = false) String orderValue){
 
@@ -93,16 +103,33 @@ public class OperationBehaviorController extends BaseController   {
             operationBehavior.setDstDeviceName(dstDeviceName);
             operationBehavior.setContent(content);
             operationBehavior.setConnectType(connectType);
-
+            operationBehavior.setProbeHdInfo(probeHdInfo);
+            operationBehavior.setUuid(uuid);
 
             try {
                 return IOperationBehaviorService.queryOperationList(operationBehavior);
             } catch (Exception e) {
+                e.printStackTrace();
                return  PageResult.error("获取操作行为接口报错！");
             }
 
     }
 
+    @GetMapping("/getOperByUuid")
+    @ApiOperation(value = "根据Uuid查询操作行为", httpMethod = "GET")
+    public AjaxResult getOperByUuid(@ApiParam("uuid")@RequestParam(value = "uuid", required = false) String uuid){
+
+        OperationBehavior operationBehavior = IOperationBehaviorService.getOperationBehaviorByUuid(uuid);
+        if(StringUtils.isEmpty(operationBehavior.getDstDeviceName())){
+            String dstCode = operationBehavior.getDstCode();
+            String deviceName = cameraService.findByCode(dstCode).getDeviceName();
+            if(StringUtils.isNotEmpty(deviceName)){
+                operationBehavior.setDstDeviceName(deviceName);
+            }
+        }
+        return AjaxResult.success(operationBehavior);
+
+    }
     @GetMapping("/getOperationBehaviorById")
     @ApiOperation(value = "获取操作行为列表", httpMethod = "GET")
     public AjaxResult getOperationBehaviorById(@ApiParam("勾选的操作行为id")@RequestParam(value = "id", required = false) Long id) {
@@ -272,6 +299,12 @@ public class OperationBehaviorController extends BaseController   {
         return AjaxResult.success(hashMap);
     }
 
+    @GetMapping("/getProbeName")
+    @ApiOperation(value = "获取探针和机器码" ,httpMethod = "GET")
+    public AjaxResult getProbeName(){
+        List<JSONObject> probeNameList = serverTreeService.getProbeName();
+        return AjaxResult.success(probeNameList);
+    }
 
 
 

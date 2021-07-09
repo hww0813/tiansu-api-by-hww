@@ -8,14 +8,15 @@ import com.yuanqing.common.exception.CustomException;
 import com.yuanqing.common.queue.ServerTreeMap;
 import com.yuanqing.common.utils.SequenceIdGenerator;
 import com.yuanqing.common.utils.StringUtils;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.project.tiansu.domain.macs.MacsProbe;
 import com.yuanqing.project.tiansu.domain.report.ReadServerExcel;
 import com.yuanqing.project.tiansu.domain.assets.Client;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 import com.yuanqing.project.tiansu.mapper.assets.ClientMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
+import com.yuanqing.project.tiansu.mapper.macs.MacsProbeMapper;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ServerTreeMapper;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
@@ -23,7 +24,6 @@ import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -31,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,13 +56,14 @@ public class ServerTreeServiceImpl implements IServerTreeService {
     private ClientTerminalMapper clientTerminalMapper;
 
     @Autowired
-    private OperationBehaviorMapper operationBehaviorMapper;
-
-    @Autowired
     private ServerTreeMapper serverTreeMapper;
 
     @Autowired
     private ICameraService cameraService;
+
+    @Autowired
+    private MacsProbeMapper macsProbeMapper;
+
 
     private static SequenceIdGenerator serverIdGenerator = new SequenceIdGenerator(1, 1);
 
@@ -256,7 +259,7 @@ public class ServerTreeServiceImpl implements IServerTreeService {
         //根据ip查找终端
         ClientTerminal clientTerminal = clientTerminalMapper.findByIpAddress(IP);
 
-        //如果存在客户端/中毒案，则更新对应终端/客户端的设备类型
+        //如果存在客户端/终端，则更新对应终端/客户端的设备类型
         handleClient(clientList, clientTerminal);
 
         ServerTree server = findOne(IP);
@@ -342,4 +345,42 @@ public class ServerTreeServiceImpl implements IServerTreeService {
             clientTerminalMapper.updateClientTerminal(clientTerminal);
         }
     }
+
+    @Override
+    public List<JSONObject> getProbeName() {
+
+        List<MacsProbe> probeList = macsProbeMapper.getProbeList();
+        ServerTree serverTree = new ServerTree();
+        serverTree.setIsDelete((short) 1);
+        List<ServerTree> serverTreeList = getList(serverTree);
+
+        List<JSONObject> list = new ArrayList<>();
+
+        serverTreeList.stream().forEach(f ->{
+            probeList.stream().forEach(h ->{
+                if(h.getIpAddress().equals(f.getServerIp())){
+                    JSONObject probeName = new JSONObject();
+                    String e = f.getServerName()==null ? IpUtils.longToIp(f.getServerIp()):f.getServerName();
+                    probeName.put("hd_info",h.getHdInfo());
+                    probeName.put("probe_name",e);
+                    list.add(probeName);
+                }
+            });
+        });
+        if(CollectionUtils.isEmpty(list)){
+            JSONObject o = new JSONObject();
+            if(probeList.size()>0) {
+                o.put("hd_info", probeList.get(0).getHdInfo());
+                o.put("probe_name", "本机");
+
+            }else{
+                o.put("hd_info", "null");
+                o.put("probe_name", "没有探针信息");
+            }
+            list.add(o);
+        }
+
+        return list;
+    }
+
 }

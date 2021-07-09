@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.mapper.analysis;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.framework.web.domain.BaseEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -182,7 +182,7 @@ public class RateVisitController extends BaseController {
         operationBehavior.setstartDate(startDate);
         operationBehavior.setendDate(endDate);
 
-        PageResult visitedRateRelatedOperation = operationBehaviorService.getVisitedRateRelatedOperation(cameraCodeList, operationBehavior);
+        PageResult visitedRateRelatedOperation = operationBehaviorService.getVisitedRateRelatedOperation(operationBehavior,cameraCodeList);
 
         return visitedRateRelatedOperation;
 

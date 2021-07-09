@@ -5,6 +5,7 @@ import com.yuanqing.common.enums.ActionDetailType;
 import com.yuanqing.common.enums.ActionType;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.framework.aspectj.lang.annotation.OperScope;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
@@ -41,6 +42,7 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     private RedisCache redisCache;
 
     @Override
+    @OperScope(operAlias = "v")
     public PageResult queryOperationList(OperationBehavior operationBehavior) throws Exception {
 
         if (StringUtils.isNotBlank(operationBehavior.getOrderType()) && StringUtils.isNotBlank(operationBehavior.getOrderValue())) {
@@ -198,10 +200,10 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
 
 
     @Override
-    public PageResult getVisitedRateRelatedOperation(List<String> cameraCodeList, OperationBehavior operationBehavior) throws Exception {
+    @OperScope(operAlias = "bo")
+    public PageResult getVisitedRateRelatedOperation(OperationBehavior operationBehavior,List<String> cameraCodeList ) throws Exception {
 
         operationBehavior.setNum(operationBehavior.getSize() * (operationBehavior.getNum() - 1));
-
 
         CompletableFuture<Integer> totalFuter = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.getVisitedRateRelatedOperationCount(cameraCodeList,operationBehavior));
         //操作行为列表
@@ -214,5 +216,10 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     @Override
     public OperationBehavior getOperationBehaviorById(Long id) {
         return operationBehaviorMapper.findById(id);
+    }
+
+    @Override
+    public OperationBehavior getOperationBehaviorByUuid(String uuid) {
+        return operationBehaviorMapper.findByUuid(uuid);
     }
 }

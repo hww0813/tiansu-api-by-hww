@@ -48,6 +48,7 @@
     <select id="getList" parameterType="com.yuanqing.project.tiansu.domain.assets.Client" resultMap="BusiClientResult">
         <include refid="selectBusiClientVo"/>
         <where>
+            device_type = 6
             <if test="deviceCode != null  and deviceCode != ''">and DEVICE_CODE = #{deviceCode}</if>
             <if test="deviceName != null  and deviceName != ''">and DEVICE_NAME like concat('%', #{deviceName}, '%')
             </if>
@@ -213,6 +214,7 @@
             e.stamp between #{startTime} and #{endTime}
           and e.src_ip = #{srcIp}
           and e.action = #{action}
+            AND (e.action &lt;> 10 and e.action &lt;> 11 )
         group by DATE_FORMAT(e.stamp, '%Y-%m-%d %H')
     </select>
 </mapper>

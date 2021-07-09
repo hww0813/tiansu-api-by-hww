@@ -35,12 +35,17 @@
         <result column="END_STAMP" property="endTime" jdbcType="TIMESTAMP"/>
         <result column="FILE_URL" property="fileUrl" jdbcType="VARCHAR"/>
         <result column="BIT_RATE" property="bitRate" jdbcType="VARCHAR"/>
+        <result column="PROBE_HD_INFO" property="probeHdInfo" jdbcType="VARCHAR"/>
+        <result column="OPER_START" property="operStart" jdbcType="VARCHAR"/>
+        <result column="OPER_END" property="operEnd" jdbcType="VARCHAR"/>
+        <result column="RELATION_OPER_UUID" property="relationOperUuid" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="getList" resultMap="resultMap"
             parameterType="com.yuanqing.project.tiansu.domain.operation.OperationBehavior">
         SELECT v.* FROM busi_oper v
         <where>
+            1=1
             <if test="id != null and id != '' ">
                 AND v.ID = #{id}
             </if>
@@ -52,6 +57,9 @@
             </if>
             <if test="srcCode != null and srcCode != '' ">
                 AND v.SRC_CODE = #{srcCode}
+            </if>
+            <if test="uuid != null and uuid != '' ">
+                AND v.UUID = #{uuid}
             </if>
             <if test="dstCode != null and dstCode != '' ">
                 AND v.DST_CODE = #{dstCode}
@@ -68,9 +76,17 @@
             <if test="action != null and action != '' ">
                 AND v.ACTION = #{action}
             </if>
+            <if test="probeHdInfo != null and probeHdInfo != '' ">
+                AND v.PROBE_HD_INFO = #{probeHdInfo}
+            </if>
 
-            <if test="startDate != null and endDate != null">and v.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d
-                %H:%i:%s') and v.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+            <if test="startDate != null and endDate != null">
+                and (v.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s')
+                and v.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+                or(
+                v.OPER_START &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+                and v.OPER_END >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s')
+                ))
             </if>
 
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
@@ -100,6 +116,11 @@
             <if test="connectType != null and connectType != '' ">
                 AND v.CONNECT_TYPE = #{connectType}
             </if>
+
+            <if test="relationOperUuid != null and relationOperUuid != '' ">
+                AND v.RELATION_OPER_UUID = #{relationOperUuid}
+            </if>
+            ${dataScope}
         </where>
 
         <if test="orderType == null or orderType == ''">
@@ -147,7 +168,7 @@
             <if test="filter.dstDeviceName != null and filter.dstDeviceName != '' ">
                 AND bo.DST_DEVICE_NAME = #{filter.dstDeviceName}
             </if>
-
+                ${filter.dataScope}
         </where>
         ORDER BY bo.STAMP DESC
         limit #{filter.num},#{filter.size}
@@ -163,9 +184,14 @@
                 </foreach>
             </if>
             <if test="filter.startDate != null and filter.endDate != null">
-                AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;=
-                STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
+                and (bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s')
+                and bo.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
+                or(
+                bo.OPER_START &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
+                and bo.OPER_END >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s')
+                ))
             </if>
+
             <if test="filter.srcIp != null and filter.srcIp != '' ">
                 AND bo.SRC_IP = #{filter.srcIp}
             </if>
@@ -184,7 +210,7 @@
             <if test="filter.dstDeviceName != null and filter.dstDeviceName != '' ">
                 AND bo.DST_DEVICE_NAME = #{filter.dstDeviceName}
             </if>
-
+            ${filter.dataScope}
         </where>
     </select>
 
@@ -193,6 +219,7 @@
         select camera_id
         from busi_oper
         where session_id = #{sessionId}
+         AND (action &lt;> 10 and action &lt;> 11 )
     </select>
 
 
@@ -203,6 +230,11 @@
             <if test="id != null and id != '' ">
                 AND v.ID = #{id}
             </if>
+
+            <if test="probeHdInfo != null and probeHdInfo != '' ">
+                AND v.PROBE_HD_INFO = #{probeHdInfo}
+            </if>
+
             <if test="srcIp != null and srcIp != '' ">
                 AND v.SRC_IP = #{srcIp}
             </if>
@@ -227,8 +259,13 @@
             <if test="action != null and action != '' ">
                 AND v.ACTION = #{action}
             </if>
-            <if test="startDate != null and endDate != null">and v.stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d
-                %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+            <if test="startDate != null and endDate != null">
+                and (v.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s')
+                and v.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+                or(
+                v.OPER_START &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+                and v.OPER_END >= STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s')
+                ))
             </if>
             <if test="dstDeviceIp != null and dstDeviceIp != ''">
                 AND v.dst_device_ip = #{dstDeviceIp}
@@ -257,6 +294,7 @@
             <if test="connectType != null and connectType != '' ">
                 AND v.CONNECT_TYPE = #{connectType}
             </if>
+            ${dataScope}
         </where>
     </select>
 
@@ -312,7 +350,7 @@
         FROM (SELECT DISTINCT CLIENT_ID , count(1) AS count
         FROM
         busi_oper bo
-        WHERE 1=1 AND bo.ACTION != 6
+        WHERE 1=1 AND bo.ACTION != 6  AND (bo.action &lt;> 10 and bo.action &lt;> 11 )
         <if test="cameraId != null and cameraId != ''">
             AND bo.CAMERA_ID = #{cameraId}
         </if>
@@ -335,7 +373,7 @@
         SELECT count(distinct CLIENT_ID) AS count
         FROM
         busi_oper bo
-        WHERE 1=1 AND bo.ACTION != 6
+        WHERE 1=1 AND bo.ACTION != 6  AND (bo.action &lt;> 10 and bo.action &lt;> 11 )
         <if test="cameraId != null and cameraId != ''">
             AND bo.CAMERA_ID = #{cameraId}
         </if>
@@ -367,11 +405,18 @@
         where id = #{id}
     </select>
 
+    <select id="findByUuid" resultMap="resultMap">
+        select *
+        from busi_oper
+        where UUID = #{uuid}
+    </select>
+
 
     <select id="getDstIpBySessionId" resultType="java.lang.Long">
         select DISTINCT dst_ip
         from busi_oper
         where session_id = #{sessionId}
+         AND (action &lt;> 10 and action &lt;> 11 )
     </select>
 
 
@@ -379,5 +424,6 @@
         select count(*)
         from busi_oper
         where stamp between #{startDate} and #{endDate}
+         AND (action &lt;> 10 and action &lt;> 11 )
     </select>
 </mapper>

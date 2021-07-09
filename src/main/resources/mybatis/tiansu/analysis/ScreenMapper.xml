@@ -13,6 +13,7 @@
             busi_oper
         WHERE
             stamp BETWEEN SUBDATE(now(),interval 7 hour) and now()
+
             GROUP BY hour(stamp),action
 
     </select>
@@ -89,7 +90,7 @@
          date_format( stamp, '%H:%i' ) AS minuteTime,
          count( id ) operCnt
         FROM
-         ( SELECT id, stamp FROM busi_oper WHERE stamp > DATE_SUB( now( ), INTERVAL 30 MINUTE ) ) b
+         ( SELECT id, stamp FROM busi_oper WHERE  action &lt;> 10 and action &lt;> 11 and stamp > DATE_SUB( now( ), INTERVAL 30 MINUTE ) ) b
         GROUP BY
          minuteTime
         ORDER BY

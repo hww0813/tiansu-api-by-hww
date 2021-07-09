@@ -118,6 +118,7 @@
     <select id="getClientTerminalByIpList" resultMap="BusiClientTerminalResult">
         <include refid="selectBusiClientTerminalVo"/>
         <where>
+            bct.device_type = 6 and
             bct.IP_ADDRESS in
             <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
                 #{item}
@@ -233,7 +234,6 @@
             DEVICE_NAME          = #{deviceName, jdbcType=VARCHAR},
             MAC_ADDRESS          = #{macAddress, jdbcType=VARCHAR},
             STATUS               = #{status, jdbcType=INTEGER},
-            REGION               = #{region.id, jdbcType=INTEGER},
             UPDATE_TIME          = now(),
             DEVICE_TYPE          =#{deviceType,jdbcType=VARCHAR},
             SIP_SERVER_ID        = #{sipServerId, jdbcType=BIGINT},

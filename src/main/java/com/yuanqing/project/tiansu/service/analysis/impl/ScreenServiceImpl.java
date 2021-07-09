@@ -3,7 +3,9 @@ package com.yuanqing.project.tiansu.service.analysis.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.ip.IpUtils;
+import com.yuanqing.framework.aspectj.lang.annotation.OperScope;
 import com.yuanqing.framework.redis.RedisCache;
+import com.yuanqing.framework.web.domain.BaseEntity;
 import com.yuanqing.project.tiansu.mapper.analysis.ScreenMapper;
 import com.yuanqing.project.tiansu.mapper.assets.CameraMapper;
 import com.yuanqing.project.tiansu.mapper.assets.ClientTerminalMapper;
@@ -79,7 +81,6 @@ public class ScreenServiceImpl implements IScreenService {
 
     @Override
     public String getOperCategory(Date dateTime) {
-
         List<JSONObject> categoryList = screenMapper.getOperCategory();
 
         return categoryList.toString();

@@ -61,4 +61,12 @@ public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior,Lo
      * @return
      */
       Integer getOperNum(Date startDate,Date endDate);
+
+
+    /**
+     * 根据uuid查询操作行为
+     * @param uuid
+     * @return
+     */
+    OperationBehavior findByUuid(String uuid);
 }

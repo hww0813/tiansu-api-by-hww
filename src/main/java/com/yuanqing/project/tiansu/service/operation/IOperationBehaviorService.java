@@ -31,8 +31,10 @@ public interface IOperationBehaviorService {
      * @param operationBehavior 过滤条件集合
      * @return
      */
-    PageResult getVisitedRateRelatedOperation(@Param("list") List<String> cameraCodeList,
-                                                           @Param("filter") OperationBehavior operationBehavior) throws ExecutionException, InterruptedException, Exception;
+    PageResult getVisitedRateRelatedOperation(@Param("filter") OperationBehavior operationBehavior,
+                                              @Param("list") List<String> cameraCodeList) throws ExecutionException, InterruptedException, Exception;
 
     OperationBehavior getOperationBehaviorById(Long id);
+
+    OperationBehavior getOperationBehaviorByUuid(String uuid);
 }

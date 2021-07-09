@@ -231,6 +231,9 @@ public class ClientServiceImpl implements IClientService {
             list.add(jsonObject);
             i++;
         }
+        list.stream().forEach(f -> {
+            f.put("Hour",f.getString("Hour")+"h");
+        });
         return list;
     }
 

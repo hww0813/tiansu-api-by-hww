@@ -204,7 +204,7 @@
             AND DEVICE_NAME like concat(#{deviceName}, '%')
         </if>
         <if test="sessionId != null and sessionId != ''">
-            AND id in (select DISTINCT camera_id from busi_oper where session_id = #{sessionId})
+            AND id in (select DISTINCT camera_id from busi_oper where session_id = #{sessionId}  AND (action &lt;> 10 and action &lt;> 11 ))
         </if>
     </select>
 

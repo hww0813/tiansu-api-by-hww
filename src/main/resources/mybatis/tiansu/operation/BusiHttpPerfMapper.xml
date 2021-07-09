@@ -65,14 +65,14 @@
             vbhp.count,
             round(vbhp.average,2) average
         FROM
-        busi_server_remark bsr
-        RIGHT JOIN (
-        SELECT
-            bhp.dst_ip,
-            bhp.dst_port,
-            count( 1 ) count,
-            AVG(http_response_time) average
-        FROM
+            busi_server_remark bsr
+            RIGHT JOIN (
+            SELECT
+                bhp.dst_ip,
+                bhp.dst_port,
+                count( 1 ) count,
+                AVG(http_response_time) average
+            FROM
                 busi_http_perf bhp
             <where>
                 <if test="dstIp != null "> and bhp.dst_ip = #{dstIp}</if>

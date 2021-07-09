@@ -97,7 +97,7 @@ public class RawNetFlowServiceImpl implements IRawNetFlowService {
 
         List<JSONObject> trendList = busiRawNetFlowMapper.getRawFlowTrend(dstIp, startTime, endTime);
 
-        trendList = dealTrendList(trendList,startTime,endTime);
+        trendList = dealTrendList(trendList, startTime, endTime);
 
         return trendList;
     }
@@ -106,7 +106,7 @@ public class RawNetFlowServiceImpl implements IRawNetFlowService {
     public List<JSONObject> getClientRawFlowTrend(Long srcIp, Date startTime, Date endTime) throws ParseException {
         List<JSONObject> trendList = busiRawNetFlowMapper.getClientRawFlowTrend(srcIp, startTime, endTime);
 
-        trendList = dealTrendList(trendList,startTime,endTime);
+        trendList = dealTrendList(trendList, startTime, endTime);
 
         return trendList;
     }
@@ -119,17 +119,18 @@ public class RawNetFlowServiceImpl implements IRawNetFlowService {
 
     /**
      * 获取流量列表终端排行
+     *
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @param orderType 排序字段
      * @return
      */
     @Override
     public List<JSONObject> getRawClientRank(Date startTime, Date endTime, String orderType) {
-        return busiRawNetFlowMapper.getRawClientRank(startTime,endTime,orderType);
+        return busiRawNetFlowMapper.getRawClientRank(startTime, endTime, orderType);
     }
 
-    public List<JSONObject> dealTrendList(List<JSONObject> trendList,Date startTime, Date endTime) throws ParseException {
+    public List<JSONObject> dealTrendList(List<JSONObject> trendList, Date startTime, Date endTime) throws ParseException {
         //获得两个时间段之内的所有日期小时
         String strDateFormat = "yyyy-MM-dd HH";
         SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
@@ -162,10 +163,12 @@ public class RawNetFlowServiceImpl implements IRawNetFlowService {
             list.add(jsonObject);
             i++;
         }
+
+        list.stream().forEach(f -> {
+            f.put("Hour",f.getString("Hour")+"h");
+        });
         return list;
     }
-
-
 
 
 }

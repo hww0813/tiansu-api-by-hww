@@ -78,17 +78,29 @@ public class OperationBehavior extends BaseEntity {
 
     private String platformName;
 
+    private String probeHdInfo;
+
     private String fileUrl;
 
     private String bitRate;
 
     private Long serverIp;
 
+    /** 相关动作uuid */
+    private String relationOperUuid;
+
     // 回放/下载开始、结束时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime startTime;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime endTime;
+
+    /** 动作开始时间 */
+    private String operStart;
+
+    /** 动作结束时间 */
+    private String operEnd;
 
     private String[] regionList;
 

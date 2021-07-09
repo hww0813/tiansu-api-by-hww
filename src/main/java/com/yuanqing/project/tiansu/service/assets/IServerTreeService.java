@@ -74,4 +74,11 @@ public interface IServerTreeService extends BaseService<ServerTree, Long> {
     public void insert(ServerTree serverTree);
 
 
+    /**
+     * 获取探针名称机器码
+     * @return
+     */
+    public List<JSONObject> getProbeName();
+
+
 }
