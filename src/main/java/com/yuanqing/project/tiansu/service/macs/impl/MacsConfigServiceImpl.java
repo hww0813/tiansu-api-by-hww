@@ -56,7 +56,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         }
 
 //        String rspStr = HttpUtils.sendGet(prefix+getConfigList_URL, macsConfig.toParamsString());
-        String rspStr = macsFeignClient.getConfigById(macsConfig);
+        String rspStr = macsFeignClient.getConfigById(macsConfig.getType(),macsConfig.getName());
         if (StringUtils.isEmpty(rspStr))
         {
             LOGGER.error("获取配置异常"+macsConfig.toParamsString());

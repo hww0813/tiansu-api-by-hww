@@ -17,7 +17,8 @@ public interface MacsFeignClient {
      * 根据条件获取一条配置信息
      * */
     @GetMapping("/tripartite/config/getConfigList")
-    String getConfigById(MacsConfig config);
+    String getConfigById(@RequestParam("type") String type,
+                         @RequestParam("name") String name);
 
     /**
      * 获取下级地区
