@@ -17,7 +17,6 @@ import java.util.Date;
 @EnableFeignClients
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 @EnableScheduling
-@EnableFeignClients
 public class RuoYiApplication
 {
     public static void main(String[] args)

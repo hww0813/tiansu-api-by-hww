@@ -11,7 +11,7 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.assets.ServerTree;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
-import com.yuanqing.project.tiansu.service.assets.PmcService;
+import com.yuanqing.project.tiansu.service.feign.PmcFeignClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -47,7 +47,7 @@ public class ServerTreeController extends BaseController {
     private OperationBehaviorMapper operationBehaviorMapper;
 
     @Resource
-    private PmcService pmcService;
+    private PmcFeignClient pmcFeignClient;
 
     @Value("${tiansu.pmchost}")
     private String prefix;
@@ -189,7 +189,7 @@ public class ServerTreeController extends BaseController {
     @ApiOperation("获取CPU使用率、内存使用率、运行时间")
     @GetMapping("/getSomeUtilization")
     public AjaxResult getSomeUtilization(@ApiParam("ip,例如:192.168.1.20") @RequestParam(value = "instance", required = false) String instance) {
-        return pmcService.getSomeUtilization(instance, IConstants.PMC_TOKEN);
+        return pmcFeignClient.getSomeUtilization(instance, IConstants.PMC_TOKEN);
     }
 
     /**
@@ -198,7 +198,7 @@ public class ServerTreeController extends BaseController {
     @ApiOperation("获得cpu使用率趋势图")
     @GetMapping("/getCpuTrend")
     public AjaxResult getCpuTrend(@ApiParam("ip") @RequestParam(value = "instance", required = false) String instance) {
-        return pmcService.getCpuTrend(instance, IConstants.PMC_TOKEN);
+        return pmcFeignClient.getCpuTrend(instance, IConstants.PMC_TOKEN);
     }
 
     /**
@@ -207,6 +207,6 @@ public class ServerTreeController extends BaseController {
     @ApiOperation("获得内存使用率趋势图")
     @GetMapping("/getMemoryTrend")
     public AjaxResult getMemoryTrend(@ApiParam("ip") @RequestParam(value = "instance", required = false) String instance) {
-        return pmcService.getMemoryTrend(instance, IConstants.PMC_TOKEN);
+        return pmcFeignClient.getMemoryTrend(instance, IConstants.PMC_TOKEN);
     }
 }

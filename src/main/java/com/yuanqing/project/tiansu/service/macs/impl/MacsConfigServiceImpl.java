@@ -10,7 +10,7 @@ import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
-import com.yuanqing.project.tiansu.service.assets.MacsFeignClient;
+import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         }
 
 //        String rspStr = HttpUtils.sendGet(prefix+getConfigList_URL, macsConfig.toParamsString());
-        String rspStr = macsFeignClient.getConfigById(macsConfig);
+        String rspStr = macsFeignClient.getConfigById(macsConfig.getType(),macsConfig.getName());
         if (StringUtils.isEmpty(rspStr))
         {
             LOGGER.error("获取配置异常"+macsConfig.toParamsString());

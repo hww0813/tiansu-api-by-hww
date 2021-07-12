@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.TokenConstants;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.event.Event;
-import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.feign.AlarmFeignClient;
 import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;

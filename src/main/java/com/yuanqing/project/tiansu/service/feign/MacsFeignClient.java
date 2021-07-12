@@ -1,9 +1,7 @@
 package com.yuanqing.project.tiansu.service.feign;
 
-import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**

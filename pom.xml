@@ -179,6 +179,13 @@
             <artifactId>spring-context-support</artifactId>
         </dependency>
 
+        <!-- FlyWay -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+
         <!--Token生成与解析-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
