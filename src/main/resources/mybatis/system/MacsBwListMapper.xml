@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.system.mapper.MacsBwListMapper">
+
+    <resultMap type="com.yuanqing.project.system.domain.MacsBwList" id="MacsBwListResult">
+        <result property="id"    column="id"    />
+        <result property="ipRange"    column="ip_range"    />
+        <result property="description"    column="description"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="globalConfig"    column="global_config"    />
+        <result property="nonwork"    column="nonwork"    />
+        <result property="scan"    column="scan"    />
+        <result property="rule"    column="rule"    />
+        <result property="crossOrigin"    column="crossorigin"    />
+    </resultMap>
+
+    <sql id="selectMacsBwListVo">
+        select id, ip_range, description, update_time, global_config, nonwork, scan,rule,crossorigin from macs_bw_list
+    </sql>
+
+    <select id="selectMacsBwListList" parameterType="MacsBwList" resultMap="MacsBwListResult">
+        <include refid="selectMacsBwListVo"/>
+        <where>
+            <if test="ipRange != null  and ipRange != ''"> and ip_range = #{ipRange}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="globalConfig != null  and globalConfig != ''"> and global_config = #{globalConfig}</if>
+            <if test="nonwork != null "> and nonwork = #{nonwork}</if>
+            <if test="scan != null "> and scan = #{scan}</if>
+            <if test="crossOrigin != null "> and crossorigin = #{crossOrigin}</if>
+        </where>
+    </select>
+
+    <select id="selectMacsBwListById" parameterType="Long" resultMap="MacsBwListResult">
+        <include refid="selectMacsBwListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertMacsBwList" parameterType="MacsBwList" useGeneratedKeys="true" keyProperty="id">
+        insert into macs_bw_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ipRange != null  and ipRange != ''">ip_range,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="globalConfig != null  and globalConfig != ''">global_config,</if>
+            <if test="nonwork != null ">nonwork,</if>
+            <if test="scan != null ">scan,</if>
+            <if test="rule != null ">rule,</if>
+            <if test="crossOrigin != null ">crossorigin,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ipRange != null  and ipRange != ''">#{ipRange},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="globalConfig != null  and globalConfig != ''">#{globalConfig},</if>
+            <if test="nonwork != null ">#{nonwork},</if>
+            <if test="scan != null ">#{scan},</if>
+            <if test="crossOrigin != null ">#{crossOrigin},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMacsBwList" parameterType="MacsBwList">
+        update macs_bw_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ipRange != null  and ipRange != ''">ip_range = #{ipRange},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="globalConfig != null  and globalConfig != ''">global_config = #{globalConfig},</if>
+            <if test="nonwork != null ">nonwork = #{nonwork},</if>
+            <if test="scan != null ">scan = #{scan},</if>
+            <if test="rule != null ">rule = #{rule},</if>
+            <if test="crossOrigin != null ">crossorigin = #{crossOrigin},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMacsBwListById" parameterType="Long">
+        delete from macs_bw_list where id = #{id}
+    </delete>
+
+    <delete id="deleteMacsBwListByIds" parameterType="String">
+        delete from macs_bw_list where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

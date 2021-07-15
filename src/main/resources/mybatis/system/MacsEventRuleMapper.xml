@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.system.mapper.MacsEventRuleMapper">
+
+    <resultMap type="com.yuanqing.project.system.domain.MacsEventRule" id="MacsEventRuleResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="keyword"    column="keyword"    />
+        <result property="description"    column="description"    />
+        <result property="effectWeek"    column="effect_week"    />
+        <result property="eventLevel"    column="event_level"    />
+        <result property="priority"    column="priority"    />
+        <result property="smsAlarm"    column="sms_alarm"    />
+        <result property="emailAlarm"    column="email_alarm"    />
+        <result property="smsUserids"    column="sms_userids"    />
+        <result property="emailUserids"    column="email_userids"    />
+        <result property="actions"    column="actions"    />
+        <result property="deviceIds"    column="device_ids"    />
+        <result property="eventCategory"    column="event_category"    />
+        <result property="onWork"    column="on_work"    />
+        <result property="sms"    column="sms"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="ipRangeSelect"    column="ip_range_select"    />
+        <result property="pointIpRange"    column="point_ip_range"    />
+        <result property="exceptIpOption"    column="except_ip_option"    />
+        <result property="exceptIpRange"    column="except_ip_range"    />
+        <result property="ruleOrder"    column="rule_order"    />
+        <result property="timeRangeSelect"    column="time_range_select"    />
+        <result property="pointSday"    column="point_sday"    />
+        <result property="pointEday"    column="point_eday"    />
+        <result property="pointStime"    column="point_stime"    />
+        <result property="pointEtime"    column="point_etime"    />
+        <result property="exceptTimeOption"    column="except_time_option"    />
+        <result property="exceptSday"    column="except_sday"    />
+        <result property="exceptEday"    column="except_eday"    />
+        <result property="exceptStime"    column="except_stime"    />
+        <result property="exceptEtime"    column="except_etime"    />
+        <result property="keywordReg"    column="keyword_reg"    />
+        <result property="srcIprange"    column="src_iprange"    />
+        <result property="usernames"    column="usernames"    />
+        <result property="deviceDescription"    column="device_description"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="deviceIprange"    column="device_iprange"    />
+        <result property="dstIpRange"    column="dst_iprange"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="deviceCode"    column="device_code"    />
+    </resultMap>
+
+    <sql id="selectMacsEventRuleVo">
+        select id, name, keyword, description, effect_week, event_level, priority, sms_alarm, email_alarm, sms_userids, email_userids, actions, device_ids, event_category, on_work, sms, create_time, update_time, ip_range_select, point_ip_range, except_ip_option, except_ip_range, rule_order, time_range_select, point_sday, point_eday, point_stime, point_etime, except_time_option, except_sday, except_eday, except_stime, except_etime, keyword_reg, src_iprange, usernames, device_description, device_type, device_iprange, device_name, device_code,dst_iprange from macs_event_rule
+    </sql>
+
+    <select id="selectMacsEventRuleList" parameterType="MacsEventRule" resultMap="MacsEventRuleResult">
+        select * from macs_event_rule
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="keyword != null  and keyword != ''"> and keyword = #{keyword}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="effectWeek != null  and effectWeek != ''"> and effect_week = #{effectWeek}</if>
+            <if test="eventLevel != null  and eventLevel != ''"> and event_level = #{eventLevel}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
+            <if test="smsAlarm != null "> and sms_alarm = #{smsAlarm}</if>
+            <if test="emailAlarm != null "> and email_alarm = #{emailAlarm}</if>
+            <if test="smsUserids != null  and smsUserids != ''"> and sms_userids = #{smsUserids}</if>
+            <if test="emailUserids != null  and emailUserids != ''"> and email_userids = #{emailUserids}</if>
+            <if test="actions != null  and actions != ''"> and actions = #{actions}</if>
+            <if test="deviceIds != null  and deviceIds != ''"> and device_ids = #{deviceIds}</if>
+            <if test="eventCategory != null "> and event_category = #{eventCategory}</if>
+            <if test="onWork != null "> and on_work = #{onWork}</if>
+            <if test="sms != null "> and sms = #{sms}</if>
+            <if test="ipRangeSelect != null "> and ip_range_select = #{ipRangeSelect}</if>
+            <if test="pointIpRange != null  and pointIpRange != ''"> and point_ip_range = #{pointIpRange}</if>
+            <if test="exceptIpOption != null "> and except_ip_option = #{exceptIpOption}</if>
+            <if test="exceptIpRange != null  and exceptIpRange != ''"> and except_ip_range = #{exceptIpRange}</if>
+            <if test="ruleOrder != null "> and rule_order = #{ruleOrder}</if>
+            <if test="timeRangeSelect != null "> and time_range_select = #{timeRangeSelect}</if>
+            <if test="pointSday != null "> and point_sday = #{pointSday}</if>
+            <if test="pointEday != null "> and point_eday = #{pointEday}</if>
+            <if test="pointStime != null  and pointStime != ''"> and point_stime = #{pointStime}</if>
+            <if test="pointEtime != null  and pointEtime != ''"> and point_etime = #{pointEtime}</if>
+            <if test="exceptTimeOption != null "> and except_time_option = #{exceptTimeOption}</if>
+            <if test="exceptSday != null "> and except_sday = #{exceptSday}</if>
+            <if test="exceptEday != null "> and except_eday = #{exceptEday}</if>
+            <if test="exceptStime != null  and exceptStime != ''"> and except_stime = #{exceptStime}</if>
+            <if test="exceptEtime != null  and exceptEtime != ''"> and except_etime = #{exceptEtime}</if>
+            <if test="keywordReg != null  and keywordReg != ''"> and keyword_reg = #{keywordReg}</if>
+            <if test="srcIprange != null  and srcIprange != ''"> and src_iprange = #{srcIprange}</if>
+            <if test="usernames != null  and usernames != ''"> and usernames = #{usernames}</if>
+            <if test="deviceDescription != null  and deviceDescription != ''"> and device_description = #{deviceDescription}</if>
+            <if test="deviceType != null  and deviceType != ''"> and device_type = #{deviceType}</if>
+            <if test="deviceIprange != null  and deviceIprange != ''"> and device_iprange = #{deviceIprange}</if>
+            <if test="dstIpRange != null  and dstIpRange != ''"> and dst_iprange = #{dstIpRange}</if>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="deviceCode != null  and deviceCode != ''"> and device_code = #{deviceCode}</if>
+        </where>
+    </select>
+
+    <select id="selectMacsEventRuleById" parameterType="Long" resultMap="MacsEventRuleResult">
+        <include refid="selectMacsEventRuleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertMacsEventRule" parameterType="MacsEventRule" useGeneratedKeys="true" keyProperty="id">
+        insert into macs_event_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+            <if test="keyword != null  and keyword != ''">keyword,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="effectWeek != null  and effectWeek != ''">effect_week,</if>
+            <if test="eventLevel != null  and eventLevel != ''">event_level,</if>
+            <if test="priority != null ">priority,</if>
+            <if test="smsAlarm != null ">sms_alarm,</if>
+            <if test="emailAlarm != null ">email_alarm,</if>
+            <if test="smsUserids != null  and smsUserids != ''">sms_userids,</if>
+            <if test="emailUserids != null  and emailUserids != ''">email_userids,</if>
+            <if test="actions != null  and actions != ''">actions,</if>
+            <if test="deviceIds != null  and deviceIds != ''">device_ids,</if>
+            <if test="eventCategory != null ">event_category,</if>
+            <if test="onWork != null ">on_work,</if>
+            <if test="sms != null ">sms,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="ipRangeSelect != null ">ip_range_select,</if>
+            <if test="pointIpRange != null  and pointIpRange != ''">point_ip_range,</if>
+            <if test="exceptIpOption != null ">except_ip_option,</if>
+            <if test="exceptIpRange != null  and exceptIpRange != ''">except_ip_range,</if>
+            <if test="ruleOrder != null ">rule_order,</if>
+            <if test="timeRangeSelect != null ">time_range_select,</if>
+            <if test="pointSday != null ">point_sday,</if>
+            <if test="pointEday != null ">point_eday,</if>
+            <if test="pointStime != null  and pointStime != ''">point_stime,</if>
+            <if test="pointEtime != null  and pointEtime != ''">point_etime,</if>
+            <if test="exceptTimeOption != null ">except_time_option,</if>
+            <if test="exceptSday != null ">except_sday,</if>
+            <if test="exceptEday != null ">except_eday,</if>
+            <if test="exceptStime != null  and exceptStime != ''">except_stime,</if>
+            <if test="exceptEtime != null  and exceptEtime != ''">except_etime,</if>
+            <if test="keywordReg != null  and keywordReg != ''">keyword_reg,</if>
+            <if test="srcIprange != null  and srcIprange != ''">src_iprange,</if>
+            <if test="usernames != null  and usernames != ''">usernames,</if>
+            <if test="deviceDescription != null  and deviceDescription != ''">device_description,</if>
+            <if test="deviceType != null  and deviceType != ''">device_type,</if>
+            <if test="deviceIprange != null  and deviceIprange != ''">device_iprange,</if>
+            <if test="dstIpRange != null  and dstIpRange != ''">dst_iprange,</if>
+            <if test="deviceName != null  and deviceName != ''">device_name,</if>
+            <if test="deviceCode != null  and deviceCode != ''">device_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="keyword != null  and keyword != ''">#{keyword},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="effectWeek != null  and effectWeek != ''">#{effectWeek},</if>
+            <if test="eventLevel != null  and eventLevel != ''">#{eventLevel},</if>
+            <if test="priority != null ">#{priority},</if>
+            <if test="smsAlarm != null ">#{smsAlarm},</if>
+            <if test="emailAlarm != null ">#{emailAlarm},</if>
+            <if test="smsUserids != null  and smsUserids != ''">#{smsUserids},</if>
+            <if test="emailUserids != null  and emailUserids != ''">#{emailUserids},</if>
+            <if test="actions != null  and actions != ''">#{actions},</if>
+            <if test="deviceIds != null  and deviceIds != ''">#{deviceIds},</if>
+            <if test="eventCategory != null ">#{eventCategory},</if>
+            <if test="onWork != null ">#{onWork},</if>
+            <if test="sms != null ">#{sms},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="ipRangeSelect != null ">#{ipRangeSelect},</if>
+            <if test="pointIpRange != null  and pointIpRange != ''">#{pointIpRange},</if>
+            <if test="exceptIpOption != null ">#{exceptIpOption},</if>
+            <if test="exceptIpRange != null  and exceptIpRange != ''">#{exceptIpRange},</if>
+            <if test="ruleOrder != null ">#{ruleOrder},</if>
+            <if test="timeRangeSelect != null ">#{timeRangeSelect},</if>
+            <if test="pointSday != null ">#{pointSday},</if>
+            <if test="pointEday != null ">#{pointEday},</if>
+            <if test="pointStime != null  and pointStime != ''">#{pointStime},</if>
+            <if test="pointEtime != null  and pointEtime != ''">#{pointEtime},</if>
+            <if test="exceptTimeOption != null ">#{exceptTimeOption},</if>
+            <if test="exceptSday != null ">#{exceptSday},</if>
+            <if test="exceptEday != null ">#{exceptEday},</if>
+            <if test="exceptStime != null  and exceptStime != ''">#{exceptStime},</if>
+            <if test="exceptEtime != null  and exceptEtime != ''">#{exceptEtime},</if>
+            <if test="keywordReg != null  and keywordReg != ''">#{keywordReg},</if>
+            <if test="srcIprange != null  and srcIprange != ''">#{srcIprange},</if>
+            <if test="usernames != null  and usernames != ''">#{usernames},</if>
+            <if test="deviceDescription != null  and deviceDescription != ''">#{deviceDescription},</if>
+            <if test="deviceType != null  and deviceType != ''">#{deviceType},</if>
+            <if test="deviceIprange != null  and deviceIprange != ''">#{deviceIprange},</if>
+            <if test="dstIpRange != null  and dstIpRange != ''">#{dstIpRange},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="deviceCode != null  and deviceCode != ''">#{deviceCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMacsEventRule" parameterType="MacsEventRule">
+        update macs_event_rule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="keyword != null  and keyword != ''">keyword = #{keyword},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="effectWeek != null  and effectWeek != ''">effect_week = #{effectWeek},</if>
+            <if test="eventLevel != null  and eventLevel != ''">event_level = #{eventLevel},</if>
+            <if test="priority != null ">priority = #{priority},</if>
+            <if test="smsAlarm != null ">sms_alarm = #{smsAlarm},</if>
+            <if test="emailAlarm != null ">email_alarm = #{emailAlarm},</if>
+            <if test="smsUserids != null  and smsUserids != ''">sms_userids = #{smsUserids},</if>
+            <if test="emailUserids != null  and emailUserids != ''">email_userids = #{emailUserids},</if>
+            <if test="actions != null  and actions != ''">actions = #{actions},</if>
+            <if test="deviceIds != null  and deviceIds != ''">device_ids = #{deviceIds},</if>
+            <if test="eventCategory != null ">event_category = #{eventCategory},</if>
+            <if test="onWork != null ">on_work = #{onWork},</if>
+            <if test="sms != null ">sms = #{sms},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="ipRangeSelect != null ">ip_range_select = #{ipRangeSelect},</if>
+            <if test="pointIpRange != null  and pointIpRange != ''">point_ip_range = #{pointIpRange},</if>
+            <if test="exceptIpOption != null ">except_ip_option = #{exceptIpOption},</if>
+            <if test="exceptIpRange != null  and exceptIpRange != ''">except_ip_range = #{exceptIpRange},</if>
+            <if test="ruleOrder != null ">rule_order = #{ruleOrder},</if>
+            <if test="timeRangeSelect != null ">time_range_select = #{timeRangeSelect},</if>
+            <if test="pointSday != null ">point_sday = #{pointSday},</if>
+            <if test="pointEday != null ">point_eday = #{pointEday},</if>
+            <if test="pointStime != null  and pointStime != ''">point_stime = #{pointStime},</if>
+            <if test="pointEtime != null  and pointEtime != ''">point_etime = #{pointEtime},</if>
+            <if test="exceptTimeOption != null ">except_time_option = #{exceptTimeOption},</if>
+            <if test="exceptSday != null ">except_sday = #{exceptSday},</if>
+            <if test="exceptEday != null ">except_eday = #{exceptEday},</if>
+            <if test="exceptStime != null  and exceptStime != ''">except_stime = #{exceptStime},</if>
+            <if test="exceptEtime != null  and exceptEtime != ''">except_etime = #{exceptEtime},</if>
+            <if test="keywordReg != null  and keywordReg != ''">keyword_reg = #{keywordReg},</if>
+            <if test="srcIprange != null  and srcIprange != ''">src_iprange = #{srcIprange},</if>
+            <if test="usernames != null  and usernames != ''">usernames = #{usernames},</if>
+            <if test="deviceDescription != null  and deviceDescription != ''">device_description = #{deviceDescription},</if>
+            <if test="deviceType != null  and deviceType != ''">device_type = #{deviceType},</if>
+            <if test="deviceIprange != null  and deviceIprange != ''">device_iprange = #{deviceIprange},</if>
+            <if test="dstIpRange != null  and dstIpRange != ''">dst_iprange = #{dstIpRange},</if>
+            <if test="deviceName != null  and deviceName != ''">device_name = #{deviceName},</if>
+            <if test="deviceCode != null  and deviceCode != ''">device_code = #{deviceCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMacsEventRuleById" parameterType="Long">
+        delete from macs_event_rule where id = #{id}
+    </delete>
+
+    <delete id="deleteMacsEventRuleByIds" parameterType="String">
+        delete from macs_event_rule where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

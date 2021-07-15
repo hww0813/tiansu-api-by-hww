@@ -56,6 +56,7 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
      */
     List<String> getAllLowerRegion(String regionId);
 
+<<<<<<< Updated upstream
 
     /**
      * 匹配下级所在地区
@@ -68,4 +69,55 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
 
 
 
+=======
+    /**
+     * 查询系统配置表
+     *
+     * @param id 系统配置表ID
+     * @return 系统配置表
+     */
+    public MacsConfig selectMacsConfigById(Long id);
+
+
+    /**
+     * 查询系统配置表列表
+     *
+     * @param macsConfig 系统配置表
+     * @return 系统配置表集合
+     */
+    public List<MacsConfig> selectMacsConfigList(MacsConfig macsConfig);
+
+    /**
+     * 新增系统配置表
+     *
+     * @param macsConfig 系统配置表
+     * @return 结果
+     */
+    public int insertMacsConfig(MacsConfig macsConfig);
+
+    /**
+     * 修改系统配置表
+     *
+     * @param macsConfig 系统配置表
+     * @return 结果
+     */
+    public int updateMacsConfig(MacsConfig macsConfig);
+
+    /**
+     * 批量删除系统配置表
+     *
+     * @param ids 需要删除的系统配置表ID
+     * @return 结果
+     */
+    public int deleteMacsConfigByIds(Long[] ids);
+
+    /**
+     * 查询系统配置表
+     *
+     * @param type 系统配置表类型
+     * @param name 系统配置表名称
+     * @return 系统配置表
+     */
+    public MacsConfig selectMacsConfigByTypeAndName(String type,String name);
+>>>>>>> Stashed changes
 }

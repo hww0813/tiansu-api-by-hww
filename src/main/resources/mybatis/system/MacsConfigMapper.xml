@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanqing.project.system.mapper.MacsConfigMapper">
+
+    <resultMap type="com.yuanqing.project.tiansu.domain.macs.MacsConfig" id="MacsConfigResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="name"    column="name"    />
+        <result property="desp"    column="desp"    />
+        <result property="value"    column="value"    />
+        <result property="defaultValue"    column="default_value"    />
+        <result property="visible"    column="visible"    />
+        <result property="modifiable"    column="modifiable"    />
+        <result property="fieldType"    column="field_type"    />
+        <result property="fieldRemark"    column="field_remark"    />
+        <result property="fieldValues"    column="field_values"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectMacsConfigVo">
+        select id, type, name, desp, value, default_value, visible, modifiable, field_type, field_remark, field_values, update_time from macs_config
+    </sql>
+
+    <select id="selectMacsConfigList" parameterType="MacsConfig" resultMap="MacsConfigResult">
+        <include refid="selectMacsConfigVo"/>
+        <where>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="desp != null  and desp != ''"> and desp = #{desp}</if>
+            <if test="value != null  and value != ''"> and value = #{value}</if>
+            <if test="defaultValue != null  and defaultValue != ''"> and default_value = #{defaultValue}</if>
+            <if test="visible != null "> and visible = #{visible}</if>
+            <if test="modifiable != null "> and modifiable = #{modifiable}</if>
+            <if test="fieldType != null  and fieldType != ''"> and field_type = #{fieldType}</if>
+            <if test="fieldRemark != null  and fieldRemark != ''"> and field_remark = #{fieldRemark}</if>
+            <if test="fieldValues != null  and fieldValues != ''"> and field_values = #{fieldValues}</if>
+        </where>
+    </select>
+
+    <select id="selectMacsConfigById" parameterType="Long" resultMap="MacsConfigResult">
+        <include refid="selectMacsConfigVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectMacsConfigBytype" parameterType="String" resultMap="MacsConfigResult">
+        <include refid="selectMacsConfigVo"/>
+        where type = #{type}
+    </select>
+
+    <select id="selectMacsConfigByTypeAndName" resultType="com.yuanqing.project.tiansu.domain.macs.MacsConfig">
+        <include refid="selectMacsConfigVo"/>
+        where type = #{type} and name = #{name}
+    </select>
+
+    <insert id="insertMacsConfig" parameterType="MacsConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into macs_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null  and type != ''">type,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="desp != null  and desp != ''">desp,</if>
+            <if test="value != null  and value != ''">value,</if>
+            <if test="defaultValue != null  and defaultValue != ''">default_value,</if>
+            <if test="visible != null ">visible,</if>
+            <if test="modifiable != null ">modifiable,</if>
+            <if test="fieldType != null  and fieldType != ''">field_type,</if>
+            <if test="fieldRemark != null  and fieldRemark != ''">field_remark,</if>
+            <if test="fieldValues != null  and fieldValues != ''">field_values,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="desp != null  and desp != ''">#{desp},</if>
+            <if test="value != null  and value != ''">#{value},</if>
+            <if test="defaultValue != null  and defaultValue != ''">#{defaultValue},</if>
+            <if test="visible != null ">#{visible},</if>
+            <if test="modifiable != null ">#{modifiable},</if>
+            <if test="fieldType != null  and fieldType != ''">#{fieldType},</if>
+            <if test="fieldRemark != null  and fieldRemark != ''">#{fieldRemark},</if>
+            <if test="fieldValues != null  and fieldValues != ''">#{fieldValues},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMacsConfig" parameterType="MacsConfig">
+        update macs_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="desp != null  and desp != ''">desp = #{desp},</if>
+            <if test="value != null  and value != ''">value = #{value},</if>
+            <if test="defaultValue != null  and defaultValue != ''">default_value = #{defaultValue},</if>
+            <if test="visible != null ">visible = #{visible},</if>
+            <if test="modifiable != null ">modifiable = #{modifiable},</if>
+            <if test="fieldType != null  and fieldType != ''">field_type = #{fieldType},</if>
+            <if test="fieldRemark != null  and fieldRemark != ''">field_remark = #{fieldRemark},</if>
+            <if test="fieldValues != null  and fieldValues != ''">field_values = #{fieldValues},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMacsConfigById" parameterType="Long">
+        delete from macs_config where id = #{id}
+    </delete>
+
+    <delete id="deleteMacsConfigByIds" parameterType="String">
+        delete from macs_config where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

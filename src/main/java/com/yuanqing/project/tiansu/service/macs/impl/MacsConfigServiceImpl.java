@@ -6,8 +6,12 @@ import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.http.HttpUtils;
+<<<<<<< Updated upstream
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
+=======
+import com.yuanqing.project.system.mapper.MacsConfigMapper;
+>>>>>>> Stashed changes
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;
@@ -31,6 +35,9 @@ import java.util.List;
 @Service
 public class MacsConfigServiceImpl implements IMacsConfigService {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MacsConfigServiceImpl.class);
+
+    @Autowired
+    private MacsConfigMapper macsConfigMapper;
 
     @Value("${tiansu.macshost}")
     private String prefix;
@@ -240,6 +247,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     }
 
     @Override
+<<<<<<< Updated upstream
     public void setLowerRegionByCamera(List<Camera> list) {
         MacsRegion region = getRegion(null);
 
@@ -254,5 +262,34 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
                 }
             });
         });
+=======
+    public MacsConfig selectMacsConfigById(Long id) {
+        return macsConfigMapper.selectMacsConfigById(id);
+    }
+
+    @Override
+    public List<MacsConfig> selectMacsConfigList(MacsConfig macsConfig) {
+        return macsConfigMapper.selectMacsConfigList(macsConfig);
+    }
+
+    @Override
+    public int insertMacsConfig(MacsConfig macsConfig) {
+        return macsConfigMapper.insertMacsConfig(macsConfig);
+    }
+
+    @Override
+    public int updateMacsConfig(MacsConfig macsConfig) {
+        return macsConfigMapper.updateMacsConfig(macsConfig);
+    }
+
+    @Override
+    public int deleteMacsConfigByIds(Long[] ids) {
+        return macsConfigMapper.deleteMacsConfigByIds(ids);
+    }
+
+    @Override
+    public MacsConfig selectMacsConfigByTypeAndName(String type, String name) {
+        return macsConfigMapper.selectMacsConfigByTypeAndName(type,name);
+>>>>>>> Stashed changes
     }
 }
