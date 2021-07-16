@@ -6,12 +6,9 @@ import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.http.HttpUtils;
-<<<<<<< Updated upstream
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
-=======
 import com.yuanqing.project.system.mapper.MacsConfigMapper;
->>>>>>> Stashed changes
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;
@@ -247,22 +244,23 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     }
 
     @Override
-<<<<<<< Updated upstream
     public void setLowerRegionByCamera(List<Camera> list) {
         MacsRegion region = getRegion(null);
 
         //匹配所在区域
         List<MacsRegion> lowerRegion = getLowerRegion(region.getId());
 
-        lowerRegion.stream().forEach( f -> {
-            list.stream().forEach( h -> {
+        lowerRegion.stream().forEach(f -> {
+            list.stream().forEach(h -> {
 
-                if( h.getRegion()!=null && h.getRegion().toString().equals(f.getId())){
+                if (h.getRegion() != null && h.getRegion().toString().equals(f.getId())) {
                     h.setRegionName(f.getName());
                 }
             });
         });
-=======
+    }
+
+    @Override
     public MacsConfig selectMacsConfigById(Long id) {
         return macsConfigMapper.selectMacsConfigById(id);
     }
@@ -290,6 +288,5 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     @Override
     public MacsConfig selectMacsConfigByTypeAndName(String type, String name) {
         return macsConfigMapper.selectMacsConfigByTypeAndName(type,name);
->>>>>>> Stashed changes
     }
 }

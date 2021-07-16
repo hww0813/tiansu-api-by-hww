@@ -56,7 +56,6 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
      */
     List<String> getAllLowerRegion(String regionId);
 
-<<<<<<< Updated upstream
 
     /**
      * 匹配下级所在地区
@@ -66,10 +65,6 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
     void setLowerRegionByCamera(List<Camera> list);
 
 
-
-
-
-=======
     /**
      * 查询系统配置表
      *
@@ -119,5 +114,5 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
      * @return 系统配置表
      */
     public MacsConfig selectMacsConfigByTypeAndName(String type,String name);
->>>>>>> Stashed changes
+
 }
