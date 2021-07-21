@@ -73,8 +73,22 @@ public class RawNetFlowController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:flow:export')")
     @Log(title = "原始流量", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(@ApiParam("原始流量") RawNetFlow busiRawNetFlow) {
-        List<RawNetFlow> list = busiRawNetFlowService.selectBusiRawNetFlowList(busiRawNetFlow);
+    public AjaxResult export(@ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                             @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                             @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String startDate,
+                             @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
+                             @ApiParam("排序")@RequestParam(required = false) String orderType,
+                             @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
+        RawNetFlow rawNetFlow = new RawNetFlow();
+        rawNetFlow.setSrcIp(IpUtils.ipToLong(srcIp));
+        rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
+        rawNetFlow.setstartDate(startDate);
+        rawNetFlow.setendDate(endDate);
+        startPage();
+        if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
+            rawNetFlow.setOrderType(orderValue + " " + orderType);
+        }
+        List<RawNetFlow> list = busiRawNetFlowService.selectBusiRawNetFlowList(rawNetFlow);
         ExcelUtil<RawNetFlow> util = new ExcelUtil<RawNetFlow>(RawNetFlow.class);
         return util.exportExcel(list, "flow");
     }

@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -1024,18 +1025,19 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/OperationSignal")
-    public void getOperationSignalReport(@ApiParam("开始时间")@RequestParam(value = "stime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime stime,
-                                         @ApiParam("结束时间")@RequestParam(value = "etime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime etime,
+    public void getOperationSignalReport(@ApiParam("开始时间")@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+                                         @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
                                          @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
                                          @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
                                          @ApiParam("联接类型")@RequestParam(value = "connectType", required = false) String connectType,
                                          @ApiParam("导出格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         JSONObject filters = new JSONObject();
-        if (stime != null) {
-            filters.put("stime", stime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        if (startDate != null) {
+            filters.put("startDate", sdf.format(startDate));
         }
-        if (etime != null) {
-            filters.put("etime", etime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        if (endDate != null) {
+            filters.put("endDate", sdf.format(endDate));
         }
         filters.put("connectType", connectType);
         filters.put("srcIp", srcIp);
