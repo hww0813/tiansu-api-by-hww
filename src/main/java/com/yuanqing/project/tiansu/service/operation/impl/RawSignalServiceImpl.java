@@ -39,8 +39,8 @@ public class RawSignalServiceImpl implements IRawSignalService {
     @Override
     public List<JSONObject> getAllToReport(JSONObject filters) {
         RawSignal condRawSignal = new RawSignal();
-        condRawSignal.setstartDate(filters.getString("stime"));
-        condRawSignal.setendDate(filters.getString("etime"));
+        condRawSignal.setstartDate(filters.getString("startDate"));
+        condRawSignal.setendDate(filters.getString("endDate"));
         condRawSignal.setSrcIp(IpUtils.ipToLong(filters.getString("srcIp")));
         condRawSignal.setDstIp(IpUtils.ipToLong(filters.getString("dstIp")));
 
