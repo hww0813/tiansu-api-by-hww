@@ -102,6 +102,7 @@ public class MacsEventRuleController extends BaseController
     public AjaxResult remove(@PathVariable("id") Long id)
     {
         MacsEventRule macsEventRule = new MacsEventRule();
+        macsEventRule.setId(id);
         return macsEventRuleService.deleteMacsEventRuleByIds(macsEventRule);
     }
 }
