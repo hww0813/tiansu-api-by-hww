@@ -2,12 +2,17 @@ package com.yuanqing.project.system.service.impl;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.DateUtils;
+import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.system.domain.MacsBwList;
-import com.yuanqing.project.system.mapper.MacsBwListMapper;
 import com.yuanqing.project.system.service.IMacsBwListService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -19,8 +24,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class MacsBwListServiceImpl implements IMacsBwListService
 {
-    @Autowired
-    private MacsBwListMapper macsBwListMapper;
+
+    @Resource
+    private MacsFeignClient macsFeignClient;
+
+    public static final String MACS_TOKEN = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImUzNjQ4YmI0LWQyMWEtNDRmZi05Mj" +
+            "c0LWJjMDcxMDBjMzgzOSJ9.Ix7KKtW5Q4UZCbKgK5roz0y7xv7z5a_tb37k8alIwuAG9uiga6R6dBuCDEsx8HWqlUnXTVqNxHRaeo_6RY_e-w";
 
     /**
      * 查询黑白名单
@@ -29,9 +38,10 @@ public class MacsBwListServiceImpl implements IMacsBwListService
      * @return 黑白名单
      */
     @Override
-    public MacsBwList selectMacsBwListById(Long id)
+    public AjaxResult selectMacsBwListById(Long id)
     {
-        return macsBwListMapper.selectMacsBwListById(id);
+
+        return macsFeignClient.selectMacsBwListById(id, MACS_TOKEN);
     }
 
     /**
@@ -41,10 +51,25 @@ public class MacsBwListServiceImpl implements IMacsBwListService
      * @return 黑白名单
      */
     @Override
-    public List<MacsBwList> selectMacsBwListList(MacsBwList macsBwList)
+    public List<MacsBwList> selectMacsBwListList(MacsBwList macsBwList, Integer pageNum,Integer pageSize)
     {
-        return macsBwListMapper.selectMacsBwListList(macsBwList);
+        String rspStr = macsFeignClient.getBlackWhiteList(macsBwList, pageSize, pageNum, MACS_TOKEN);
+        if (StringUtils.isEmpty(rspStr))
+        {
+            return null;
+        }
+        JSONObject object = JSONObject.parseObject(rspStr);
+        if (object != null) {
+            int code = object.getInteger("code");
+            if (200 == code) {
+                List<MacsBwList> result = JSONArray.parseArray(object.getString("rows"), MacsBwList.class);
+                return result;
+            }
+        }
+
+        return null;
     }
+
 
     /**
      * 新增黑白名单
@@ -53,9 +78,10 @@ public class MacsBwListServiceImpl implements IMacsBwListService
      * @return 结果
      */
     @Override
-    public int insertMacsBwList(MacsBwList macsBwList)
+    public AjaxResult insertMacsBwList(MacsBwList macsBwList)
     {
-        return macsBwListMapper.insertMacsBwList(macsBwList);
+
+        return macsFeignClient.insertBlackWhite(macsBwList, MACS_TOKEN);
     }
 
     /**
@@ -65,10 +91,9 @@ public class MacsBwListServiceImpl implements IMacsBwListService
      * @return 结果
      */
     @Override
-    public int updateMacsBwList(MacsBwList macsBwList)
+    public AjaxResult updateMacsBwList(MacsBwList macsBwList)
     {
-        macsBwList.setUpdateTime(DateUtils.getNowDate());
-        return macsBwListMapper.updateMacsBwList(macsBwList);
+        return macsFeignClient.updateBlackWhite(macsBwList, MACS_TOKEN);
     }
 
     /**
@@ -78,9 +103,9 @@ public class MacsBwListServiceImpl implements IMacsBwListService
      * @return 结果
      */
     @Override
-    public int deleteMacsBwListByIds(Long[] ids)
+    public AjaxResult deleteMacsBwListByIds(Long[] ids)
     {
-        return macsBwListMapper.deleteMacsBwListByIds(ids);
+        return macsFeignClient.deleteMacsBwListByIds(ids, MACS_TOKEN);
     }
 
     /**
@@ -89,9 +114,9 @@ public class MacsBwListServiceImpl implements IMacsBwListService
      * @param id 黑白名单ID
      * @return 结果
      */
-    @Override
-    public int deleteMacsBwListById(Long id)
-    {
-        return macsBwListMapper.deleteMacsBwListById(id);
-    }
+//    @Override
+//    public int deleteMacsBwListById(Long id)
+//    {
+//        return macsBwListMapper.deleteMacsBwListById(id);
+//    }
 }

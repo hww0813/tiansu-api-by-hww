@@ -2,6 +2,9 @@ package com.yuanqing.project.system.controller;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.framework.web.page.PageDomain;
 import com.yuanqing.project.system.domain.MacsEventRule;
 import com.yuanqing.project.system.service.IMacsEventRuleService;
 import com.yuanqing.common.utils.poi.ExcelUtil;
@@ -10,8 +13,6 @@ import com.yuanqing.framework.aspectj.lang.enums.BusinessType;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.page.TableDataInfo;
-import io.swagger.annotations.Api;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,9 +37,14 @@ public class MacsEventRuleController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(MacsEventRule macsEventRule)
     {
-        startPage();
-        List<MacsEventRule> list = macsEventRuleService.selectMacsEventRuleList(macsEventRule);
-        return getDataTable(list);
+        PageDomain pageDomain = startPage();
+        JSONObject result = macsEventRuleService.selectMacsEventRuleList(macsEventRule, pageDomain.getPageNum(), pageDomain.getPageSize());
+        TableDataInfo tableDataInfo = new TableDataInfo();
+        tableDataInfo.setList(result.getJSONArray("rows"));
+        tableDataInfo.setTotal(result.getInteger("total"));
+        tableDataInfo.setMsg(result.getInteger("msg"));
+        tableDataInfo.setCode(result.getInteger("code"));
+        return tableDataInfo;
     }
 
     /**
@@ -49,7 +55,8 @@ public class MacsEventRuleController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(MacsEventRule macsEventRule)
     {
-        List<MacsEventRule> list = macsEventRuleService.selectMacsEventRuleList(macsEventRule);
+        JSONObject result = macsEventRuleService.selectMacsEventRuleList(macsEventRule, null, null);
+        List<MacsEventRule> list = JSONArray.parseArray(result.getString("rows"), MacsEventRule.class);
         ExcelUtil<MacsEventRule> util = new ExcelUtil<MacsEventRule>(MacsEventRule.class);
         return util.exportExcel(list, "rule");
     }
@@ -61,7 +68,7 @@ public class MacsEventRuleController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(macsEventRuleService.selectMacsEventRuleById(id));
+        return macsEventRuleService.selectMacsEventRuleById(id);
     }
 
     /**
@@ -72,11 +79,7 @@ public class MacsEventRuleController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody MacsEventRule macsEventRule)
     {
-        if (macsEventRuleService.insertMacsEventRule(macsEventRule) == 0) {
-            return AjaxResult.error("规则名重复，新增失败");
-        }else {
-            return AjaxResult.success("新增成功");
-        }
+        return macsEventRuleService.insertMacsEventRule(macsEventRule);
     }
 
     /**
@@ -87,11 +90,7 @@ public class MacsEventRuleController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody MacsEventRule macsEventRule)
     {
-        if (macsEventRuleService.updateMacsEventRule(macsEventRule) == 0) {
-            return AjaxResult.error("规则名重复，修改失败");
-        }else {
-            return AjaxResult.success("修改成功");
-        }
+        return macsEventRuleService.updateMacsEventRule(macsEventRule);
     }
 
     /**
@@ -102,7 +101,7 @@ public class MacsEventRuleController extends BaseController
     @DeleteMapping("/{id}")
     public AjaxResult remove(@PathVariable("id") Long id)
     {
-        Long []ids = {id};
-        return toAjax(macsEventRuleService.deleteMacsEventRuleByIds(ids));
+        MacsEventRule macsEventRule = new MacsEventRule();
+        return macsEventRuleService.deleteMacsEventRuleByIds(macsEventRule);
     }
 }

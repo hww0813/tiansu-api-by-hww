@@ -5,11 +5,12 @@ import com.yuanqing.framework.aspectj.lang.annotation.Log;
 import com.yuanqing.framework.aspectj.lang.enums.BusinessType;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
+import com.yuanqing.framework.web.page.PageDomain;
 import com.yuanqing.framework.web.page.TableDataInfo;
 import com.yuanqing.project.system.domain.MacsBwList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +37,14 @@ import java.util.List;
 @RequestMapping("/api/configuration/blackWhite")
 public class MacsBwListController extends BaseController
 {
+
     @Autowired
     private IMacsBwListService macsBwListService;
+
+    @Value("${tiansu.macshost}")
+    private String prefix;
+
+
 
     /**
      * 查询黑白名单列表
@@ -47,8 +54,8 @@ public class MacsBwListController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(MacsBwList macsBwList)
     {
-        startPage();
-        List<MacsBwList> list = macsBwListService.selectMacsBwListList(macsBwList);
+        PageDomain pageDomain = startPage();
+        List<MacsBwList> list = macsBwListService.selectMacsBwListList(macsBwList,pageDomain.getPageNum(),pageDomain.getPageSize());
         return getDataTable(list);
     }
 
@@ -61,7 +68,7 @@ public class MacsBwListController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(MacsBwList macsBwList)
     {
-        List<MacsBwList> list = macsBwListService.selectMacsBwListList(macsBwList);
+        List<MacsBwList> list = macsBwListService.selectMacsBwListList(macsBwList,null,null);
         ExcelUtil<MacsBwList> util = new ExcelUtil<MacsBwList>(MacsBwList.class);
         return util.exportExcel(list, "blackWhite");
     }
@@ -86,7 +93,7 @@ public class MacsBwListController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody MacsBwList macsBwList)
     {
-        return toAjax(macsBwListService.insertMacsBwList(macsBwList));
+        return macsBwListService.insertMacsBwList(macsBwList);
     }
 
     /**
@@ -98,7 +105,7 @@ public class MacsBwListController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody MacsBwList macsBwList)
     {
-        return toAjax(macsBwListService.updateMacsBwList(macsBwList));
+        return macsBwListService.updateMacsBwList(macsBwList);
     }
 
     /**
@@ -110,6 +117,6 @@ public class MacsBwListController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(macsBwListService.deleteMacsBwListByIds(ids));
+        return macsBwListService.deleteMacsBwListByIds(ids);
     }
 }

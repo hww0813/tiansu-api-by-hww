@@ -7,8 +7,8 @@ import com.yuanqing.common.enums.SaveType;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.framework.redis.RedisCache;
+import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
-import com.yuanqing.project.system.mapper.MacsConfigMapper;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;
@@ -33,9 +33,6 @@ import java.util.List;
 public class MacsConfigServiceImpl implements IMacsConfigService {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MacsConfigServiceImpl.class);
 
-    @Autowired
-    private MacsConfigMapper macsConfigMapper;
-
     @Value("${tiansu.macshost}")
     private String prefix;
 
@@ -54,6 +51,9 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     private final String selectMacsRegionList_URL = "/tripartite/region/regionList";
 
     private final String getProbeName_URL = "/tripartite/probe/getProbeName";
+
+    public static final String MACS_TOKEN = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImUzNjQ4YmI0LWQyMWEtNDRmZi05Mj" +
+            "c0LWJjMDcxMDBjMzgzOSJ9.Ix7KKtW5Q4UZCbKgK5roz0y7xv7z5a_tb37k8alIwuAG9uiga6R6dBuCDEsx8HWqlUnXTVqNxHRaeo_6RY_e-w";
 
 
     // TODO: 增加缓存。。。
@@ -261,32 +261,32 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     }
 
     @Override
-    public MacsConfig selectMacsConfigById(Long id) {
-        return macsConfigMapper.selectMacsConfigById(id);
+    public AjaxResult selectMacsConfigById(Long id) {
+        return macsFeignClient.selectMacsConfigById(id, MACS_TOKEN);
     }
 
     @Override
-    public List<MacsConfig> selectMacsConfigList(MacsConfig macsConfig) {
-        return macsConfigMapper.selectMacsConfigList(macsConfig);
+    public JSONObject selectMacsConfigList(MacsConfig macsConfig) {
+        return macsFeignClient.getMacsConfigList(macsConfig, MACS_TOKEN);
     }
 
     @Override
-    public int insertMacsConfig(MacsConfig macsConfig) {
-        return macsConfigMapper.insertMacsConfig(macsConfig);
+    public AjaxResult insertMacsConfig(MacsConfig macsConfig) {
+        return macsFeignClient.addMacsConfig(macsConfig, MACS_TOKEN);
     }
 
     @Override
-    public int updateMacsConfig(MacsConfig macsConfig) {
-        return macsConfigMapper.updateMacsConfig(macsConfig);
+    public AjaxResult updateMacsConfig(MacsConfig macsConfig) {
+        return macsFeignClient.editMacsConfig(macsConfig, MACS_TOKEN);
     }
 
     @Override
-    public int deleteMacsConfigByIds(Long[] ids) {
-        return macsConfigMapper.deleteMacsConfigByIds(ids);
+    public AjaxResult deleteMacsConfigByIds(Long[] ids) {
+        return macsFeignClient.removeMacsConfig(ids, MACS_TOKEN);
     }
 
-    @Override
-    public MacsConfig selectMacsConfigByTypeAndName(String type, String name) {
-        return macsConfigMapper.selectMacsConfigByTypeAndName(type,name);
-    }
+//    @Override
+//    public MacsConfig selectMacsConfigByTypeAndName(String type, String name) {
+//        return macsConfigMapper.selectMacsConfigByTypeAndName(type,name);
+//    }
 }

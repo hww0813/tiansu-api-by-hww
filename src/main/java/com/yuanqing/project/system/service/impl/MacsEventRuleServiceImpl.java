@@ -1,13 +1,13 @@
 package com.yuanqing.project.system.service.impl;
 
-import java.util.List;
-
-import com.yuanqing.common.utils.DateUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.system.domain.MacsEventRule;
-import com.yuanqing.project.system.mapper.MacsEventRuleMapper;
 import com.yuanqing.project.system.service.IMacsEventRuleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * 告警规则Service业务层处理
@@ -18,8 +18,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class MacsEventRuleServiceImpl implements IMacsEventRuleService
 {
-    @Autowired
-    private MacsEventRuleMapper macsEventRuleMapper;
+
+    @Resource
+    private MacsFeignClient macsFeignClient;
+
+    public static final String MACS_TOKEN = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImUzNjQ4YmI0LWQyMWEtNDRmZi05Mj" +
+            "c0LWJjMDcxMDBjMzgzOSJ9.Ix7KKtW5Q4UZCbKgK5roz0y7xv7z5a_tb37k8alIwuAG9uiga6R6dBuCDEsx8HWqlUnXTVqNxHRaeo_6RY_e-w";
 
     /**
      * 查询告警规则
@@ -28,9 +32,10 @@ public class MacsEventRuleServiceImpl implements IMacsEventRuleService
      * @return 告警规则
      */
     @Override
-    public MacsEventRule selectMacsEventRuleById(Long id)
+    public AjaxResult selectMacsEventRuleById(Long id)
     {
-        return macsEventRuleMapper.selectMacsEventRuleById(id);
+
+        return macsFeignClient.selectMacsBwListById(id, MACS_TOKEN);
     }
 
     /**
@@ -40,9 +45,10 @@ public class MacsEventRuleServiceImpl implements IMacsEventRuleService
      * @return 告警规则
      */
     @Override
-    public List<MacsEventRule> selectMacsEventRuleList(MacsEventRule macsEventRule)
+    public JSONObject selectMacsEventRuleList(MacsEventRule macsEventRule, Integer pageNum,Integer pageSize)
     {
-        return macsEventRuleMapper.selectMacsEventRuleList(macsEventRule);
+        JSONObject rspJson = macsFeignClient.getEventRuleList(macsEventRule, pageNum, pageSize, MACS_TOKEN);
+        return rspJson;
     }
 
     /**
@@ -52,16 +58,9 @@ public class MacsEventRuleServiceImpl implements IMacsEventRuleService
      * @return 结果
      */
     @Override
-    public int insertMacsEventRule(MacsEventRule macsEventRule)
+    public AjaxResult insertMacsEventRule(MacsEventRule macsEventRule)
     {
-        macsEventRule.setCreateTime(DateUtils.getNowDate());
-        MacsEventRule rule = new MacsEventRule();
-        rule.setName(macsEventRule.getName());
-        List<MacsEventRule> rules = macsEventRuleMapper.selectMacsEventRuleList(rule);
-        if(rules.size() > 0) {
-            return 0;
-        }
-        return macsEventRuleMapper.insertMacsEventRule(macsEventRule);
+        return macsFeignClient.addEventRule(macsEventRule, MACS_TOKEN);
     }
 
     /**
@@ -71,31 +70,22 @@ public class MacsEventRuleServiceImpl implements IMacsEventRuleService
      * @return 结果
      */
     @Override
-    public int updateMacsEventRule(MacsEventRule macsEventRule)
+    public AjaxResult updateMacsEventRule(MacsEventRule macsEventRule)
     {
-        macsEventRule.setUpdateTime(DateUtils.getNowDate());
-        MacsEventRule rule = new MacsEventRule();
-        Long srcId = macsEventRule.getId();
-        rule.setName(macsEventRule.getName());
-        List<MacsEventRule> rules = macsEventRuleMapper.selectMacsEventRuleList(rule);
-        if(rules.size() > 1) {
-            return 0;
-        }else if (rules.size() == 1 && !rules.get(0).getId().equals(srcId)) {
-            return 0;
-        }
-        return macsEventRuleMapper.updateMacsEventRule(macsEventRule);
+        return macsFeignClient.editEventRule(macsEventRule, MACS_TOKEN);
     }
 
     /**
      * 批量删除告警规则
      *
-     * @param ids 需要删除的告警规则ID
+     * @param macsEventRule 需要删除的告警规则
      * @return 结果
      */
     @Override
-    public int deleteMacsEventRuleByIds(Long[] ids)
+    public AjaxResult deleteMacsEventRuleByIds(MacsEventRule macsEventRule)
     {
-        return macsEventRuleMapper.deleteMacsEventRuleByIds(ids);
+
+        return macsFeignClient.removeEventRule(macsEventRule, MACS_TOKEN);
     }
 
     /**
@@ -104,9 +94,9 @@ public class MacsEventRuleServiceImpl implements IMacsEventRuleService
      * @param id 告警规则ID
      * @return 结果
      */
-    @Override
-    public int deleteMacsEventRuleById(Long id)
-    {
-        return macsEventRuleMapper.deleteMacsEventRuleById(id);
-    }
+//    @Override
+//    public int deleteMacsEventRuleById(Long id)
+//    {
+//        return macsEventRuleMapper.deleteMacsEventRuleById(id);
+//    }
 }

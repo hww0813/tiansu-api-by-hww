@@ -48,7 +48,7 @@ public class BaseController
     /**
      * 设置请求分页数据
      */
-    protected void startPage()
+    protected PageDomain startPage()
     {
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();
@@ -58,6 +58,7 @@ public class BaseController
             String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
             PageHelper.startPage(pageNum, pageSize, orderBy);
         }
+        return pageDomain;
     }
 
     /**
