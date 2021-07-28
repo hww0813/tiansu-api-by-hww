@@ -1,12 +1,11 @@
 package com.yuanqing.common.utils.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import com.alibaba.fastjson.JSONObject;
+
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -138,5 +137,51 @@ public class FileUtils
             filename = URLEncoder.encode(filename, "utf-8");
         }
         return filename;
+    }
+
+    /**
+     * 写文件
+     *
+     */
+    public static void writeFile(Path path, String content){
+        if(!Files.exists(path)){
+            try {
+                Files.createFile(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedWriter bfw=Files.newBufferedWriter(path);
+            bfw.write(content);
+            bfw.flush();
+            bfw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 读文件
+     *
+     */
+    public static JSONObject readFile(Path path){
+
+        //创建BufferedReader
+        try {
+            BufferedReader bfr=Files.newBufferedReader(path);
+
+            StringBuilder sb  = new StringBuilder();
+            String str;
+            while((str = bfr.readLine())!= null){
+                sb.append(str);
+            }
+            JSONObject jsonObject = JSONObject.parseObject(sb.toString());
+            bfr.close();
+            return jsonObject;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

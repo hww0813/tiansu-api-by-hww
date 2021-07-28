@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * 系统配置表Mapper接口
@@ -11,6 +12,7 @@ import org.apache.ibatis.annotations.Param;
  * @author xucan
  * @date 2020-10-21
  */
+@Repository
 public interface MacsConfigMapper
 {
     /**

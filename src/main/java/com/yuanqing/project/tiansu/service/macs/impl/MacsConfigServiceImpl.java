@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.queue.MacsMap;
 import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.common.utils.file.FileUtils;
 import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -13,17 +15,24 @@ import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.service.feign.MacsFeignClient;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
+import feign.RetryableException;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 获取配置中心配置
@@ -31,6 +40,7 @@ import java.util.List;
  */
 @Service
 public class MacsConfigServiceImpl implements IMacsConfigService {
+
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MacsConfigServiceImpl.class);
 
     @Value("${tiansu.macshost}")
@@ -42,7 +52,6 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     @Resource
     private MacsFeignClient macsFeignClient;
 
-    private final String getConfigList_URL = "/tripartite/config/getConfigList";
 
     private final String selectMacsRegionById_URL = "/tripartite/region/getConfigById";
 
@@ -50,40 +59,117 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
     private final String selectMacsRegionList_URL = "/tripartite/region/regionList";
 
-    private final String getProbeName_URL = "/tripartite/probe/getProbeName";
+
+    @PostConstruct
+    public void init() {
+
+        JSONObject localConfigJson = new JSONObject();
+
+        try{
+            localConfigJson = FileUtils.readFile(Paths.get(Constants.CONFIG_FILE_PATH));
+        }catch (Exception e){
+            LOGGER.error("读取本地配置文件出错！！");
+            e.printStackTrace();
+        }
+
+        Set<String> keys = localConfigJson.keySet();
+
+        JSONObject finalLocalConfigJson = localConfigJson;
+
+        keys.stream().forEach(f ->{
+
+            JSONArray jsonArray = finalLocalConfigJson.getJSONArray(f);
+
+            List<MacsConfig> macsConfigList = jsonArray.toJavaList(MacsConfig.class);
+
+            MacsMap.put(f,macsConfigList);
+
+        });
+
+        LOGGER.error("本地配置已写入缓存");
+    }
 
     public static final String MACS_TOKEN = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImUzNjQ4YmI0LWQyMWEtNDRmZi05Mj" +
             "c0LWJjMDcxMDBjMzgzOSJ9.Ix7KKtW5Q4UZCbKgK5roz0y7xv7z5a_tb37k8alIwuAG9uiga6R6dBuCDEsx8HWqlUnXTVqNxHRaeo_6RY_e-w";
 
 
-    // TODO: 增加缓存。。。
 
     @Override
     public List<MacsConfig> selectMacsConfigByTypeAndName(MacsConfig macsConfig) {
         if(macsConfig == null) {
             return null;
         }
+        String macsKey = macsConfig.getType() + "-" + macsConfig.getName();
 
-//        String rspStr = HttpUtils.sendGet(prefix+getConfigList_URL, macsConfig.toParamsString());
-        String rspStr = macsFeignClient.getConfigById(macsConfig.getType(),macsConfig.getName());
-        if (StringUtils.isEmpty(rspStr))
-        {
-            LOGGER.error("获取配置异常"+macsConfig.toParamsString());
-            return null;
+        List<MacsConfig> macsConfigCache = MacsMap.get(macsKey);
+
+
+        String rspStr = null;
+
+        try{
+
+            rspStr =  macsFeignClient.getConfigById(macsConfig.getType(),macsConfig.getName());
+
+        }catch (RetryableException e ){
+            LOGGER.error("请求Macs接口异常,读取本地配置信息:"+macsKey);
+
+            return getLocationConfig(macsKey);
+        }
+
+        if (StringUtils.isEmpty(rspStr)) {
+            LOGGER.error("请求Macs接口返回结果为空,读取本地配置信息:"+macsKey);
+
+            return getLocationConfig(macsKey);
         }
 
         JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
+
         if(jsonObject == null || !jsonObject.containsKey("data")) {
-            LOGGER.error("获取配置为空"+macsConfig.toParamsString());
-            return null;
+
+            LOGGER.error("请求Macs接口配置为空,读取本地配置信息:" + macsKey);
+
+            return getLocationConfig(macsKey);
+
+        }else{
+
+            LOGGER.info("请求Macs接口成功"+macsKey);
+
+            JSONArray data = jsonObject.getJSONArray("data");
+
+            List<MacsConfig> Config = data.toJavaList(MacsConfig.class);
+
+            LOGGER.info("将配置信息写入缓存...");
+            MacsMap.put(macsKey,Config);
+
+            JSONObject MacsMapList = MacsMap.valueJson();
+
+            LOGGER.info("将配置信息更新到本地配置文件...");
+            FileUtils.writeFile(Paths.get(Constants.CONFIG_FILE_PATH),MacsMapList.toJSONString());
+
+            return Config;
         }
 
-        JSONArray data = jsonObject.getJSONArray("data");
-
-        List<MacsConfig> Config = data.toJavaList(MacsConfig.class);
-
-        return Config;
     }
+
+    private List<MacsConfig> getLocationConfig(String macsKey){
+
+        JSONObject jsonObject = new JSONObject();
+
+        try{
+
+          jsonObject = FileUtils.readFile(Paths.get(Constants.CONFIG_FILE_PATH));
+
+        }catch (Exception e){
+
+        }
+
+        JSONArray jsonArray = jsonObject.getJSONArray(macsKey);
+
+        List<MacsConfig> config = jsonArray.toJavaList(MacsConfig.class);
+
+        return config;
+    }
+
 
 
     /**
