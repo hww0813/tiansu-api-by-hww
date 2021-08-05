@@ -70,7 +70,6 @@ public class RawNetFlowController extends BaseController {
     /**
      * 导出原始流量列表
      */
-    @PreAuthorize("@ss.hasPermi('system:flow:export')")
     @Log(title = "原始流量", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(@ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
