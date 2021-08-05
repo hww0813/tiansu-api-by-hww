@@ -156,6 +156,7 @@ public class CameraServiceImpl implements ICameraService {
             //如果根据国标查找摄像头存在
             //更新摄像头相关信息
             if (cameraGB != null) {
+                //???
                 cameraGB.setId(cameraGB.getId());
                 // 获取摄像头编号的前六位  编号的长度为20
                 if (gbId != null && !gbId.equals("")) {
@@ -446,6 +447,7 @@ public class CameraServiceImpl implements ICameraService {
         //根据国标编码为key,将数据put到HashMap1中;根据设备编码即私标编码为key,将数据put到HashMap2中
         Map<String, Object> deviceGbIdMap = new HashMap<>();
         Map<String, Object> deviceIdMap = new HashMap<>();
+
         for (ExternalDevice b : externalDeviceList) {
             deviceGbIdMap.put(b.getGbId(), b);
             deviceIdMap.put(b.getDeviceId(), b);

@@ -242,6 +242,6 @@ public class Constants
     public static final String CONFIG_LOWER_REGION = "config:LOWER_REGION_";
 
     /** 配置文件地址 */
-    public static final String CONFIG_FILE_PATH = "config/apiConfig.json";
+    public static final String CONFIG_FILE_PATH = "/usr/local/tiansu/bin/config/apiConfig.json";
 
 }

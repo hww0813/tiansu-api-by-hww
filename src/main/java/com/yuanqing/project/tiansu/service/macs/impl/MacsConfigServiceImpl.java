@@ -101,16 +101,13 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         }
         String macsKey = macsConfig.getType() + "-" + macsConfig.getName();
 
-        List<MacsConfig> macsConfigCache = MacsMap.get(macsKey);
-
-
         String rspStr = null;
 
         try{
 
             rspStr =  macsFeignClient.getConfigById(macsConfig.getType(),macsConfig.getName());
 
-        }catch (RetryableException e ){
+        }catch (Exception e ){
             LOGGER.error("请求Macs接口异常,读取本地配置信息:"+macsKey);
 
             return getLocationConfig(macsKey);
@@ -189,6 +186,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
         if(CollectionUtils.isEmpty(redisConfig)){
             String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL, "regionId="+id);
+
             if (StringUtils.isEmpty(rspStr))
             {
                 LOGGER.error("获取区域异常 id={}", id);
