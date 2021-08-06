@@ -58,10 +58,10 @@ public class RawNetFlowController extends BaseController {
         rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
         rawNetFlow.setstartDate(startDate);
         rawNetFlow.setendDate(endDate);
-        startPage();
         if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
             rawNetFlow.setOrderType(orderValue + " " + orderType);
         }
+        startPage();
         List<RawNetFlow> rawNetFlowList = busiRawNetFlowService.selectBusiRawNetFlowList(rawNetFlow);
 
         return AjaxResult.success(getDataTable(rawNetFlowList));
@@ -83,10 +83,10 @@ public class RawNetFlowController extends BaseController {
         rawNetFlow.setDstIp(IpUtils.ipToLong(dstIp));
         rawNetFlow.setstartDate(startDate);
         rawNetFlow.setendDate(endDate);
-        startPage();
         if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
             rawNetFlow.setOrderType(orderValue + " " + orderType);
         }
+        startPage();
         List<RawNetFlow> list = busiRawNetFlowService.selectBusiRawNetFlowList(rawNetFlow);
         ExcelUtil<RawNetFlow> util = new ExcelUtil<RawNetFlow>(RawNetFlow.class);
         return util.exportExcel(list, "flow");
