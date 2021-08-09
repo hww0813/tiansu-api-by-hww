@@ -22,11 +22,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.swing.text.DateFormatter;
 import javax.validation.Valid;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -306,6 +311,47 @@ public class OperationBehaviorController extends BaseController   {
         return AjaxResult.success(probeNameList);
     }
 
+    @GetMapping("/getLoginIpsCount")
+    @ApiOperation(value = "获取天数范围内用户登陆的ip数量", httpMethod = "GET")
+    public AjaxResult getLoginIpsCount(@ApiParam("用户名")@RequestParam(value = "username") String username,
+                                       @ApiParam("天数")@RequestParam(value = "days") Integer days) throws ExecutionException, InterruptedException {
+        JSONObject filters = new JSONObject();
+        filters.put("username", username);
 
+//        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//        String startTime = df.format(System.currentTimeMillis() - days*24*60*60*1000);
+//
 
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String startTime = now.minus(days, ChronoUnit.DAYS).format(dtf);
+        String endTime = now.format(dtf);
+
+        filters.put("startDate", startTime);
+        filters.put("endDate",  endTime);
+
+        //总量
+        CompletableFuture<Integer> count = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.selectOperationByTimeAndName(filters));
+        return AjaxResult.success(count.get());
+    }
+
+    @GetMapping("/getOperRatio")
+    @ApiOperation(value = "获取下班操作数与上班操作数的比值", httpMethod = "GET")
+    public AjaxResult getOperRatio(@ApiParam("上班开始时间") @RequestParam(value = "startDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startDate,
+                                   @ApiParam("下班时间") @RequestParam(value = "endDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endDate) {
+
+        String startStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + startDate.format(DateTimeFormatter.ISO_LOCAL_TIME);
+        String endStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + endDate.format(DateTimeFormatter.ISO_LOCAL_TIME);
+
+        Integer workTimeNum = operationBehaviorMapper.getOperNumByTime(startStr, endStr);
+        Integer closeingTimeNum = operationBehaviorMapper.getOperNumByTime(endStr, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        if (workTimeNum != 0) {
+            double ratio = closeingTimeNum * 0.1 / workTimeNum;
+            return AjaxResult.success(ratio);
+        } else {
+            return AjaxResult.success(0);
+        }
+    }
 }
+
+

@@ -69,4 +69,18 @@ public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior,Lo
      * @return
      */
     OperationBehavior findByUuid(String uuid);
+
+    /**
+     * 获取开始时间到结束时间段内用户名的操作数
+     * @return
+     */
+    Integer selectOperationByTimeAndName(JSONObject filters);
+
+    /**
+     * 获取时间段内所有操作行为总数
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    Integer getOperNumByTime(String startDate, String endDate);
 }

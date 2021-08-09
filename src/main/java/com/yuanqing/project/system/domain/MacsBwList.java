@@ -58,6 +58,20 @@ public class MacsBwList extends BaseEntity
     @Excel(name = "跨区域访问")
     private Integer crossOrigin;
 
+    /**
+     * 同账号多IP登陆白名单 0:true; 1:false
+     */
+    @ApiModelProperty("同账号多IP登陆")
+    @Excel(name = "同账号多IP登陆白名单 0:true; 1:false")
+    private Integer mutiIpLogin;
+
+    /**
+     * 上下班操作数比值白名单 0:true; 1:false
+     */
+    @ApiModelProperty("上下班操作数比值白名单")
+    @Excel(name = "上下班操作数比值白名单 0:true; 1:false")
+    private Integer operRatio;
+
     public Integer getCrossOrigin() {
         return crossOrigin;
     }
@@ -129,6 +143,22 @@ public class MacsBwList extends BaseEntity
         return scan;
     }
 
+    public Integer getMutiIpLogin() {
+        return mutiIpLogin;
+    }
+
+    public void setMutiIpLogin(Integer mutiIpLogin) {
+        this.mutiIpLogin = mutiIpLogin;
+    }
+
+    public void setOperRatio(Integer operRatio) {
+        this.operRatio = operRatio;
+    }
+
+    public Integer getOperRatio() {
+        return operRatio;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -136,7 +166,7 @@ public class MacsBwList extends BaseEntity
             .append("ipRange", getIpRange())
             .append("description", getDescription())
             .append("updateTime", getUpdateTime())
-            .append("globalConfig", getGlobalConfig())
+            .append("g/tripartite/alarm/getRegionlobalConfig", getGlobalConfig())
             .append("crossOrigin", getCrossOrigin())
             .append("nonwork", getNonwork())
             .append("scan", getScan())

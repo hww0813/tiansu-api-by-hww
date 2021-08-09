@@ -426,4 +426,24 @@
         where stamp between #{startDate} and #{endDate}
          AND (action &lt;> 10 and action &lt;> 11 )
     </select>
+
+    <select id="selectOperationByTimeAndName" resultType="java.lang.Integer">
+        SELECT count(distinct SRC_IP)
+        FROM
+        busi_oper bo
+        WHERE 1=1
+        <if test="username != null and username != ''">
+            AND bo.USERNAME = #{username}
+        </if>
+
+        <if test="startDate != null and endDate != null">and bo.stamp between #{startDate}
+             and #{endDate}
+        </if>
+    </select>
+
+    <select id="getOperNumByTime" resultType="java.lang.Integer">
+        select count(*)
+        from busi_oper
+        where stamp between #{startDate} and #{endDate}
+    </select>
 </mapper>
