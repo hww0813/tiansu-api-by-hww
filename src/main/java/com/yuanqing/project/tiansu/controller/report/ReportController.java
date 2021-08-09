@@ -11,6 +11,7 @@ import com.yuanqing.common.utils.spring.SpringContextUtil;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.analysis.Statistics;
+import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
@@ -437,40 +438,48 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/sipDevice")
-    public void getSipDiveceReport(@ApiParam("状态") @RequestParam(value = "status", required = false) String status,
+    public void getSipDiveceReport(@ApiParam("状态") @RequestParam(value = "status", required = false) Integer status,
+                                   @ApiParam("是否国标") @RequestParam(value = "isGb", required = false) Integer isGb,
                                    @ApiParam("设备名称") @RequestParam(value = "deviceName", required = false) String deviceName,
                                    @ApiParam("设备编码") @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                   @ApiParam("区域代码") @RequestParam(value = "region", required = false) String region,
+                                   @ApiParam("区域ID") @RequestParam(value = "regionId", required = false) Integer regionId,
                                    @ApiParam("IP地址") @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                   @ApiParam("信令服务器ID") @RequestParam(value = "sipServerId", required = false) Long sipServerId,
+                                   @ApiParam("排序") @RequestParam(required = false) String orderType,
+                                   @ApiParam("排序对象") @RequestParam(required = false) String orderValue,
                                    @ApiParam("导出格式") @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-        JSONObject filters = new JSONObject();
-        filters.put("status", status);
-        filters.put("deviceName", deviceName);
-        filters.put("deviceCode", deviceCode);
-        filters.put("ipAddress", ipAddress);
-        filters.put("sipServerId", sipServerId);
-        if (region != null && !region.equals("")) {
-            String[] regionList = region.split(",");
-            if (regionList.length == 1) {
-                String provinceRegion1 = region.substring(2, 6);
-                if (!provinceRegion1.equals("0000")) {
-                    String provinceRegion = region.substring(0, 2);
-                    filters.put("provinceRegion", provinceRegion);
-                }
-            }
-            if (regionList.length == 2) {
-                String cityRegion = regionList[1].substring(0, 4);
-                filters.put("cityRegion", cityRegion);
-            }
-            if (regionList.length == 3) {
-                String countryRegion = regionList[2].substring(0, 6);
-                filters.put("countryRegion", countryRegion);
-            }
+        Camera camera = new Camera();
+        camera.setStatus(status);
+        camera.setIsGb(isGb);
+        camera.setDeviceName(deviceName);
+        camera.setRegion(regionId);
+        camera.setDeviceCode(deviceCode);
+        camera.setIpAddress(IpUtils.ipToLong(ipAddress));
+
+        String orderStr = null;
+        if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+            orderStr = orderValue + " " + orderType;
         }
+
+        List<Camera> getList = cameraService.getListWithOrder(camera, orderStr);
+
+        macsConfigService.setLowerRegionByCamera(getList);
+
+        List<JSONObject> list = new ArrayList<>();
+        SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        getList.stream().forEach(f -> {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("deviceCode", f.getDeviceCode());
+            jsonObject.put("ipAddress", IpUtils.longToIp(f.getIpAddress()));
+            jsonObject.put("deviceName", f.getDeviceName());
+            jsonObject.put("regionName", f.getRegionName());
+            jsonObject.put("status", EnumTransfer.eventStatus(f.getStatus()));
+            jsonObject.put("updateTime", sdf.format(f.getUpdateTime()));
+            list.add(jsonObject);
+        });
+
         if ("xlsx".equals(format)) {
             try {
-                CameraExcel(response, filters);
+                CameraExcel(response, list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -491,8 +500,6 @@ public class ReportController extends BaseController {
 
                 //参数
                 Map<String, Object> params = new HashMap<>();
-
-                List<JSONObject> list = cameraService.getAllToReport(filters);
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -1148,15 +1155,15 @@ public class ReportController extends BaseController {
 
         List<JSONObject> list = new ArrayList<>();
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        rawNetFlows.stream().forEach(j->{
+        rawNetFlows.stream().forEach(j -> {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("srcIp",IpUtils.longToIp(j.getSrcIp()));
-            jsonObject.put("srcPort",j.getSrcPort());
-            jsonObject.put("dstIp",IpUtils.longToIp(j.getDstIp()));
-            jsonObject.put("dstPort",j.getDstPort());
-            jsonObject.put("packetSize",j.getPacketSize());
-            jsonObject.put("packetCount",j.getPacketCount());
-            jsonObject.put("stamp",df.format(j.getStamp()));
+            jsonObject.put("srcIp", IpUtils.longToIp(j.getSrcIp()));
+            jsonObject.put("srcPort", j.getSrcPort());
+            jsonObject.put("dstIp", IpUtils.longToIp(j.getDstIp()));
+            jsonObject.put("dstPort", j.getDstPort());
+            jsonObject.put("packetSize", j.getPacketSize());
+            jsonObject.put("packetCount", j.getPacketCount());
+            jsonObject.put("stamp", df.format(j.getStamp()));
             list.add(jsonObject);
         });
 
@@ -3128,33 +3135,29 @@ public class ReportController extends BaseController {
         ExportExcelUtils.exportExcel(response, "服务器资源报表.xlsx", data);
     }
 
-    public void CameraExcel(HttpServletResponse response, JSONObject filters) throws Exception {
+    public void CameraExcel(HttpServletResponse response, List<JSONObject> list) throws Exception {
         ExcelData data = new ExcelData();
         data.setName("摄像头");
 
         List<String> titles = new ArrayList();
         titles.add("设备编号");
-        titles.add("摄像头名称");
         titles.add("IP地址");
+        titles.add("摄像头名称");
         titles.add("所在地区");
         titles.add("状态");
         titles.add("首次更新时间");
-        titles.add("设备厂商");
         data.setTitles(titles);
 
-        List<JSONObject> all = cameraService.getAllToReport(filters);
-
-        if (!CollectionUtils.isEmpty(all)) {
+        if (list.size() > 0) {
             List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+            for (JSONObject j : list) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("deviceCode"));
-                row.add(j.get("deviceName"));
                 row.add(j.get("ipAddress"));
-                row.add(j.get("name"));
+                row.add(j.get("deviceName"));
+                row.add(j.get("regionName"));
                 row.add(j.get("status"));
                 row.add(j.get("updateTime"));
-                row.add(j.get("manufacturer"));
                 rows.add(row);
             }
 
