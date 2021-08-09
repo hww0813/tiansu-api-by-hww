@@ -144,11 +144,13 @@ public class ClientUserController extends BaseController {
     @GetMapping("/active")
     @ApiOperation(value = "获取活跃用户列表")
     public TableDataInfo getActiveClient() {
+
+        startPage();
         List<ClientUser> activeClientUser = clientUserService.getActiveClientUser();
 
         List<ClientUserDto> dtoList = clientUserService.handleClientUserTerminalNum(activeClientUser);
 
-        return getDataTable(dtoList);
+        return getDataTable(dtoList,activeClientUser);
     }
 
 

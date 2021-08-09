@@ -165,8 +165,10 @@ public class ClientController extends BaseController {
     public TableDataInfo getActiveClient() {
         startPage();
         List<ClientTerminal> activeTerminal = clientTerminalService.getActiveTerminal();
+
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(activeTerminal);
-        return getDataTable(dtoList);
+
+        return getDataTable(dtoList,activeTerminal);
     }
 
 

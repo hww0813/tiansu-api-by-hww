@@ -46,6 +46,9 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     @Value("${tiansu.macshost}")
     private String prefix;
 
+    @Value("${tiansu.apiConfig}")
+    private String apiConfig;
+
     @Autowired
     private RedisCache redisCache;
 
@@ -66,7 +69,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         JSONObject localConfigJson = new JSONObject();
 
         try{
-            localConfigJson = FileUtils.readFile(Paths.get(Constants.CONFIG_FILE_PATH));
+            localConfigJson = FileUtils.readFile(Paths.get(apiConfig));
         }catch (Exception e){
             LOGGER.error("读取本地配置文件出错！！");
             e.printStackTrace();
@@ -141,7 +144,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
             JSONObject MacsMapList = MacsMap.valueJson();
 
             LOGGER.info("将配置信息更新到本地配置文件...");
-            FileUtils.writeFile(Paths.get(Constants.CONFIG_FILE_PATH),MacsMapList.toJSONString());
+            FileUtils.writeFile(Paths.get(apiConfig),MacsMapList.toJSONString());
 
             return Config;
         }
@@ -154,7 +157,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
         try{
 
-          jsonObject = FileUtils.readFile(Paths.get(Constants.CONFIG_FILE_PATH));
+          jsonObject = FileUtils.readFile(Paths.get(apiConfig));
 
         }catch (Exception e){
 

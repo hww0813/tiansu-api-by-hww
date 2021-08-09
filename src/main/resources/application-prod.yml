@@ -107,3 +107,5 @@ tiansu:
     alarmhost: http://127.0.0.1:8086/alarm
     # 性能监控url
     pmchost: http://127.0.0.1:8188
+    #配置文件地址
+    apiConfig: /usr/local/tiansu/bin/config/apiConfig.json
