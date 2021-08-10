@@ -1,16 +1,29 @@
 package com.yuanqing.project.tiansu.controller.tripartite;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
+import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by xucan on 2020-12-07 11:43
@@ -33,6 +46,9 @@ public class AlarmController {
     @Resource
     private IMacsConfigService macsConfigService;
 
+    @Resource
+    private OperationBehaviorMapper operationBehaviorMapper;
+
     @GetMapping("/clientById")
     public AjaxResult clientById(@ApiParam("客户端ID")@Valid @RequestParam(value = "id") Long id) {
         if (id == null) {
@@ -52,6 +68,44 @@ public class AlarmController {
     @GetMapping("/getRegion")
     public AjaxResult getRegion() {
         return AjaxResult.success(macsConfigService.getRegionList());
+    }
+
+    @GetMapping("/getLoginIpsCount")
+    @ApiOperation(value = "获取天数范围内用户登陆的ip数量", httpMethod = "GET")
+    public AjaxResult getLoginIpsCount(@ApiParam("用户名")@RequestParam(value = "username") String username,
+                                       @ApiParam("天数")@RequestParam(value = "days") Integer days) throws ExecutionException, InterruptedException {
+        JSONObject filters = new JSONObject();
+        filters.put("username", username);
+        
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String startTime = now.minus(days, ChronoUnit.DAYS).format(dtf);
+        String endTime = now.format(dtf);
+
+        filters.put("startDate", startTime);
+        filters.put("endDate",  endTime);
+
+        //总量
+        CompletableFuture<Integer> count = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.selectOperationByTimeAndName(filters));
+        return AjaxResult.success(count.get());
+    }
+
+    @GetMapping("/getOperRatio")
+    @ApiOperation(value = "获取下班操作数与上班操作数的比值", httpMethod = "GET")
+    public AjaxResult getOperRatio(@ApiParam("上班开始时间") @RequestParam(value = "startDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startDate,
+                                   @ApiParam("下班时间") @RequestParam(value = "endDate") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endDate) {
+
+        String startStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + startDate.format(DateTimeFormatter.ISO_LOCAL_TIME);
+        String endStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + endDate.format(DateTimeFormatter.ISO_LOCAL_TIME);
+
+        Integer workTimeNum = operationBehaviorMapper.getOperNumByTime(startStr, endStr);
+        Integer closeingTimeNum = operationBehaviorMapper.getOperNumByTime(endStr, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        if (workTimeNum != 0) {
+            double ratio = closeingTimeNum * 0.1 / workTimeNum;
+            return AjaxResult.success(ratio);
+        } else {
+            return AjaxResult.success(0);
+        }
     }
 
 }
