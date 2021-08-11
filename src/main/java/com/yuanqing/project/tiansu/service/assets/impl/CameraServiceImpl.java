@@ -161,7 +161,11 @@ public class CameraServiceImpl implements ICameraService {
                 // 获取摄像头编号的前六位  编号的长度为20
                 if (gbId != null && !gbId.equals("")) {
                     cameraGB.setDeviceCode(gbId);
-                    cameraGB.setIsGb(Integer.parseInt(GBEnum.GB.getValue()));
+                    if(gbId.length() == 20){
+                        cameraGB.setIsGb(Integer.parseInt(GBEnum.GB.getValue()));
+                    }else {
+                        cameraGB.setIsGb(Integer.parseInt(GBEnum.NGB.getValue()));
+                    }
                 } else {
                     cameraGB.setDeviceCode(dstCode);
                     cameraGB.setIsGb(Integer.parseInt(GBEnum.NGB.getValue()));

@@ -35,17 +35,18 @@
     <select id="getUserTop" resultType="com.alibaba.fastjson.JSONObject">
 
         SELECT
-            username idCard,
-            sum( count ) count
+            bs.username idCard,
+            sum( bs.count ) count
         FROM
-            busi_statistics
+            busi_statistics bs left join busi_camera bc on bc.device_code = bs.dst_code
         WHERE
             1=1
-            and  stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            and bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            and bc.device_type = 1
         GROUP BY
-            username
+            bs.username
         ORDER BY
-            count desc
+            bs.count desc
             LIMIT 0,5
 
     </select>
@@ -53,35 +54,37 @@
     <select id="getTerminalTop" resultType="com.alibaba.fastjson.JSONObject">
 
         SELECT
-            src_ip ip,
-            sum( count ) count
+            bs.src_ip ip,
+            sum( bs.count ) count
         FROM
-            busi_statistics
+            busi_statistics bs left join busi_camera bc on bc.device_code = bs.dst_code
         WHERE
             1=1
-            and  stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            and  bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            and bc.device_type = 1
         GROUP BY
-            src_ip
+            bs.src_ip
         ORDER BY
-            count desc
+            bs.count desc
             LIMIT 0,5
     </select>
 
     <select id="getCameraTop" resultType="com.alibaba.fastjson.JSONObject">
 
         SELECT
-            dst_code ip,
-            sum( count ) count,
+            bs.dst_code ip,
+            sum( bs.count ) count,
             '' as name
         FROM
-            busi_statistics
+            busi_statistics bs left join busi_camera bc on bc.device_code = bs.dst_code
         WHERE
             1=1
-            and  stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            and  bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            and bc.device_type = 1
         GROUP BY
-            dst_code
+            bs.dst_code
         ORDER BY
-            count desc
+            bs.count desc
             LIMIT 0,5
 
     </select>

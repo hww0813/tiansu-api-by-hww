@@ -52,18 +52,19 @@
     </select>
 
     <select id="getClientUserList" resultMap="BusiStatisticsResultMap">
-        select src_ip, group_concat(distinct username) username, sum(count) count from busi_statistics
+        select bs.src_ip, group_concat(distinct bs.username) username, sum(bs.count) count from busi_statistics bs left join busi_camera bc on bc.device_code = bs.dst_code
         <where>
-            <if test="srcIp != null  and srcIp != ''">and src_ip = #{srcIp}</if>
-            <if test="username != null  and username != ''">and username = #{username}</if>
-            <if test="dstCode != null  and dstCode != ''">and dst_code like concat('%', #{dstCode}, '%')</if>
-            <if test="action != null  and action != ''">and action = #{action}</if>
-            <if test="startDate != null and endDate != null">and stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and
-                stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+            <if test="srcIp != null  and srcIp != ''">and bs.src_ip = #{srcIp}</if>
+            <if test="username != null  and username != ''">and bs.username = #{username}</if>
+            <if test="dstCode != null  and dstCode != ''">and bs.dst_code like concat('%', #{dstCode}, '%')</if>
+            <if test="action != null  and action != ''">and bs.action = #{action}</if>
+            <if test="startDate != null and endDate != null">and bs.stamp >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') and
+                bs.stamp &lt;= STR_TO_DATE(#{endDate}, '%Y-%m-%d')
             </if>
+            and bc.device_type = 1
         </where>
-        group by src_ip
-        order by count desc
+        group by bs.src_ip
+        order by bs.count desc
     </select>
 
     <select id="visitedRate" resultMap="visitedRateMap">
@@ -110,33 +111,34 @@
 
     <select id="getTerminalVisit" resultMap="TerminalVisitMap">
         SELECT
-        src_ip,
-        username,
-        action,
-        sum( count ) count,
-        count( DISTINCT dst_code ) camera_cnt
+        bs.src_ip,
+        bs.username,
+        bs.action,
+        sum( bs.count ) count,
+        count( DISTINCT bs.dst_code ) camera_cnt
         FROM
-        busi_statistics
+        busi_statistics bs left join busi_camera bc on bc.device_code = bs.dst_code
         <where>
             1=1
-            <if test="terminalVisit.ipAddress != null  and terminalVisit.ipAddress != ''">and src_ip =
+            <if test="terminalVisit.ipAddress != null  and terminalVisit.ipAddress != ''">and bs.src_ip =
                 #{terminalVisit.ipAddress}
             </if>
-            <if test="terminalVisit.username != null  and terminalVisit.username != ''">and username =
+            <if test="terminalVisit.username != null  and terminalVisit.username != ''">and bs.username =
                 #{terminalVisit.username}
             </if>
             <if test="terminalVisit.action != null">and action = #{terminalVisit.action}</if>
-            <if test="terminalVisit.startDate != null and terminalVisit.endDate != null">and stamp >=
-                STR_TO_DATE(#{terminalVisit.startDate}, '%Y-%m-%d') and stamp &lt;=
+            <if test="terminalVisit.startDate != null and terminalVisit.endDate != null">and bs.stamp >=
+                STR_TO_DATE(#{terminalVisit.startDate}, '%Y-%m-%d') and bs.stamp &lt;=
                 STR_TO_DATE(#{terminalVisit.endDate}, '%Y-%m-%d')
             </if>
+            and bc.device_type = 1
         </where>
         GROUP BY
-        src_ip,
-        username,
-        action
+        bs.src_ip,
+        bs.username,
+        bs.action
         <if test="orderStr != null and orderStr != ''">
-            ORDER BY ${orderStr}
+            ORDER BY bs.${orderStr}
         </if>
     </select>
 
@@ -144,64 +146,66 @@
     <select id="getCameraVisit" resultMap="CameraVisitMap">
 
         SELECT
-        dst_code,
-        action,
-        sum( count ) count,
-        count( DISTINCT src_ip ) terminal_cnt
+        bs.dst_code,
+        bs.action,
+        sum( bs.count ) count,
+        count( DISTINCT bs.src_ip ) terminal_cnt
         FROM
-        busi_statistics
+        busi_statistics bs left join busi_camera bc on bc.device_code = bs.dst_code
         <where>
             1=1
             <if test="list != null">
-                and dst_code in
+                and bs.dst_code in
                 <foreach collection="list" open="(" separator="," close=")" item="item">
                     #{item}
                 </foreach>
             </if>
-            <if test="filter.startDate != null and filter.endDate != null">and stamp >= STR_TO_DATE(#{filter.startDate},
-                '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
+            <if test="filter.startDate != null and filter.endDate != null">and bs.stamp >= STR_TO_DATE(#{filter.startDate},
+                '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
             </if>
-            <if test="filter.action != null">and action = #{filter.action}</if>
+            <if test="filter.action != null">and bs.action = #{filter.action}</if>
         </where>
         GROUP BY
-        dst_code,
-        action
+        bs.dst_code,
+        bs.action
         <if test="orderStr != null and orderStr != ''">
-            ORDER BY ${orderStr}
+            ORDER BY bs.${orderStr}
         </if>
     </select>
 
     <select id="getCameraVisited" resultType="java.lang.String">
 
         SELECT
-        DISTINCT dst_code
+        DISTINCT bs.dst_code
         FROM
-        busi_statistics
+        busi_statistics bs left join busi_camera bc on bc.device_code = bs.dst_code
         <where>
-            dst_code in
+            bs.dst_code in
             <foreach collection="list" open="(" separator="," close=")" item="item">
                 #{item}
             </foreach>
-            <if test="filter.startDate != null and filter.endDate != null">and stamp >= STR_TO_DATE(#{filter.startDate},
-                '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
+            <if test="filter.startDate != null and filter.endDate != null">and bs.stamp >= STR_TO_DATE(#{filter.startDate},
+                '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
             </if>
+            and bc.device_type = 1
         </where>
     </select>
 
 
     <select id="getTerminalVisited" resultType="java.lang.Long">
         SELECT
-        DISTINCT src_ip
+        DISTINCT bs.src_ip
         FROM
-        busi_statistics
+        busi_statistics bs left join busi_camera bc on bc.device_code = bs.dst_code
         <where>
-            dst_code in
+            bs.dst_code in
             <foreach collection="list" open="(" separator="," close=")" item="item">
                 #{item}
             </foreach>
-            <if test="filter.startDate != null and filter.endDate != null">and stamp >= STR_TO_DATE(#{filter.startDate},
-                '%Y-%m-%d') and stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
+            <if test="filter.startDate != null and filter.endDate != null">and bs.stamp >= STR_TO_DATE(#{filter.startDate},
+                '%Y-%m-%d') and bs.stamp &lt;= STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d')
             </if>
+            and bc.device_type = 1
         </where>
 
     </select>
