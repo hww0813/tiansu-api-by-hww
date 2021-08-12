@@ -23,6 +23,7 @@
       <if test="action !=null and action == 1" >
           and (bs.action = 1 or bs.action =2)
       </if>
+          and bc.device_type = 1
       GROUP BY bs.`dst_code`
       <if test="ascFlag != null " >
           order by VISITED_CNT asc

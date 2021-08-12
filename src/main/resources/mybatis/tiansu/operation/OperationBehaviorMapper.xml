@@ -177,7 +177,7 @@
     </select>
 
     <select id="getVisitedRateRelatedOperationCount" resultType="java.lang.Integer">
-        select count(*) from busi_oper bo
+        select count(*) from busi_oper bo left join busi_camera bc on bc.device_code = bo.dst_code
         <where>
             <if test="list!=null and list.size()>0">
                 DST_CODE in
@@ -212,6 +212,7 @@
             <if test="filter.dstDeviceName != null and filter.dstDeviceName != '' ">
                 AND bo.DST_DEVICE_NAME = #{filter.dstDeviceName}
             </if>
+            AND bc.device_type = 1
             ${filter.dataScope}
         </where>
     </select>
