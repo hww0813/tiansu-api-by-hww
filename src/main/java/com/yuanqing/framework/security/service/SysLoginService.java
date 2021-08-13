@@ -80,6 +80,9 @@ public class SysLoginService
         int failedLoginCnt = Integer.parseInt(cnt.get(0).getValue());
         int failedLoginTime = Integer.parseInt(time.get(0).getValue());
 
+        //将读取的登陆失败次数和时长放入缓存
+        redisCache.setCacheObject("tiansuFailedLoginCnt",failedLoginCnt);
+        redisCache.setCacheObject("tiansuFailedLoginTime",failedLoginTime);
 
         String key = String.format("%s", username);
         Integer failedCnt = redisCache.getCacheObject(key);
