@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.domain.assets;
 
+import com.monitorjbl.xlsx.StreamingReader;
 import com.yuanqing.common.utils.ip.IpUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -72,8 +73,8 @@ public class ReadExcel {
     /**
      * 根据excel里面的内容读取客户信息
      *
-     * @param is      输入流
-     * @param isExcel2003   excel是2003还是2007版本
+     * @param is          输入流
+     * @param isExcel2003 excel是2003还是2007版本
      * @return
      * @throws IOException
      */
@@ -121,7 +122,7 @@ public class ReadExcel {
                 if (null != cell) {
                     if (c == 0) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String deviceCode = String.valueOf(cell.getStringCellValue());
                             map.put("deviceCode", deviceCode);// 设备编号
                         } else {
@@ -129,114 +130,114 @@ public class ReadExcel {
                         }
                     } else if (c == 1) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
 
                             String deviceDomain = String.valueOf(cell.getStringCellValue());
-                            map.put("deviceDomain",deviceDomain);// 设备域
+                            map.put("deviceDomain", deviceDomain);// 设备域
                         } else {
-                            map.put("deviceDomain","");// 设备域
+                            map.put("deviceDomain", "");// 设备域
                         }
                     } else if (c == 2) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
 
                             String deviceName = String.valueOf(cell.getStringCellValue());
                             map.put("deviceName", deviceName);// 设备名称
                         } else {
                             map.put("deviceName", "");// 设备名称
                         }
-                    }else if (c == 3) {
+                    } else if (c == 3) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
 
                             String macAddress = String.valueOf(cell.getStringCellValue());
-                            map.put("macAddress",macAddress);// MAC地址
+                            map.put("macAddress", macAddress);// MAC地址
                         } else {
-                            map.put("macAddress","");// MAC地址
+                            map.put("macAddress", "");// MAC地址
                         }
                     } else if (c == 4) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
 
                             Double longitude = Double.valueOf(String.valueOf(cell.getStringCellValue()));
                             map.put("longitude", longitude);// 经度
                         } else {
                             map.put("longitude", "");// 经度
                         }
-                    }else if (c == 5) {
+                    } else if (c == 5) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             Double latitude = Double.valueOf(String.valueOf(cell.getStringCellValue()));
-                            map.put("latitude",latitude);// 纬度
+                            map.put("latitude", latitude);// 纬度
                         } else {
-                            map.put("latitude","");// 纬度
+                            map.put("latitude", "");// 纬度
                         }
                     } else if (c == 6) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String region = String.valueOf(cell.getStringCellValue());
                             map.put("region", region);// 行政区域
                         } else {
                             map.put("region", "");// 行政区域
                         }
-                    }else if (c == 7) {
+                    } else if (c == 7) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String ip = String.valueOf(cell.getStringCellValue());
-                            Long ipAddress= IpUtils.getIp2long(ip);
-                            map.put("ipAddress",ipAddress);// IP地址
+                            Long ipAddress = IpUtils.getIp2long(ip);
+                            map.put("ipAddress", ipAddress);// IP地址
                         } else {
-                            map.put("ipAddress","");// IP地址
+                            map.put("ipAddress", "");// IP地址
                         }
                     } else if (c == 8) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String age = String.valueOf(cell.getStringCellValue());
-                            if(age.equals("已确认")||age.equals("0")){
+                            if (age.equals("已确认") || age.equals("0")) {
                                 map.put("status", "已确认");// 状态
-                            }else if(age.equals("新发现")||age.equals("1")){
+                            } else if (age.equals("新发现") || age.equals("1")) {
                                 map.put("status", "新发现");// 状态
-                            }else if(age.equals("变更")||age.equals("2")){
+                            } else if (age.equals("变更") || age.equals("2")) {
                                 map.put("status", "变更");// 状态
-                            }else if(age.equals("未授权")||age.equals("3")){
+                            } else if (age.equals("未授权") || age.equals("3")) {
                                 map.put("status", "未授权");
                             }
                         } else {
                             map.put("status", "新发现");// 状态
                         }
-                    }else if (c == 9) {
+                    } else if (c == 9) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String deviceType = String.valueOf(cell.getStringCellValue());
-                            map.put("deviceType",deviceType);// 设备类型
+                            map.put("deviceType", deviceType);// 设备类型
                         } else {
-                            map.put("deviceType","");// 设备类型
+                            map.put("deviceType", "");// 设备类型
                         }
                     } else if (c == 10) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String ip = String.valueOf(cell.getStringCellValue());
-                            Long domainIp=IpUtils.ipToLong(ip);
+                            Long domainIp = IpUtils.ipToLong(ip);
                             map.put("domainIp", domainIp);// 域IP
                         } else {
                             map.put("domainIp", "");// 域IP
                         }
-                    }else if (c == 11) {
+                    } else if (c == 11) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String age = String.valueOf(cell.getStringCellValue());
-                            Long domainPort=Long.valueOf(age);
+                            Long domainPort = Long.valueOf(age);
                             map.put("domainPort", domainPort);// 域端口
                         } else {
                             map.put("domainPort", "");// 域端口
                         }
                     } else if (c == 12) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String age = String.valueOf(cell.getStringCellValue());
-                            if(age.equals("非国标")||age.equals("0")){
+                            if (age.equals("非国标") || age.equals("0")) {
                                 map.put("isGb", 0);// 是否国标
-                            }else if(age.equals("国标")||age.equals("1")){
+                            } else if (age.equals("国标") || age.equals("1")) {
                                 map.put("isGb", 1);// 是否国标
                             }
                         } else {
@@ -303,8 +304,8 @@ public class ReadExcel {
     /**
      * 根据excel里面的内容读取客户信息
      *
-     * @param is      输入流
-     * @param isExcel2003   excel是2003还是2007版本
+     * @param is          输入流
+     * @param isExcel2003 excel是2003还是2007版本
      * @return
      * @throws IOException
      */
@@ -314,7 +315,11 @@ public class ReadExcel {
             if (isExcel2003) {// 当excel是2003时,创建excel2003
                 wb = new HSSFWorkbook(is);
             } else {// 当excel是2007时,创建excel2007
-                wb = new XSSFWorkbook(is);
+//                wb = new XSSFWorkbook(is);
+                wb = StreamingReader.builder()
+                        .rowCacheSize(100)  //缓存到内存中的行数，默认是10
+                        .bufferSize(4096)  //读取资源时，缓存到内存的字节大小，默认是1024
+                        .open(is);  //打开资源，必须，可以是InputStream或者是File，注意：只能打开XLSX格式的文件
             }
             return readExtCameraExcelValue(wb);// 读取Excel里面客户的信息
         } catch (IOException e) {
@@ -332,109 +337,94 @@ public class ReadExcel {
     private List<Map<String, Object>> readExtCameraExcelValue(Workbook wb) {
         // 得到第一个shell
         Sheet sheet = wb.getSheetAt(0);
-        // 得到Excel的行数
-        this.totalRows = sheet.getPhysicalNumberOfRows();
-        // 得到Excel的列数(前提是有行数)
-        if (totalRows > 1 && sheet.getRow(0) != null) {
-            this.totalCells = sheet.getRow(0).getPhysicalNumberOfCells();
-        }
+
         List<Map<String, Object>> cameraList = new ArrayList<Map<String, Object>>();
         // 循环Excel行数
-        for (int r = 1; r < totalRows; r++) {
-            Row row = sheet.getRow(r);
-            if (row == null) {
+        for (Row row : sheet) {
+
+            // 循环Excel的列
+            if(row.getRowNum()==0){
                 continue;
             }
-            // 循环Excel的列
             Map<String, Object> map = new HashMap<String, Object>();
-            for (int c = 0; c < this.totalCells; c++) {
-                Cell cell = row.getCell(c);
-                if (null != cell) {
+            int c = 0;
+            for (Cell cell : row) {
                     if (c == 0) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String gbId = String.valueOf(cell.getStringCellValue());
                             map.put("gbId", gbId);// 国标编码
                         } else {
                             map.put("gbId", "");// 国标编码
                         }
                     } else if (c == 1) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String deviceId = String.valueOf(cell.getStringCellValue());
                             map.put("deviceId", deviceId);// 内部编码
                         } else {
                             map.put("deviceId", "");// 内部编码
                         }
                     } else if (c == 2) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
 
                             String deviceName = String.valueOf(cell.getStringCellValue());
                             map.put("deviceName", deviceName);// 设备名称
                         } else {
                             map.put("deviceName", "");// 设备名称
                         }
-                    }else if (c == 3) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                    } else if (c == 3) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
 
                             String macAddress = String.valueOf(cell.getStringCellValue());
-                            map.put("macAddress",macAddress);// MAC地址
+                            map.put("macAddress", macAddress);// MAC地址
                         } else {
-                            map.put("macAddress","");// MAC地址
+                            map.put("macAddress", "");// MAC地址
                         }
                     } else if (c == 4) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             try {
                                 Double longitude = Double.valueOf(String.valueOf(cell.getStringCellValue()));
                                 map.put("longitude", longitude);// 经度
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 map.put("longitude", "");// 经度
                             }
                         } else {
                             map.put("longitude", "");// 经度
                         }
-                    }else if (c == 5) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                    } else if (c == 5) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             try {
                                 Double latitude = Double.valueOf(String.valueOf(cell.getStringCellValue()));
-                                map.put("latitude",latitude);// 纬度
-                            }catch (Exception e){
-                                map.put("latitude","");// 纬度
+                                map.put("latitude", latitude);// 纬度
+                            } catch (Exception e) {
+                                map.put("latitude", "");// 纬度
                             }
                         } else {
-                            map.put("latitude","");// 纬度
+                            map.put("latitude", "");// 纬度
                         }
                     } else if (c == 6) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String region = String.valueOf(cell.getStringCellValue());
                             map.put("region", region);// 行政区域
                         } else {
                             map.put("region", "");// 行政区域
                         }
-                    }else if (c == 7) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                    } else if (c == 7) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String ip = String.valueOf(cell.getStringCellValue());
 //                            Long ipAddress=IPv4Util.getIp2long(ip);
-                            map.put("ipAddress",ip);// IP地址
+                            map.put("ipAddress", ip);// IP地址
                         } else {
-                            map.put("ipAddress","");// IP地址
+                            map.put("ipAddress", "");// IP地址
                         }
                     } else if (c == 8) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if (!cell.getStringCellValue().equals("")&&cell.getStringCellValue()!=null) {
+                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
                             String manufacturer = String.valueOf(cell.getStringCellValue());
-                            map.put("manufacturer",manufacturer);// 设备厂商
+                            map.put("manufacturer", manufacturer);// 设备厂商
                         } else {
-                            map.put("manufacturer","");// 设备厂商
+                            map.put("manufacturer", "");// 设备厂商
                         }
                     }
-                }
+                c++;
             }
             // 添加到list
             cameraList.add(map);
