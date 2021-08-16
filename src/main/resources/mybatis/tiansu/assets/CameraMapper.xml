@@ -135,8 +135,8 @@
             <if test="camera.isImport != null  and camera.isImport != ''">and IS_IMPORT = #{camera.isImport}</if>
             <if test="camera.isCheck != null ">and IS_CHECK = #{isCheck}</if>
             <if test="camera.startDate != null and camera.endDate != null">and update_time between
-                STR_TO_DATE(#{camera.startDate}, '%Y-%m-%d') and STR_TO_DATE(#{camera.endDate},
-                '%Y-%m-%d')
+                STR_TO_DATE(#{camera.startDate}, '%Y-%m-%dT%H:%i:%s') and STR_TO_DATE(#{camera.endDate},
+                '%Y-%m-%dT%H:%i:%s')
             </if>
         </where>
         order by update_time desc

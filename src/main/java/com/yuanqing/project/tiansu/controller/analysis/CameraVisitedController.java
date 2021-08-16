@@ -64,8 +64,8 @@ public class CameraVisitedController extends BaseController {
         cameraVisit.setstartDate(camera.getstartDate());
         cameraVisit.setendDate(camera.getendDate());
 
-//        camera.setstartDate(null);
-//        camera.setendDate(null);
+        camera.setstartDate(null);
+        camera.setendDate(null);
         camera.setIpAddress(IpUtils.ipToLong(cameraIp));
 
         String orderStr = null;
@@ -77,7 +77,7 @@ public class CameraVisitedController extends BaseController {
 
         List<Camera> cameraList = null;
 
-//        startPage();
+        startPage();
         cameraList = cameraService.getList(camera);
 
         macsConfigService.setLowerRegionByCamera(cameraList);
@@ -85,7 +85,7 @@ public class CameraVisitedController extends BaseController {
         startPage();
         List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList, cameraVisit, orderStr);
 
-        return AjaxResult.success(getDataTable(cameraVisitList));
+        return AjaxResult.success(getDataTable(cameraVisitList,cameraList));
 
 
     }
