@@ -15,4 +15,8 @@ public class ConfigFileException extends BaseException {
     {
         super(content);
     }
+    public ConfigFileException(String content,String ConfigParams)
+    {
+        super(content, new Object[] { ConfigParams });
+    }
 }

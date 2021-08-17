@@ -133,7 +133,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         JSONArray jsonArray = fileContent.getJSONArray(macsKey);
 
         if(CollectionUtils.isEmpty(jsonArray)){
-            throw new ConfigParseException();
+            throw new ConfigParseException(macsKey);
         }
 
         List<MacsConfig> config = jsonArray.toJavaList(MacsConfig.class);
