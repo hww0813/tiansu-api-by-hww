@@ -16,4 +16,7 @@ create table busi_raw_signal_tmp like busi_raw_signal;
 create table busi_raw_signal_t like busi_raw_signal;
 
 
+--删除busi_raw_siagnal_temp表的分区;
+
+alter table busi_raw_signal_tmp remove partitioning;
 
