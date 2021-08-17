@@ -241,5 +241,16 @@ public class Constants
 
     public static final String CONFIG_LOWER_REGION = "config:LOWER_REGION_";
 
-//    public static final String CONFIG_FILE_PATH = "/config/apiConfig.json";
+    public static final String SYSTEM_FAIL_LOGIN_CNT = "system-failLoginCnt";
+
+    public static final String SYSTEM_FAILED_LOGIN_TIME = "system-failedLoginTime";
+
+    public static final String SYSTEM_PERMIT_CAMERA = "system-permitCamera";
+
+    public static final String SYSTEM_PERMIT_USER = "system-permitUser";
+
+
+
+
+
 }

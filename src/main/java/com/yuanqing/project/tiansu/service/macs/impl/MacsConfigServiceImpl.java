@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.constant.Constants;
 import com.yuanqing.common.enums.SaveType;
+import com.yuanqing.common.exception.config.ConfigFileException;
+import com.yuanqing.common.exception.config.ConfigNullException;
+import com.yuanqing.common.exception.config.ConfigParseException;
 import com.yuanqing.common.queue.MacsMap;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.file.FileUtils;
@@ -39,6 +42,10 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MacsConfigServiceImpl.class);
 
+    public static final String MACS_TOKEN = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImUzNjQ4YmI0LWQyMWEtNDRmZi05Mj" +
+            "c0LWJjMDcxMDBjMzgzOSJ9.Ix7KKtW5Q4UZCbKgK5roz0y7xv7z5a_tb37k8alIwuAG9uiga6R6dBuCDEsx8HWqlUnXTVqNxHRaeo_6RY_e-w";
+
+
     @Value("${tiansu.macshost}")
     private String prefix;
 
@@ -59,57 +66,22 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     private final String selectMacsRegionList_URL = "/tripartite/region/regionList";
 
 
-    @PostConstruct
-    public void init() {
-
-        JSONObject localConfigJson = new JSONObject();
-
-        try{
-            localConfigJson = FileUtils.readFile(Paths.get(apiConfig));
-        }catch (Exception e){
-            LOGGER.error("读取本地配置文件出错！！");
-            e.printStackTrace();
-        }
-
-        if(!CollectionUtils.isEmpty(localConfigJson)){
-            Set<String> keys = localConfigJson.keySet();
-
-            JSONObject finalLocalConfigJson = localConfigJson;
-
-            keys.stream().forEach(f ->{
-
-                JSONArray jsonArray = finalLocalConfigJson.getJSONArray(f);
-
-                List<MacsConfig> macsConfigList = jsonArray.toJavaList(MacsConfig.class);
-
-                MacsMap.put(f,macsConfigList);
-
-            });
-            LOGGER.error("本地配置已写入缓存");
-        }else{
-            LOGGER.error("本地配置信息为空");
-        }
-    }
-
-    public static final String MACS_TOKEN = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImUzNjQ4YmI0LWQyMWEtNDRmZi05Mj" +
-            "c0LWJjMDcxMDBjMzgzOSJ9.Ix7KKtW5Q4UZCbKgK5roz0y7xv7z5a_tb37k8alIwuAG9uiga6R6dBuCDEsx8HWqlUnXTVqNxHRaeo_6RY_e-w";
-
-
-
     @Override
-    public List<MacsConfig> selectMacsConfigByTypeAndName(MacsConfig macsConfig) {
+    public List<MacsConfig> selectMacsConfigByTypeAndName(MacsConfig macsConfig) throws ConfigFileException{
+
         if(macsConfig == null) {
             return null;
         }
+
         String macsKey = macsConfig.getType() + "-" + macsConfig.getName();
 
         String rspStr = null;
 
         try{
-
             rspStr =  macsFeignClient.getConfigById(macsConfig.getType(),macsConfig.getName());
 
-        }catch (Exception e ){
+        }catch (Exception e){
+
             LOGGER.error("请求Macs接口异常,读取本地配置信息:"+macsKey);
 
             return getLocationConfig(macsKey);
@@ -150,19 +122,19 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
     }
 
-    private List<MacsConfig> getLocationConfig(String macsKey){
+    private List<MacsConfig> getLocationConfig(String macsKey) throws ConfigFileException {
 
-        JSONObject jsonObject = new JSONObject();
+        JSONObject fileContent = FileUtils.readFile(Paths.get(apiConfig));
 
-        try{
-
-          jsonObject = FileUtils.readFile(Paths.get(apiConfig));
-
-        }catch (Exception e){
-
+        if(CollectionUtils.isEmpty(fileContent)){
+            throw new ConfigNullException();
         }
 
-        JSONArray jsonArray = jsonObject.getJSONArray(macsKey);
+        JSONArray jsonArray = fileContent.getJSONArray(macsKey);
+
+        if(CollectionUtils.isEmpty(jsonArray)){
+            throw new ConfigParseException();
+        }
 
         List<MacsConfig> config = jsonArray.toJavaList(MacsConfig.class);
 

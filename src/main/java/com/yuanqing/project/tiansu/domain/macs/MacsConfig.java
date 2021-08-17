@@ -34,6 +34,12 @@ public class MacsConfig extends BaseEntity
         this.name = name;
     }
 
+    public MacsConfig(String type,String name,String value){
+        this.type = type;
+        this.name = name;
+        this.value = value;
+    }
+
     public MacsConfig(String type){
         this.type = type;
     }

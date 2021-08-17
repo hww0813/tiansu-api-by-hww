@@ -1,6 +1,10 @@
 package com.yuanqing.common.utils.file;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.utils.StringUtils;
+import com.yuanqing.framework.init.ConfigInit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -13,8 +17,11 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author yuanqing
  */
-public class FileUtils
-{
+public class FileUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
+
+
     public static String FILENAME_PATTERN = "[a-zA-Z0-9_\\-\\|\\.\\u4e00-\\u9fa5]+";
 
     /**
@@ -165,7 +172,21 @@ public class FileUtils
      * 读文件
      *
      */
-    public static JSONObject readFile(Path path){
+    public static JSONObject readFile(Path path) {
+
+        JSONObject fileContent = new JSONObject();
+
+        //如果文件不存在 就创建文件
+        File file = path.toFile();
+        if(!file.exists()){
+            try {
+
+                LOGGER.error("文件不存在,创建文件:{}",path.getFileName());
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         //创建BufferedReader
         try {
@@ -173,12 +194,18 @@ public class FileUtils
 
             StringBuilder sb  = new StringBuilder();
             String str;
+
             while((str = bfr.readLine())!= null){
                 sb.append(str);
             }
-            JSONObject jsonObject = JSONObject.parseObject(sb.toString());
+
+            if(!StringUtils.isEmpty(sb)){
+                fileContent = JSONObject.parseObject(sb.toString());
+            }
+
             bfr.close();
-            return jsonObject;
+            return fileContent;
+
         } catch (IOException e) {
             e.printStackTrace();
         }

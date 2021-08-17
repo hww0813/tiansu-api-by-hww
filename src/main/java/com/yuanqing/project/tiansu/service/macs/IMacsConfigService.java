@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.service.macs;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.exception.config.ConfigFileException;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.service.BaseService;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
@@ -15,12 +16,14 @@ import java.util.List;
  */
 public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
 
+
     /**
      * 根据类型和名称查询系统配置
      * @param macsConfig
      * @return
+     * @throws ConfigFileException 配置文件相关异常
      */
-    List<MacsConfig> selectMacsConfigByTypeAndName(MacsConfig macsConfig);
+    List<MacsConfig> selectMacsConfigByTypeAndName(MacsConfig macsConfig) throws ConfigFileException;
 
     /**
      * 根据区域ID获取下级区域信息
