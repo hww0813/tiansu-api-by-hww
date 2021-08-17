@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.domain.assets;
 
 import com.monitorjbl.xlsx.StreamingReader;
+import com.monitorjbl.xlsx.impl.StreamingRow;
 import com.yuanqing.common.utils.ip.IpUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -343,88 +344,91 @@ public class ReadExcel {
         for (Row row : sheet) {
 
             // 循环Excel的列
-            if(row.getRowNum()==0){
+            if (row.getRowNum() == 0) {
                 continue;
             }
+
             Map<String, Object> map = new HashMap<String, Object>();
-            int c = 0;
-            for (Cell cell : row) {
-                    if (c == 0) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
-                            String gbId = String.valueOf(cell.getStringCellValue());
-                            map.put("gbId", gbId);// 国标编码
-                        } else {
-                            map.put("gbId", "");// 国标编码
-                        }
-                    } else if (c == 1) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
-                            String deviceId = String.valueOf(cell.getStringCellValue());
-                            map.put("deviceId", deviceId);// 内部编码
-                        } else {
-                            map.put("deviceId", "");// 内部编码
-                        }
-                    } else if (c == 2) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
 
-                            String deviceName = String.valueOf(cell.getStringCellValue());
-                            map.put("deviceName", deviceName);// 设备名称
-                        } else {
-                            map.put("deviceName", "");// 设备名称
-                        }
-                    } else if (c == 3) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+            Map<Integer, Cell> cellMap = ((StreamingRow) (row)).getCellMap();
+            for (Map.Entry<Integer, Cell> entry : cellMap.entrySet()) {
+                int c = entry.getKey();
+                Cell cell = entry.getValue();
+                if (c == 0) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+                        String gbId = String.valueOf(cell.getStringCellValue());
+                        map.put("gbId", gbId);// 国标编码
+                    } else {
+                        map.put("gbId", "");// 国标编码
+                    }
+                } else if (c == 1) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+                        String deviceId = String.valueOf(cell.getStringCellValue());
+                        map.put("deviceId", deviceId);// 内部编码
+                    } else {
+                        map.put("deviceId", "");// 内部编码
+                    }
+                } else if (c == 2) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
 
-                            String macAddress = String.valueOf(cell.getStringCellValue());
-                            map.put("macAddress", macAddress);// MAC地址
-                        } else {
-                            map.put("macAddress", "");// MAC地址
-                        }
-                    } else if (c == 4) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
-                            try {
-                                Double longitude = Double.valueOf(String.valueOf(cell.getStringCellValue()));
-                                map.put("longitude", longitude);// 经度
-                            } catch (Exception e) {
-                                map.put("longitude", "");// 经度
-                            }
-                        } else {
+                        String deviceName = String.valueOf(cell.getStringCellValue());
+                        map.put("deviceName", deviceName);// 设备名称
+                    } else {
+                        map.put("deviceName", "");// 设备名称
+                    }
+                } else if (c == 3) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+
+                        String macAddress = String.valueOf(cell.getStringCellValue());
+                        map.put("macAddress", macAddress);// MAC地址
+                    } else {
+                        map.put("macAddress", "");// MAC地址
+                    }
+                } else if (c == 4) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+                        try {
+                            Double longitude = Double.valueOf(String.valueOf(cell.getStringCellValue()));
+                            map.put("longitude", longitude);// 经度
+                        } catch (Exception e) {
                             map.put("longitude", "");// 经度
                         }
-                    } else if (c == 5) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
-                            try {
-                                Double latitude = Double.valueOf(String.valueOf(cell.getStringCellValue()));
-                                map.put("latitude", latitude);// 纬度
-                            } catch (Exception e) {
-                                map.put("latitude", "");// 纬度
-                            }
-                        } else {
+                    } else {
+                        map.put("longitude", "");// 经度
+                    }
+                } else if (c == 5) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+                        try {
+                            Double latitude = Double.valueOf(String.valueOf(cell.getStringCellValue()));
+                            map.put("latitude", latitude);// 纬度
+                        } catch (Exception e) {
                             map.put("latitude", "");// 纬度
                         }
-                    } else if (c == 6) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
-                            String region = String.valueOf(cell.getStringCellValue());
-                            map.put("region", region);// 行政区域
-                        } else {
-                            map.put("region", "");// 行政区域
-                        }
-                    } else if (c == 7) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
-                            String ip = String.valueOf(cell.getStringCellValue());
-//                            Long ipAddress=IPv4Util.getIp2long(ip);
-                            map.put("ipAddress", ip);// IP地址
-                        } else {
-                            map.put("ipAddress", "");// IP地址
-                        }
-                    } else if (c == 8) {
-                        if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
-                            String manufacturer = String.valueOf(cell.getStringCellValue());
-                            map.put("manufacturer", manufacturer);// 设备厂商
-                        } else {
-                            map.put("manufacturer", "");// 设备厂商
-                        }
+                    } else {
+                        map.put("latitude", "");// 纬度
                     }
-                c++;
+                } else if (c == 6) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+                        String region = String.valueOf(cell.getStringCellValue());
+                        map.put("region", region);// 行政区域
+                    } else {
+                        map.put("region", "");// 行政区域
+                    }
+                } else if (c == 7) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+                        String ip = String.valueOf(cell.getStringCellValue());
+//                            Long ipAddress=IPv4Util.getIp2long(ip);
+                        map.put("ipAddress", ip);// IP地址
+                    } else {
+                        map.put("ipAddress", "");// IP地址
+                    }
+                } else if (c == 8) {
+                    if (!cell.getStringCellValue().equals("") && cell.getStringCellValue() != null) {
+                        String manufacturer = String.valueOf(cell.getStringCellValue());
+                        map.put("manufacturer", manufacturer);// 设备厂商
+                    } else {
+                        map.put("manufacturer", "");// 设备厂商
+                    }
+                }
             }
             // 添加到list
             cameraList.add(map);
