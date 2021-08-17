@@ -4,7 +4,7 @@ ruoyi:
 
 server:
     # 服务器的HTTP端口，默认为8080
-    port: ${SERVER_PORT:8081}
+    port: ${SERVER_PORT:8080}
 quartz:
     scheduler:
         instanceName: Scheduler-prod
