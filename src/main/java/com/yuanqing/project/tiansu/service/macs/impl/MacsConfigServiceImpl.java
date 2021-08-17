@@ -71,7 +71,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
             e.printStackTrace();
         }
 
-        if(CollectionUtils.isEmpty(localConfigJson)){
+        if(!CollectionUtils.isEmpty(localConfigJson)){
             Set<String> keys = localConfigJson.keySet();
 
             JSONObject finalLocalConfigJson = localConfigJson;
