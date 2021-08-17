@@ -3,10 +3,11 @@
 -- 作者：易鹏飞
 
 -- 修改action的字段长度为255
-ALTER TABLE tb_article MODIFY COLUMN action VARCHAR(255);
+ALTER TABLE busi_raw_signal MODIFY COLUMN action VARCHAR(255);
 
 
 --  备份busi_raw_siagnal_t表
+DROP TABLE IF EXISTS `busi_raw_signal_tmp`;
 alter table busi_raw_signal_t rename busi_raw_signal_t_bak0817;
 
 

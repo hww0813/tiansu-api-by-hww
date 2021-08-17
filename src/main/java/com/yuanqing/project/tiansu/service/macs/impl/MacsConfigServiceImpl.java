@@ -71,21 +71,24 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
             e.printStackTrace();
         }
 
-        Set<String> keys = localConfigJson.keySet();
+        if(CollectionUtils.isEmpty(localConfigJson)){
+            Set<String> keys = localConfigJson.keySet();
 
-        JSONObject finalLocalConfigJson = localConfigJson;
+            JSONObject finalLocalConfigJson = localConfigJson;
 
-        keys.stream().forEach(f ->{
+            keys.stream().forEach(f ->{
 
-            JSONArray jsonArray = finalLocalConfigJson.getJSONArray(f);
+                JSONArray jsonArray = finalLocalConfigJson.getJSONArray(f);
 
-            List<MacsConfig> macsConfigList = jsonArray.toJavaList(MacsConfig.class);
+                List<MacsConfig> macsConfigList = jsonArray.toJavaList(MacsConfig.class);
 
-            MacsMap.put(f,macsConfigList);
+                MacsMap.put(f,macsConfigList);
 
-        });
-
-        LOGGER.error("本地配置已写入缓存");
+            });
+            LOGGER.error("本地配置已写入缓存");
+        }else{
+            LOGGER.error("本地配置信息为空");
+        }
     }
 
     public static final String MACS_TOKEN = "BearereyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImUzNjQ4YmI0LWQyMWEtNDRmZi05Mj" +
