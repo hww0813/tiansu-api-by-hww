@@ -4,7 +4,7 @@ ruoyi:
 
 server:
     # 服务器的HTTP端口，默认为8080
-    port: 8080
+    port: ${SERVER_PORT:8081}
 quartz:
     scheduler:
         instanceName: Scheduler-prod
@@ -14,7 +14,7 @@ spring:
         host: 127.0.0.1
         port: 5672
         username: admin
-        password: YQHbst4201
+        password: ${RABBITMQ_PASSWORD:YQHbst4201}
     redis:
         # 地址
         host: 127.0.0.1
@@ -42,7 +42,7 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://127.0.0.1:3306/itms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://${MYSQL_IP:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:itms}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=${MYSQL_USESSL:true}&serverTimezone=GMT%2B8&rewriteBatchedStatements=true
                 username: root
                 password: mysql
             # 从库数据源
