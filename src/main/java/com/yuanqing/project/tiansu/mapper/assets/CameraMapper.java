@@ -214,9 +214,9 @@ public interface CameraMapper extends BaseMapper<Camera, Long> {
     /**
      * 首页摄像头活跃详情列
      *
-     * @param date
+     * @param camera
      * @return
      */
-    public List<Camera> getScreenList(Date date);
+    public List<Camera> getScreenList(Camera camera);
 
 }

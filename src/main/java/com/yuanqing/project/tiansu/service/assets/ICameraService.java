@@ -146,10 +146,10 @@ public interface ICameraService extends BaseService<Camera, Long> {
 
     /**
      * 首页摄像头活跃详情列
-     *
+     * @param camera
      * @return
      */
-    public List<Camera> getScreenList();
+    public List<Camera> getScreenList(Camera camera);
 
 
 }

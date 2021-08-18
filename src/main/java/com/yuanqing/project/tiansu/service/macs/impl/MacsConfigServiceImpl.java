@@ -122,26 +122,6 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
     }
 
-    private List<MacsConfig> getLocationConfig(String macsKey) throws ConfigFileException {
-
-        JSONObject fileContent = FileUtils.readFile(Paths.get(apiConfig));
-
-        if(CollectionUtils.isEmpty(fileContent)){
-            throw new ConfigNullException();
-        }
-
-        JSONArray jsonArray = fileContent.getJSONArray(macsKey);
-
-        if(CollectionUtils.isEmpty(jsonArray)){
-            throw new ConfigParseException(macsKey);
-        }
-
-        List<MacsConfig> config = jsonArray.toJavaList(MacsConfig.class);
-
-        return config;
-    }
-
-
 
     /**
      * 获取下级地区
@@ -276,7 +256,6 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
         JSONObject jsonObject = (JSONObject) JSONObject.parse(rspStr);
 
-        // || 200 != jsonObject.getIntValue("code")
         if(jsonObject == null || !jsonObject.containsKey("data")) {
             LOGGER.error("获取区域为空");
             return null;
@@ -343,8 +322,31 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         return macsFeignClient.removeMacsConfig(ids, MACS_TOKEN);
     }
 
-//    @Override
-//    public MacsConfig selectMacsConfigByTypeAndName(String type, String name) {
-//        return macsConfigMapper.selectMacsConfigByTypeAndName(type,name);
-//    }
+
+
+    /**
+     * 读取本地配置文件配置
+     * @param macsKey 配置项
+     * @return
+     * @throws ConfigFileException 配置文件异常
+     */
+    private List<MacsConfig> getLocationConfig(String macsKey) throws ConfigFileException {
+
+        JSONObject fileContent = FileUtils.readFile(Paths.get(apiConfig));
+
+        if(CollectionUtils.isEmpty(fileContent)){
+            throw new ConfigNullException();
+        }
+
+        JSONArray jsonArray = fileContent.getJSONArray(macsKey);
+
+        if(CollectionUtils.isEmpty(jsonArray)){
+            throw new ConfigParseException(macsKey);
+        }
+
+        List<MacsConfig> config = jsonArray.toJavaList(MacsConfig.class);
+
+        return config;
+    }
+
 }

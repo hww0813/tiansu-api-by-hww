@@ -64,8 +64,6 @@ public class CameraVisitedController extends BaseController {
         cameraVisit.setstartDate(camera.getstartDate());
         cameraVisit.setendDate(camera.getendDate());
 
-        camera.setstartDate(null);
-        camera.setendDate(null);
         camera.setIpAddress(IpUtils.ipToLong(cameraIp));
 
         String orderStr = null;
@@ -73,12 +71,10 @@ public class CameraVisitedController extends BaseController {
             orderStr = orderValue + " " + orderType;
         }
 
-
-
         List<Camera> cameraList = null;
 
         startPage();
-        cameraList = cameraService.getList(camera);
+        cameraList = cameraService.getScreenList(camera);
 
         macsConfigService.setLowerRegionByCamera(cameraList);
 

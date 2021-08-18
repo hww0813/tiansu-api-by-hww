@@ -752,8 +752,8 @@ public class CameraServiceImpl implements ICameraService {
     }
 
     @Override
-    public List<Camera> getScreenList() {
-        return cameraMapper.getScreenList(new Date());
+    public List<Camera> getScreenList(Camera camera){
+        return cameraMapper.getScreenList(camera);
     }
 
 
