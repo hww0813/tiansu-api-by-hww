@@ -163,9 +163,10 @@ public class StatisticsServiceImpl implements IStatisticsService {
                     visited.put("visitCnt", visitedRate.getVisitedCnt() == null ? 0 : visitedRate.getVisitedCnt());
                     Double rate = 0D;
                     if (visitedRate.getAllCount() != 0) {
-                        rate = DoubleUtils.roundOff(((double) visitedRate.getVisitedCamera() / (double) visitedRate.getAllCount()), 2);
+                        rate = ((double) visitedRate.getVisitedCamera() / (double) visitedRate.getAllCount());
                     }
-                    visited.put("rate", rate * 100 + "%");
+
+                    visited.put("rate", DoubleUtils.roundOff((rate * 100),2) + "%");
                     rateList.add(visited);
 
                 });

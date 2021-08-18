@@ -81,7 +81,7 @@ public class ConfigInit {
     }
 
     /**
-     * 获取用户登录限制相关配置信息
+     * 获取相关配置信息
      */
     private void getMacsInfo(String key, String defaultValue){
         String[] keys = key.split("-");
