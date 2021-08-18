@@ -106,9 +106,9 @@
             </otherwise>
         </choose>
         )
+        <if test="deviceCode != null  and deviceCode != ''">and DEVICE_CODE = #{deviceCode}</if>
         <if test="deviceDomain != null  and deviceDomain != ''">and DEVICE_DOMAIN = #{deviceDomain}</if>
-        <if test="deviceName != null  and deviceName != ''">and DEVICE_NAME like concat('%', #{deviceName}, '%')
-        </if>
+        <if test="deviceName != null  and deviceName != ''">and DEVICE_NAME like concat('%', #{deviceName}, '%')</if>
         <if test="macAddress != null  and macAddress != ''">and MAC_ADDRESS = #{macAddress}</if>
         <if test="longitude != null ">and LONGITUDE = #{longitude}</if>
         <if test="latitude != null ">and LATITUDE = #{latitude}</if>
