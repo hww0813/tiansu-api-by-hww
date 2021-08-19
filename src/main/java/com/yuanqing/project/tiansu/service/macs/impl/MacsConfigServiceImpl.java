@@ -75,9 +75,10 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
         String macsKey = macsConfig.getType() + "-" + macsConfig.getName();
 
-        String rspStr = null;
+        String rspStr;
 
         try{
+
             rspStr =  macsFeignClient.getConfigById(macsConfig.getType(),macsConfig.getName());
 
         }catch (Exception e){
@@ -88,6 +89,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         }
 
         if (StringUtils.isEmpty(rspStr)) {
+
             LOGGER.error("请求Macs接口返回结果为空,读取本地配置信息:"+macsKey);
 
             return getLocationConfig(macsKey);
@@ -345,6 +347,9 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         }
 
         List<MacsConfig> config = jsonArray.toJavaList(MacsConfig.class);
+
+        //读取成功后将配置放入缓存
+        MacsMap.put(macsKey,config);
 
         return config;
     }
