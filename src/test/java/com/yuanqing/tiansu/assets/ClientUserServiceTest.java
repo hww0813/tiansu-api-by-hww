@@ -40,7 +40,7 @@ public class ClientUserServiceTest {
      */
     @Test
     public void getActiveClientUser(){
-        List<ClientUser> activeClientUser = clientUserService.getActiveClientUser();
+        List<ClientUser> activeClientUser = clientUserService.getActiveClientUser(new ClientUser());
 //        System.out.println(activeClientUser);
         Assert.assertEquals(3,activeClientUser.size());
     }

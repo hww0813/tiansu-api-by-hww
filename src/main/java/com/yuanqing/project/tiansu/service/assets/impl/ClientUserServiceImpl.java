@@ -243,9 +243,8 @@ public class ClientUserServiceImpl implements IClientUserService {
     }
 
     @Override
-    public List<ClientUser> getActiveClientUser() {
-        ClientUser clientUser = (ClientUser) DateUtils.getDayTime(ClientUser.class);
-        return clientUserMapper.getList(clientUser);
+    public List<ClientUser> getActiveClientUser(ClientUser clientUser) {
+        return clientUserMapper.getActiveClientUser(clientUser);
     }
 
     @Override

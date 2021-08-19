@@ -45,4 +45,6 @@ public interface ClientUserMapper extends BaseMapper<ClientUser,Long> {
      * @return
      */
     Integer getRealTotal();
+
+    List<ClientUser> getActiveClientUser(ClientUser clientUser);
 }

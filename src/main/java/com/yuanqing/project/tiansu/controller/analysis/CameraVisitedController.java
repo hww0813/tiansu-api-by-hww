@@ -2,7 +2,6 @@ package com.yuanqing.project.tiansu.controller.analysis;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.StringUtils;
-import com.yuanqing.common.utils.bean.BeanUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
@@ -75,7 +74,7 @@ public class CameraVisitedController extends BaseController {
         List<Camera> cameraList = null;
 
         startPage();
-        cameraList = cameraService.getScreenList(camera);
+        cameraList = cameraService.getActiveList(camera);
 
         macsConfigService.setLowerRegionByCamera(cameraList);
 

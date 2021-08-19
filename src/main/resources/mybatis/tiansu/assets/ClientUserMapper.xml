@@ -71,6 +71,32 @@
         select count(*) from busi_client_user;
     </select>
 
+    <select id="getActiveClientUser" resultType="com.yuanqing.project.tiansu.domain.assets.ClientUser">
+        <include refid="selectBusiClientUserVo"/>
+        where bcu.username in (
+        SELECT DISTINCT
+        bs.username
+        FROM
+        busi_statistics bs
+        WHERE
+        1=1
+        <choose>
+            <when test="startDate != null and endDate != null">
+                and bs.stamp BETWEEN DATE_FORMAT(#{startDate}, '%y%m%d') and DATE_FORMAT(#{endDate}, '%y%m%d')
+            </when>
+            <otherwise>
+                and bs.stamp BETWEEN DATE_FORMAT(now(), '%y%m%d') and DATE_FORMAT(now(), '%y%m%d')
+            </otherwise>
+        </choose>
+        )
+        <if test="username != null  and username != ''"> and bcu.USERNAME = #{username}</if>
+        <if test="status != null"> and bcu.STATUS = #{status}</if>
+        <if test="createTime != null "> and bcu.CREATE_TIME = #{createTime}</if>
+        <if test="updateTime != null "> and bcu.UPDATE_TIME = #{updateTime}</if>
+        <if test="source != null  and source != ''"> and bcu.SOURCE = #{source}</if>
+
+    </select>
+
     <insert id="insert" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientUser">
         insert into busi_client_user
         <trim prefix="(" suffix=")" suffixOverrides=",">

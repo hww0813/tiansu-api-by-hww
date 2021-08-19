@@ -46,5 +46,10 @@ public interface ClientTerminalMapper extends BaseMapper<ClientTerminal, Long> {
 
     Integer getRealTotal();
 
-
+    /**
+     * 获取活跃终端
+     * @param clientTerminal
+     * @return
+     */
+    List<ClientTerminal> getActiveTerminal(ClientTerminal clientTerminal);
 }

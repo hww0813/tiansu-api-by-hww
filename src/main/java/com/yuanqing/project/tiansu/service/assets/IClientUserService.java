@@ -53,9 +53,10 @@ public interface IClientUserService extends BaseService<ClientUser,Long> {
 
     /**
      * 获取活跃用户
+     * @param clientUser
      * @return
      */
-    List<ClientUser> getActiveClientUser();
+    List<ClientUser> getActiveClientUser(ClientUser clientUser);
 
 
     /**

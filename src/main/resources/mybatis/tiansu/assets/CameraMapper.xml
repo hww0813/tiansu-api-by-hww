@@ -86,7 +86,7 @@
         order by update_time desc
     </select>
 
-    <select id="getScreenList" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera" resultMap="BusiCameraResult">
+    <select id="getActiveList" parameterType="com.yuanqing.project.tiansu.domain.assets.Camera" resultMap="BusiCameraResult">
         <include refid="selectBusiCameraVo"/>
         where
         device_type = 1

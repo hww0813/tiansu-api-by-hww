@@ -146,7 +146,7 @@ public class ClientUserController extends BaseController {
     public TableDataInfo getActiveClient() {
 
         startPage();
-        List<ClientUser> activeClientUser = clientUserService.getActiveClientUser();
+        List<ClientUser> activeClientUser = clientUserService.getActiveClientUser(new ClientUser());
 
         List<ClientUserDto> dtoList = clientUserService.handleClientUserTerminalNum(activeClientUser);
 

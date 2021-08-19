@@ -164,7 +164,7 @@ public class ClientController extends BaseController {
     @ApiOperation(value = "活跃终端列表")
     public TableDataInfo getActiveClient() {
         startPage();
-        List<ClientTerminal> activeTerminal = clientTerminalService.getActiveTerminal();
+        List<ClientTerminal> activeTerminal = clientTerminalService.getActiveTerminal(new ClientTerminal());
 
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(activeTerminal);
 

@@ -149,7 +149,8 @@ public interface ICameraService extends BaseService<Camera, Long> {
      * @param camera
      * @return
      */
-    public List<Camera> getScreenList(Camera camera);
+    public List<Camera> getActiveList(Camera camera);
+
 
 
 }

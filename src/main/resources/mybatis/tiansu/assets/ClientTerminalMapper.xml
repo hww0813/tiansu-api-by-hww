@@ -72,6 +72,49 @@
         </where>
     </select>
 
+    <select id="getActiveTerminal" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal"
+            resultMap="BusiClientTerminalResult">
+        <include refid="selectBusiClientTerminalVo"/>
+        where
+        bct.device_type = 6
+        and bct.ip_address in (
+        SELECT DISTINCT
+        bs.src_ip
+        FROM
+        busi_statistics bs
+        WHERE
+        1=1
+        <choose>
+            <when test="startDate != null and endDate != null">
+                and bs.stamp BETWEEN DATE_FORMAT(#{startDate}, '%y%m%d') and DATE_FORMAT(#{endDate}, '%y%m%d')
+            </when>
+            <otherwise>
+                and bs.stamp BETWEEN DATE_FORMAT(now(), '%y%m%d') and DATE_FORMAT(now(), '%y%m%d')
+            </otherwise>
+        </choose>
+        )
+        <if test="deviceCode != null  and deviceCode != ''">and bct.DEVICE_CODE = #{deviceCode}</if>
+        <if test="deviceName != null  and deviceName != ''">and bct.DEVICE_NAME like concat('%', #{deviceName},
+            '%')
+        </if>
+        <if test="macAddress != null  and macAddress != ''">and bct.MAC_ADDRESS = #{macAddress}</if>
+        <if test="status != null">and bct.STATUS = #{status}</if>
+        <if test="createTime != null ">and bct.CREATE_TIME = #{createTime}</if>
+        <if test="updateTime != null ">and bct.UPDATE_TIME = #{updateTime}</if>
+        <if test="ipAddress != null ">and bct.IP_ADDRESS = #{ipAddress}</if>
+        <if test="sipServerId != null ">and bct.SIP_SERVER_ID = #{sipServerId}</if>
+        <if test="mediaServerId != null ">and bct.MEDIA_SERVER_ID = #{mediaServerId}</if>
+        <if test="userProxyServerId != null ">and bct.USER_PROXY_SERVER_ID = #{userProxyServerId}</if>
+        <if test="deviceType != null  and deviceType != ''">and bct.DEVICE_TYPE = #{deviceType}</if>
+        <if test="domainIp != null ">and bct.DOMAIN_IP = #{domainIp}</if>
+        <if test="domainPort != null ">and bct.DOMAIN_PORT = #{domainPort}</if>
+        <if test="regionId != null ">and bct.REGION = #{regionId}</if>
+        <if test="source != null  and source != ''">and bct.SOURCE = #{source}</if>
+
+    </select>
+
+
+
     <select id="getListWithOrder" resultMap="BusiClientTerminalResult">
         <include refid="selectBusiClientTerminalVo"/>
         <where>
@@ -226,6 +269,7 @@
         from BUSI_CLIENT_TERMINAL
         where device_type = 6
     </select>
+
 
 
     <update id="updateClientTerminal" parameterType="com.yuanqing.project.tiansu.domain.assets.ClientTerminal">

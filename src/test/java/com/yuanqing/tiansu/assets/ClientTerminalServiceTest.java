@@ -46,7 +46,7 @@ public class ClientTerminalServiceTest {
      */
     @Test
     public void getActiveTerminal(){
-        List<ClientTerminal> activeTerminal = clientTerminalService.getActiveTerminal();
+        List<ClientTerminal> activeTerminal = clientTerminalService.getActiveTerminal(new ClientTerminal());
         List<ClientTerminalDto> dtoList = clientTerminalService.handleTerminalUserNum(activeTerminal);
 //        System.out.println(dtoList);
         Assert.assertEquals(1,dtoList.size());

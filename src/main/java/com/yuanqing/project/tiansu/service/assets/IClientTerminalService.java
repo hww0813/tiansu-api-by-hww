@@ -37,9 +37,10 @@ public interface IClientTerminalService extends BaseService<ClientTerminal, Long
 
     /**
      * 获取活跃终端
+     * @param clientTerminal
      * @return
      */
-    List<ClientTerminal> getActiveTerminal();
+    List<ClientTerminal> getActiveTerminal(ClientTerminal clientTerminal);
 
 
     /**

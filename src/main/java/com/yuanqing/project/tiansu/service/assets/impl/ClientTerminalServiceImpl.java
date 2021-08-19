@@ -156,10 +156,8 @@ public class ClientTerminalServiceImpl implements IClientTerminalService {
     }
 
     @Override
-    public List<ClientTerminal> getActiveTerminal() {
-        ClientTerminal clientTerminalFilter = (ClientTerminal) DateUtils.getDayTime(ClientTerminal.class);
-        List<ClientTerminal> list = clientTerminalMapper.getList(clientTerminalFilter);
-        return list;
+    public List<ClientTerminal> getActiveTerminal(ClientTerminal clientTerminal) {
+        return clientTerminalMapper.getActiveTerminal(clientTerminal);
     }
 
 
