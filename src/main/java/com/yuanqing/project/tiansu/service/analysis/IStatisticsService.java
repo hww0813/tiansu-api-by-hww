@@ -5,6 +5,7 @@ import com.yuanqing.framework.web.domain.BaseEntity;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.Statistics;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
+import com.yuanqing.project.tiansu.domain.analysis.dto.CameraVisitDto;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 
@@ -50,7 +51,7 @@ public interface IStatisticsService {
      * @param cameraVisit 过滤条件
      * @return
      */
-    List<CameraVisit> getCameraVisit(List<Camera> cameraList,CameraVisit cameraVisit, String orderStr);
+    List<CameraVisitDto> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr);
 
 
     /**

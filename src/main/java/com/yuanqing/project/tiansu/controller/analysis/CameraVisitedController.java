@@ -9,6 +9,7 @@ import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.Statistics;
+import com.yuanqing.project.tiansu.domain.analysis.dto.CameraVisitDto;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
@@ -78,8 +79,9 @@ public class CameraVisitedController extends BaseController {
 
         macsConfigService.setLowerRegionByCamera(cameraList);
 
-        startPage();
-        List<CameraVisit> cameraVisitList = statisticsService.getCameraVisit(cameraList, cameraVisit, orderStr);
+        List<CameraVisitDto> cameraVisitList = statisticsService.getCameraVisit(cameraList, cameraVisit, orderStr);
+
+
 
         return AjaxResult.success(getDataTable(cameraVisitList,cameraList));
 

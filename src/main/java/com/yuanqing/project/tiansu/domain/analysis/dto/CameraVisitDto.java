@@ -1,8 +1,11 @@
-package com.yuanqing.project.tiansu.domain.analysis;
+package com.yuanqing.project.tiansu.domain.analysis.dto;
 
 import com.yuanqing.framework.web.domain.BaseEntity;
-import com.yuanqing.project.tiansu.domain.assets.base.BaseCamera;
+import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author xucan
@@ -10,7 +13,7 @@ import lombok.Data;
  * @Date 2021-03-08 15:44
  */
 @Data
-public class CameraVisit extends BaseEntity {
+public class CameraVisitDto extends BaseEntity {
 
     private String id;
 
@@ -27,5 +30,7 @@ public class CameraVisit extends BaseEntity {
     private Long visitCnt;
 
     private Long terminalCnt;
+
+    private List<CameraVisit> children = new ArrayList<>();
 
 }

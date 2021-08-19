@@ -3,6 +3,7 @@ package com.yuanqing.project.tiansu.service.analysis.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.DoubleUtils;
+import com.yuanqing.common.utils.IdUtils;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.bean.BeanUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
@@ -12,6 +13,7 @@ import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.Statistics;
 import com.yuanqing.project.tiansu.domain.analysis.TerminalVisit;
 import com.yuanqing.project.tiansu.domain.analysis.VisitedRate;
+import com.yuanqing.project.tiansu.domain.analysis.dto.CameraVisitDto;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
@@ -24,12 +26,12 @@ import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -187,33 +189,64 @@ public class StatisticsServiceImpl implements IStatisticsService {
      * @param cameraList 摄像头集合
      * @return 摄像头被访问对象
      */
-    @Override
-    public List<CameraVisit> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr) {
+        @Override
+        public List<CameraVisitDto> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr) {
 
-        List<String> deviceCodeList = null;
-        List<CameraVisit> cameraVisitList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(cameraList)) {
-            deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
-            cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
-        }
+            List<String> deviceCodeList = null;
+            List<CameraVisit> cameraVisitList = new ArrayList<>();
 
-        cameraVisitList.stream().forEach(f -> {
+            //如果摄像头list 不为空，提取摄像头编码到统计表中查询相关统计数据
             if (!CollectionUtils.isEmpty(cameraList)) {
-                cameraList.stream().forEach(h -> {
-                    if (f.getDeviceCode().equals(h.getDeviceCode())) {
-                        f.setDeviceName(h.getDeviceName());
-                        f.setIpAddress(h.getIpAddress());
-                        f.setRegionName(h.getRegionName());
-                    }
-                });
-            } else {
-                Camera camera = cameraService.findByCode(f.getDeviceCode());
-                f.setDeviceName(camera.getDeviceName());
-                f.setIpAddress(camera.getIpAddress());
-                f.setRegionName(camera.getRegionName());
+                deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
+                cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
             }
-        });
-        return cameraVisitList;
+
+            Map<String,CameraVisitDto> deviceCodeMap = new HashMap<>();
+
+            // 因为统计表中只有摄像头编码信息，所以将查到的摄像头list中的其他信息补充进来
+            cameraVisitList.stream().forEach(f -> {
+                if (!CollectionUtils.isEmpty(cameraList)) {
+                    cameraList.stream().forEach(h -> {
+                        if (f.getDeviceCode().equals(h.getDeviceCode())) {
+                            f.setDeviceName(h.getDeviceName());
+                            f.setIpAddress(h.getIpAddress());
+                            f.setRegionName(h.getRegionName());
+                        }
+                    });
+                } else {
+                    Camera camera = cameraService.findByCode(f.getDeviceCode());
+                    f.setDeviceName(camera.getDeviceName());
+                    f.setIpAddress(camera.getIpAddress());
+                    f.setRegionName(camera.getRegionName());
+                }
+
+                //设置唯一标识，前端展示的时候需要每条数据有一个唯一标识
+                f.setId(IdUtils.simpleUUID());
+
+                //将摄像头列表重新组合，将摄像头编码作为key,将编码相同的放到一起（dto对象的children中）
+                CameraVisitDto cameraVisitDto;
+                if(!deviceCodeMap.containsKey(f.getDeviceCode())){
+                    cameraVisitDto = new CameraVisitDto();
+                    BeanUtils.copyProperties(f,cameraVisitDto);
+                    deviceCodeMap.put(f.getDeviceCode(),cameraVisitDto);
+                }else {
+                    deviceCodeMap.get(f.getDeviceCode()).getChildren().add(f);
+                }
+
+            });
+
+            //将重新组合好的Map 还原成List
+            Set<String> keys = deviceCodeMap.keySet();
+
+            List<CameraVisitDto> cameraVisitDtoList = new ArrayList<>();
+
+            keys.stream().forEach(f ->{
+                CameraVisitDto cameraVisitDto = deviceCodeMap.get(f);
+
+                cameraVisitDtoList.add(cameraVisitDto);
+            });
+
+            return cameraVisitDtoList;
     }
 
     /**
@@ -561,9 +594,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
         condCameraVisit.setstartDate(filters.getString("startDate"));
         condCameraVisit.setendDate(filters.getString("endDate"));
         // TODO: 没有传入排序条件
-        List<CameraVisit> cameraVisitList = this.getCameraVisit(cameraList, condCameraVisit, null);
+        List<CameraVisitDto> cameraVisitList = this.getCameraVisit(cameraList, condCameraVisit, null);
         if (!CollectionUtils.isEmpty(cameraVisitList)) {
-            for (CameraVisit cameraVisit : cameraVisitList) {
+            for (CameraVisitDto cameraVisit : cameraVisitList) {
                 JSONObject jsonObject = new JSONObject();
 
                 jsonObject.put("USERNAME", "");
