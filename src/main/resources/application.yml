@@ -124,6 +124,8 @@ tiansu:
     system-permitCamera: 3000
     #用户许可数
     system-permitUser: 3000
+    #导出sheet行数
+    max-rows: 10000
 
 
 

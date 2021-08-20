@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -574,32 +575,24 @@ public class StatisticsServiceImpl implements IStatisticsService {
     }
 
     @Override
-    public List<JSONObject> getCameraVisitedToReport(JSONObject filters) {
+    public List<JSONObject> getCameraVisitedToReport(CameraVisit cameraVis,Camera camera,String orderStr) {
+
+        List<Camera> cameraList = null;
+
+        cameraList = cameraService.getActiveList(camera);
+
+        macsConfigService.setLowerRegionByCamera(cameraList);
+
+        List<CameraVisitDto> cameraVisitList = getCameraVisit(cameraList, cameraVis, orderStr);
+
+
         List<JSONObject> cameraVisitedObjectList = new ArrayList<>();
 
-        Camera condCamera = new Camera();
-        // TODO: 开始结束时间未生效
-//        condCamera.setstartDate(filters.getString("startDate"));
-//        condCamera.setendDate(filters.getString("endDate"));
-        if (StringUtils.isNotEmpty(filters.getString("cameraIp"))) {
-            condCamera.setIpAddress(IpUtils.ipToLong(filters.getString("cameraIp")));
-        }
-        condCamera.setDeviceCode(filters.getString("cameraCode"));
-        condCamera.setDeviceName(filters.getString("cameraName"));
-        // TODO: 地区查询
-//        condCamera.setRegion();
-        List<Camera> cameraList = cameraService.getList(condCamera);
 
-        CameraVisit condCameraVisit = new CameraVisit();
-        condCameraVisit.setstartDate(filters.getString("startDate"));
-        condCameraVisit.setendDate(filters.getString("endDate"));
-        // TODO: 没有传入排序条件
-        List<CameraVisitDto> cameraVisitList = this.getCameraVisit(cameraList, condCameraVisit, null);
         if (!CollectionUtils.isEmpty(cameraVisitList)) {
             for (CameraVisitDto cameraVisit : cameraVisitList) {
                 JSONObject jsonObject = new JSONObject();
 
-                jsonObject.put("USERNAME", "");
                 if (StringUtils.isNotEmpty(cameraVisit.getDeviceCode())) {
                     jsonObject.put("CAMERA_CODE", cameraVisit.getDeviceCode());
                 } else {
@@ -670,4 +663,66 @@ public class StatisticsServiceImpl implements IStatisticsService {
         }
         return cameraVisitedObjectList;
     }
+
+    @Override
+    public List<JSONObject> getCameraVisitedCntToReport(JSONObject filters) {
+        List<JSONObject> list = new ArrayList<>();
+//        List<OperationBehavior> operList = cameraVisitedMapper.getCameraVisitedCntList(filters);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        for (int i = 0; i < operList.size(); i++) {
+//            JSONObject jsonObject = new JSONObject();
+//            if (operList.get(i).getSrcCode() != null && !operList.get(i).getSrcCode().equals("")) {
+//                jsonObject.put("srcCode", operList.get(i).getSrcCode());
+//            } else {
+//                jsonObject.put("srcCode", "");
+//            }
+//            if (operList.get(i).getSrcIp() != null && !operList.get(i).getSrcIp().equals("")) {
+//                jsonObject.put("srcIp", IpUtils.longToIPv4(operList.get(i).getSrcIp()));
+//            }
+//            if (operList.get(i).getSrcPort() != null && !operList.get(i).getSrcPort().equals("")) {
+//                jsonObject.put("srcPort", operList.get(i).getSrcPort());
+//            }
+//            if (operList.get(i).getSrcMac() != null && !operList.get(i).getSrcMac().equals("")) {
+//                jsonObject.put("srcMac", operList.get(i).getSrcMac());
+//            }
+//            if (operList.get(i).getUsername() != null && !operList.get(i).getUsername().equals("")) {
+//                jsonObject.put("username", operList.get(i).getUsername());
+//            } else {
+//                jsonObject.put("username", "");
+//            }
+//
+//
+//            if (operList.get(i).getUpFlow() != null && operList.get(i).getUpFlow() != 0L) {
+//                jsonObject.put("upFlow", FlowUtil.setFlow(operList.get(i).getUpFlow()));
+//            } else {
+//                jsonObject.put("upFlow", "0");
+//            }
+//            if (operList.get(i).getDownFlow() != null && operList.get(i).getUpFlow() != 0L) {
+//                jsonObject.put("downFlow", FlowUtil.setFlow(operList.get(i).getDownFlow()));
+//            } else {
+//                jsonObject.put("downFlow", "0");
+//            }
+//            if (operList.get(i).getAction() != null && !operList.get(i).getAction().equals("")) {
+//                jsonObject.put("action", operList.get(i).getAction().getLabel());
+//            }
+//            if (operList.get(i).getActionDetail() != null && !operList.get(i).getActionDetail().equals("")) {
+//                jsonObject.put("actionDetail", operList.get(i).getActionDetail().getLabel());
+//            }
+//            if (operList.get(i).getResult() != null && !operList.get(i).getResult().equals("")) {
+//                if ("1".equals(operList.get(i).getResult())) {
+//                    jsonObject.put("result", "成功");
+//                } else if ("0".equals(operList.get(i).getResult())) {
+//                    jsonObject.put("result", "失败");
+//                } else {
+//                    jsonObject.put("result", "未知");
+//                }
+//            } else {
+//                jsonObject.put("result", "未知");
+//            }
+//            jsonObject.put("stamp", formatter.format(operList.get(i).getStamp()));
+//            list.add(jsonObject);
+//        }
+        return list;
+    }
+
 }

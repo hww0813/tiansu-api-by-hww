@@ -1,16 +1,21 @@
 package com.yuanqing.project.tiansu.controller.report;
 
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.common.enums.ActionType;
 import com.yuanqing.common.enums.EventStatusEnum;
 import com.yuanqing.common.utils.*;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.common.utils.spring.SpringContextUtil;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
+import com.yuanqing.project.tiansu.controller.analysis.CameraVisitedController;
+import com.yuanqing.project.tiansu.domain.analysis.CameraVisit;
 import com.yuanqing.project.tiansu.domain.analysis.Statistics;
+import com.yuanqing.project.tiansu.domain.analysis.dto.CameraVisitDto;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
@@ -54,6 +59,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * 摄像头被访问统计报表
@@ -68,6 +75,8 @@ import java.util.*;
 @Api(value = "报表", description = "报表导出")
 public class ReportController extends BaseController {
 
+    @Value("${tiansu.default.max-rows}")
+    private int MAXROWS = 10000;
 
     public static Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
 
@@ -152,8 +161,6 @@ public class ReportController extends BaseController {
     @Resource
     private IStatisticsService statisticsService;
 
-//    @Resource
-//    private CameraVisitedManager cameraVisitedManager;
 //
 //    @Resource
 //    private CameraDirectVisitedManager cameraDirectVisitedManager;
@@ -317,39 +324,31 @@ public class ReportController extends BaseController {
                                @ApiParam("排序") @RequestParam(required = false) String orderType,
                                @ApiParam("排序对象") @RequestParam(required = false) String orderValue,
                                @ApiParam("导出格式") @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-//        JSONObject filters = new JSONObject();
-//        if (stime != null) {
-//            filters.put("startTime", stime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-//        }
-//        if (etime != null) {
-//            filters.put("endTime", etime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-//        }
-//        filters.put("eventSource", eventSource);
-//        filters.put("status", status);
-//        filters.put("eventCategory", eventCategory);
-//        filters.put("eventLevel", eventLevel);
-//        filters.put("clientIp", clientIp);
-//        filters.put("action", action);
-//        filters.put("id", id);
 
         Event event = new Event();
         event.setStartTime(stime);
         event.setEndTime(etime);
         event.setEventSource(eventSource);
-        event.setStatus(Long.parseLong(status));
         event.setEventCategory(eventCategory);
         event.setEventLevel(eventLevel);
-        event.setClientIp(Long.parseLong(clientIp));
         event.setCameraName(cameraName);
-        event.setAction(Long.parseLong(action));
         event.setId(id);
 
+
+        if(StringUtils.isNotEmpty(status)){
+            event.setStatus(Long.parseLong(status));
+        }
+        if(StringUtils.isNotEmpty(clientIp)){
+            event.setClientIp(Long.parseLong(clientIp));
+        }
+        if(StringUtils.isNotEmpty(action)){
+            event.setAction(Long.parseLong(action));
+        }
+
         if (StringUtils.isNotBlank(orderType) && StringUtils.isNotBlank(orderValue)) {
-//            filters.put("orderType", orderValue + " " + orderType);
             event.setOrderType(orderValue + " " + orderType);
         }
-//        String url = alarmHost + "/BusiEvent/listT?";
-//        String result = HttpUtils.sendGet(url, filters);
+
         String result = alarmFeignClient.listT(event, null, null);
         JSONObject resultObj = JSONObject.parseObject(result);
         JSONArray datas = resultObj.getJSONArray("rows");
@@ -465,7 +464,7 @@ public class ReportController extends BaseController {
         macsConfigService.setLowerRegionByCamera(getList);
 
         List<JSONObject> list = new ArrayList<>();
-        SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         getList.stream().forEach(f -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("deviceCode", f.getDeviceCode());
@@ -1831,33 +1830,32 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/camera/visited")
-    public void getAnalysisCameraReport(@ApiParam("开始时间") @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                        @ApiParam("结束时间") @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                                        @ApiParam("客户端IP") @RequestParam(value = "cameraIp", required = false) String cameraIp,
-                                        @ApiParam("区域代码") @RequestParam(value = "region[]", required = false) String[] region,
-                                        @ApiParam("摄像头编码") @RequestParam(value = "cameraCode", required = false) String cameraCode,
-                                        @ApiParam("摄像头名称") @RequestParam(value = "cameraName", required = false) String cameraName,
-                                        @ApiParam("操作类型") @RequestParam(value = "action", required = false) String action,
-                                        @ApiParam("摄像头ID") @RequestParam(value = "cameraId", required = false) String cameraId,
+    public void getAnalysisCameraReport(@ApiParam("动作类型")@RequestParam(value = "action",required = false) Integer action,
+                                        @ApiParam("摄像头IP")@RequestParam(value = "cameraIp",required = false) String cameraIp,
+                                        @ApiParam("摄像头实体")Camera camera,
+                                        @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                        @ApiParam("排序对象")@RequestParam(required = false) String orderValue,
                                         @ApiParam("导出格式") @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
-        JSONObject filters = new JSONObject();
-        if (startDate != null) {
-            filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        CameraVisit cameraVisit = new CameraVisit();
+        cameraVisit.setAction(action);
+
+        cameraVisit.setstartDate(camera.getstartDate());
+        cameraVisit.setendDate(camera.getendDate());
+
+        camera.setIpAddress(IpUtils.ipToLong(cameraIp));
+
+        String orderStr = null;
+        if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
+            orderStr = orderValue + " " + orderType;
         }
-        if (startDate != null) {
-            filters.put("endDate", endDate.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE));
-        }
-        filters.put("cameraIp", cameraIp);
-        filters.put("cameraCode", cameraCode);
-        filters.put("cameraName", cameraName);
-        filters.put("action", action);
-        filters.put("cameraId", cameraId);
-        filters = RegionUtil.setRegion(filters, region);
+
+
+        List<JSONObject> list = statisticsService.getCameraVisitedToReport(cameraVisit,camera,orderStr);
 
         if ("xlsx".equals(format)) {
             try {
-                this.getAnalysisCameraExcelReport(response, filters);
+                this.getAnalysisCameraExcelReport(response, list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1879,7 +1877,6 @@ public class ReportController extends BaseController {
                 //参数
                 Map<String, Object> params = new HashMap<>();
 
-                List<JSONObject> list = statisticsService.getCameraVisitedToReport(filters);
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -1931,23 +1928,27 @@ public class ReportController extends BaseController {
     }
 
 //    @GetMapping(value = "analysis/camera/visit/cnt")
-//    public void getAnalysisCameraReport(@ApiParam("页码数")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-//                                        @ApiParam("页码数")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-//                                        @ApiParam("页码数")@RequestParam(value = "clientId", required = false) Long clientId,
-//                                        @ApiParam("页码数")@RequestParam(value = "cameraId", required = false) Long cameraId,
-//                                        @ApiParam("页码数")@RequestParam(value = "srcIp", required = false) String srcIp,
-//                                        @ApiParam("页码数")@RequestParam(value = "srcCode", required = false) String srcCode,
-//                                        @ApiParam("页码数")@RequestParam(value = "action", required = false) String action,
-//                                        @ApiParam("页码数")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+//    public void getAnalysisCameraReport( @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String  startDate,
+//                                         @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
+//                                         @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) Long clientId,
+//                                         @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) Long cameraId,
+//                                         @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+//                                         @ApiParam("目的设备编码")@RequestParam(value = "deviceCode", required = false) String dstCode,
+//                                         @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+//                                         @ApiParam("源设备编码")@RequestParam(value = "srcCode", required = false) String srcCode,
+//                                         @ApiParam("动作类型")@RequestParam(value = "action", required = false) String action,
+//                                        @ApiParam("格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 //
-//        JSONObject filters = new JSONObject();
-//        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-//        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-//        filters.put("clientId", clientId);
-//        filters.put("cameraId", cameraId);
-//        filters.put("srcIp", srcIp);
-//        filters.put("srcCode", srcCode);
-//        filters.put("action", action);
+//        OperationBehavior operationBehavior = new OperationBehavior();
+//        operationBehavior.setClientId(clientId);
+//        operationBehavior.setCameraId(cameraId);
+//        operationBehavior.setDstCode(srcCode);
+//        operationBehavior.setAction(action);
+//        operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
+//        operationBehavior.setUsername(username);
+//        operationBehavior.setstartDate(startDate);
+//        operationBehavior.setDstCode(dstCode);
+//        operationBehavior.setendDate(endDate);
 //
 //        if ("xlsx".equals(format)) {
 //            try {
@@ -2594,95 +2595,53 @@ public class ReportController extends BaseController {
 //    }
 
     public void getRateClientCntExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("访问率相关终端个数");
-
-        List<String> titles = new ArrayList();
-//        titles.add("设备编号");
-        titles.add("IP地址");
-        titles.add("MAC地址");
-//        titles.add("登陆账号");
-        titles.add("状态");
-        titles.add("最后更新时间");
-        data.setTitles(titles);
-
         List<JSONObject> all = visitRateService.getRateClientCntToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+        reportTemplete("访问率相关终端报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"IP地址", "MAC地址","状态","最后更新时间"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
-//                row.add(j.get("deviceCode"));
                 row.add(j.get("ipAddress"));
                 row.add(j.get("macAddress"));
-//                row.add(j.get("username"));
                 row.add(j.get("status"));
                 row.add(j.get("updateTime"));
-                rows.add(row);
+                dataList.add(row);
             }
-
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "访问率相关终端报表.xlsx", data);
+            return dataList;
+        });
     }
 
     private void getRateVisitCntExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("访问率访问次数列表");
         List<JSONObject> all = visitRateService.getRateVisitCntToReport(filters);
-        List<String> titles = new ArrayList();
-        titles.add("终端IP");
-        titles.add("摄像头IP");
-        titles.add("摄像头编号");
-        titles.add("摄像头名称");
-        titles.add("动作");
-        titles.add("动作详情");
-        titles.add("上行流量");
-        titles.add("下行流量");
-        titles.add("登录账号");
-        titles.add("时间");
-        titles.add("结果");
-        data.setTitles(titles);
+        reportTemplete("访问率访问次数报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"终端IP", "摄像头IP","摄像头编号","摄像头名称","动作","动作详情","登录账号","时间","结果"}));
+            dataList.add(headList);
 
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : all) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("srcIp"));
-            row.add(j.get("dstIp"));
-            row.add(j.get("dstCode"));
-            row.add(j.get("dstDeviceName"));
-            row.add(j.get("action"));
-            row.add(j.get("actionDetail"));
-            row.add(j.get("upFlow"));
-            row.add(j.get("downFlow"));
-            row.add(j.get("username"));
-            row.add(j.get("stamp"));
-            row.add(j.get("result"));
-            rows.add(row);
-        }
-        data.setRows(rows);
-
-        ExportExcelUtils.exportExcel(response, "访问率访问次数报表.xlsx", data);
+            for (JSONObject j : objectList) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("srcIp"));
+                row.add(j.get("dstIp"));
+                row.add(j.get("dstCode"));
+                row.add(j.get("dstDeviceName"));
+                row.add(j.get("action"));
+                row.add(j.get("actionDetail"));
+                row.add(j.get("username"));
+                row.add(j.get("stamp"));
+                row.add(j.get("result"));
+                dataList.add(row);
+            }
+            return dataList;
+        });
     }
 
     public void getRateVisitedCntExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("访问率被访问摄像头个数");
-
-        List<String> titles = new ArrayList();
-        titles.add("设备编号");
-        titles.add("摄像头名称");
-        titles.add("IP地址");
-        titles.add("设备厂商");
-        titles.add("所在地区");
-        titles.add("状态");
-        titles.add("最后更新时间");
-        data.setTitles(titles);
-
         List<JSONObject> all = visitRateService.getRateVisitedCntToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+        reportTemplete("访问率被访问摄像头个数报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"摄像头编号", "摄像头名称","摄像头IP","设备厂商","所在地区","状态","最后更新时间"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("deviceCode"));
                 row.add(j.get("deviceName"));
@@ -2691,33 +2650,19 @@ public class ReportController extends BaseController {
                 row.add(j.get("region"));
                 row.add(j.get("status"));
                 row.add(j.get("updateTime"));
-                rows.add(row);
+                dataList.add(row);
             }
-
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "访问率被访问摄像头个数报表.xlsx", data);
+            return dataList;
+        });
     }
 
     public void getRateCameraCntExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("访问率相关摄像头总数");
-
-        List<String> titles = new ArrayList();
-        titles.add("设备编号");
-        titles.add("摄像头名称");
-        titles.add("IP地址");
-        titles.add("设备厂商");
-        titles.add("所在地区");
-        titles.add("状态");
-        titles.add("最后更新时间");
-        data.setTitles(titles);
-
         List<JSONObject> all = visitRateService.getRateCameraCntToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+        reportTemplete("访问率相关摄像头总数报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"摄像头编号", "摄像头名称","摄像头IP","设备厂商","所在地区","状态","最后更新时间"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("deviceCode"));
                 row.add(j.get("deviceName"));
@@ -2726,38 +2671,28 @@ public class ReportController extends BaseController {
                 row.add(j.get("region"));
                 row.add(j.get("status"));
                 row.add(j.get("updateTime"));
-                rows.add(row);
+                dataList.add(row);
             }
-
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "访问率相关摄像头总数报表.xlsx", data);
+            return dataList;
+        });
     }
 
     private void getAnalysisCameraRelatedClientExcelReport(HttpServletResponse response, List<JSONObject> statisticsList) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("摄像头被访问相关终端");
+        reportTemplete("摄像头被访问相关终端报表.xlsx", response, statisticsList, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"终端IP", "登录用户","访问次数"}));
+            dataList.add(headList);
 
-        List<String> titles = new ArrayList();
-        titles.add("终端IP");
-        titles.add("登录用户");
-        titles.add("访问次数");
-        data.setTitles(titles);
-
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : statisticsList) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("srcIp"));
-            row.add(j.get("username"));
-            row.add(j.get("count"));
-            rows.add(row);
-        }
-        data.setRows(rows);
-
-        ExportExcelUtils.exportExcel(response, "摄像头被访问相关终端报表.xlsx", data);
+            for (JSONObject j : objectList) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("srcIp"));
+                row.add(j.get("username"));
+                row.add(j.get("count"));
+                dataList.add(row);
+            }
+            return dataList;
+        });
     }
-//
+
 //    private void getAnalysisCameraDetailExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
 //        ExcelData data = new ExcelData();
 //        data.setName("摄像头被访问次数");
@@ -2797,198 +2732,125 @@ public class ReportController extends BaseController {
 //        ExportExcelUtils.exportExcel(response, "摄像头被访问次数报表.xlsx", data);
 //    }
 
-    private void getAnalysisCameraExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("摄像头被访问");
-        List<JSONObject> all = statisticsService.getCameraVisitedToReport(filters);
-        List<String> titles = new ArrayList();
-        titles.add("摄像头编号");
-        titles.add("摄像头IP");
-        titles.add("摄像头名称");
-        titles.add("所在地区");
-        titles.add("操作类型");
-        titles.add("被访问次数");
-        titles.add("相关终端数");
-        data.setTitles(titles);
+    private void getAnalysisCameraExcelReport(HttpServletResponse response, List<JSONObject> all) throws Exception {
+        reportTemplete("摄像头被访问报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"摄像头编号", "摄像头IP","摄像头名称", "所在地区", "操作类型","操作次数","相关终端数"}));
+            dataList.add(headList);
 
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : all) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("CAMERA_CODE"));
-            row.add(j.get("CAMERA_IP"));
-            row.add(j.get("CAMERA_NAME"));
-            row.add(j.get("CAMERA_REGION"));
-            row.add(j.get("ACTION"));
-            row.add(j.get("VISITED_CNT"));
-            row.add(j.get("CLIENT_CNT"));
-            rows.add(row);
-        }
-        data.setRows(rows);
-
-        ExportExcelUtils.exportExcel(response, "摄像头被访问报表.xlsx", data);
+            for (JSONObject j : objectList) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("CAMERA_CODE"));
+                row.add(j.get("CAMERA_IP"));
+                row.add(j.get("CAMERA_NAME"));
+                row.add(j.get("CAMERA_REGION"));
+                row.add(j.get("ACTION"));
+                row.add(j.get("VISITED_CNT"));
+                row.add(j.get("CLIENT_CNT"));
+                dataList.add(row);
+            }
+            return dataList;
+        });
     }
 
     private void getAnalysisClientRelatedCameraExcelReport(HttpServletResponse response, List<JSONObject> all) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("终端访问相关摄像头");
+        reportTemplete("终端访问相关摄像头报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"摄像头编号", "摄像头IP","摄像头名称", "所在地区", "被访问次数"}));
+            dataList.add(headList);
 
-        List<String> titles = new ArrayList();
-        titles.add("设备编号");
-        titles.add("名称");
-        titles.add("IP地址");
-        titles.add("所在地区");
-        titles.add("被访问次数");
-        data.setTitles(titles);
-
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("CAMERA_CODE"));
-                row.add(j.get("CAMERA_NAME"));
                 row.add(j.get("CAMERA_IP"));
+                row.add(j.get("CAMERA_NAME"));
                 row.add(j.get("CAMERA_REGION"));
                 row.add(j.get("VISITED_CNT"));
-                rows.add(row);
+                dataList.add(row);
             }
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "终端访问相关摄像头报表.xlsx", data);
+            return dataList;
+        });
     }
 
     private void getAnalysisClientDetailExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("终端访问次数");
-
-        List<String> titles = new ArrayList();
-        titles.add("目的设备编号");
-        titles.add("目的设备IP");
-        titles.add("目的设备端口");
-        titles.add("目的设备MAC");
-        titles.add("目的设备名称");
-        titles.add("上行流量");
-        titles.add("下行流量");
-        titles.add("动作");
-        titles.add("动作详情");
-        titles.add("结果");
-        titles.add("时间");
-        data.setTitles(titles);
-
         List<JSONObject> all = statisticsService.getClientVisitCntToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+        reportTemplete("终端访问次数报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"摄像头编号", "摄像头名称","摄像头IP", "摄像头端口", "动作","动作详情","时间"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("dstCode"));
-                row.add(j.get("dstIp").toString());
-                row.add(j.get("dstPort"));
-                row.add(j.get("dstMac"));
                 row.add(j.get("dstDeviceName"));
-                row.add(j.get("upFlow"));
-                row.add(j.get("downFlow"));
+                row.add(j.get("dstIp"));
+                row.add(j.get("dstPort"));
                 row.add(j.get("action"));
                 row.add(j.get("actionDetail"));
-                row.add(j.get("result"));
                 row.add(j.get("stamp"));
-                rows.add(row);
+                dataList.add(row);
             }
-            data.setRows(rows);
-        }
+            return dataList;
+        });
 
-        ExportExcelUtils.exportExcel(response, "终端访问次数报表.xlsx", data);
     }
 
     private void getAnalysisClientExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("终端访问");
-
-        List<String> titles = new ArrayList();
-        titles.add("终端IP");
-        titles.add("用户名");
-        titles.add("操作类型");
-        titles.add("访问次数");
-        titles.add("相关摄像头数");
-        data.setTitles(titles);
-
         List<JSONObject> all = statisticsService.getClientVisitToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+        reportTemplete("终端访问报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"终端IP", "用户名", "操作类型", "访问次数", "相关摄像头"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("CLIENT_IP"));
                 row.add(j.get("USERNAME"));
                 row.add(j.get("ACTION"));
-                row.add(j.get("VISIT_CNT").toString());
-                row.add(j.get("CAMERA_CNT").toString());
-                rows.add(row);
+                row.add(j.get("VISIT_CNT"));
+                row.add(j.get("CAMERA_CNT"));
+                dataList.add(row);
             }
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "终端访问报表.xlsx", data);
+            return dataList;
+        });
     }
 
     private void rawSignalExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("原始信令");
-
-        List<String> titles = new ArrayList();
-        titles.add("源设备IP");
-//        titles.add("源设备编码");
-        titles.add("目的设备IP");
-        titles.add("目的设备编码");
-        titles.add("时间");
-        titles.add("信令内容");
-        data.setTitles(titles);
-
         List<JSONObject> all = rawSignalService.getAllToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+
+        reportTemplete("原始信令报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"源设备IP", "目的设备IP", "目的设备编码", "内容", "时间"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("srcIp"));
-//                row.add(j.get("fromCode"));
                 row.add(j.get("dstIp"));
                 row.add(j.get("toCode"));
-                row.add(j.get("stamp"));
                 row.add(j.get("content"));
-                rows.add(row);
+                row.add(j.get("stamp"));
+                dataList.add(row);
             }
-            data.setRows(rows);
-        }
+            return dataList;
+        });
 
-        ExportExcelUtils.exportExcel(response, "原始信令报表.xlsx", data);
     }
 
     private void rawNetFlowExcel(HttpServletResponse response, List<JSONObject> list) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("流量列表");
-        List<String> titles = new ArrayList();
-        titles.add("源IP");
-        titles.add("源端口");
-        titles.add("目的IP");
-        titles.add("目的端口");
-        titles.add("包大小");
-        titles.add("包数量");
-        titles.add("时间");
-        data.setTitles(titles);
+        reportTemplete("流量列表报表.xlsx", response, list, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"源IP", "源端口", "目的IP", "目的端口", "包大小","包数量","时间"}));
+            dataList.add(headList);
 
-        List<List<Object>> rows = new ArrayList();
-        for (JSONObject j : list) {
-            List<Object> row = new ArrayList();
-            row.add(j.get("srcIp"));
-            row.add(j.get("srcPort"));
-            row.add(j.get("dstIp"));
-            row.add(j.get("dstPort"));
-            row.add(j.get("packetSize"));
-            row.add(j.get("packetCount"));
-            row.add(j.get("stamp"));
-            rows.add(row);
-        }
-        data.setRows(rows);
+            for (JSONObject j : objectList) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("srcIp"));
+                row.add(j.get("srcPort"));
+                row.add(j.get("dstIp"));
+                row.add(j.get("dstPort"));
+                row.add(j.get("packetSize"));
+                row.add(j.get("packetCount"));
+                row.add(j.get("stamp"));
+                dataList.add(row);
+            }
+            return dataList;
+        });
 
-        ExportExcelUtils.exportExcel(response, "流量列表报表.xlsx", data);
     }
 //
 //    private void remoteRecordExcel(HttpServletResponse response, JSONObject filters) throws Exception {
@@ -3027,62 +2889,31 @@ public class ReportController extends BaseController {
 //    }
 
     public void operationBehaviorSessionExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("行为会话");
-
-        List<String> titles = new ArrayList();
-//        titles.add("源设备编号");
-        titles.add("源设备IP");
-        titles.add("登录帐号");
-//        titles.add("上行流量");
-//        titles.add("下行流量");
-        titles.add("开始时间");
-        titles.add("最近活跃时间");
-        data.setTitles(titles);
-
         List<JSONObject> all = operationBehaviorSessionService.getAllToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+
+        reportTemplete("行为会话报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"源设备IP", "登录帐号", "开始时间", "最近活跃时间"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
-//                row.add(j.get("srcCode"));
                 row.add(j.get("srcIp"));
                 row.add(j.get("username"));
-//                row.add(j.get("upFlow"));
-//                row.add(j.get("downFlow"));
                 row.add(j.get("startTime"));
                 row.add(j.get("activeTime"));
-                rows.add(row);
+                dataList.add(row);
             }
+            return dataList;
+        });
 
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "行为会话报表.xlsx", data);
     }
 
     public void operationBehaviorExcel(HttpServletResponse response, List<JSONObject> all) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("操作行为");
+        reportTemplete("操作行为报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"终端IP", "摄像头IP", "摄像头编号", "摄像头名称", "动作", "动作详细", "登录帐号", "时间", "平台名称"}));
+            dataList.add(headList);
 
-        List<String> titles = new ArrayList();
-        titles.add("终端IP");
-        titles.add("摄像头IP");
-        titles.add("摄像头编号");
-        titles.add("摄像头名称");
-        titles.add("动作");
-        titles.add("动作详细");
-//        titles.add("上行流量");
-//        titles.add("下行流量");
-        titles.add("登录帐号");
-        titles.add("时间");
-        titles.add("平台名称");
-        data.setTitles(titles);
-
-
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("srcIp"));
                 row.add(j.get("dstIp"));
@@ -3090,67 +2921,43 @@ public class ReportController extends BaseController {
                 row.add(j.get("dstDeviceName"));
                 row.add(j.get("action"));
                 row.add(j.get("actionDetail"));
-//                row.add(j.get("upFlow"));
-//                row.add(j.get("downFlow"));
                 row.add(j.get("username"));
                 row.add(j.get("stamp"));
                 row.add(j.get("platformName"));
-                rows.add(row);
+                dataList.add(row);
             }
+            return dataList;
+        });
 
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "操作行为报表.xlsx", data);
     }
 
     public void ServerTreeExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("服务器资源");
-
-        List<String> titles = new ArrayList();
-        titles.add("服务器编号");
-        titles.add("服务器名称");
-        titles.add("服务器IP");
-        titles.add("服务器域名");
-        titles.add("服务器类型");
-        data.setTitles(titles);
-
         List<JSONObject> all = serverTreeService.getAllToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+
+        reportTemplete("服务器资源报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"服务器名称", "服务器IP", "服务器域名", "服务器类型"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
-                row.add(j.get("serverCode"));
                 row.add(j.get("serverName"));
                 row.add(j.get("serverIp"));
                 row.add(j.get("serverDomain"));
                 row.add(j.get("serverType"));
-                rows.add(row);
+                dataList.add(row);
             }
+            return dataList;
+        });
 
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "服务器资源报表.xlsx", data);
     }
 
+
     public void CameraExcel(HttpServletResponse response, List<JSONObject> list) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("摄像头");
+        reportTemplete("摄像头报表.xlsx", response, list, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"设备编号", "IP地址", "摄像头名称", "所在地区", "状态", "首次更新时间"}));
+            dataList.add(headList);
 
-        List<String> titles = new ArrayList();
-        titles.add("设备编号");
-        titles.add("IP地址");
-        titles.add("摄像头名称");
-        titles.add("所在地区");
-        titles.add("状态");
-        titles.add("首次更新时间");
-        data.setTitles(titles);
-
-        if (list.size() > 0) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : list) {
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
                 row.add(j.get("deviceCode"));
                 row.add(j.get("ipAddress"));
@@ -3158,45 +2965,32 @@ public class ReportController extends BaseController {
                 row.add(j.get("regionName"));
                 row.add(j.get("status"));
                 row.add(j.get("updateTime"));
-                rows.add(row);
+                dataList.add(row);
             }
+            return dataList;
+        });
 
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "摄像头报表.xlsx", data);
     }
 
     public void ClientExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("终端");
-
-        List<String> titles = new ArrayList();
-//        titles.add("设备编号");
-        titles.add("IP地址");
-        titles.add("MAC地址");
-        titles.add("用户数");
-        titles.add("状态");
-        titles.add("首次更新时间");
-        data.setTitles(titles);
-
         List<JSONObject> all = clientTerminalService.getAllToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (JSONObject j : all) {
+
+        reportTemplete("终端报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"IP地址", "MAC地址", "用户数", "状态", "首次更新时间"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
-//                row.add(j.get("deviceCode"));
                 row.add(j.get("ipAddress"));
                 row.add(j.get("macAddress"));
                 row.add(j.get("usercnt"));
                 row.add(j.get("status"));
                 row.add(j.get("updateTime"));
-                rows.add(row);
+                dataList.add(row);
             }
-            data.setRows(rows);
-        }
+            return dataList;
+        });
 
-        ExportExcelUtils.exportExcel(response, "终端报表.xlsx", data);
     }
 
     public void ClientUserExcel(HttpServletResponse response, JSONObject filters) throws Exception {
@@ -3228,70 +3022,49 @@ public class ReportController extends BaseController {
     }
 
     public void eventExcel(HttpServletResponse response, JSONArray datas) throws Exception {
-        List<Event> list = datas.toJavaList(Event.class);
-        ExcelData data = new ExcelData();
-        data.setName("告警事件");
+        List<JSONObject> list = datas.toJavaList(JSONObject.class);
 
-        List<String> titles = new ArrayList();
-        titles.add("终端IP");
-        titles.add("摄像头名称");
-        titles.add("事件类型");
-        titles.add("事件来源");
-        titles.add("报警等级");
-        titles.add("操作行为");
-        titles.add("状态");
-        titles.add("时间");
-        data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList();
-        for (Event j : list) {
-            List<Object> row = new ArrayList();
-            row.add(IpUtils.longToIPv4(j.getClientIp()));
-            row.add(j.getCameraName());
-            row.add(j.getEventCategory());
-            row.add(j.getEventSource());
-            row.add(j.getEventLevel());
-            row.add(ActionType.getLabel(j.getAction().toString()));
-            row.add(EventStatusEnum.getLabel(j.getStatus()));
-            row.add(j.getStartTime());
-            rows.add(row);
-        }
+        reportTemplete("告警事件报表.xlsx", response, list, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"终端IP", "摄像头名称", "事件类型", "事件来源", "报警等级", "操作行为","状态","时间"}));
+            dataList.add(headList);
 
-        data.setRows(rows);
+            for (JSONObject j : objectList) {
+                List<Object> row = new ArrayList();
+                row.add(IpUtils.longToIPv4(j.getLong("clientIp")));
+                row.add(j.get("cameraName"));
+                row.add(j.get("eventCategory"));
+                row.add(j.get("eventSource"));
+                row.add(j.get("eventLevel"));
+                row.add(ActionType.getLabel(j.getString("action")));
+                row.add(EventStatusEnum.getLabel(j.getLong("status")));
+                row.add(j.get("startTime"));
+                dataList.add(row);
+            }
+            return dataList;
+        });
 
-        ExportExcelUtils.exportExcel(response, "告警事件报表.xlsx", data);
     }
 
     public void CameraVisitRateExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-        ExcelData data = new ExcelData();
-        data.setName("摄像头访问率");
-
-        List<String> titles = new ArrayList();
-        titles.add("地区名称");
-        titles.add("摄像头数");
-        titles.add("被访问摄像头");
-        titles.add("访问率");
-        titles.add("访问次数");
-        titles.add("终端数");
-        data.setTitles(titles);
-
         List<VisitRate> all = visitRateService.getAllToReport(filters);
-        if (!CollectionUtils.isEmpty(all)) {
-            List<List<Object>> rows = new ArrayList();
-            for (VisitRate visitRate : all) {
+        List<JSONObject> list = all.stream().map(f -> JSONObject.parseObject(JSONObject.toJSONString(f))).collect(Collectors.toList());
+        reportTemplete("访问率统计报表.xlsx", response, list, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"地区名称", "摄像头数", "被访问摄像头", "访问率", "访问次数", "终端数"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
                 List<Object> row = new ArrayList();
-                row.add(visitRate.getCityName());
-                row.add(visitRate.getCameraCnt());
-                row.add(visitRate.getVisitedCnt());
-                row.add(visitRate.getRate());
-                row.add(visitRate.getVisitCnt());
-                row.add(visitRate.getClientCnt());
-                rows.add(row);
+                row.add(j.get("cityName"));
+                row.add(j.get("cameraCnt"));
+                row.add(j.get("visitedCnt"));
+                row.add(j.get("rate"));
+                row.add(j.get("visitCnt"));
+                row.add(j.get("clientCnt"));
+                dataList.add(row);
             }
+            return dataList;
+        });
 
-            data.setRows(rows);
-        }
-
-        ExportExcelUtils.exportExcel(response, "访问率统计报表.xlsx", data);
     }
 
 //    public void selfAuditExcel(HttpServletResponse response, JSONObject filters) throws Exception {
@@ -3380,4 +3153,26 @@ public class ReportController extends BaseController {
 //
 //        ExportExcelUtils.exportExcel(response, "访问失败报表.xlsx", data);
 //    }
+
+
+    private void reportTemplete(String fileName, HttpServletResponse response, List<JSONObject> list, BiFunction<List<List<Object>>, List<JSONObject>, List<List<Object>>> biFunction) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); // .xlsx
+        response.setCharacterEncoding("utf8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "utf-8"));
+
+        //将数据写入sheet页中
+        ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
+
+        List<List<JSONObject>> lists = SplitList.splitList(list, MAXROWS); // 分割的集合
+        for (int i = 1; i <= lists.size(); i++) {
+            List<JSONObject> objectList = lists.get(i - 1);
+            List<List<Object>> dataList = new ArrayList<>();
+            dataList = biFunction.apply(dataList, objectList);
+            WriteSheet writeSheet = EasyExcel.writerSheet(i - 1, "sheet" + i).build();
+            excelWriter.write(dataList, writeSheet);
+        }
+
+        excelWriter.finish();
+        response.flushBuffer();
+    }
 }

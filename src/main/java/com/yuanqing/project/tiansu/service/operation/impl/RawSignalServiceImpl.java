@@ -46,11 +46,12 @@ public class RawSignalServiceImpl implements IRawSignalService {
 
         condRawSignal.setNum(0);
         Integer count = rawSignalMapper.queryCount(condRawSignal);
-        if(count > 1000) {
-            condRawSignal.setSize(1000);
-        } else {
-            condRawSignal.setSize(count);
-        }
+        condRawSignal.setSize(count);
+//        if(count > 1000) {
+//            condRawSignal.setSize(1000);
+//        } else {
+//            condRawSignal.setSize(count);
+//        }
 
         List<JSONObject> reportList = new ArrayList<JSONObject>();
         List<RawSignal> rawSignalList = rawSignalMapper.queryListAll(condRawSignal);
