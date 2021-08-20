@@ -1,8 +1,20 @@
 package com.yuanqing.project.system.controller;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.yuanqing.common.constant.Constants;
+import com.yuanqing.common.exception.CustomException;
+import com.yuanqing.common.exception.user.UserPasswordNotMatchException;
+import com.yuanqing.common.utils.MessageUtils;
+import com.yuanqing.framework.manager.AsyncManager;
+import com.yuanqing.framework.manager.factory.AsyncFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,13 +42,15 @@ import com.yuanqing.project.system.service.ISysPostService;
 import com.yuanqing.project.system.service.ISysRoleService;
 import com.yuanqing.project.system.service.ISysUserService;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 用户信息
  *
  * @author ruoyi
  */
 @RestController
-@RequestMapping("/system/user")
+@RequestMapping("/api/system/user")
 public class SysUserController extends BaseController
 {
     @Autowired
@@ -50,6 +64,10 @@ public class SysUserController extends BaseController
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
 
     /**
      * 获取用户列表
@@ -172,15 +190,31 @@ public class SysUserController extends BaseController
     /**
      * 重置密码
      */
-    @PreAuthorize("@ss.hasPermi('system:user:edit')")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
-    public AjaxResult resetPwd(@RequestBody SysUser user)
+    public AjaxResult resetPwd(@RequestBody SysUser user, HttpServletRequest request)
     {
         userService.checkUserAllowed(user);
-        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
-        user.setUpdateBy(SecurityUtils.getUsername());
-        return toAjax(userService.resetPwd(user));
+        String username = SecurityUtils.getUsername();
+        Authentication authentication;
+        try{
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, user.getOldPwd()));
+        }catch (Exception e){
+            if (e instanceof BadCredentialsException)
+            {
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
+                throw new UserPasswordNotMatchException();
+            }
+            else
+            {
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
+                throw new CustomException(e.getMessage());
+            }
+        }
+        String encryptPassword = SecurityUtils.encryptPassword(user.getPassword());
+
+        return toAjax(userService.resetUserPwd(username,encryptPassword));
     }
 
     /**

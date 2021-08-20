@@ -57,6 +57,9 @@ public class SysUser extends BaseEntity
     /** 密码 */
     private String password;
 
+    /** 旧密码 */
+    private String oldPwd;
+
     /** 盐加密 */
     private String salt;
 
@@ -195,6 +198,14 @@ public class SysUser extends BaseEntity
     public void setAvatar(String avatar)
     {
         this.avatar = avatar;
+    }
+
+    public String getOldPwd() {
+        return oldPwd;
+    }
+
+    public void setOldPwd(String oldPwd) {
+        this.oldPwd = oldPwd;
     }
 
     @JsonProperty
