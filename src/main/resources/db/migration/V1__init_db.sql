@@ -209,8 +209,8 @@ CREATE TABLE `busi_http_perf` (
   `dst_port` varchar(50) DEFAULT NULL COMMENT '目的端口',
   `http_url` varchar(4000) DEFAULT NULL COMMENT '访问地址',
   `http_status` varchar(255) DEFAULT NULL COMMENT '响应状态',
-  `request_parameter` varchar(1000) DEFAULT NULL COMMENT '请求参数',
-  `response_parameter` varchar(1000) DEFAULT NULL COMMENT '响应参数',
+--   `request_parameter` varchar(1000) DEFAULT NULL COMMENT '请求参数',
+--   `response_parameter` varchar(1000) DEFAULT NULL COMMENT '响应参数',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `stamp` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -269,10 +269,10 @@ CREATE TABLE `busi_oper` (
   `CONNECT_TYPE` bigint(20) DEFAULT NULL COMMENT '连接类型1：非直联；2：直联',
   `FILE_URL` varchar(255) DEFAULT NULL COMMENT '回放下载的地址',
   `BIT_RATE` varchar(255) DEFAULT NULL COMMENT '码率',
-  `PROBE_HD_INFO` varchar(255) DEFAULT NULL COMMENT '探针机器码',
-  `OPER_START` datetime DEFAULT NULL COMMENT '动作开始时间',
-  `OPER_END` datetime DEFAULT NULL COMMENT '动作结束时间',
-  `RELATION_OPER_UUID` varchar(255) DEFAULT NULL COMMENT '相关操作行为uuid',
+--   `PROBE_HD_INFO` varchar(255) DEFAULT NULL COMMENT '探针机器码',
+--   `OPER_START` datetime DEFAULT NULL COMMENT '动作开始时间',
+--   `OPER_END` datetime DEFAULT NULL COMMENT '动作结束时间',
+--   `RELATION_OPER_UUID` varchar(255) DEFAULT NULL COMMENT '相关操作行为uuid',
   PRIMARY KEY (`ID`,`STAMP`) USING BTREE,
   KEY `STAMP_INDEX` (`STAMP`) USING BTREE,
   KEY `DST_CODE_INDEX` (`DST_CODE`) USING BTREE,
@@ -518,10 +518,10 @@ CREATE TABLE `busi_oper_t` (
   `CONNECT_TYPE` bigint(20) DEFAULT NULL COMMENT '连接类型1：非直联；2：直联',
   `FILE_URL` varchar(255) DEFAULT NULL COMMENT '回放下载的地址',
   `BIT_RATE` varchar(255) DEFAULT NULL COMMENT '码率',
-  `PROBE_HD_INFO` varchar(255) DEFAULT NULL COMMENT '探针机器码',
-  `OPER_START` datetime DEFAULT NULL COMMENT '动作开始时间',
-  `OPER_END` datetime DEFAULT NULL COMMENT '动作结束时间',
-  `RELATION_OPER_UUID` varchar(255) NOT NULL COMMENT '相关操作行为uuid',
+--   `PROBE_HD_INFO` varchar(255) DEFAULT NULL COMMENT '探针机器码',
+--   `OPER_START` datetime DEFAULT NULL COMMENT '动作开始时间',
+--   `OPER_END` datetime DEFAULT NULL COMMENT '动作结束时间',
+--   `RELATION_OPER_UUID` varchar(255) NOT NULL COMMENT '相关操作行为uuid',
   PRIMARY KEY (`ID`,`STAMP`) USING BTREE,
   KEY `STAMP_INDEX` (`STAMP`) USING BTREE,
   KEY `DST_CODE_INDEX` (`DST_CODE`) USING BTREE,
@@ -1992,6 +1992,342 @@ CREATE TABLE `sys_user_role` (
   `role_id` bigint(20) NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`user_id`,`role_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户和角色关联表';
+
+
+INSERT INTO `sys_config` VALUES (1, '主框架页-默认皮肤样式名称', 'sys.index.skinName', 'skin-blue', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '蓝色 skin-blue、绿色 skin-green、紫色 skin-purple、红色 skin-red、黄色 skin-yellow');
+INSERT INTO `sys_config` VALUES (2, '用户管理-账号初始密码', 'sys.user.initPassword', '123456', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '初始化密码 123456');
+INSERT INTO `sys_config` VALUES (3, '主框架页-侧边栏主题', 'sys.index.sideTheme', 'theme-dark', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '深黑主题theme-dark，浅色主题theme-light，深蓝主题theme-blue');
+INSERT INTO `sys_config` VALUES (4, '账号自助-是否开启用户注册功能', 'sys.account.registerUser', 'false', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '是否开启注册用户功能（true开启，false关闭）');
+INSERT INTO `sys_config` VALUES (5, '用户管理-密码字符范围', 'sys.account.chrtype', '0', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '默认任意字符范围，0任意（密码可以输入任意字符），1数字（密码只能为0-9数字），2英文字母（密码只能为a-z和A-Z字母），3字母和数字（密码必须包含字母，数字）,4字母数字和特殊字符（目前支持的特殊字符包括：~!@#$%^&*()-=_+）');
+INSERT INTO `sys_config` VALUES (6, '用户管理-初始密码修改策略', 'sys.account.initPasswordModify', '0', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '0：初始密码修改策略关闭，没有任何提示，1：提醒用户，如果未修改初始密码，则在登录时就会提醒修改密码对话框');
+INSERT INTO `sys_config` VALUES (7, '用户管理-账号密码更新周期', 'sys.account.passwordValidateDays', '0', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '密码更新周期（填写数字，数据初始化值为0不限制，若修改必须为大于0小于365的正整数），如果超过这个周期登录系统时，则在登录时就会提醒修改密码对话框');
+INSERT INTO `sys_config` VALUES (8, '主框架页-菜单导航显示风格', 'sys.index.menuStyle', 'default', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '菜单导航显示风格（default为左侧导航菜单，topnav为顶部导航菜单）');
+INSERT INTO `sys_config` VALUES (9, '主框架页-是否开启页脚', 'sys.index.ignoreFooter', 'true', 'Y', 'admin', '2021-01-06 17:21:05', '', NULL, '是否开启底部页脚显示（true显示，false隐藏）');
+
+INSERT INTO `sys_dept` VALUES (100, 0, '0', '若依科技', 0, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (101, 100, '0,100', '深圳总公司', 1, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (102, 100, '0,100', '长沙分公司', 2, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (103, 101, '0,100,101', '研发部门', 1, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (104, 101, '0,100,101', '市场部门', 2, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (105, 101, '0,100,101', '测试部门', 3, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (106, 101, '0,100,101', '财务部门', 4, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (107, 101, '0,100,101', '运维部门', 5, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (108, 102, '0,100,102', '市场部门', 1, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+INSERT INTO `sys_dept` VALUES (109, 102, '0,100,102', '财务部门', 2, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2021-01-06 17:21:00', '', NULL);
+
+INSERT INTO `sys_dict_data` VALUES (1, 1, '已确认', '0', 'asset_status', '', '', 'Y', '0', 'admin', '2018-03-16 11:33:00', 'admin', '2018-03-16 11:33:00', '资产状态:已确认');
+INSERT INTO `sys_dict_data` VALUES (2, 2, '新发现', '1', 'asset_status', '', '', 'N', '0', 'admin', '2018-03-16 11:33:00', 'admin', '2018-03-16 11:33:00', '资产状态:新发现');
+INSERT INTO `sys_dict_data` VALUES (3, 1, '播放视频', '0', 'oper_action', NULL, NULL, 'N', '0', 'admin', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (4, 2, '下载视频', '1', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (5, 3, '回放视频', '2', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (6, 4, '控制设备', '3', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (7, 5, '登录', '4', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (8, 6, '退出', '5', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (9, 7, '其他操作', '6', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (10, 8, '订阅', '7', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (11, 9, '通知', '8', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (12, 10, '查询', '9', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (13, 11, '播放失败', '10', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (14, 0, '实时播放', '0', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (15, 1, '回放视频', '1', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (16, 2, '下载视频', '2', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (17, 3, '登录', '3', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (18, 4, '注销', '4', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (19, 5, '查看目录', '5', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (20, 6, '控制向上', '6', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (21, 7, '控制向下', '7', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (22, 8, '控制向左', '8', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (23, 9, '控制向右', '9', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (24, 10, '其他', '10', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (25, 11, '放大', '11', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (26, 12, '缩小', '12', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (27, 13, '警报订阅', '13', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (28, 14, '目录订阅', '14', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (29, 15, '警报通知', '15', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (30, 16, '目录通知', '16', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (31, 17, '警报查询', '17', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (32, 18, '目录查询', '18', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (33, 19, '设备信息查询', '19', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (34, 20, '设备状态查询', '20', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (35, 21, '文件检索', '21', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (36, 22, '播放失败', '22', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (37, 23, '停止播放', '23', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (38, 24, '停止下载', '24', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (39, 25, '停止回放', '25', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (40, 26, '控制左上', '26', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (41, 27, '控制右上', '27', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (42, 28, '控制左下', '28', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (43, 29, '控制右下', '29', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (44, 30, '控制停止', '30', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (45, 0, '其他', '0', 'device_type', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (46, 1, '摄像头', '1', 'device_type', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (47, 2, '中心信令控制服务器', '2', 'device_type', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (48, 3, '代理服务器', '3', 'device_type', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (49, 4, '媒体服务器', '4', 'device_type', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (50, 5, '用户类型', '5', 'device_type', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (51, 6, '终端类型', '6', 'device_type', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (52, 12, '停止', '11', 'oper_action', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (53, 1, '全局黑名单', 'Black', 'ip_global_config', NULL, NULL, 'N', '0', 'admin', '2020-10-22 14:44:54', 'admin', '2020-12-01 15:23:05', NULL);
+INSERT INTO `sys_dict_data` VALUES (54, 2, '全局白名单', 'White', 'ip_global_config', NULL, NULL, 'N', '0', 'admin', '2020-10-22 14:45:06', 'admin', '2020-12-01 15:23:09', NULL);
+INSERT INTO `sys_dict_data` VALUES (55, 3, '自定义设置', 'Closed', 'ip_global_config', NULL, NULL, 'N', '0', 'admin', '2020-10-22 14:45:13', 'admin', '2020-12-01 15:00:46', NULL);
+INSERT INTO `sys_dict_data` VALUES (56, 0, '一般', 'COMMON', 'log_level', NULL, NULL, 'N', '0', 'admin', '2020-11-03 09:37:31', 'admin', '2020-11-03 09:57:25', NULL);
+INSERT INTO `sys_dict_data` VALUES (57, 1, '重要', 'MAJOR', 'log_level', NULL, NULL, 'N', '0', 'admin', '2020-11-03 09:37:37', 'admin', '2020-11-03 09:57:33', NULL);
+INSERT INTO `sys_dict_data` VALUES (58, 3, '严重', 'SERIOUS', 'log_level', NULL, NULL, 'N', '0', 'admin', '2020-11-03 09:37:45', 'admin', '2020-11-03 09:57:42', NULL);
+INSERT INTO `sys_dict_data` VALUES (59, 0, '未知', '0', 'app_watch_status', NULL, NULL, 'N', '0', 'admin', '2020-11-04 09:39:12', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (60, 1, '开启', '1', 'app_watch_status', NULL, NULL, 'N', '0', 'admin', '2020-11-04 09:39:20', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (61, 2, '关闭', '2', 'app_watch_status', NULL, NULL, 'N', '0', 'admin', '2020-11-04 09:39:27', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (62, 1, '播放', '0', 'win_oper_type', NULL, NULL, 'N', '0', 'admin', '2020-11-12 11:31:21', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (63, 2, '下载', '1', 'win_oper_type', NULL, NULL, 'N', '0', 'admin', '2020-11-12 11:31:28', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (64, 1, '回放', '0', 'linux_oper_type', NULL, NULL, 'N', '0', 'admin', '2020-11-12 11:31:58', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (65, 2, '搜索', '1', 'linux_oper_type', NULL, NULL, 'N', '0', 'admin', '2020-11-12 11:32:11', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (66, 1, '生效', '1', 'is_valid', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:48:30', 'admin', '2021-03-25 16:26:03', NULL);
+INSERT INTO `sys_dict_data` VALUES (67, 1, '未生效', '0', 'is_valid', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:48:43', 'admin', '2021-03-25 16:26:06', NULL);
+INSERT INTO `sys_dict_data` VALUES (68, 0, '一般', '一般', 'warn_level', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:50:01', 'admin', '2021-03-25 16:42:54', NULL);
+INSERT INTO `sys_dict_data` VALUES (69, 1, '重要', '重要', 'warn_level', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:50:07', 'admin', '2021-03-25 16:42:59', NULL);
+INSERT INTO `sys_dict_data` VALUES (70, 2, '严重', '严重', 'warn_level', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:50:12', 'admin', '2021-03-25 16:43:05', NULL);
+INSERT INTO `sys_dict_data` VALUES (71, 0, '普通事件', '0', 'event_category', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:51:09', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (72, 1, '控制事件', '1', 'event_category', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:51:17', 'admin', '2021-03-25 16:35:50', NULL);
+INSERT INTO `sys_dict_data` VALUES (73, 2, '敏感事件', '2', 'event_category', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:51:30', 'admin', '2020-11-13 15:51:46', NULL);
+INSERT INTO `sys_dict_data` VALUES (74, 3, '异常事件', '3', 'event_category', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:52:01', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (75, 2, '终端', '1', 'device_type_warn', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:52:48', 'admin', '2021-03-25 16:37:12', NULL);
+INSERT INTO `sys_dict_data` VALUES (76, 1, '不指定', '0', 'device_type_warn', NULL, NULL, 'N', '0', 'admin', '2020-11-13 15:52:54', 'admin', '2021-03-25 16:37:27', NULL);
+INSERT INTO `sys_dict_data` VALUES (77, 1, '播放视频', '0', 'oper_type', NULL, NULL, 'N', '0', 'admin', '2020-11-13 16:36:47', 'admin', '2021-03-25 16:38:09', NULL);
+INSERT INTO `sys_dict_data` VALUES (78, 0, '指定时间', '1', 'date_range', NULL, NULL, 'N', '0', 'admin', '2020-11-13 16:58:32', 'admin', '2021-03-25 15:36:54', NULL);
+INSERT INTO `sys_dict_data` VALUES (79, 1, '全部时间', '0', 'date_range', NULL, NULL, 'N', '0', 'admin', '2020-11-13 16:58:43', 'admin', '2021-03-25 15:36:50', NULL);
+INSERT INTO `sys_dict_data` VALUES (80, 2, '下载视频', '1', 'oper_type', NULL, NULL, 'N', '0', 'admin', '2020-11-19 14:54:51', 'admin', '2021-03-25 16:38:16', NULL);
+INSERT INTO `sys_dict_data` VALUES (81, 3, '回放视频', '2', 'oper_type', NULL, NULL, 'N', '0', 'admin', '2020-11-19 14:55:02', 'admin', '2021-03-25 16:38:37', NULL);
+INSERT INTO `sys_dict_data` VALUES (82, 1, '开启白名单', '0', 'warn_rule', NULL, NULL, 'N', '0', 'admin', '2020-12-01 15:02:56', 'admin', '2021-03-25 16:42:01', NULL);
+INSERT INTO `sys_dict_data` VALUES (83, 2, '关闭黑名单', '1', 'warn_rule', NULL, NULL, 'N', '0', 'admin', '2020-12-01 15:03:04', 'admin', '2021-03-25 16:42:05', NULL);
+INSERT INTO `sys_dict_data` VALUES (84, 1, '开启白名单', '0', 'non_work', NULL, NULL, 'N', '0', 'admin', '2020-12-01 15:04:03', 'admin', '2021-03-25 16:40:45', NULL);
+INSERT INTO `sys_dict_data` VALUES (85, 2, '关闭黑名单', '1', 'non_work', NULL, NULL, 'N', '0', 'admin', '2020-12-01 15:04:09', 'admin', '2021-03-25 16:40:48', NULL);
+INSERT INTO `sys_dict_data` VALUES (86, 1, '开启白名单', '0', 'cross_origin', NULL, NULL, 'N', '0', 'admin', '2020-12-14 10:16:01', 'admin', '2021-03-25 16:41:16', NULL);
+INSERT INTO `sys_dict_data` VALUES (87, 2, '关闭黑名单', '1', 'cross_origin', NULL, NULL, 'N', '0', 'admin', '2020-12-14 10:16:07', 'admin', '2021-03-25 16:41:20', NULL);
+INSERT INTO `sys_dict_data` VALUES (88, 4, '控制设备', '3', 'oper_type', NULL, NULL, 'N', '0', 'admin', '2020-12-18 14:11:48', 'admin', '2021-03-25 16:38:52', NULL);
+INSERT INTO `sys_dict_data` VALUES (89, 5, '登录', '4', 'oper_type', NULL, NULL, 'N', '0', 'admin', '2021-01-04 11:43:24', 'admin', '2021-03-25 16:39:04', NULL);
+INSERT INTO `sys_dict_data` VALUES (90, 6, '退出', '5', 'oper_type', NULL, NULL, 'N', '0', 'admin', '2021-01-04 11:43:35', 'admin', '2021-03-25 16:39:11', NULL);
+INSERT INTO `sys_dict_data` VALUES (91, 7, '其他', '6', 'oper_type', NULL, NULL, 'N', '0', 'admin', '2021-01-04 11:44:26', 'admin', '2021-03-25 16:39:17', NULL);
+INSERT INTO `sys_dict_data` VALUES (92, 0, '是', '0', 'ext_date_range', NULL, NULL, 'N', '0', 'admin', '2020-11-13 16:59:27', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (93, 1, '否', '1', 'ext_date_range', NULL, NULL, 'N', '0', 'admin', '2020-11-13 16:59:31', '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (94, 3, '摄像头', '2', 'device_type_warn', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (95, 4, '服务器', '3', 'device_type_warn', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+INSERT INTO `sys_dict_data` VALUES (96, 1, '开启白名单', '0', 'abnormal_scan', NULL, NULL, 'N', '0', 'admin', '2020-12-01 15:05:10', 'admin', '2021-03-25 16:41:39', NULL);
+INSERT INTO `sys_dict_data` VALUES (97, 2, '关闭黑名单', '1', 'abnormal_scan', NULL, NULL, 'N', '0', 'admin', '2020-12-01 15:05:20', 'admin', '2021-03-25 16:41:43', NULL);
+-- INSERT INTO `sys_dict_data` VALUES (98, 31, '焦点前调', '31', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (99, 32, '焦点后调', '32', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (100, 33, '光圈扩大', '33', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (101, 34, '光圈缩小', '34', 'oper_action_detail', NULL, NULL, 'N', '0', '', NULL, '', NULL, NULL);
+
+INSERT INTO `sys_dict_type` VALUES (1, '用户性别', 'sys_user_sex', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '用户性别列表');
+INSERT INTO `sys_dict_type` VALUES (2, '菜单状态', 'sys_show_hide', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '菜单状态列表');
+INSERT INTO `sys_dict_type` VALUES (3, '系统开关', 'sys_normal_disable', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '系统开关列表');
+INSERT INTO `sys_dict_type` VALUES (4, '任务状态', 'sys_job_status', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '任务状态列表');
+INSERT INTO `sys_dict_type` VALUES (5, '任务分组', 'sys_job_group', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '任务分组列表');
+INSERT INTO `sys_dict_type` VALUES (6, '系统是否', 'sys_yes_no', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '系统是否列表');
+INSERT INTO `sys_dict_type` VALUES (7, '通知类型', 'sys_notice_type', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '通知类型列表');
+INSERT INTO `sys_dict_type` VALUES (8, '通知状态', 'sys_notice_status', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '通知状态列表');
+INSERT INTO `sys_dict_type` VALUES (9, '操作类型', 'sys_oper_type', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '操作类型列表');
+INSERT INTO `sys_dict_type` VALUES (10, '系统状态', 'sys_common_status', '0', 'admin', '2021-01-06 17:21:04', '', NULL, '登录状态列表');
+INSERT INTO `sys_dict_type` VALUES (11, '用户状态', 'asset_status', '0', 'admin', '2021-03-25 16:00:30', '', NULL, '用户状态列表');
+INSERT INTO `sys_dict_type` VALUES (12, '操作行为动作', 'oper_action', '0', 'admin', '2021-03-25 16:01:41', '', NULL, '操作行为动作');
+
+INSERT INTO `sys_job` VALUES (1, '系统默认（无参）', 'DEFAULT', 'ryTask.ryNoParams', '0/10 * * * * ?', '3', '1', '1', 'admin', '2021-01-06 17:21:05', '', NULL, '');
+INSERT INTO `sys_job` VALUES (2, '系统默认（有参）', 'DEFAULT', 'ryTask.ryParams(\'ry\')', '0/15 * * * * ?', '3', '1', '1', 'admin', '2021-01-06 17:21:05', '', NULL, '');
+INSERT INTO `sys_job` VALUES (3, '系统默认（多参）', 'DEFAULT', 'ryTask.ryMultipleParams(\'ry\', true, 2000L, 316.50D, 100)', '0/20 * * * * ?', '3', '1', '1', 'admin', '2021-01-06 17:21:05', '', NULL, '');
+INSERT INTO `sys_job` VALUES (5, '摄像头访问率刷新', 'DEFAULT', 'operationStatisticsController.camera', '0 0 0/1 * * ? ', '1', '0', '0', '', '2021-04-07 13:16:20', '', NULL, '');
+INSERT INTO `sys_job` VALUES (6, '摄像头终端率刷新', 'DEFAULT', 'operationStatisticsController.client', '0 0 0/1 * * ? ', '3', '1', '0', '', '2021-04-07 14:42:02', '', NULL, '');
+INSERT INTO `sys_job` VALUES (7, '摄像头用户率刷新', 'DEFAULT', 'operationStatisticsController.user', '0 0 0/1 * * ? ', '3', '1', '0', '', '2021-04-07 14:43:04', '', NULL, '');
+INSERT INTO `sys_job` VALUES (8, '首页卡片刷新', 'DEFAULT', 'operationStatisticsController.card', '0 0/30 0/1 * * ? ', '3', '1', '0', '', '2021-04-07 14:47:07', '', NULL, '');
+
+INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 1, 'system', NULL, 1, 'M', '0', '0', '', 'system', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '系统管理目录');
+INSERT INTO `sys_menu` VALUES (2, '系统监控', 0, 2, 'monitor', NULL, 1, 'M', '0', '0', '', 'monitor', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '系统监控目录');
+INSERT INTO `sys_menu` VALUES (3, '系统工具', 0, 3, 'tool', NULL, 1, 'M', '0', '0', '', 'tool', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '系统工具目录');
+INSERT INTO `sys_menu` VALUES (4, '若依官网', 0, 4, 'http://ruoyi.vip', NULL, 0, 'M', '0', '0', '', 'guide', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '若依官网地址');
+INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', 1, 'C', '0', '0', 'system:user:list', 'user', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '用户管理菜单');
+INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', 1, 'C', '0', '0', 'system:role:list', 'peoples', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '角色管理菜单');
+INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', 1, 'C', '0', '0', 'system:menu:list', 'tree-table', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '菜单管理菜单');
+INSERT INTO `sys_menu` VALUES (103, '部门管理', 1, 4, 'dept', 'system/dept/index', 1, 'C', '0', '0', 'system:dept:list', 'tree', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '部门管理菜单');
+INSERT INTO `sys_menu` VALUES (104, '岗位管理', 1, 5, 'post', 'system/post/index', 1, 'C', '0', '0', 'system:post:list', 'post', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '岗位管理菜单');
+INSERT INTO `sys_menu` VALUES (105, '字典管理', 1, 6, 'dict', 'system/dict/index', 1, 'C', '0', '0', 'system:dict:list', 'dict', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '字典管理菜单');
+INSERT INTO `sys_menu` VALUES (106, '参数设置', 1, 7, 'config', 'system/config/index', 1, 'C', '0', '0', 'system:config:list', 'edit', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '参数设置菜单');
+INSERT INTO `sys_menu` VALUES (107, '通知公告', 1, 8, 'notice', 'system/notice/index', 1, 'C', '0', '0', 'system:notice:list', 'message', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '通知公告菜单');
+INSERT INTO `sys_menu` VALUES (108, '日志管理', 1, 9, 'log', 'system/log/index', 1, 'M', '0', '0', '', 'log', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '日志管理菜单');
+INSERT INTO `sys_menu` VALUES (109, '在线用户', 2, 1, 'online', 'monitor/online/index', 1, 'C', '0', '0', 'monitor:online:list', 'online', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '在线用户菜单');
+INSERT INTO `sys_menu` VALUES (110, '定时任务', 2, 2, 'job', 'monitor/job/index', 1, 'C', '0', '0', 'monitor:job:list', 'job', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '定时任务菜单');
+INSERT INTO `sys_menu` VALUES (111, '数据监控', 2, 3, 'druid', 'monitor/druid/index', 1, 'C', '0', '0', 'monitor:druid:list', 'druid', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '数据监控菜单');
+INSERT INTO `sys_menu` VALUES (112, '服务监控', 2, 4, 'server', 'monitor/server/index', 1, 'C', '0', '0', 'monitor:server:list', 'server', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '服务监控菜单');
+INSERT INTO `sys_menu` VALUES (113, '表单构建', 3, 1, 'build', 'tool/build/index', 1, 'C', '0', '0', 'tool:build:list', 'build', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '表单构建菜单');
+INSERT INTO `sys_menu` VALUES (114, '代码生成', 3, 2, 'gen', 'tool/gen/index', 1, 'C', '0', '0', 'tool:gen:list', 'code', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '代码生成菜单');
+INSERT INTO `sys_menu` VALUES (115, '系统接口', 3, 3, 'swagger', 'tool/swagger/index', 1, 'C', '0', '0', 'tool:swagger:list', 'swagger', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '系统接口菜单');
+INSERT INTO `sys_menu` VALUES (500, '操作日志', 108, 1, 'operlog', 'monitor/operlog/index', 1, 'C', '0', '0', 'monitor:operlog:list', 'form', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '操作日志菜单');
+INSERT INTO `sys_menu` VALUES (501, '登录日志', 108, 2, 'logininfor', 'monitor/logininfor/index', 1, 'C', '0', '0', 'monitor:logininfor:list', 'logininfor', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '登录日志菜单');
+INSERT INTO `sys_menu` VALUES (1001, '用户查询', 100, 1, '', '', 1, 'F', '0', '0', 'system:user:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1002, '用户新增', 100, 2, '', '', 1, 'F', '0', '0', 'system:user:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1003, '用户修改', 100, 3, '', '', 1, 'F', '0', '0', 'system:user:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1004, '用户删除', 100, 4, '', '', 1, 'F', '0', '0', 'system:user:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1005, '用户导出', 100, 5, '', '', 1, 'F', '0', '0', 'system:user:export', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1006, '用户导入', 100, 6, '', '', 1, 'F', '0', '0', 'system:user:import', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1007, '重置密码', 100, 7, '', '', 1, 'F', '0', '0', 'system:user:resetPwd', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1008, '角色查询', 101, 1, '', '', 1, 'F', '0', '0', 'system:role:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1009, '角色新增', 101, 2, '', '', 1, 'F', '0', '0', 'system:role:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1010, '角色修改', 101, 3, '', '', 1, 'F', '0', '0', 'system:role:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1011, '角色删除', 101, 4, '', '', 1, 'F', '0', '0', 'system:role:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1012, '角色导出', 101, 5, '', '', 1, 'F', '0', '0', 'system:role:export', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1013, '菜单查询', 102, 1, '', '', 1, 'F', '0', '0', 'system:menu:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1014, '菜单新增', 102, 2, '', '', 1, 'F', '0', '0', 'system:menu:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1015, '菜单修改', 102, 3, '', '', 1, 'F', '0', '0', 'system:menu:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1016, '菜单删除', 102, 4, '', '', 1, 'F', '0', '0', 'system:menu:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1017, '部门查询', 103, 1, '', '', 1, 'F', '0', '0', 'system:dept:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1018, '部门新增', 103, 2, '', '', 1, 'F', '0', '0', 'system:dept:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1019, '部门修改', 103, 3, '', '', 1, 'F', '0', '0', 'system:dept:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1020, '部门删除', 103, 4, '', '', 1, 'F', '0', '0', 'system:dept:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1021, '岗位查询', 104, 1, '', '', 1, 'F', '0', '0', 'system:post:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1022, '岗位新增', 104, 2, '', '', 1, 'F', '0', '0', 'system:post:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1023, '岗位修改', 104, 3, '', '', 1, 'F', '0', '0', 'system:post:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1024, '岗位删除', 104, 4, '', '', 1, 'F', '0', '0', 'system:post:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1025, '岗位导出', 104, 5, '', '', 1, 'F', '0', '0', 'system:post:export', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1026, '字典查询', 105, 1, '#', '', 1, 'F', '0', '0', 'system:dict:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1027, '字典新增', 105, 2, '#', '', 1, 'F', '0', '0', 'system:dict:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1028, '字典修改', 105, 3, '#', '', 1, 'F', '0', '0', 'system:dict:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1029, '字典删除', 105, 4, '#', '', 1, 'F', '0', '0', 'system:dict:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1030, '字典导出', 105, 5, '#', '', 1, 'F', '0', '0', 'system:dict:export', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1031, '参数查询', 106, 1, '#', '', 1, 'F', '0', '0', 'system:config:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1032, '参数新增', 106, 2, '#', '', 1, 'F', '0', '0', 'system:config:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1033, '参数修改', 106, 3, '#', '', 1, 'F', '0', '0', 'system:config:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1034, '参数删除', 106, 4, '#', '', 1, 'F', '0', '0', 'system:config:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1035, '参数导出', 106, 5, '#', '', 1, 'F', '0', '0', 'system:config:export', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1036, '公告查询', 107, 1, '#', '', 1, 'F', '0', '0', 'system:notice:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1037, '公告新增', 107, 2, '#', '', 1, 'F', '0', '0', 'system:notice:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1038, '公告修改', 107, 3, '#', '', 1, 'F', '0', '0', 'system:notice:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1039, '公告删除', 107, 4, '#', '', 1, 'F', '0', '0', 'system:notice:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1040, '操作查询', 500, 1, '#', '', 1, 'F', '0', '0', 'monitor:operlog:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1041, '操作删除', 500, 2, '#', '', 1, 'F', '0', '0', 'monitor:operlog:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1042, '日志导出', 500, 4, '#', '', 1, 'F', '0', '0', 'monitor:operlog:export', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1043, '登录查询', 501, 1, '#', '', 1, 'F', '0', '0', 'monitor:logininfor:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1044, '登录删除', 501, 2, '#', '', 1, 'F', '0', '0', 'monitor:logininfor:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1045, '日志导出', 501, 3, '#', '', 1, 'F', '0', '0', 'monitor:logininfor:export', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1046, '在线查询', 109, 1, '#', '', 1, 'F', '0', '0', 'monitor:online:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1047, '批量强退', 109, 2, '#', '', 1, 'F', '0', '0', 'monitor:online:batchLogout', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1048, '单条强退', 109, 3, '#', '', 1, 'F', '0', '0', 'monitor:online:forceLogout', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1049, '任务查询', 110, 1, '#', '', 1, 'F', '0', '0', 'monitor:job:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1050, '任务新增', 110, 2, '#', '', 1, 'F', '0', '0', 'monitor:job:add', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1051, '任务修改', 110, 3, '#', '', 1, 'F', '0', '0', 'monitor:job:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1052, '任务删除', 110, 4, '#', '', 1, 'F', '0', '0', 'monitor:job:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1053, '状态修改', 110, 5, '#', '', 1, 'F', '0', '0', 'monitor:job:changeStatus', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1054, '任务导出', 110, 7, '#', '', 1, 'F', '0', '0', 'monitor:job:export', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1055, '生成查询', 114, 1, '#', '', 1, 'F', '0', '0', 'tool:gen:query', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1056, '生成修改', 114, 2, '#', '', 1, 'F', '0', '0', 'tool:gen:edit', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1057, '生成删除', 114, 3, '#', '', 1, 'F', '0', '0', 'tool:gen:remove', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1058, '导入代码', 114, 2, '#', '', 1, 'F', '0', '0', 'tool:gen:import', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1059, '预览代码', 114, 4, '#', '', 1, 'F', '0', '0', 'tool:gen:preview', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+INSERT INTO `sys_menu` VALUES (1060, '生成代码', 114, 5, '#', '', 1, 'F', '0', '0', 'tool:gen:code', '#', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '');
+
+INSERT INTO `sys_post` VALUES (1, 'ceo', '董事长', 1, '0', 'admin', '2021-01-06 17:21:01', '', NULL, '');
+INSERT INTO `sys_post` VALUES (2, 'se', '项目经理', 2, '0', 'admin', '2021-01-06 17:21:01', '', NULL, '');
+INSERT INTO `sys_post` VALUES (3, 'hr', '人力资源', 3, '0', 'admin', '2021-01-06 17:21:01', '', NULL, '');
+INSERT INTO `sys_post` VALUES (4, 'user', '普通员工', 4, '0', 'admin', '2021-01-06 17:21:01', '', NULL, '');
+
+INSERT INTO `sys_role_dept` VALUES (2, 100);
+INSERT INTO `sys_role_dept` VALUES (2, 101);
+INSERT INTO `sys_role_dept` VALUES (2, 105);
+
+INSERT INTO `sys_role_menu` VALUES (2, 1);
+INSERT INTO `sys_role_menu` VALUES (2, 2);
+INSERT INTO `sys_role_menu` VALUES (2, 3);
+INSERT INTO `sys_role_menu` VALUES (2, 4);
+INSERT INTO `sys_role_menu` VALUES (2, 100);
+INSERT INTO `sys_role_menu` VALUES (2, 101);
+INSERT INTO `sys_role_menu` VALUES (2, 102);
+INSERT INTO `sys_role_menu` VALUES (2, 103);
+INSERT INTO `sys_role_menu` VALUES (2, 104);
+INSERT INTO `sys_role_menu` VALUES (2, 105);
+INSERT INTO `sys_role_menu` VALUES (2, 106);
+INSERT INTO `sys_role_menu` VALUES (2, 107);
+INSERT INTO `sys_role_menu` VALUES (2, 108);
+INSERT INTO `sys_role_menu` VALUES (2, 109);
+INSERT INTO `sys_role_menu` VALUES (2, 110);
+INSERT INTO `sys_role_menu` VALUES (2, 111);
+INSERT INTO `sys_role_menu` VALUES (2, 112);
+INSERT INTO `sys_role_menu` VALUES (2, 113);
+INSERT INTO `sys_role_menu` VALUES (2, 114);
+INSERT INTO `sys_role_menu` VALUES (2, 115);
+INSERT INTO `sys_role_menu` VALUES (2, 116);
+INSERT INTO `sys_role_menu` VALUES (2, 500);
+INSERT INTO `sys_role_menu` VALUES (2, 501);
+INSERT INTO `sys_role_menu` VALUES (2, 1000);
+INSERT INTO `sys_role_menu` VALUES (2, 1001);
+INSERT INTO `sys_role_menu` VALUES (2, 1002);
+INSERT INTO `sys_role_menu` VALUES (2, 1003);
+INSERT INTO `sys_role_menu` VALUES (2, 1004);
+INSERT INTO `sys_role_menu` VALUES (2, 1005);
+INSERT INTO `sys_role_menu` VALUES (2, 1006);
+INSERT INTO `sys_role_menu` VALUES (2, 1007);
+INSERT INTO `sys_role_menu` VALUES (2, 1008);
+INSERT INTO `sys_role_menu` VALUES (2, 1009);
+INSERT INTO `sys_role_menu` VALUES (2, 1010);
+INSERT INTO `sys_role_menu` VALUES (2, 1011);
+INSERT INTO `sys_role_menu` VALUES (2, 1012);
+INSERT INTO `sys_role_menu` VALUES (2, 1013);
+INSERT INTO `sys_role_menu` VALUES (2, 1014);
+INSERT INTO `sys_role_menu` VALUES (2, 1015);
+INSERT INTO `sys_role_menu` VALUES (2, 1016);
+INSERT INTO `sys_role_menu` VALUES (2, 1017);
+INSERT INTO `sys_role_menu` VALUES (2, 1018);
+INSERT INTO `sys_role_menu` VALUES (2, 1019);
+INSERT INTO `sys_role_menu` VALUES (2, 1020);
+INSERT INTO `sys_role_menu` VALUES (2, 1021);
+INSERT INTO `sys_role_menu` VALUES (2, 1022);
+INSERT INTO `sys_role_menu` VALUES (2, 1023);
+INSERT INTO `sys_role_menu` VALUES (2, 1024);
+INSERT INTO `sys_role_menu` VALUES (2, 1025);
+INSERT INTO `sys_role_menu` VALUES (2, 1026);
+INSERT INTO `sys_role_menu` VALUES (2, 1027);
+INSERT INTO `sys_role_menu` VALUES (2, 1028);
+INSERT INTO `sys_role_menu` VALUES (2, 1029);
+INSERT INTO `sys_role_menu` VALUES (2, 1030);
+INSERT INTO `sys_role_menu` VALUES (2, 1031);
+INSERT INTO `sys_role_menu` VALUES (2, 1032);
+INSERT INTO `sys_role_menu` VALUES (2, 1033);
+INSERT INTO `sys_role_menu` VALUES (2, 1034);
+INSERT INTO `sys_role_menu` VALUES (2, 1035);
+INSERT INTO `sys_role_menu` VALUES (2, 1036);
+INSERT INTO `sys_role_menu` VALUES (2, 1037);
+INSERT INTO `sys_role_menu` VALUES (2, 1038);
+INSERT INTO `sys_role_menu` VALUES (2, 1039);
+INSERT INTO `sys_role_menu` VALUES (2, 1040);
+INSERT INTO `sys_role_menu` VALUES (2, 1041);
+INSERT INTO `sys_role_menu` VALUES (2, 1042);
+INSERT INTO `sys_role_menu` VALUES (2, 1043);
+INSERT INTO `sys_role_menu` VALUES (2, 1044);
+INSERT INTO `sys_role_menu` VALUES (2, 1045);
+INSERT INTO `sys_role_menu` VALUES (2, 1046);
+INSERT INTO `sys_role_menu` VALUES (2, 1047);
+INSERT INTO `sys_role_menu` VALUES (2, 1048);
+INSERT INTO `sys_role_menu` VALUES (2, 1049);
+INSERT INTO `sys_role_menu` VALUES (2, 1050);
+INSERT INTO `sys_role_menu` VALUES (2, 1051);
+INSERT INTO `sys_role_menu` VALUES (2, 1052);
+INSERT INTO `sys_role_menu` VALUES (2, 1053);
+INSERT INTO `sys_role_menu` VALUES (2, 1054);
+INSERT INTO `sys_role_menu` VALUES (2, 1055);
+INSERT INTO `sys_role_menu` VALUES (2, 1056);
+INSERT INTO `sys_role_menu` VALUES (2, 1057);
+INSERT INTO `sys_role_menu` VALUES (2, 1058);
+INSERT INTO `sys_role_menu` VALUES (2, 1059);
+INSERT INTO `sys_role_menu` VALUES (2, 1060);
+INSERT INTO `sys_role_menu` VALUES (2, 1061);
+
+INSERT INTO `sys_role` VALUES (1, '超级管理员', 'admin', 1, '1', '0', '0', 'admin', '2021-01-06 17:21:01', '', NULL, '超级管理员');
+INSERT INTO `sys_role` VALUES (2, '普通角色', 'common', 2, '2', '0', '0', 'admin', '2021-01-06 17:21:01', '', NULL, '普通角色');
+
+INSERT INTO `sys_user_post` VALUES (1, 1);
+INSERT INTO `sys_user_post` VALUES (2, 2);
+
+INSERT INTO `sys_user_role` VALUES (1, 1);
+INSERT INTO `sys_user_role` VALUES (2, 2);
+
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2018-03-16 11:33:00', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '管理员');
+INSERT INTO `sys_user` VALUES (2, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2018-03-16 11:33:00', 'admin', '2018-03-16 11:33:00', 'admin', '2020-05-12 20:24:26', '测试员1');
+
 
 -- ----------------------------
 -- Procedure structure for AUTO_ADD_PARTITION

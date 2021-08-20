@@ -6,6 +6,6 @@
 
 ALTER TABLE `itms`.`busi_http_perf`
 ADD COLUMN `request_parameter` varchar(1000) NULL COMMENT '请求参数' AFTER `http_status`,
-ADD COLUMN `response_parameter` varchar(1000)  NULL COMMENT '响应参数' AFTER `request_parameter`,
+ADD COLUMN `response_parameter` varchar(1000)  NULL COMMENT '响应参数' AFTER `request_parameter`
 
 

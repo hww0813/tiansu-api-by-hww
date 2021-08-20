@@ -7,6 +7,7 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.yuanqing.common.constant.ScheduleConstants;
@@ -23,6 +24,7 @@ import com.yuanqing.project.monitor.service.ISysJobService;
  * @author ruoyi
  */
 @Service
+@DependsOn("flyWayConfig")
 public class SysJobServiceImpl implements ISysJobService
 {
     @Autowired
