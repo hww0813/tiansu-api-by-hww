@@ -97,6 +97,8 @@ public class Event implements Serializable {
     //排序
     private String orderType;
 
+    private long count;
+
 
     public Long getId() {
         return id;
@@ -240,6 +242,14 @@ public class Event implements Serializable {
 
     public void setOrderType(String orderType) {
         this.orderType = orderType;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
     @Override
