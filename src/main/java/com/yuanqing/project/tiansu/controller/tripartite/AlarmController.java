@@ -76,7 +76,7 @@ public class AlarmController {
                                        @ApiParam("天数")@RequestParam(value = "days") Integer days) throws ExecutionException, InterruptedException {
         JSONObject filters = new JSONObject();
         filters.put("username", username);
-        
+
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String startTime = now.minus(days, ChronoUnit.DAYS).format(dtf);
@@ -100,12 +100,19 @@ public class AlarmController {
 
         Integer workTimeNum = operationBehaviorMapper.getOperNumByTime(startStr, endStr);
         Integer closeingTimeNum = operationBehaviorMapper.getOperNumByTime(endStr, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        Integer preTimeNum = operationBehaviorMapper.getOperNumByTime(getTodayStartTime(), startStr);
+
         if (workTimeNum != 0) {
-            double ratio = closeingTimeNum * 0.1 / workTimeNum;
+            double ratio = (preTimeNum + closeingTimeNum) * 1.0 / workTimeNum;
             return AjaxResult.success(ratio);
         } else {
             return AjaxResult.success(0);
         }
+    }
+
+    private String getTodayStartTime() {
+        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
+        return formater.format(new Date())+ " 00:00:00";
     }
 
 }
