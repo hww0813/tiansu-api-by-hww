@@ -102,6 +102,16 @@ public class ClientController extends BaseController {
         return AjaxResult.success(getDataTable(clientTerminalDtoList, list));
     }
 
+    @GetMapping("/getByClientId")
+    @ApiOperation(value = "根据告警事件关", httpMethod = "GET")
+    public AjaxResult getByclientId( @ApiParam("ID")@RequestParam(value = "id", required = false) Long id) {
+        Client client = clientService.findById(id);
+        List<Client> list = new ArrayList<>();
+        list.add(client);
+        return AjaxResult.success(list);
+    }
+
+
     @GetMapping("/clientList")
     @ApiOperation(value = "获取客户端列表", httpMethod = "GET")
     public AjaxResult getAll(@ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
