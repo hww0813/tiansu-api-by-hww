@@ -56,6 +56,9 @@ public class EventManagerImpl implements EventManager {
         if(data.containsKey("startTime")){
             data.put("startTime",LocalDateTime.parse(data.getString("startTime"),df));
         }
+        if (data.containsKey("endTime")) {
+            data.put("endTime",LocalDateTime.parse(data.getString("endTime"),df));
+        }
         Event event = data.toJavaObject(Event.class);
         return event;
     }
