@@ -1,6 +1,8 @@
 package com.yuanqing.project.tiansu.service.analysis.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.enums.ActionDetailType;
+import com.yuanqing.common.enums.ActionType;
 import com.yuanqing.common.utils.DateUtils;
 import com.yuanqing.common.utils.DoubleUtils;
 import com.yuanqing.common.utils.IdUtils;
@@ -19,6 +21,7 @@ import com.yuanqing.project.tiansu.domain.assets.ClientTerminal;
 import com.yuanqing.project.tiansu.domain.macs.MacsRegion;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.mapper.analysis.StatisticsMapper;
+import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import com.yuanqing.project.tiansu.service.assets.IClientTerminalService;
@@ -30,7 +33,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,6 +63,11 @@ public class StatisticsServiceImpl implements IStatisticsService {
     @Autowired
     private StatisticsMapper statisticsMapper;
 
+    @Resource
+    private OperationBehaviorMapper operationBehaviorMapper;
+
+    @Autowired
+    private IStatisticsService statisticsService;
 
     @Override
     public List<Statistics> getList(Statistics statistics) {
@@ -118,8 +128,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
                 filter = DateUtils.getMonth();
                 break;
             case "all":
-                filter.put("startDate",null);
-                filter.put("endDate",null);
+                filter.put("startDate", null);
+                filter.put("endDate", null);
                 break;
         }
 
@@ -169,7 +179,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
                         rate = ((double) visitedRate.getVisitedCamera() / (double) visitedRate.getAllCount());
                     }
 
-                    visited.put("rate", DoubleUtils.roundOff((rate * 100),2) + "%");
+                    visited.put("rate", DoubleUtils.roundOff((rate * 100), 2) + "%");
                     rateList.add(visited);
 
                 });
@@ -190,64 +200,64 @@ public class StatisticsServiceImpl implements IStatisticsService {
      * @param cameraList 摄像头集合
      * @return 摄像头被访问对象
      */
-        @Override
-        public List<CameraVisitDto> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr) {
+    @Override
+    public List<CameraVisitDto> getCameraVisit(List<Camera> cameraList, CameraVisit cameraVisit, String orderStr) {
 
-            List<String> deviceCodeList = null;
-            List<CameraVisit> cameraVisitList = new ArrayList<>();
+        List<String> deviceCodeList = null;
+        List<CameraVisit> cameraVisitList = new ArrayList<>();
 
-            //如果摄像头list 不为空，提取摄像头编码到统计表中查询相关统计数据
+        //如果摄像头list 不为空，提取摄像头编码到统计表中查询相关统计数据
+        if (!CollectionUtils.isEmpty(cameraList)) {
+            deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
+            cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
+        }
+
+        Map<String, CameraVisitDto> deviceCodeMap = new HashMap<>();
+
+        // 因为统计表中只有摄像头编码信息，所以将查到的摄像头list中的其他信息补充进来
+        cameraVisitList.stream().forEach(f -> {
             if (!CollectionUtils.isEmpty(cameraList)) {
-                deviceCodeList = cameraList.stream().map(f -> f.getDeviceCode()).collect(Collectors.toList());
-                cameraVisitList = statisticsMapper.getCameraVisit(deviceCodeList, cameraVisit, orderStr);
+                cameraList.stream().forEach(h -> {
+                    if (f.getDeviceCode().equals(h.getDeviceCode())) {
+                        f.setDeviceName(h.getDeviceName());
+                        f.setIpAddress(h.getIpAddress());
+                        f.setRegionName(h.getRegionName());
+                    }
+                });
+            } else {
+                Camera camera = cameraService.findByCode(f.getDeviceCode());
+                f.setDeviceName(camera.getDeviceName());
+                f.setIpAddress(camera.getIpAddress());
+                f.setRegionName(camera.getRegionName());
             }
 
-            Map<String,CameraVisitDto> deviceCodeMap = new HashMap<>();
+            //设置唯一标识，前端展示的时候需要每条数据有一个唯一标识
+            f.setId(IdUtils.simpleUUID());
 
-            // 因为统计表中只有摄像头编码信息，所以将查到的摄像头list中的其他信息补充进来
-            cameraVisitList.stream().forEach(f -> {
-                if (!CollectionUtils.isEmpty(cameraList)) {
-                    cameraList.stream().forEach(h -> {
-                        if (f.getDeviceCode().equals(h.getDeviceCode())) {
-                            f.setDeviceName(h.getDeviceName());
-                            f.setIpAddress(h.getIpAddress());
-                            f.setRegionName(h.getRegionName());
-                        }
-                    });
-                } else {
-                    Camera camera = cameraService.findByCode(f.getDeviceCode());
-                    f.setDeviceName(camera.getDeviceName());
-                    f.setIpAddress(camera.getIpAddress());
-                    f.setRegionName(camera.getRegionName());
-                }
+            //将摄像头列表重新组合，将摄像头编码作为key,将编码相同的放到一起（dto对象的children中）
+            CameraVisitDto cameraVisitDto;
+            if (!deviceCodeMap.containsKey(f.getDeviceCode())) {
+                cameraVisitDto = new CameraVisitDto();
+                BeanUtils.copyProperties(f, cameraVisitDto);
+                deviceCodeMap.put(f.getDeviceCode(), cameraVisitDto);
+            } else {
+                deviceCodeMap.get(f.getDeviceCode()).getChildren().add(f);
+            }
 
-                //设置唯一标识，前端展示的时候需要每条数据有一个唯一标识
-                f.setId(IdUtils.simpleUUID());
+        });
 
-                //将摄像头列表重新组合，将摄像头编码作为key,将编码相同的放到一起（dto对象的children中）
-                CameraVisitDto cameraVisitDto;
-                if(!deviceCodeMap.containsKey(f.getDeviceCode())){
-                    cameraVisitDto = new CameraVisitDto();
-                    BeanUtils.copyProperties(f,cameraVisitDto);
-                    deviceCodeMap.put(f.getDeviceCode(),cameraVisitDto);
-                }else {
-                    deviceCodeMap.get(f.getDeviceCode()).getChildren().add(f);
-                }
+        //将重新组合好的Map 还原成List
+        Set<String> keys = deviceCodeMap.keySet();
 
-            });
+        List<CameraVisitDto> cameraVisitDtoList = new ArrayList<>();
 
-            //将重新组合好的Map 还原成List
-            Set<String> keys = deviceCodeMap.keySet();
+        keys.stream().forEach(f -> {
+            CameraVisitDto cameraVisitDto = deviceCodeMap.get(f);
 
-            List<CameraVisitDto> cameraVisitDtoList = new ArrayList<>();
+            cameraVisitDtoList.add(cameraVisitDto);
+        });
 
-            keys.stream().forEach(f ->{
-                CameraVisitDto cameraVisitDto = deviceCodeMap.get(f);
-
-                cameraVisitDtoList.add(cameraVisitDto);
-            });
-
-            return cameraVisitDtoList;
+        return cameraVisitDtoList;
     }
 
     /**
@@ -443,62 +453,50 @@ public class StatisticsServiceImpl implements IStatisticsService {
     }
 
     @Override
-    public List<JSONObject> getClientVisitCntToReport(JSONObject filters) {
+    public List<JSONObject> getClientVisitCntToReport(OperationBehavior operationBehavior) {
+        List<OperationBehavior> operList = operationBehaviorMapper.getVisitedRelatedOperation(operationBehavior);
+
         List<JSONObject> list = new ArrayList<>();
 
-//        List<OperationBehavior> operList = statisticsMapper.getClientVisitCntList(filters);
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        for (int i = 0; i < operList.size(); i++) {
-//            JSONObject jsonObject = new JSONObject();
-//            if (operList.get(i).getDstCode() != null && !operList.get(i).getDstCode().equals("")) {
-//                jsonObject.put("dstCode", operList.get(i).getDstCode());
-//            }
-//            if (operList.get(i).getDstIp() != null && !operList.get(i).getDstIp().equals("")) {
-//                jsonObject.put("dstIp", IpUtils.longToIPv4(operList.get(i).getDstIp()));
-//            }
-//            if (operList.get(i).getDstPort() != null && !operList.get(i).getDstPort().equals("")) {
-//                jsonObject.put("dstPort", operList.get(i).getDstPort());
-//            }
-//            if (operList.get(i).getDstMac() != null && !operList.get(i).getDstMac().equals("")) {
-//                jsonObject.put("dstMac", operList.get(i).getDstMac());
-//            }
-//            if (operList.get(i).getDstDeviceName() != null && !operList.get(i).getDstDeviceName().equals("")) {
-//                jsonObject.put("dstDeviceName", operList.get(i).getDstDeviceName());
-//            } else {
-//                jsonObject.put("dstDeviceName", "");
-//            }
-//
-//
-//            if (operList.get(i).getUpFlow() != null && operList.get(i).getUpFlow() != 0L) {
-//                jsonObject.put("upFlow", FlowUtil.setFlow(operList.get(i).getUpFlow()));
-//            } else {
-//                jsonObject.put("upFlow", "0");
-//            }
-//            if (operList.get(i).getDownFlow() != null && operList.get(i).getUpFlow() != 0L) {
-//                jsonObject.put("downFlow", FlowUtil.setFlow(operList.get(i).getDownFlow()));
-//            } else {
-//                jsonObject.put("downFlow", "0");
-//            }
-//            if (operList.get(i).getAction() != null && !operList.get(i).getAction().equals("")) {
-//                jsonObject.put("action", operList.get(i).getAction().getLabel());
-//            }
-//            if (operList.get(i).getActionDetail() != null && !operList.get(i).getActionDetail().equals("")) {
-//                jsonObject.put("actionDetail", operList.get(i).getActionDetail().getLabel());
-//            }
-//            if (operList.get(i).getResult() != null && !operList.get(i).getResult().equals("")) {
-//                if ("1".equals(operList.get(i).getResult())) {
-//                    jsonObject.put("result", "成功");
-//                } else if ("0".equals(operList.get(i).getResult())) {
-//                    jsonObject.put("result", "失败");
-//                } else {
-//                    jsonObject.put("result", "未知");
-//                }
-//            } else {
-//                jsonObject.put("result", "未知");
-//            }
-//            jsonObject.put("stamp", formatter.format(operList.get(i).getStamp()));
-//            list.add(jsonObject);
-//        }
+        for (OperationBehavior oper : operList) {
+            JSONObject jsonObject = new JSONObject();
+            if (StringUtils.isNotEmpty(oper.getDstCode())) {
+                jsonObject.put("dstCode", oper.getDstCode());
+            } else {
+                jsonObject.put("dstCode", "");
+            }
+            if (StringUtils.isNotEmpty(oper.getDstDeviceName())) {
+                jsonObject.put("dstDeviceName", oper.getDstDeviceName());
+            } else {
+                jsonObject.put("dstDeviceName", "");
+            }
+            if (oper.getDstIp() != null) {
+                jsonObject.put("dstIp", IpUtils.longToIPv4(oper.getDstIp()));
+            } else {
+                jsonObject.put("dstIp", "");
+            }
+            if (oper.getDstPort() != null) {
+                jsonObject.put("dstPort", oper.getDstPort());
+            } else {
+                jsonObject.put("dstPort", "");
+            }
+            if (StringUtils.isNotBlank(oper.getAction())) {
+                jsonObject.put("action", ActionType.getLabel(oper.getAction()));
+            } else {
+                jsonObject.put("action", "");
+            }
+            if (StringUtils.isNotBlank(oper.getActionDetail())) {
+                jsonObject.put("actionDetail", ActionDetailType.getLabel(oper.getActionDetail()));
+            } else {
+                jsonObject.put("actionDetail", "");
+            }
+            if (oper.getStamp() != null) {
+                jsonObject.put("stamp", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, oper.getStamp()));
+            } else {
+                jsonObject.put("stamp", "");
+            }
+            list.add(jsonObject);
+        }
 
         return list;
     }
@@ -575,7 +573,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
     }
 
     @Override
-    public List<JSONObject> getCameraVisitedToReport(CameraVisit cameraVis,Camera camera,String orderStr) {
+    public List<JSONObject> getCameraVisitedToReport(CameraVisit cameraVis, Camera camera, String orderStr) {
 
         List<Camera> cameraList = null;
 
@@ -665,64 +663,56 @@ public class StatisticsServiceImpl implements IStatisticsService {
     }
 
     @Override
-    public List<JSONObject> getCameraVisitedCntToReport(JSONObject filters) {
-        List<JSONObject> list = new ArrayList<>();
-//        List<OperationBehavior> operList = cameraVisitedMapper.getCameraVisitedCntList(filters);
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        for (int i = 0; i < operList.size(); i++) {
-//            JSONObject jsonObject = new JSONObject();
-//            if (operList.get(i).getSrcCode() != null && !operList.get(i).getSrcCode().equals("")) {
-//                jsonObject.put("srcCode", operList.get(i).getSrcCode());
-//            } else {
-//                jsonObject.put("srcCode", "");
-//            }
-//            if (operList.get(i).getSrcIp() != null && !operList.get(i).getSrcIp().equals("")) {
-//                jsonObject.put("srcIp", IpUtils.longToIPv4(operList.get(i).getSrcIp()));
-//            }
-//            if (operList.get(i).getSrcPort() != null && !operList.get(i).getSrcPort().equals("")) {
-//                jsonObject.put("srcPort", operList.get(i).getSrcPort());
-//            }
-//            if (operList.get(i).getSrcMac() != null && !operList.get(i).getSrcMac().equals("")) {
-//                jsonObject.put("srcMac", operList.get(i).getSrcMac());
-//            }
-//            if (operList.get(i).getUsername() != null && !operList.get(i).getUsername().equals("")) {
-//                jsonObject.put("username", operList.get(i).getUsername());
-//            } else {
-//                jsonObject.put("username", "");
-//            }
-//
-//
-//            if (operList.get(i).getUpFlow() != null && operList.get(i).getUpFlow() != 0L) {
-//                jsonObject.put("upFlow", FlowUtil.setFlow(operList.get(i).getUpFlow()));
-//            } else {
-//                jsonObject.put("upFlow", "0");
-//            }
-//            if (operList.get(i).getDownFlow() != null && operList.get(i).getUpFlow() != 0L) {
-//                jsonObject.put("downFlow", FlowUtil.setFlow(operList.get(i).getDownFlow()));
-//            } else {
-//                jsonObject.put("downFlow", "0");
-//            }
-//            if (operList.get(i).getAction() != null && !operList.get(i).getAction().equals("")) {
-//                jsonObject.put("action", operList.get(i).getAction().getLabel());
-//            }
-//            if (operList.get(i).getActionDetail() != null && !operList.get(i).getActionDetail().equals("")) {
-//                jsonObject.put("actionDetail", operList.get(i).getActionDetail().getLabel());
-//            }
-//            if (operList.get(i).getResult() != null && !operList.get(i).getResult().equals("")) {
-//                if ("1".equals(operList.get(i).getResult())) {
-//                    jsonObject.put("result", "成功");
-//                } else if ("0".equals(operList.get(i).getResult())) {
-//                    jsonObject.put("result", "失败");
-//                } else {
-//                    jsonObject.put("result", "未知");
-//                }
-//            } else {
-//                jsonObject.put("result", "未知");
-//            }
-//            jsonObject.put("stamp", formatter.format(operList.get(i).getStamp()));
-//            list.add(jsonObject);
-//        }
+    public List<JSONObject> getCameraVisitedCntToReport(OperationBehavior operationBehavior) {
+        if (StringUtils.isNotBlank(operationBehavior.getOrderType()) && StringUtils.isNotBlank(operationBehavior.getOrderValue())) {
+            operationBehavior.setOrderType(operationBehavior.getOrderValue() + " " + operationBehavior.getOrderType());
+        }
+        //地区码判断
+        if (operationBehavior.getRegionList() != null) {
+            String[] regionList = operationBehavior.getRegionList();
+            String region = regionList[regionList.length - 1];
+            if (regionList.length == 1) {
+                int count = region.length();
+                if (count == 2) {
+                    operationBehavior.setProvinceRegion(region);
+                }
+                if (count == 4) {
+                    operationBehavior.setCityRegion(region);
+                }
+                if (count == 6) {
+                    operationBehavior.setCityRegion(region);
+                }
+            }
+            if (regionList.length == 2) {
+                int count = region.length();
+                if (count == 4) {
+                    operationBehavior.setCityRegion(region);
+                }
+                if (count == 6) {
+                    operationBehavior.setCountryRegion(region);
+                }
+            }
+            if (regionList.length == 3) {
+                operationBehavior.setCountryRegion(region);
+            }
+        }
+        operationBehavior.setstartDate("2021-08-26 00:00:00");
+        operationBehavior.setendDate("2021-08-26 23:59:59");
+        Integer count = operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior);
+        operationBehavior.setNum(0);
+        operationBehavior.setSize(count);
+        List<OperationBehavior> operList = operationBehaviorMapper.getList(operationBehavior);
+        List<JSONObject> list = statisticsService.associateTerminalInfo(operList);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        list.stream().forEach(f -> {
+            f.put("srcIp", IpUtils.longToIPv4(f.getLong("srcIp")));
+            f.put("action", ActionType.getLabel(f.getString("action")));
+            f.put("actionDetail", ActionDetailType.getLabel(f.getString("actionDetail")));
+            f.put("stamp", formatter.format(f.getTimestamp("stamp")));
+        });
+
         return list;
     }
+
 
 }

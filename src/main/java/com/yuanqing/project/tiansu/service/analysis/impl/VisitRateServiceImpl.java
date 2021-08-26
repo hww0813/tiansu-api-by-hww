@@ -205,13 +205,10 @@ public class VisitRateServiceImpl implements IVisitRateService {
     }
 
     @Override
-    public List<JSONObject> getRateCameraCntToReport(JSONObject filters) {
-        Camera condCamera = new Camera();
-        condCamera.setRegion(filters.getInteger("region"));
-        condCamera.setstartDate(filters.getString("startDate"));
-        condCamera.setendDate(filters.getString("endDate"));
-        List<Camera> cameraList = cameraService.getList(condCamera);
-//        List<Camera> cameraList = visitRateMapper.getCameraCntList(filters);
+    public List<JSONObject> getRateCameraCntToReport(Camera ca) {
+        List<Camera> cameraList = cameraService.getAllList(ca);
+
+        macsConfigService.setLowerRegionByCamera(cameraList);
 
         List<JSONObject> list = new ArrayList<>();
         if (!CollectionUtils.isEmpty(cameraList)) {

@@ -55,6 +55,14 @@ public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior,Lo
                                                              @Param("filter") OperationBehavior operationBehavior);
 
     /**
+     * 根据过滤条件查询操作行为(用于导出)
+     * @param operationBehavior 过滤条件集合
+     * @return
+     */
+    List<OperationBehavior> getVisitedRelatedOperation(@Param("filter") OperationBehavior operationBehavior);
+
+
+    /**
      * 获取操作行为总数
      * @param startDate
      * @param endDate

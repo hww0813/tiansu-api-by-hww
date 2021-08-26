@@ -19,7 +19,9 @@ import com.yuanqing.project.tiansu.domain.analysis.dto.CameraVisitDto;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
 import com.yuanqing.project.tiansu.domain.event.Event;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
+import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSession;
 import com.yuanqing.project.tiansu.domain.operation.RawNetFlow;
+import com.yuanqing.project.tiansu.domain.operation.RawSignal;
 import com.yuanqing.project.tiansu.domain.report.ExcelData;
 import com.yuanqing.project.tiansu.domain.report.VisitRate;
 import com.yuanqing.project.tiansu.service.analysis.IStatisticsService;
@@ -339,7 +341,7 @@ public class ReportController extends BaseController {
             event.setStatus(Long.parseLong(status));
         }
         if(StringUtils.isNotEmpty(clientIp)){
-            event.setClientIp(Long.parseLong(clientIp));
+            event.setClientIp(IpUtils.ipToLong(clientIp));
         }
         if(StringUtils.isNotEmpty(action)){
             event.setAction(Long.parseLong(action));
@@ -838,23 +840,23 @@ public class ReportController extends BaseController {
     @GetMapping(value = "/operationBehaviorSession")
     public void getoperationBehaviorSessionReport(@ApiParam("开始时间") @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
                                                   @ApiParam("结束时间") @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
-                                                  @ApiParam("会话ID") @RequestParam(value = "sessionId", required = false) Long sessionId,
-                                                  @ApiParam("源编码") @RequestParam(value = "srcCode", required = false) String srcCode,
+                                                  @ApiParam("IP地址")@RequestParam(value = "ipAddress", required = false) String ipAddress,
                                                   @ApiParam("用户名") @RequestParam(value = "username", required = false) String username,
+                                                  @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                                  @ApiParam("排序对象")@RequestParam(required = false) String orderValue,
                                                   @ApiParam("导出格式") @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-        JSONObject filters = new JSONObject();
-        if (startDate != null) {
-            filters.put("stime", startDate);
+        OperationBehaviorSession operationBehaviorSession = new OperationBehaviorSession();
+        operationBehaviorSession.setStime(startDate);
+        operationBehaviorSession.setEtime(endDate);
+        operationBehaviorSession.setSrcIp(IpUtils.ipToLong(ipAddress));
+        operationBehaviorSession.setUsername(username);
+        if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
+            operationBehaviorSession.setOrderType(orderValue + " " + orderType);
         }
-        if (endDate != null) {
-            filters.put("etime", endDate);
-        }
-        filters.put("sessionId", sessionId);
-        filters.put("srcCode", srcCode);
-        filters.put("username", username);
+        List<JSONObject> list = operationBehaviorSessionService.getAllToReport(operationBehaviorSession);
         if ("xlsx".equals(format)) {
             try {
-                operationBehaviorSessionExcel(response, filters);
+                operationBehaviorSessionExcel(response, list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -874,8 +876,6 @@ public class ReportController extends BaseController {
 
                 //参数
                 Map<String, Object> params = new HashMap<>();
-
-                List<JSONObject> list = operationBehaviorSessionService.getAllToReport(filters);
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -1036,31 +1036,27 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "/OperationSignal")
-    public void getOperationSignalReport(@ApiParam("开始时间") @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
-                                         @ApiParam("结束时间") @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
-                                         @ApiParam("源IP") @RequestParam(value = "srcIp", required = false) String srcIp,
-                                         @ApiParam("目的IP") @RequestParam(value = "dstIp", required = false) String dstIp,
-                                         @ApiParam("联接类型") @RequestParam(value = "connectType", required = false) String connectType,
-                                         @ApiParam("导出格式") @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        JSONObject filters = new JSONObject();
-        if (startDate != null) {
-            filters.put("startDate", sdf.format(startDate));
+    public void getOperationSignalReport( @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                          @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                          @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                          @ApiParam("排序对象")@RequestParam(required = false) String orderValue, @ApiParam("原始信令实体") RawSignal rawSignal,
+                                          @ApiParam("导出格式") @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+        rawSignal.setSrcIp(IpUtils.ipToLong(srcIp));
+        rawSignal.setDstIp(IpUtils.ipToLong(dstIp));
+        if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
+            rawSignal.setOrderType(orderValue + " " + orderType);
         }
-        if (endDate != null) {
-            filters.put("endDate", sdf.format(endDate));
-        }
-        filters.put("connectType", connectType);
-        filters.put("srcIp", srcIp);
-        filters.put("dstIp", dstIp);
 
         if ("xlsx".equals(format)) {
             try {
-                rawSignalExcel(response, filters);
+                rawSignalService.getListToReport(response,rawSignal);
+                rawSignalExcel(response, rawSignal);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
+            List<JSONObject> list = rawSignalService.getAllToReport(rawSignal);
+
             ApplicationContext ctx = SpringContextUtil.getApplicationContext();
 
             org.springframework.core.io.Resource resource = null;
@@ -1077,8 +1073,6 @@ public class ReportController extends BaseController {
 
                 //参数
                 Map<String, Object> params = new HashMap<>();
-
-                List<JSONObject> list = rawSignalService.getAllToReport(filters);
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -1641,27 +1635,31 @@ public class ReportController extends BaseController {
     }
 
     @GetMapping(value = "analysis/client/visit/cnt")
-    public void getAnalysisClientDetailReport(@ApiParam("开始时间") @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                              @ApiParam("结束时间") @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-                                              @ApiParam("客户端ID") @RequestParam(value = "clientId", required = false) Long clientId,
-                                              @ApiParam("摄像头ID") @RequestParam(value = "cameraId", required = false) Long cameraId,
-                                              @ApiParam("目的IP") @RequestParam(value = "dstIp", required = false) String dstIp,
-                                              @ApiParam("目的编码") @RequestParam(value = "dstCode", required = false) String dstCode,
-                                              @ApiParam("操作类型") @RequestParam(value = "action", required = false) String action,
+    public void getAnalysisClientDetailReport(@ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                              @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                              @ApiParam("动作类型")@RequestParam(value = "action", required = false) String action,
+                                              @ApiParam("目的设备编码")@RequestParam(value = "dstCode", required = false) String deviceCode,
+                                              @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                              @ApiParam("目的设备名称")@RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
+                                              @ApiParam("开始时间")@RequestParam(value = "startDate") String startDate,
+                                              @ApiParam("结束时间")@RequestParam(value = "endDate") String endDate,
                                               @ApiParam("导出格式") @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
-        JSONObject filters = new JSONObject();
-        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        filters.put("clientId", clientId);
-        filters.put("cameraId", cameraId);
-        filters.put("dstIp", dstIp);
-        filters.put("dstCode", dstCode);
-        filters.put("action", action);
+        OperationBehavior operationBehavior = new OperationBehavior();
+        operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
+        operationBehavior.setDstCode(deviceCode);
+        operationBehavior.setUsername(username);
+        operationBehavior.setDstDeviceName(dstDeviceName);
+        operationBehavior.setAction(action);
+        operationBehavior.setDstIp(IpUtils.ipToLong(dstIp));
+        operationBehavior.setstartDate(startDate);
+        operationBehavior.setendDate(endDate);
+
+        List<JSONObject> list = statisticsService.getClientVisitCntToReport(operationBehavior);
 
         if ("xlsx".equals(format)) {
             try {
-                this.getAnalysisClientDetailExcelReport(response, filters);
+                this.getAnalysisClientDetailExcelReport(response, list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1683,7 +1681,7 @@ public class ReportController extends BaseController {
                 //参数
                 Map<String, Object> params = new HashMap<>();
 
-                List<JSONObject> list = clientService.getClientVisitDetailToReport(filters);
+//                List<JSONObject> list = clientService.getClientVisitDetailToReport(filters);
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -1927,103 +1925,103 @@ public class ReportController extends BaseController {
         }
     }
 
-//    @GetMapping(value = "analysis/camera/visit/cnt")
-//    public void getAnalysisCameraReport( @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String  startDate,
-//                                         @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
-//                                         @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) Long clientId,
-//                                         @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) Long cameraId,
-//                                         @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
-//                                         @ApiParam("目的设备编码")@RequestParam(value = "deviceCode", required = false) String dstCode,
-//                                         @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
-//                                         @ApiParam("源设备编码")@RequestParam(value = "srcCode", required = false) String srcCode,
-//                                         @ApiParam("动作类型")@RequestParam(value = "action", required = false) String action,
-//                                        @ApiParam("格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
-//
-//        OperationBehavior operationBehavior = new OperationBehavior();
-//        operationBehavior.setClientId(clientId);
-//        operationBehavior.setCameraId(cameraId);
-//        operationBehavior.setDstCode(srcCode);
-//        operationBehavior.setAction(action);
-//        operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
-//        operationBehavior.setUsername(username);
-//        operationBehavior.setstartDate(startDate);
-//        operationBehavior.setDstCode(dstCode);
-//        operationBehavior.setendDate(endDate);
-//
-//        if ("xlsx".equals(format)) {
-//            try {
-//                this.getAnalysisCameraDetailExcelReport(response, filters);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
-//
-//            org.springframework.core.io.Resource resource = null;
-//
-//            resource = ctx.getResource(ANALYSIS_CAMERA_DETAIL);
-//
-//            InputStream inputStream;
-//            try {
-//                inputStream = resource.getInputStream();
-//
-//
-//                //编译报表
-//                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
-//
-//                //参数
-//                Map<String, Object> params = new HashMap<>();
-//
-//                List<JSONObject> list = cameraVisitedManager.getCameraVisitedCntToReport(filters);
-//
-//                JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
-//
-//                //print文件
-//                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
-//
-//                JRAbstractExporter exporter = null;
-//
-//                if ("pdf".equals(format)) {
-//                    exporter = new JRPdfExporter();
-//                    response.setContentType("application/pdf");
-//                } else if ("docx".equals(format)) {
-//                    exporter = new JRDocxExporter();
-//                    response.setContentType("application/msword");
-//                } else if ("html".equals(format)) {
-//                    exporter = new HtmlExporter();
-//                    response.setContentType("application/html");
-//                } else {
-//                    throw new RuntimeException("参数错误");
-//                }
-//
-//                //设置输入项
-//                ExporterInput exporterInput = new SimpleExporterInput(print);
-//                exporter.setExporterInput(exporterInput);
-//
-//                //设置输出项
-//                if ("html".equals(format)) {
-//                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
-//
-//                    exporter.setExporterOutput(htmlExportOutput);
-//                } else {
-//                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
-//                            response.getOutputStream());
-//                    exporter.setExporterOutput(exporterOutput);
-//
-//                }
-//
-//                response.setHeader("Content-Disposition",
-//                        "attachment;filename=" + URLEncoder.encode("摄像头被访问次数报表." + format, "utf-8"));
-//
-//                exporter.exportReport();
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (JRException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    @GetMapping(value = "analysis/camera/visit/cnt")
+    public void getAnalysisCameraReport( @ApiParam("开始时间")@RequestParam(value = "startDate", required = false) String  startDate,
+                                         @ApiParam("结束时间")@RequestParam(value = "endDate", required = false) String endDate,
+                                         @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) Long clientId,
+                                         @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) Long cameraId,
+                                         @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                         @ApiParam("目的设备编码")@RequestParam(value = "deviceCode", required = false) String dstCode,
+                                         @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                         @ApiParam("源设备编码")@RequestParam(value = "srcCode", required = false) String srcCode,
+                                         @ApiParam("动作类型")@RequestParam(value = "action", required = false) String action,
+                                        @ApiParam("格式")@RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
+
+        OperationBehavior operationBehavior = new OperationBehavior();
+        operationBehavior.setClientId(clientId);
+        operationBehavior.setCameraId(cameraId);
+        operationBehavior.setDstCode(srcCode);
+        operationBehavior.setAction(action);
+        operationBehavior.setSrcIp(IpUtils.ipToLong(srcIp));
+        operationBehavior.setUsername(username);
+        operationBehavior.setstartDate(startDate);
+        operationBehavior.setDstCode(dstCode);
+        operationBehavior.setendDate(endDate);
+
+        List<JSONObject> all = statisticsService.getCameraVisitedCntToReport(operationBehavior);
+
+        if ("xlsx".equals(format)) {
+            try {
+                this.getAnalysisCameraDetailExcelReport(response, all);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            ApplicationContext ctx = SpringContextUtil.getApplicationContext();
+
+            org.springframework.core.io.Resource resource = null;
+
+            resource = ctx.getResource(ANALYSIS_CAMERA_DETAIL);
+
+            InputStream inputStream;
+            try {
+                inputStream = resource.getInputStream();
+
+
+                //编译报表
+                JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+
+                //参数
+                Map<String, Object> params = new HashMap<>();
+
+                JRDataSource jrDataSource = new JRBeanCollectionDataSource(all);
+
+                //print文件
+                JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrDataSource);
+
+                JRAbstractExporter exporter = null;
+
+                if ("pdf".equals(format)) {
+                    exporter = new JRPdfExporter();
+                    response.setContentType("application/pdf");
+                } else if ("docx".equals(format)) {
+                    exporter = new JRDocxExporter();
+                    response.setContentType("application/msword");
+                } else if ("html".equals(format)) {
+                    exporter = new HtmlExporter();
+                    response.setContentType("application/html");
+                } else {
+                    throw new RuntimeException("参数错误");
+                }
+
+                //设置输入项
+                ExporterInput exporterInput = new SimpleExporterInput(print);
+                exporter.setExporterInput(exporterInput);
+
+                //设置输出项
+                if ("html".equals(format)) {
+                    SimpleHtmlExporterOutput htmlExportOutput = new SimpleHtmlExporterOutput(response.getOutputStream());
+
+                    exporter.setExporterOutput(htmlExportOutput);
+                } else {
+                    OutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+                            response.getOutputStream());
+                    exporter.setExporterOutput(exporterOutput);
+
+                }
+
+                response.setHeader("Content-Disposition",
+                        "attachment;filename=" + URLEncoder.encode("摄像头被访问次数报表." + format, "utf-8"));
+
+                exporter.exportReport();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JRException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @GetMapping(value = "analysis/camera/visited/relatedClient")
     public void getAnalysisCameraRelatedClientReport(@ApiParam("设备编码") @RequestParam(value = "deviceCode", required = false) String deviceCode,
@@ -2115,30 +2113,14 @@ public class ReportController extends BaseController {
 
 
     @GetMapping(value = "analysis/visit/rate/cameraCnt")
-    public void getRateCameraCntReport(@ApiParam("区域代码") @RequestParam(value = "region", required = false) Integer region,
-                                       @ApiParam("开始时间") @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                       @ApiParam("结束时间") @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-                                       @ApiParam("设备编码") @RequestParam(value = "deviceCode", required = false) String deviceCode,
-                                       @ApiParam("设备名称") @RequestParam(value = "deviceName", required = false) String deviceName,
-                                       @ApiParam("IP地址") @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                       @ApiParam("状态") @RequestParam(value = "status", required = false) String status,
-                                       @ApiParam("制造厂商") @RequestParam(value = "manufacturer", required = false) String manufacturer,
+    public void getRateCameraCntReport(@ApiParam("摄像头实体")Camera camera,
                                        @ApiParam("导出格式") @RequestParam(value = "format", required = false) String format, HttpServletResponse response) {
 
-        JSONObject filters = new JSONObject();
-        filters.put("deviceCode", deviceCode);
-        filters.put("deviceName", deviceName);
-        filters.put("ipAddress", ipAddress);
-        filters.put("status", status);
-        filters.put("manufacturer", manufacturer);
-        filters.put("region", region);
-        // 不用时间，就是查区域全部的摄像头
-//        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-//        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        List<JSONObject> list = visitRateService.getRateCameraCntToReport(camera);
 
         if ("xlsx".equals(format)) {
             try {
-                this.getRateCameraCntExcelReport(response, filters);
+                this.getRateCameraCntExcelReport(response, list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -2159,8 +2141,6 @@ public class ReportController extends BaseController {
 
                 //参数
                 Map<String, Object> params = new HashMap<>();
-
-                List<JSONObject> list = visitRateService.getRateCameraCntToReport(filters);
 
                 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
@@ -2656,9 +2636,8 @@ public class ReportController extends BaseController {
         });
     }
 
-    public void getRateCameraCntExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        List<JSONObject> all = visitRateService.getRateCameraCntToReport(filters);
-        reportTemplete("访问率相关摄像头总数报表.xlsx", response, all, (dataList, objectList) -> {
+    public void getRateCameraCntExcelReport(HttpServletResponse response, List<JSONObject> list) throws Exception {
+        reportTemplete("访问率相关摄像头总数报表.xlsx", response, list, (dataList, objectList) -> {
             List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"摄像头编号", "摄像头名称","摄像头IP","设备厂商","所在地区","状态","最后更新时间"}));
             dataList.add(headList);
 
@@ -2693,44 +2672,23 @@ public class ReportController extends BaseController {
         });
     }
 
-//    private void getAnalysisCameraDetailExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-//        ExcelData data = new ExcelData();
-//        data.setName("摄像头被访问次数");
-//        List<JSONObject> all = cameraVisitedManager.getCameraVisitedCntToReport(filters);
-//        List<String> titles = new ArrayList();
-//        titles.add("源设备编号");
-//        titles.add("源设备IP");
-//        titles.add("源设备端口");
-//        titles.add("源设备MAC");
-//        titles.add("用户名");
-//        titles.add("上行流量");
-//        titles.add("下行流量");
-//        titles.add("动作");
-//        titles.add("动作详情");
-//        titles.add("结果");
-//        titles.add("时间");
-//        data.setTitles(titles);
-//
-//        List<List<Object>> rows = new ArrayList();
-//        for (JSONObject j : all) {
-//            List<Object> row = new ArrayList();
-//            row.add(j.get("srcCode"));
-//            row.add(j.get("srcIp").toString());
-//            row.add(j.get("srcPort"));
-//            row.add(j.get("srcMac"));
-//            row.add(j.get("username"));
-//            row.add(j.get("upFlow"));
-//            row.add(j.get("downFlow"));
-//            row.add(j.get("action"));
-//            row.add(j.get("actionDetail"));
-//            row.add(j.get("result"));
-//            row.add(j.get("stamp"));
-//            rows.add(row);
-//        }
-//        data.setRows(rows);
-//
-//        ExportExcelUtils.exportExcel(response, "摄像头被访问次数报表.xlsx", data);
-//    }
+    private void getAnalysisCameraDetailExcelReport(HttpServletResponse response, List<JSONObject> all) throws Exception {
+        reportTemplete("摄像头被访问次数报表.xlsx", response, all, (dataList, objectList) -> {
+            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"终端IP", "用户名","动作", "动作详细", "时间"}));
+            dataList.add(headList);
+
+            for (JSONObject j : objectList) {
+                List<Object> row = new ArrayList();
+                row.add(j.get("srcIp"));
+                row.add(j.get("username"));
+                row.add(j.get("action"));
+                row.add(j.get("actionDetail"));
+                row.add(j.get("stamp"));
+                dataList.add(row);
+            }
+            return dataList;
+        });
+    }
 
     private void getAnalysisCameraExcelReport(HttpServletResponse response, List<JSONObject> all) throws Exception {
         reportTemplete("摄像头被访问报表.xlsx", response, all, (dataList, objectList) -> {
@@ -2770,8 +2728,7 @@ public class ReportController extends BaseController {
         });
     }
 
-    private void getAnalysisClientDetailExcelReport(HttpServletResponse response, JSONObject filters) throws Exception {
-        List<JSONObject> all = statisticsService.getClientVisitCntToReport(filters);
+    private void getAnalysisClientDetailExcelReport(HttpServletResponse response, List<JSONObject> all) throws Exception {
         reportTemplete("终端访问次数报表.xlsx", response, all, (dataList, objectList) -> {
             List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"摄像头编号", "摄像头名称","摄像头IP", "摄像头端口", "动作","动作详情","时间"}));
             dataList.add(headList);
@@ -2811,24 +2768,37 @@ public class ReportController extends BaseController {
         });
     }
 
-    private void rawSignalExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-        List<JSONObject> all = rawSignalService.getAllToReport(filters);
-
-        reportTemplete("原始信令报表.xlsx", response, all, (dataList, objectList) -> {
-            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"源设备IP", "目的设备IP", "目的设备编码", "内容", "时间"}));
-            dataList.add(headList);
-
-            for (JSONObject j : objectList) {
-                List<Object> row = new ArrayList();
-                row.add(j.get("srcIp"));
-                row.add(j.get("dstIp"));
-                row.add(j.get("toCode"));
-                row.add(j.get("content"));
-                row.add(j.get("stamp"));
-                dataList.add(row);
-            }
-            return dataList;
-        });
+    private void rawSignalExcel(HttpServletResponse response, RawSignal rawSignal) throws Exception {
+//        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); // .xlsx
+//        response.setCharacterEncoding("utf8");
+//        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("原始信令报表.xlsx", "utf-8"));
+//
+//        //将数据写入sheet页中
+//        ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
+//
+//        List<List<JSONObject>> lists = SplitList.splitList(list, MAXROWS); // 分割的集合
+//        for (int i = 1; i <= lists.size(); i++) {
+//            List<JSONObject> objectList = lists.get(i - 1);
+//            List<List<Object>> dataList = new ArrayList<>();
+//            List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"源设备IP", "目的设备IP", "目的设备编码", "内容", "时间"}));
+//            dataList.add(headList);
+//
+//            for (JSONObject j : objectList) {
+//                List<Object> row = new ArrayList();
+//                row.add(j.get("srcIp"));
+//                row.add(j.get("dstIp"));
+//                row.add(j.get("toCode"));
+//                row.add(j.get("content"));
+//                row.add(j.get("stamp"));
+//                dataList.add(row);
+//            }
+//
+//            WriteSheet writeSheet = EasyExcel.writerSheet(i - 1, "sheet" + i).build();
+//            excelWriter.write(dataList, writeSheet);
+//        }
+//
+//        excelWriter.finish();
+//        response.flushBuffer();
 
     }
 
@@ -2888,10 +2858,8 @@ public class ReportController extends BaseController {
 //        ExportExcelUtils.exportExcel(response, "远程访问报表.xlsx", data);
 //    }
 
-    public void operationBehaviorSessionExcel(HttpServletResponse response, JSONObject filters) throws Exception {
-        List<JSONObject> all = operationBehaviorSessionService.getAllToReport(filters);
-
-        reportTemplete("行为会话报表.xlsx", response, all, (dataList, objectList) -> {
+    public void operationBehaviorSessionExcel(HttpServletResponse response, List<JSONObject> list) throws Exception {
+        reportTemplete("行为会话报表.xlsx", response, list, (dataList, objectList) -> {
             List<Object> headList = new ArrayList<>(Arrays.asList(new Object[]{"源设备IP", "登录帐号", "开始时间", "最近活跃时间"}));
             dataList.add(headList);
 

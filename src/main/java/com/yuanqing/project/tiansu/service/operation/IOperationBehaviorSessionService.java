@@ -20,7 +20,7 @@ public interface IOperationBehaviorSessionService {
 
     PageResult getList(OperationBehaviorSession operationBehaviorSession) throws ExecutionException, InterruptedException;
 
-    List<JSONObject> getAllToReport(JSONObject filters);
+    List<JSONObject> getAllToReport(OperationBehaviorSession operationBehaviorSession);
 
     /**
      * 统计操作行为分类

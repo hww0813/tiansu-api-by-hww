@@ -1,5 +1,6 @@
 package com.yuanqing.project.tiansu.mapper.operation;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.project.tiansu.domain.operation.RawSignal;
 
 import java.util.List;
@@ -14,6 +15,8 @@ import java.util.List;
 public interface RawSignalMapper {
 
     List<RawSignal> queryListAll(RawSignal rawSignal);
+
+    List<JSONObject> queryList(RawSignal rawSignal);
 
     Integer queryCount(RawSignal rawSignal);
 

@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanqing.framework.web.domain.PageResult;
 import com.yuanqing.project.tiansu.domain.operation.RawSignal;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -18,5 +20,7 @@ public interface IRawSignalService {
 
     PageResult queryRawSignals(RawSignal rawSignal) throws ExecutionException, InterruptedException;
 
-    List<JSONObject> getAllToReport(JSONObject filters);
+    List<JSONObject> getAllToReport(RawSignal rawSignal);
+
+    public void getListToReport(HttpServletResponse response,RawSignal condRawSignal) throws IOException;
 }
