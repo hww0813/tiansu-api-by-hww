@@ -94,4 +94,9 @@ public interface MacsFeignClient {
 
     @GetMapping(value = "/configuration/config/{id}")
     AjaxResult selectMacsConfigById(@PathVariable("id") Long id, @RequestHeader(name="Authorization") String Authorization);
+
+    @GetMapping(value = "/maintain/MacsHealth/operate")
+    AjaxResult operate(@RequestParam("instance") String instance, @RequestParam("operation") String operation,
+                       @RequestParam("serverName") String serverName, @RequestHeader(name="Authorization") String Authorization);
+
 }
