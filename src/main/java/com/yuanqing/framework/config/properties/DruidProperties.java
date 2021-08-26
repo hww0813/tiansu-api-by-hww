@@ -3,6 +3,7 @@ package com.yuanqing.framework.config.properties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import com.alibaba.druid.pool.DruidDataSource;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * druid 配置属性
@@ -10,6 +11,7 @@ import com.alibaba.druid.pool.DruidDataSource;
  * @author ruoyi
  */
 @Configuration
+@DependsOn("consulPropertySourceLocator")
 public class DruidProperties
 {
     @Value("${spring.datasource.druid.initialSize}")

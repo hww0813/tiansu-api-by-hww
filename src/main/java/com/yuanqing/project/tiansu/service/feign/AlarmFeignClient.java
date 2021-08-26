@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
  * @author lvjingjing
  * @date 2021/6/25 10:13
  */
-@FeignClient(name = "alarm", url = "${tiansu.alarmhost}")
+@FeignClient(value = "alarm-root")
 public interface AlarmFeignClient {
 
     /**

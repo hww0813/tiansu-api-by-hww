@@ -1,0 +1,36 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  flyway:
+    enabled: true
+    # 禁止清理数据库表
+    clean-disabled: true
+    # 如果数据库不是空表，需要设置成 true，否则启动报错
+    baseline-on-migrate: true
+    # 与 baseline-on-migrate: true 搭配使用
+    baseline-version: 0
+    locations:
+      classpath: db/migration
+  cloud:
+    consul:
+      host: 192.168.1.21
+      port: 8500
+      discovery:
+        service-name: ${spring.application.name}
+      config:
+        data-key: data
+        prefix: config
+        format: yaml
+        watch:
+          enabled: true
+          delay: 10000
+          wait-time: 30
+  application:
+    name: tiansu-api
+
+
+
+
+
+
+

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +25,7 @@ import java.util.List;
  * @Date 2021-08-17 15:51
  */
 @Component
+@DependsOn("consulPropertySourceLocator")
 public class ConfigInit {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigInit.class);

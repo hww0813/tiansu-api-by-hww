@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * @author lvjingjing
  * @date 2021/6/25 11:46
  */
-@FeignClient(name = "macs",url = "${tiansu.macshost}")
+@FeignClient(value = "macs-root")
 public interface MacsFeignClient {
 
     /**

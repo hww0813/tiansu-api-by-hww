@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author lvjingjing
  * @date 2021/6/23 15:55
  */
-@FeignClient(name = "pmc", url = "${tiansu.pmchost}")
+@FeignClient(value = "pmc-root")
 public interface PmcFeignClient {
 
     /**
