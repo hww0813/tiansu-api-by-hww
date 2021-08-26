@@ -176,6 +176,38 @@
         limit #{filter.num},#{filter.size}
     </select>
 
+    <select id="getVisitedRelatedOperation" resultMap="resultMap">
+        select * from busi_oper bo left join busi_camera bc on bc.device_code = bo.dst_code
+        <where>
+            <if test="filter.startDate != null and filter.endDate != null">
+                AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;=
+                STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="filter.srcIp != null and filter.srcIp != '' ">
+                AND bo.SRC_IP = #{filter.srcIp}
+            </if>
+            <if test="filter.dstCode != null and filter.dstCode != '' ">
+                AND bo.DST_CODE = #{filter.dstCode}
+            </if>
+            <if test="filter.action != null and filter.action != '' ">
+                AND bo.ACTION = #{filter.action}
+            </if>
+            <if test="filter.dstIp != null and filter.dstIp != '' ">
+                AND bo.DST_IP = #{filter.dstIp}
+            </if>
+            <if test="filter.username != null and filter.username != '' ">
+                AND bo.USERNAME = #{filter.username}
+            </if>
+            <if test="filter.dstDeviceName != null and filter.dstDeviceName != '' ">
+                AND bo.DST_DEVICE_NAME = #{filter.dstDeviceName}
+            </if>
+            AND bc.device_type = 1
+            ${filter.dataScope}
+        </where>
+        ORDER BY bo.STAMP DESC
+    </select>
+
+
     <select id="getVisitedRateRelatedOperationCount" resultType="java.lang.Integer">
         select count(*) from busi_oper bo left join busi_camera bc on bc.device_code = bo.dst_code
         <where>
