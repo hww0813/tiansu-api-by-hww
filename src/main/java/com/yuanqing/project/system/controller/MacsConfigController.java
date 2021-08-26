@@ -13,6 +13,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Method;
+
 
 /**
  * 系统配置表Controller
@@ -137,9 +139,8 @@ public class MacsConfigController extends BaseController
      */
     @ApiOperation("重启告警服务")
     @GetMapping(value = "/operate")
-    public AjaxResult getInfo(@RequestParam("instance") String instance, @RequestParam("operation") String operation,
-                              @RequestParam("serverName") String serverName)
-    {
+    public AjaxResult operate(@RequestParam("instance") String instance, @RequestParam("operation") String operation,
+                              @RequestParam("serverName") String serverName) {
         return macsConfigService.operate(instance, operation, serverName);
     }
 }
