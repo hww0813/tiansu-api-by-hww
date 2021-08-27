@@ -696,8 +696,6 @@ public class StatisticsServiceImpl implements IStatisticsService {
                 operationBehavior.setCountryRegion(region);
             }
         }
-        operationBehavior.setstartDate("2021-08-26 00:00:00");
-        operationBehavior.setendDate("2021-08-26 23:59:59");
         Integer count = operationBehaviorMapper.quertyOperationBehaviorCount(operationBehavior);
         operationBehavior.setNum(0);
         operationBehavior.setSize(count);
