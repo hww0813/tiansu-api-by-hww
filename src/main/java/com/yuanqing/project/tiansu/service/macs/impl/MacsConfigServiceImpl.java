@@ -10,7 +10,6 @@ import com.yuanqing.common.exception.config.ConfigParseException;
 import com.yuanqing.common.queue.MacsMap;
 import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.common.utils.file.FileUtils;
-import com.yuanqing.common.utils.http.HttpUtils;
 import com.yuanqing.framework.redis.RedisCache;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.assets.Camera;
@@ -24,14 +23,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 获取配置中心配置
@@ -57,13 +54,6 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
 
     @Resource
     private MacsFeignClient macsFeignClient;
-
-
-    private final String selectMacsRegionById_URL = "/tripartite/region/getConfigById";
-
-    private final String selectMacsRegionInfo_URL = "/tripartite/region/regionInfo";
-
-    private final String selectMacsRegionList_URL = "/tripartite/region/regionList";
 
 
     @Override
@@ -141,10 +131,9 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         List<Object> redisConfig = redisCache.getCacheList(key);
 
         if(CollectionUtils.isEmpty(redisConfig)){
-            String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionById_URL, "regionId="+id);
+            String rspStr = macsFeignClient.getConfigById(id);
 
-            if (StringUtils.isEmpty(rspStr))
-            {
+            if (StringUtils.isEmpty(rspStr)){
                 LOGGER.error("获取区域异常 id={}", id);
                 return null;
             }
@@ -177,7 +166,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         if(StringUtils.isEmpty(id)) {
             return null;
         }
-        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionInfo_URL, "regionId="+id);
+        String rspStr = macsFeignClient.getRegionInfo(id);
         if (StringUtils.isEmpty(rspStr))
         {
             LOGGER.error("获取区域异常 id={}", id);
@@ -248,7 +237,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     @Override
     public List<MacsRegion> getRegionList() {
 
-        String rspStr = HttpUtils.sendGet(prefix+selectMacsRegionList_URL,"");
+        String rspStr = macsFeignClient.getRegionList();
 
         if (StringUtils.isEmpty(rspStr))
         {
@@ -269,15 +258,14 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
     }
 
 
-
     @Override
     public List<String> getAllLowerRegion(String regionId) {
         //下级区也需要查询,将所有本级及下级平台的id存入string
         List<MacsRegion> areaRegion = getLowerRegion(regionId);
         List<String> region = new ArrayList<>();
         region.add(regionId);
-        areaRegion.stream().forEach(r->{
-            region.add(r.getId());
+        areaRegion.stream().forEach(f ->{
+            region.add(f.getId());
         });
         return  region;
     }
@@ -289,14 +277,16 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         //匹配所在区域
         List<MacsRegion> lowerRegion = getLowerRegion(region.getId());
 
-        lowerRegion.stream().forEach(f -> {
-            list.stream().forEach(h -> {
-
-                if (h.getRegion() != null && h.getRegion().toString().equals(f.getId())) {
-                    h.setRegionName(f.getName());
-                }
+        if(!CollectionUtils.isEmpty(lowerRegion)){
+            lowerRegion.stream().forEach(f -> {
+                list.stream().forEach(h -> {
+                    if (h.getRegion() != null && h.getRegion().toString().equals(f.getId())) {
+                        h.setRegionName(f.getName());
+                    }
+                });
             });
-        });
+        }
+
     }
 
     @Override

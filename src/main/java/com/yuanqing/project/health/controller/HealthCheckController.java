@@ -1,13 +1,18 @@
 package com.yuanqing.project.health.controller;
 
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.project.health.queue.RunTimeMap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,4 +37,20 @@ public class HealthCheckController {
             return "程序启动时间获取有误";
         }
     }
+
+
+
+
+    @GetMapping("/gitInfo")
+    public String getGitInfo() throws Exception {
+
+        String originStr = IOUtils.toString(new URI("classpath:git.properties"), StandardCharsets.UTF_8);
+        if(StringUtils.isEmpty(originStr)){
+            return "git版本文件为空";
+        }else {
+            return StringUtils.decodeUnicode(originStr);
+        }
+    }
+
+
 }

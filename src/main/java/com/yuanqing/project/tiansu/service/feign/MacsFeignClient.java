@@ -33,13 +33,13 @@ public interface MacsFeignClient {
      * 获取地区配置详细信息
      */
     @GetMapping(value = "/tripartite/region/regionInfo")
-    String getInfo(@RequestParam("regionId") String regionId);
+    String getRegionInfo(@RequestParam("regionId") String regionId);
 
     /**
      * 获取地区配置详细信息
      */
     @GetMapping(value = "/tripartite/region/regionList")
-    String getList();
+    String getRegionList();
 
     /**
      * 黑白名单

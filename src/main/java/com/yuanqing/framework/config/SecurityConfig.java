@@ -111,7 +111,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/api/reports/**").anonymous()
                 .antMatchers("/tripartite/**").anonymous()
                 .antMatchers("/api/**/summary","/api/warn/total","/api/**/top","/api/map/statis","/api/behavior/trend","/api/oper/add","/api/operHttp/someMsg").anonymous()
-                .antMatchers("/api/tiansu_api/healthCheck").anonymous()
+                .antMatchers("/api/tiansu_api/**").anonymous()
                 .antMatchers("/actuator/**").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
