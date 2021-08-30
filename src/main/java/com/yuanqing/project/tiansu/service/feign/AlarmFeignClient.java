@@ -16,37 +16,37 @@ public interface AlarmFeignClient {
     /**
      * 根据告警事件的eventId查询cameraId
      */
-    @GetMapping("/BusiEvent/getCameraId")
+    @GetMapping("/alarm/BusiEvent/getCameraId")
     String getCameraId(@RequestParam("event_id") Long event_id);
 
     /**
      * 获取活跃告警事件次数
      */
-    @GetMapping("/BusiEvent/getEventActive")
+    @GetMapping("/alarm/BusiEvent/getEventActive")
     String getEventActive();
 
     /**
      * 查询最近一段时间内每分钟的的告警数量
      * @param intervalMinutes 最近分钟数
      */
-    @GetMapping("/analysisEvent/queryEventCntPerMinute")
+    @GetMapping("/alarm/analysisEvent/queryEventCntPerMinute")
     String queryEventCntPerMinute(@RequestParam("intervalMinutes") Integer intervalMinutes);
 
     /**
      * 获取告警事件详细信息和uuid
      */
-    @GetMapping(value = "/BusiEvent/getTInfo")
+    @GetMapping(value = "/alarm/BusiEvent/getTInfo")
     String detailAndTOperUuid(@RequestParam("event_id") Long event_id) ;
 
     /**
      * 批量确认告警事件
      */
-    @PutMapping("/BusiEvent/{ids}")
+    @PutMapping("/alarm/BusiEvent/{ids}")
     AjaxResult confirm(@PathVariable("ids") Long[] ids);
 
     /**
      * 查询告警事件列表
      */
-    @GetMapping("/BusiEvent/listT")
+    @GetMapping("/alarm/BusiEvent/listT")
     String listT(@RequestBody Event event,@RequestParam(value = "pageSize") Integer pageSize,@RequestParam(value = "pageNum") Integer pageNum);
 }

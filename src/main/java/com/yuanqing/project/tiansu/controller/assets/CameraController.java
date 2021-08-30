@@ -151,8 +151,7 @@ public class CameraController extends BaseController {
                                        @ApiParam("排序")@RequestParam(required = false) String orderType,
                                        @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
         List<Camera> list = new ArrayList<>();
-//        String url = alarmHost + "/BusiEvent/getCameraId";
-//        String result = HttpUtils.sendGet(url, "event_id=" + id);
+
         String result = alarmFeignClient.getCameraId(id);
         JSONObject resultObj = JSONObject.parseObject(result);
 
@@ -162,7 +161,13 @@ public class CameraController extends BaseController {
             JSONObject filters = new JSONObject();
             filters.put("deviceCode", deviceCode);
             filters.put("ipAddress", ipAddress);
-            filters.put("id", ids);
+
+            if(StringUtils.isEmpty(ids)){
+                return AjaxResult.success(getDataTable(null));
+            }else{
+                filters.put("id", ids);
+            }
+
             String orderStr = null;
             if (!StringUtils.isEmpty(orderType) && !StringUtils.isEmpty(orderValue)) {
                 orderStr = orderValue + " " + orderType;
