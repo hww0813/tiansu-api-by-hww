@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    consul:
+      host: 192.168.1.21
+      port: 8500
+      discovery:
+        service-name: ${spring.application.name}
+      config:
+        data-key: data
+        prefix: config
+        format: yaml
+        watch:
+          enabled: true
+          delay: 10000
+          wait-time: 30
+
+
+
+
+
+
+
+
