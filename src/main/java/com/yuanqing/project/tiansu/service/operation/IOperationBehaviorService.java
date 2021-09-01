@@ -37,4 +37,6 @@ public interface IOperationBehaviorService {
     OperationBehavior getOperationBehaviorById(Long id);
 
     OperationBehavior getOperationBehaviorByUuid(String uuid);
+
+    List<OperationBehavior> getOperationListByUuids(int pageNum, int pageSize, JSONObject filters);
 }

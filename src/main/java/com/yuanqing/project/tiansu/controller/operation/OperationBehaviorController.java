@@ -7,11 +7,13 @@ import com.yuanqing.common.utils.ip.IpUtils;
 import com.yuanqing.framework.web.controller.BaseController;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.framework.web.domain.PageResult;
+import com.yuanqing.framework.web.page.TableDataInfo;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehavior;
 import com.yuanqing.project.tiansu.domain.operation.OperationBehaviorSearch;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.ICameraService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
+import com.yuanqing.project.tiansu.service.feign.AlarmFeignClient;
 import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,16 +24,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.swing.text.DateFormatter;
 import javax.validation.Valid;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -62,6 +59,9 @@ public class OperationBehaviorController extends BaseController   {
 
     @Autowired
     private ICameraService cameraService;
+
+    @Resource
+    private AlarmFeignClient alarmFeignClient;
 
 
     @GetMapping("/list")
@@ -309,6 +309,58 @@ public class OperationBehaviorController extends BaseController   {
     public AjaxResult getProbeName(){
         List<JSONObject> probeNameList = serverTreeService.getProbeName();
         return AjaxResult.success(probeNameList);
+    }
+
+    @GetMapping("/getOperByEventId")
+    @ApiOperation(value = "根据事件id获取操作行为列表", httpMethod = "GET")
+    public TableDataInfo getOperListByEventId(@ApiParam("页码数")@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                              @ApiParam("行数")@RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+                                              @ApiParam("开始时间")@RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                              @ApiParam("结束时间")@RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+                                              @ApiParam("ID")@RequestParam(value = "eventId", required = false) Long eventId,
+                                              @ApiParam("源IP")@RequestParam(value = "srcIp", required = false) String srcIp,
+                                              @ApiParam("目的IP")@RequestParam(value = "dstIp", required = false) String dstIp,
+                                              @ApiParam("源设备编码")@RequestParam(value = "srcCode", required = false) String srcCode,
+                                              @ApiParam("目的设备编码")@RequestParam(value = "dstCode", required = false) String dstCode,
+                                              @ApiParam("客户端ID")@RequestParam(value = "clientId", required = false) Long clientId,
+                                              @ApiParam("摄像头ID")@RequestParam(value = "cameraId", required = false) Long cameraId,
+                                              @ApiParam("操作类型")@RequestParam(value = "action", required = false) String action,
+                                              @ApiParam("目的设备ip")@RequestParam(value = "dstDeviceIp", required = false) String dstDeviceIp,
+                                              @ApiParam("目的设备名")@RequestParam(value = "dstDeviceName", required = false) String dstDeviceName,
+                                              @ApiParam("用户名")@RequestParam(value = "username", required = false) String username,
+                                              @ApiParam("平台名称")@RequestParam(value = "probeHdInfo", required = false) String probeHdInfo,
+                                              @ApiParam("排序")@RequestParam(required = false) String orderType,
+                                              @ApiParam("排序对象")@RequestParam(required = false) String orderValue) {
+
+        JSONObject filters = new JSONObject();
+        filters.put("pageNum", pageNum);
+        filters.put("pageSize", pageSize);
+        filters.put("startDate", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        filters.put("endDate", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        filters.put("eventId", eventId);
+        filters.put("srcIp", IpUtils.ipToLong(srcIp));
+        filters.put("dstIp", IpUtils.ipToLong(dstIp));
+        filters.put("dstDeviceIp", IpUtils.ipToLong(dstDeviceIp));
+        filters.put("action", action);
+        filters.put("username", username);
+        filters.put("orderType", orderType);
+        filters.put("orderValue", orderValue);
+        filters.put("dstCode", dstCode);
+        filters.put("srcCode", srcCode);
+        filters.put("clientId", clientId);
+        filters.put("cameraId", cameraId);
+        filters.put("dstDeviceName", dstDeviceName);
+
+        AjaxResult uuidListResult = alarmFeignClient.getUuidListByEventId(eventId, startDate, endDate);
+        List<String> uuids = (List<String>) uuidListResult.get("data");
+        startPage();
+        if (uuids.size() > 0) {
+            filters.put("uuids", uuids);
+            List<OperationBehavior> operationBehaviorList = IOperationBehaviorService.getOperationListByUuids(pageNum, pageSize, filters);
+            return getDataTable(operationBehaviorList);
+        } else {
+            return getDataTable(null);
+        }
     }
 }
 

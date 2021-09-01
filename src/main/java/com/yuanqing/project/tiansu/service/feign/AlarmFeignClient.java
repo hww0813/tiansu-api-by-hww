@@ -3,7 +3,10 @@ package com.yuanqing.project.tiansu.service.feign;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.event.Event;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 
 /**
@@ -49,4 +52,8 @@ public interface AlarmFeignClient {
      */
     @GetMapping("/BusiEvent/listT")
     String listT(@RequestBody Event event,@RequestParam(value = "pageSize") Integer pageSize,@RequestParam(value = "pageNum") Integer pageNum);
+
+    @GetMapping("/BusiEvent/getUuidListByEventId")
+    AjaxResult getUuidListByEventId(@RequestParam(value = "eventId") long eventId, @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                    @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate);
 }
