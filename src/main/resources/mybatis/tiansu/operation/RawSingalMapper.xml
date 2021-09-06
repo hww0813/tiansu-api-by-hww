@@ -67,6 +67,27 @@
         </if>
         limit #{num},#{size}
     </select>
+
+    <select id="queryList" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT SRC_IP as srcIp,DST_IP as dstIp,TO_CODE as toCode,CONTENT as content,STAMP as stamp FROM busi_raw_signal br WHERE 1 = 1
+        <if test="startDate != null and endDate != null">
+            and br.STAMP between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="srcIp != null">
+            AND br.SRC_IP = #{srcIp}
+        </if>
+        <if test="dstIp != null ">
+            AND br.DST_IP = #{dstIp}
+        </if>
+        <if test="orderType == null or orderType == ''">
+            ORDER BY br.STAMP DESC
+        </if>
+        <if test="orderType != null and orderType != ''">
+            ORDER BY ${orderType}
+        </if>
+        limit #{num},#{size}
+    </select>
+
     <select id="queryCount" resultType="java.lang.Integer"
             parameterType="com.yuanqing.project.tiansu.domain.operation.RawSignal">
         SELECT count(1) FROM busi_raw_signal br WHERE 1 = 1

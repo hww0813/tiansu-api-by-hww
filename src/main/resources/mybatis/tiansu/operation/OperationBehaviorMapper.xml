@@ -176,6 +176,38 @@
         limit #{filter.num},#{filter.size}
     </select>
 
+    <select id="getVisitedRelatedOperation" resultMap="resultMap">
+        select * from busi_oper bo left join busi_camera bc on bc.device_code = bo.dst_code
+        <where>
+            <if test="filter.startDate != null and filter.endDate != null">
+                AND bo.stamp >= STR_TO_DATE(#{filter.startDate}, '%Y-%m-%d %H:%i:%s') and bo.stamp &lt;=
+                STR_TO_DATE(#{filter.endDate}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="filter.srcIp != null and filter.srcIp != '' ">
+                AND bo.SRC_IP = #{filter.srcIp}
+            </if>
+            <if test="filter.dstCode != null and filter.dstCode != '' ">
+                AND bo.DST_CODE = #{filter.dstCode}
+            </if>
+            <if test="filter.action != null and filter.action != '' ">
+                AND bo.ACTION = #{filter.action}
+            </if>
+            <if test="filter.dstIp != null and filter.dstIp != '' ">
+                AND bo.DST_IP = #{filter.dstIp}
+            </if>
+            <if test="filter.username != null and filter.username != '' ">
+                AND bo.USERNAME = #{filter.username}
+            </if>
+            <if test="filter.dstDeviceName != null and filter.dstDeviceName != '' ">
+                AND bo.DST_DEVICE_NAME = #{filter.dstDeviceName}
+            </if>
+            AND bc.device_type = 1
+            ${filter.dataScope}
+        </where>
+        ORDER BY bo.STAMP DESC
+    </select>
+
+
     <select id="getVisitedRateRelatedOperationCount" resultType="java.lang.Integer">
         select count(*) from busi_oper bo left join busi_camera bc on bc.device_code = bo.dst_code
         <where>
@@ -412,6 +444,64 @@
         select *
         from busi_oper
         where UUID = #{uuid}
+    </select>
+
+    <select id="operListByUuids" parameterType="com.alibaba.fastjson.JSONObject" resultMap="resultMap">
+        select *
+        from busi_oper v
+        <where>
+            1=1
+            <if test="uuids != null">
+                and uuid in
+                <foreach item="uuid" collection="uuids" open="(" separator="," close=")">
+                    #{uuid}
+                </foreach>
+            </if>
+            <if test="srcIp != null and srcIp != '' ">
+                AND v.SRC_IP = #{srcIp}
+            </if>
+            <if test="dstIp != null and dstIp != '' ">
+                AND v.DST_IP = #{dstIp}
+            </if>
+            <if test="srcCode != null and srcCode != '' ">
+                AND v.SRC_CODE = #{srcCode}
+            </if>
+            <if test="dstCode != null and dstCode != '' ">
+                AND v.DST_CODE = #{dstCode}
+            </if>
+            <if test="clientId != null and clientId != '' ">
+                AND v.CLIENT_ID = #{clientId}
+            </if>
+            <if test="cameraId != null and cameraId != '' ">
+                AND v.CAMERA_ID = #{cameraId}
+            </if>
+            <if test="action != null and action != '' ">
+                AND v.ACTION = #{action}
+            </if>
+            <if test="dstDeviceIp != null and dstDeviceIp != ''">
+                AND v.dst_device_ip = #{dstDeviceIp}
+            </if>
+            <if test="dstDeviceName != null and dstDeviceName != '' ">
+                AND v.DST_DEVICE_NAME = #{dstDeviceName}
+            </if>
+            <if test="username != null and username != '' ">
+                AND v.USERNAME = #{username}
+            </if>
+            <if test="probeHdInfo != null and probeHdInfo != '' ">
+                AND v.PROBE_HD_INFO = #{probeHdInfo}
+            </if>
+        </where>
+
+        <if test="orderType != null or orderType != ''">
+            ORDER BY v.STAMP DESC
+        </if>
+
+        <if test="orderType != null and orderType != ''">
+            ORDER BY ${orderType}
+        </if>
+        <if test="num != null and size != null">
+            limit #{num},#{size}
+        </if>
     </select>
 
 

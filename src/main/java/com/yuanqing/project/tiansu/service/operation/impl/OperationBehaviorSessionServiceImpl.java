@@ -47,33 +47,17 @@ public class OperationBehaviorSessionServiceImpl implements IOperationBehaviorSe
     }
 
     @Override
-    public List<JSONObject> getAllToReport(JSONObject filters) {
-        OperationBehaviorSession condOperationBehaviorSession = new OperationBehaviorSession();
-        condOperationBehaviorSession.setStime(filters.getDate("stime"));
-        condOperationBehaviorSession.setEtime(filters.getDate("etime"));
-        condOperationBehaviorSession.setUsername(filters.getString("username"));
-        condOperationBehaviorSession.setSrcIp(IpUtils.ipToLong(filters.getString("srcIp")));
-
-        condOperationBehaviorSession.setNum(0);
-        Integer count = operationBehaviorSessionMapper.getCount(condOperationBehaviorSession);
-        if(count > 20000) {
-            condOperationBehaviorSession.setSize(20000);
-        } else {
-            condOperationBehaviorSession.setSize(count);
-        }
-
+    public List<JSONObject> getAllToReport(OperationBehaviorSession session) {
+        Integer count = operationBehaviorSessionMapper.getCount(session);
+        session.setNum(0);
+        session.setSize(count);
+        List<OperationBehaviorSession> operationBehaviorSessionList = operationBehaviorSessionMapper.getList(session);
         List<JSONObject> reportList = new ArrayList<JSONObject>();
-        List<OperationBehaviorSession> operationBehaviorSessionList = operationBehaviorSessionMapper.getList(condOperationBehaviorSession);
         if(!CollectionUtils.isEmpty(operationBehaviorSessionList)) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             for (OperationBehaviorSession operationBehaviorSession : operationBehaviorSessionList) {
                 JSONObject jsonObject = new JSONObject();
 
-                if (StringUtils.isNotEmpty(operationBehaviorSession.getSrcCode())) {
-                    jsonObject.put("srcCode", operationBehaviorSession.getSrcCode());
-                }else {
-                    jsonObject.put("srcCode", "");
-                }
                 if (operationBehaviorSession.getSrcIp() != null) {
                     jsonObject.put("srcIp", IpUtils.longToIPv4(operationBehaviorSession.getSrcIp()));
                 } else {
@@ -83,21 +67,6 @@ public class OperationBehaviorSessionServiceImpl implements IOperationBehaviorSe
                     jsonObject.put("username", operationBehaviorSession.getUsername());
                 }else {
                     jsonObject.put("username", "");
-                }
-                if (operationBehaviorSession.getUpFlow() != null) {
-                    jsonObject.put("upFlow", String.valueOf(operationBehaviorSession.getUpFlow()));
-                }else {
-                    jsonObject.put("upFlow", "0");
-                }
-                if (operationBehaviorSession.getDownFlow() != null) {
-                    jsonObject.put("downFlow", String.valueOf(operationBehaviorSession.getDownFlow()));
-                }else {
-                    jsonObject.put("downFlow", "0");
-                }
-                if (operationBehaviorSession.getTotalTime() != null) {
-                    jsonObject.put("totalTime", operationBehaviorSession.getTotalTime());
-                } else {
-                    jsonObject.put("totalTime", "0秒");
                 }
                 if (operationBehaviorSession.getStime() != null) {
                     jsonObject.put("startTime", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, operationBehaviorSession.getStime()));

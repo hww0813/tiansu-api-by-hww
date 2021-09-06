@@ -19,7 +19,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -221,5 +220,10 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     @Override
     public OperationBehavior getOperationBehaviorByUuid(String uuid) {
         return operationBehaviorMapper.findByUuid(uuid);
+    }
+
+    @Override
+    public  List<OperationBehavior> getOperationListByUuids(int pageNum, int pageSize, JSONObject filters) {
+        return operationBehaviorMapper.operListByUuids(filters);
     }
 }

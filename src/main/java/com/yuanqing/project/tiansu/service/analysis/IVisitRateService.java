@@ -26,7 +26,7 @@ public interface IVisitRateService extends BaseService<VisitRate, Long>{
 
     PageInfo<Client> getClientCntList(int pageNum, int pageSize, JSONObject filters);
 
-    List<JSONObject> getRateCameraCntToReport(JSONObject filters);
+    List<JSONObject> getRateCameraCntToReport(Camera camera);
 
     List<JSONObject> getRateVisitedCntToReport(JSONObject filters);
 

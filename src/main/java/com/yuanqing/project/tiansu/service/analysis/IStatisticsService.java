@@ -88,11 +88,11 @@ public interface IStatisticsService {
 
     List<JSONObject> getClientVisitToReport(JSONObject filters);
 
-    List<JSONObject> getClientVisitCntToReport(JSONObject filters);
+    List<JSONObject> getClientVisitCntToReport(OperationBehavior operationBehavior);
 
     List<JSONObject> getClientVisitRelateCameraToReport(JSONObject filters);
 
     List<JSONObject> getCameraVisitedToReport(CameraVisit cameraVisit,Camera camera,String orderStr);
 
-    List<JSONObject> getCameraVisitedCntToReport(JSONObject filters);
+    List<JSONObject> getCameraVisitedCntToReport(OperationBehavior operationBehavior);
 }

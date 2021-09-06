@@ -354,4 +354,9 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         return config;
     }
 
+    @Override
+    public AjaxResult operate(String instance, String operation, String serverName) {
+        return macsFeignClient.operate(instance, operation, serverName, MACS_TOKEN);
+    }
+
 }

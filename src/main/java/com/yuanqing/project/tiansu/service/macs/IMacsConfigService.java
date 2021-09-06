@@ -119,4 +119,6 @@ public interface IMacsConfigService extends BaseService<MacsConfig, Long>{
      */
 //    public MacsConfig selectMacsConfigByTypeAndName(String type,String name);
 
+    public AjaxResult operate(String instance, String operation, String serverName);
+
 }
