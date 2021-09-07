@@ -74,6 +74,7 @@ public class MacsConfigServiceImpl implements IMacsConfigService {
         }catch (Exception e){
 
             LOGGER.error("请求Macs接口异常,读取本地配置信息:"+macsKey);
+            e.printStackTrace();
 
             return getLocationConfig(macsKey);
         }
