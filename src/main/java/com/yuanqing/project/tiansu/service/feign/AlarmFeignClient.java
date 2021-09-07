@@ -53,7 +53,7 @@ public interface AlarmFeignClient {
     @GetMapping("/alarm/BusiEvent/listT")
     String listT(@RequestBody Event event,@RequestParam(value = "pageSize") Integer pageSize,@RequestParam(value = "pageNum") Integer pageNum);
 
-    @GetMapping("/BusiEvent/getUuidListByEventId")
+    @GetMapping("/alarm/BusiEvent/getUuidListByEventId")
     AjaxResult getUuidListByEventId(@RequestParam(value = "eventId") long eventId, @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
                                     @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate);
 }
