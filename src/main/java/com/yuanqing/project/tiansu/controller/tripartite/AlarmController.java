@@ -7,6 +7,8 @@ import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
 import com.yuanqing.project.tiansu.service.assets.IClientService;
 import com.yuanqing.project.tiansu.service.assets.IServerTreeService;
 import com.yuanqing.project.tiansu.service.macs.IMacsConfigService;
+import com.yuanqing.project.tiansu.service.operation.IOperationBehaviorService;
+import com.yuanqing.project.tiansu.service.operation.impl.OperationBehaviorServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,6 +25,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -48,7 +51,7 @@ public class AlarmController {
     private IMacsConfigService macsConfigService;
 
     @Resource
-    private OperationBehaviorMapper operationBehaviorMapper;
+    private IOperationBehaviorService operationBehaviorService;
 
     @GetMapping("/clientById")
     public AjaxResult clientById(@ApiParam("客户端ID")@Valid @RequestParam(value = "id") Long id) {
@@ -87,8 +90,28 @@ public class AlarmController {
         filters.put("endDate",  endTime);
 
         //总量
-        CompletableFuture<Integer> count = CompletableFuture.supplyAsync(() -> operationBehaviorMapper.selectOperationByTimeAndName(filters));
+        CompletableFuture<Integer> count = CompletableFuture.supplyAsync(() -> operationBehaviorService.selectOperationByTimeAndName(filters));
         return AjaxResult.success(count.get());
+    }
+
+    @GetMapping("/getLoginIps")
+    @ApiOperation(value = "获取天数范围内用户登陆的ip", httpMethod = "GET")
+    public AjaxResult getLoginIps(@ApiParam("用户名")@RequestParam(value = "username") String username,
+                                       @ApiParam("天数")@RequestParam(value = "days") Integer days) throws ExecutionException, InterruptedException {
+        JSONObject filters = new JSONObject();
+        filters.put("username", username);
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String startTime = now.minus(days, ChronoUnit.DAYS).format(dtf);
+        String endTime = now.format(dtf);
+
+        filters.put("startDate", startTime);
+        filters.put("endDate",  endTime);
+
+        //总量
+        List<String> ips =  operationBehaviorService.selectOperationIpsByTimeAndName(filters);
+        return AjaxResult.success(ips);
     }
 
     @GetMapping("/getOperRatio")
@@ -99,16 +122,18 @@ public class AlarmController {
         String startStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + startDate.format(DateTimeFormatter.ISO_LOCAL_TIME);
         String endStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + endDate.format(DateTimeFormatter.ISO_LOCAL_TIME);
 
-        Integer workTimeNum = operationBehaviorMapper.getOperNumByTime(startStr, endStr);
-        Integer closeingTimeNum = operationBehaviorMapper.getOperNumByTime(endStr, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        Integer preTimeNum = operationBehaviorMapper.getOperNumByTime(getTodayStartTime(), startStr);
+//        Integer workTimeNum = operationBehaviorMapper.getOperNumByTime(startStr, endStr);
+        Integer closeingTimeNum = operationBehaviorService.getOperNumByTime(endStr, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        Integer preTimeNum = operationBehaviorService.getOperNumByTime(getTodayStartTime(), startStr);
 
-        if (workTimeNum != 0) {
-            double ratio = (preTimeNum + closeingTimeNum) * 1.0 / workTimeNum;
-            return AjaxResult.success(ratio);
-        } else {
-            return AjaxResult.success(0);
-        }
+//        if (workTimeNum != 0) {
+//            double ratio = (preTimeNum + closeingTimeNum) * 1.0 / workTimeNum;
+//            return AjaxResult.success(ratio);
+//        } else {
+//            return AjaxResult.success(0);
+//        }
+
+        return AjaxResult.success(preTimeNum + closeingTimeNum);
     }
 
     private String getTodayStartTime() {

@@ -86,6 +86,8 @@ public interface OperationBehaviorMapper extends BaseMapper<OperationBehavior,Lo
      */
     Integer selectOperationByTimeAndName(JSONObject filters);
 
+    List<String> selectOperationIpsByTimeAndName(JSONObject filters);
+
     /**
      * 获取时间段内所有操作行为总数
      * @param startDate

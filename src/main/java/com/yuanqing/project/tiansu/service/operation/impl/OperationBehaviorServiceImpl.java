@@ -223,7 +223,21 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     }
 
     @Override
-    public  List<OperationBehavior> getOperationListByUuids(int pageNum, int pageSize, JSONObject filters) {
+    public List<OperationBehavior> getOperationListByUuids(int pageNum, int pageSize, JSONObject filters) {
         return operationBehaviorMapper.operListByUuids(filters);
+    }
+
+    @Override
+    public Integer selectOperationByTimeAndName(JSONObject filters) {
+        return operationBehaviorMapper.selectOperationByTimeAndName(filters);
+    }
+
+    @Override
+    public List<String> selectOperationIpsByTimeAndName(JSONObject filters) {
+        return operationBehaviorMapper.selectOperationIpsByTimeAndName(filters);
+    }
+
+    public Integer getOperNumByTime(String startDate, String endDate) {
+        return operationBehaviorMapper.getOperNumByTime(startDate, endDate);
     }
 }
