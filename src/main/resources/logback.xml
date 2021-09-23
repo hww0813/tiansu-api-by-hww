@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 日志存放路径 -->
-<!--    <property name="log.path" value="/var/log/spring-boot/"/>-->
-	<property name="log.path" value="/users/xucan/logs" />
+    <property name="log.path" value="/var/log/spring-boot/"/>
+<!--	<property name="log.path" value="/users/xucan/logs" />-->
 
     <property name="amqp.host" value="127.0.0.1:5672" />
 
