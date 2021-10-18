@@ -60,6 +60,8 @@ public class RawNetFlowController extends BaseController {
         rawNetFlow.setendDate(endDate);
         if (StringUtils.isNotBlank(orderValue) && StringUtils.isNotBlank(orderType)) {
             rawNetFlow.setOrderType(orderValue + " " + orderType);
+        }else{
+            rawNetFlow.setOrderType( "packet_count desc");
         }
         startPage();
         List<RawNetFlow> rawNetFlowList = busiRawNetFlowService.selectBusiRawNetFlowList(rawNetFlow);

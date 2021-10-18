@@ -73,9 +73,17 @@ public class RawNetFlow extends BaseEntity {
     /**
      * 包大小
      */
-    @ApiModelProperty("包大小")
-    @Excel(name = "包大小")
+    @ApiModelProperty("接收包大小")
+    @Excel(name = "接收包大小")
     private Long packetSize;
+
+
+    /**
+     * 发送包大小
+     */
+    @ApiModelProperty("发送包大小")
+    @Excel(name = "发送包大小")
+    private Long sentSize;
 
     /**
      * 包类型
@@ -87,9 +95,16 @@ public class RawNetFlow extends BaseEntity {
     /**
      * 包数量
      */
-    @ApiModelProperty("包数量")
-    @Excel(name = "包数量")
+    @ApiModelProperty("接收包数量")
+    @Excel(name = "接收包数量")
     private Long packetCount;
+
+    /**
+     * 包数量
+     */
+    @ApiModelProperty("发送包数量")
+    @Excel(name = "发送包数量")
+    private Long sentCount;
 
 
     private String OrderType;

@@ -14,8 +14,10 @@
         <result property="dstMac" column="dst_mac"/>
         <result property="stamp" column="stamp"/>
         <result property="packetSize" column="packet_size"/>
+        <result property="sentSize" column="sent_size"/>
         <result property="packetType" column="packet_type"/>
         <result property="packetCount" column="packet_count"/>
+        <result property="sentCount" column="sent_count"/>
     </resultMap>
 
     <sql id="selectBusiRawNetFlowVo">
@@ -44,8 +46,10 @@
             <if test="dstMac != null  and dstMac != ''">and dst_mac = #{dstMac}</if>
             <if test="stamp != null ">and stamp = #{stamp}</if>
             <if test="packetSize != null ">and packet_size = #{packetSize}</if>
+            <if test="sentSize != null ">and sent_size = #{sentSize}</if>
             <if test="packetType != null  and packetType != ''">and packet_type = #{packetType}</if>
             <if test="packetCount != null ">and packet_count = #{packetCount}</if>
+            <if test="sentCount != null ">and sent_count = #{sentCount}</if>
             <if test="startDate != null and endDate != null">
                 and stamp between STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
             </if>
