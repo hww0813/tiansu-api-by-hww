@@ -1,6 +1,7 @@
 package com.yuanqing.project.tiansu.controller.tripartite;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yuanqing.common.utils.StringUtils;
 import com.yuanqing.framework.web.domain.AjaxResult;
 import com.yuanqing.project.tiansu.domain.macs.MacsConfig;
 import com.yuanqing.project.tiansu.mapper.operation.OperationBehaviorMapper;
@@ -24,8 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -96,10 +96,8 @@ public class AlarmController {
 
     @GetMapping("/getLoginIps")
     @ApiOperation(value = "获取天数范围内用户登陆的ip", httpMethod = "GET")
-    public AjaxResult getLoginIps(@ApiParam("用户名")@RequestParam(value = "username") String username,
-                                       @ApiParam("天数")@RequestParam(value = "days") Integer days) throws ExecutionException, InterruptedException {
+    public AjaxResult getLoginIps(@ApiParam("天数")@RequestParam(value = "days") Integer days) {
         JSONObject filters = new JSONObject();
-        filters.put("username", username);
 
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -108,10 +106,19 @@ public class AlarmController {
 
         filters.put("startDate", startTime);
         filters.put("endDate",  endTime);
+        List<String> usernames = operationBehaviorService.selectOperationNamesByTime(filters);
 
-        //总量
-        List<String> ips =  operationBehaviorService.selectOperationIpsByTimeAndName(filters);
-        return AjaxResult.success(ips);
+        Map<String, Set<Long>> result = new HashMap<>();
+        for(String username : usernames) {
+            if (StringUtils.isEmpty(username)) {
+                continue;
+            }
+            filters.put("username", username);
+            List<Long> ips =  operationBehaviorService.selectOperationIpsByTimeAndName(filters);
+            result.put(username, new HashSet<>(ips));
+        }
+
+        return AjaxResult.success(result);
     }
 
     @GetMapping("/getOperRatio")
@@ -123,8 +130,8 @@ public class AlarmController {
         String endStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + endDate.format(DateTimeFormatter.ISO_LOCAL_TIME);
 
 //        Integer workTimeNum = operationBehaviorMapper.getOperNumByTime(startStr, endStr);
-        Integer closeingTimeNum = operationBehaviorService.getOperNumByTime(endStr, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        Integer preTimeNum = operationBehaviorService.getOperNumByTime(getTodayStartTime(), startStr);
+        Long closeingTimeNum = operationBehaviorService.getOperNumByTime(endStr, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        Long preTimeNum = operationBehaviorService.getOperNumByTime(getTodayStartTime(), startStr);
 
 //        if (workTimeNum != 0) {
 //            double ratio = (preTimeNum + closeingTimeNum) * 1.0 / workTimeNum;

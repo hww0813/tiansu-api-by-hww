@@ -233,11 +233,17 @@ public class OperationBehaviorServiceImpl implements IOperationBehaviorService {
     }
 
     @Override
-    public List<String> selectOperationIpsByTimeAndName(JSONObject filters) {
+    public List<Long> selectOperationIpsByTimeAndName(JSONObject filters) {
         return operationBehaviorMapper.selectOperationIpsByTimeAndName(filters);
     }
 
-    public Integer getOperNumByTime(String startDate, String endDate) {
+    @Override
+    public List<String> selectOperationNamesByTime(JSONObject filters) {
+        return operationBehaviorMapper.selectOperationNamesByTime(filters);
+    }
+
+    @Override
+    public Long getOperNumByTime(String startDate, String endDate) {
         return operationBehaviorMapper.getOperNumByTime(startDate, endDate);
     }
 }
