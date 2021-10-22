@@ -189,12 +189,10 @@ public class CameraServiceImpl implements ICameraService {
                     cameraGB.setDeviceName(deviceName);
                 }
 
-                try {
+                Long  ipAddress = entity.getIpAddress();
+                if(ipAddress != null){
                     cameraGB.setIpAddress(entity.getIpAddress());
-                } catch (Exception e) {
-                    cameraGB.setIpAddress(null);
                 }
-
                 cameraGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
                 cameraGB.setIsProbe(ProbeEnum.IMPORT.getValue());
                 cameraGB.setStatus(0);
@@ -232,10 +230,10 @@ public class CameraServiceImpl implements ICameraService {
             if (deviceName != null && !"".equals(deviceName)) {
                 cameraNGB.setDeviceName(deviceName);
             }
-            try {
+
+            Long  ipAddress = entity.getIpAddress();
+            if(ipAddress != null){
                 cameraNGB.setIpAddress(entity.getIpAddress());
-            } catch (Exception e) {
-                cameraNGB.setIpAddress(null);
             }
             cameraNGB.setIsImport(ImportEnum.IMPORT_CAMERA.getValue());
             cameraNGB.setIsProbe(ProbeEnum.IMPORT.getValue());
@@ -261,6 +259,7 @@ public class CameraServiceImpl implements ICameraService {
                 cameraNGB.setDeviceCode(entity.getGbId());
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.NGB.getValue()));
             }
+
             if (gbId != null && !gbId.equals("")) {
                 try {
 //                    Region region1 = new Region();
@@ -272,10 +271,10 @@ public class CameraServiceImpl implements ICameraService {
             } else {
                 cameraNGB.setRegion(0000);
             }
-            try {
+
+            Long  ipAddress = entity.getIpAddress();
+            if(ipAddress != null){
                 cameraNGB.setIpAddress(entity.getIpAddress());
-            } catch (Exception e) {
-                cameraNGB.setIpAddress(null);
             }
 
             try {
