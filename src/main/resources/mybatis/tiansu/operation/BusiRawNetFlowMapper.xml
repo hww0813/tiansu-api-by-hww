@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yuanqing.project.tiansu.mapper.operation.RawNetFlowMapper">
 
-    <resultMap type="RawNetFlow" id="BusiRawNetFlowResult">
+    <resultMap type="com.yuanqing.project.tiansu.domain.operation.RawNetFlow" id="BusiRawNetFlowResult">
         <result property="id" column="id"/>
         <result property="srcIp" column="src_ip"/>
         <result property="srcPort" column="src_port"/>
@@ -30,8 +30,10 @@
                dst_mac,
                stamp,
                packet_size,
+               sent_size,
                packet_type,
-               packet_count
+               packet_count,
+               sent_count
         from busi_raw_net_flow
     </sql>
 
