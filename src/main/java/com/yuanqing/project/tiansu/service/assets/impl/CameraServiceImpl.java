@@ -592,7 +592,7 @@ public class CameraServiceImpl implements ICameraService {
         return result;
     }
 
-    private static int batchCount = 500;
+    private static int batchCount = 1000;
 
     /**
      * 外部设备新增/更新入库
@@ -600,14 +600,26 @@ public class CameraServiceImpl implements ICameraService {
      * @param externalDevices
      */
     private void deviceSave(List<ExternalDevice> externalDevices, int isUpdate) {
+        int lastIndex = 1000;
         if (isUpdate == 0) {
-            for (int i = 0; i <= externalDevices.size() / batchCount; i++) {
-                if (i == externalDevices.size() / batchCount) {
-                    if (externalDevices.subList(i * batchCount, externalDevices.size()).size() > 0) {
-                        busiExternalDeviceMapper.batchInsert(externalDevices.subList(i * batchCount, externalDevices.size()));
-                    }
+//            for (int i = 0; i <= externalDevices.size() / batchCount; i++) {
+//                if (i == externalDevices.size() / batchCount) {
+//                    if (externalDevices.subList(i * batchCount, externalDevices.size()).size() > 0) {
+//                        busiExternalDeviceMapper.batchInsert(externalDevices.subList(i * batchCount, externalDevices.size()));
+//                    }
+//                } else {
+//                    busiExternalDeviceMapper.batchInsert(externalDevices.subList(i * batchCount, (i + 1) * batchCount));
+//
+//                }
+//            }
+            for (int index = 0; index < externalDevices.size(); ) {
+                if (batchCount >= externalDevices.size()) {
+                    lastIndex = externalDevices.size();
+                    busiExternalDeviceMapper.batchInsert(externalDevices.subList(index, lastIndex));
                 } else {
-                    busiExternalDeviceMapper.batchInsert(externalDevices.subList(i * batchCount, (i + 1) * batchCount));
+                    busiExternalDeviceMapper.batchInsert(externalDevices.subList(index, lastIndex));
+                    index = lastIndex;
+                    lastIndex = index + (batchCount - 1);
                 }
             }
 //            for (int i = 0; i < externalDevices.size(); i++) {
