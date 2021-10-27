@@ -108,14 +108,14 @@ public class AlarmController {
         filters.put("endDate",  endTime);
         List<String> usernames = operationBehaviorService.selectOperationNamesByTime(filters);
 
-        Map<String, Set<Long>> result = new HashMap<>();
+        Map<String, List<Long>> result = new HashMap<>();
         for(String username : usernames) {
             if (StringUtils.isEmpty(username)) {
                 continue;
             }
             filters.put("username", username);
             List<Long> ips =  operationBehaviorService.selectOperationIpsByTimeAndName(filters);
-            result.put(username, new HashSet<>(ips));
+            result.put(username, ips);
         }
 
         return AjaxResult.success(result);
