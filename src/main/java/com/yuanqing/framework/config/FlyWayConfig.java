@@ -26,19 +26,19 @@ public class FlyWayConfig {
 
     @PostConstruct
     public void migrate() {
-        Flyway flyway = new Flyway();
 
-        flyway.setDataSource(dataSource);
+        Flyway flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .locations("db/migration")
+                .encoding("UTF-8")
+                .outOfOrder(true)
+                .baselineOnMigrate(true)
+                .baselineVersion("0")
+                .load();
 
-        // 设置flyway扫描sql升级脚本、java升级脚本的目录路径或包路径（表示是src/main/resources/flyway下面，前缀默认为src/main/resources，因为这个路径默认在classpath下面）
-        flyway.setLocations("db/migration");
-        // 设置sql脚本文件的编码
-        flyway.setEncoding("UTF-8");
-
-        flyway.setOutOfOrder(true);
 
         try {
-            
+
             flyway.migrate();
 
         } catch (FlywayException e) {

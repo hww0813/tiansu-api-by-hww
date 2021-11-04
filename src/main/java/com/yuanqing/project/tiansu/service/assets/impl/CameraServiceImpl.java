@@ -256,7 +256,7 @@ public class CameraServiceImpl implements ICameraService {
                 cameraNGB.setDeviceCode(gbId);
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.GB.getValue()));
             } else {
-                cameraNGB.setDeviceCode(entity.getGbId());
+                cameraNGB.setDeviceCode(entity.getDeviceId());
                 cameraNGB.setIsGb(Integer.valueOf(GBEnum.NGB.getValue()));
             }
 
@@ -592,7 +592,6 @@ public class CameraServiceImpl implements ICameraService {
         return result;
     }
 
-    private static int batchCount = 1000;
 
     /**
      * 外部设备新增/更新入库
@@ -600,7 +599,8 @@ public class CameraServiceImpl implements ICameraService {
      * @param externalDevices
      */
     private void deviceSave(List<ExternalDevice> externalDevices, int isUpdate) {
-        int lastIndex = 1000;
+        int lastIndex = 2;
+        int batchCount = 1000;
         if (isUpdate == 0) {
 //            for (int i = 0; i <= externalDevices.size() / batchCount; i++) {
 //                if (i == externalDevices.size() / batchCount) {
@@ -612,14 +612,19 @@ public class CameraServiceImpl implements ICameraService {
 //
 //                }
 //            }
-            for (int index = 0; index < externalDevices.size(); ) {
-                if (batchCount >= externalDevices.size()) {
-                    lastIndex = externalDevices.size();
-                    busiExternalDeviceMapper.batchInsert(externalDevices.subList(index, lastIndex));
-                } else {
-                    busiExternalDeviceMapper.batchInsert(externalDevices.subList(index, lastIndex));
-                    index = lastIndex;
-                    lastIndex = index + (batchCount - 1);
+            int size = externalDevices.size();
+            int count = size % batchCount > 0 ? size / batchCount +1 : size / batchCount ;
+            int fromIndex = 0 ;
+            int toIndex = 0 ;
+            for(int i =0 ; i < count ;i ++){
+                fromIndex = i* batchCount;
+                if(i == count -1 && (size % batchCount != 0)){
+                    batchCount = size % batchCount ;
+                    toIndex = size ;
+                    busiExternalDeviceMapper.batchInsert(externalDevices.subList(fromIndex,toIndex));
+                }else{
+                    toIndex = (i+1)*batchCount;
+                    busiExternalDeviceMapper.batchInsert(externalDevices.subList(fromIndex,toIndex));
                 }
             }
 //            for (int i = 0; i < externalDevices.size(); i++) {
@@ -638,14 +643,24 @@ public class CameraServiceImpl implements ICameraService {
      * @param cameras
      */
     private void cameraSave(List<Camera> cameras, int isUpdate) {
+
+        int batchCount = 2;
+//        int lastIndex = 1000;
+
         if (isUpdate == 0) {
-            for (int i = 0; i <= cameras.size() / batchCount; i++) {
-                if (i == cameras.size() / batchCount) {
-                    if (cameras.subList(i * batchCount, cameras.size()).size() > 0) {
-                        cameraMapper.batchInsert(cameras.subList(i * batchCount, cameras.size()));
-                    }
-                } else {
-                    cameraMapper.batchInsert(cameras.subList(i * batchCount, (i + 1) * batchCount));
+            int size = cameras.size();
+            int count = size % batchCount > 0 ? size / batchCount +1 : size / batchCount ;
+            int fromIndex = 0 ;
+            int toIndex = 0 ;
+            for(int i =0 ; i < count ;i ++){
+                fromIndex = i* batchCount;
+                if(i == count -1 && (size % batchCount != 0)){
+                    batchCount = size % batchCount ;
+                    toIndex = size ;
+                    cameraMapper.batchInsert(cameras.subList(fromIndex,toIndex));
+                }else{
+                    toIndex = (i+1)*batchCount;
+                    cameraMapper.batchInsert(cameras.subList(fromIndex,toIndex));
                 }
             }
 
