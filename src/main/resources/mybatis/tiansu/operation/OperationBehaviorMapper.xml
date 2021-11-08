@@ -551,7 +551,7 @@
     <select id="selectOperationNamesByTime" resultType="java.lang.String">
         SELECT distinct username
         FROM
-        busi_oper bo
+        busi_statistics bo
         WHERE 1=1
         <if test="startDate != null and endDate != null">and bo.stamp between #{startDate}
             and #{endDate}
