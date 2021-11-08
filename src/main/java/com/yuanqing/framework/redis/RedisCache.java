@@ -217,6 +217,8 @@ public class RedisCache
         return map;
     }
 
+
+
     /**
      * 获得缓存的基本对象列表
      *
@@ -226,5 +228,16 @@ public class RedisCache
     public Collection<String> keys(String pattern)
     {
         return redisTemplate.keys(pattern);
+    }
+
+
+    /**
+     * 判断缓存的key 是否存在
+     * @param key
+     * @return
+     */
+    public boolean hasKey(String key){
+
+        return redisTemplate.hasKey(key);
     }
 }
